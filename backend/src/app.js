@@ -63,9 +63,11 @@ if (!isProduction) {
 }
 
 // Limitation du taux de requêtes
+// 500 requêtes / 15 min : une navigation normale du site public fait
+// 5-10 appels par page, 100 était trop bas pour la production.
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // 100 requêtes max par fenêtre
+  max: 500,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Trop de requêtes, veuillez réessayer plus tard.' },

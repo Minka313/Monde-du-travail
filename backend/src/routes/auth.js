@@ -9,7 +9,10 @@ const validate = require('../middleware/validate');
 const registerSchema = z.object({
   body: z.object({
     email: z.string().email('Email invalide'),
-    password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
+    password: z.string()
+      .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+      .regex(/[a-zA-Z]/, 'Le mot de passe doit contenir au moins une lettre')
+      .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
     firstName: z.string().min(2, 'Prénom requis'),
     lastName: z.string().min(2, 'Nom requis'),
     motivation: z.string().max(1000, 'Motivation trop longue (max 1000 caractères)').optional(),
