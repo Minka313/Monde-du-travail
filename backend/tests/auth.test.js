@@ -1,7 +1,20 @@
 const request = require('supertest');
+const { PrismaClient } = require('@prisma/client');
 const { app } = require('../src/app');
+const prisma = new PrismaClient();
 
 describe('Auth Integration', () => {
+  afterAll(async () => {
+    // Les inscriptions de test pollueraient la base sinon
+    await prisma.membershipRequest.deleteMany({
+      where: { user: { email: { endsWith: '@example.com' } } },
+    });
+    await prisma.user.deleteMany({
+      where: { email: { endsWith: '@example.com' } },
+    });
+    await prisma.$disconnect();
+  });
+
   describe('POST /api/auth/register', () => {
     it('should register a new user', async () => {
       const uniqueEmail = `test-register-${Date.now()}@example.com`;
