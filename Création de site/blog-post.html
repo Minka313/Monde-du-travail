@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="keywords" content="blog, actualités, club, monde du travail">
+    <title>Article - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <a href="login.html" class="btn-cta">Espace Membre</a>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Accueil</a>
+            <a href="about.html">À Propos</a>
+            <a href="job.html">Métiers & Orientation</a>
+            <a href="formations.html">Formations</a>
+            <a href="forum.html">Forum</a>
+            <a href="blog.html">Blog</a>
+            <a href="login.html">Connexion</a>
+
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content">
+        <section class="section">
+            <div class="container page-content">
+                <div id="blogPostContainer">
+                    <p class="text-muted text-center">Chargement...</p>
+                </div>
+
+                <div id="relatedPosts" class="blog-related"></div>
+
+                <div class="text-center mt-2">
+                    <a href="blog.html" class="btn btn-outline btn-lg">← Retour au Blog</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Le Monde du Travail</h4>
+                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+            </div>
+            <div class="footer-col">
+                <h4>Ressources</h4>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="blog.html">Blog</a>
+    
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/frontend-api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      document.addEventListener('layout:loaded', async () => {
+        const container = document.getElementById('blogPostContainer');
+        const relatedContainer = document.getElementById('relatedPosts');
+
+        const categoryLabels = {
+          CLUB: 'Activités du club',
+          FORMATION: 'Formations',
+          ATELIER: 'Ateliers',
+          RENCONTRE: 'Rencontres',
+          CONFERENCE: 'Conférences',
+          VISITE: 'Visites',
+          PROJET: 'Projets',
+          TEMOIGNAGE: 'Témoignages',
+          ANNONCE: 'Annonces'
+        };
+
+        const categoryIcons = {
+          CLUB: '🏛️',
+          FORMATION: '📚',
+          ATELIER: '🎤',
+          RENCONTRE: '🤝',
+          CONFERENCE: '🌍',
+          VISITE: '🏢',
+          PROJET: '🚀',
+          TEMOIGNAGE: '💬',
+          ANNONCE: '📢'
+        };
+
+        function getDefaultImage(category) {
+          const defaultImages = {
+            CLUB: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
+            FORMATION: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80',
+            ATELIER: 'https://images.unsplash.com/photo-1521737711867-e3b97375f052?w=800&q=80',
+            RENCONTRE: 'https://images.unsplash.com/photo-1528605248644-14dd04022db1?w=800&q=80',
+            CONFERENCE: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=800&q=80',
+            VISITE: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
+            PROJET: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
+            TEMOIGNAGE: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
+            ANNONCE: 'https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=800&q=80'
+          };
+          return defaultImages[category] || defaultImages['CLUB'];
+        }
+
+        function formatDate(dateStr) {
+          if (!dateStr) return '';
+          const date = new Date(dateStr);
+          return date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function renderGallery(gallery) {
+          if (!gallery || gallery.length === 0) return '';
+          const images = gallery.map(url => `<img src="${url}" alt="Galerie" loading="lazy">`).join('');
+          return `<div class="blog-gallery">${images}</div>`;
+        }
+
+        async function loadPost() {
+          try {
+            const params = new URLSearchParams(window.location.search);
+            const postId = params.get('id');
+            const slug = params.get('slug');
+
+            if (!postId && !slug) {
+              container.innerHTML = '<p class="text-muted text-center">Article non trouvé.</p>';
+              return;
+            }
+
+            let post;
+            if (postId) {
+              const response = await window.Api.blog.getById(postId);
+              post = response.data;
+            } else {
+              const response = await window.Api.blog.getBySlug(slug);
+              post = response.data;
+            }
+
+            if (!post) {
+              container.innerHTML = '<p class="text-muted text-center">Article non trouvé.</p>';
+              return;
+            }
+
+            const img = post.coverImage || getDefaultImage(post.category);
+            const categoryLabel = categoryLabels[post.category] || post.category;
+            const categoryIcon = categoryIcons[post.category] || '📄';
+
+            document.title = `${post.title} - Le Monde du Travail`;
+
+            container.innerHTML = `
+              <article class="blog-post">
+                <header class="blog-post-header">
+                  <span class="blog-category">${categoryIcon} ${categoryLabel}</span>
+                  <h1>${post.title}</h1>
+                  <div class="blog-meta">
+                    <span>✍️ ${post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu'}</span>
+                    <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
+                  </div>
+                </header>
+                <div class="blog-post-image">
+                  <img src="${img}" alt="${post.title}" loading="eager">
+                </div>
+                <div class="blog-post-content">
+                  ${post.excerpt ? `<p class="blog-post-excerpt">${post.excerpt}</p>` : ''}
+                  <div class="blog-post-body">${post.content}</div>
+                </div>
+                ${renderGallery(post.gallery)}
+              </article>
+            `;
+
+            const relatedResponse = await window.Api.blog.getRelated(post.id, 3);
+            const related = relatedResponse.data || [];
+
+            if (related.length > 0) {
+              relatedContainer.innerHTML = `
+                <h3 class="text-center mt-2">Articles associés</h3>
+                <div class="cards-grid mt-1">
+                  ${related.map(relatedPost => {
+                    const relatedImg = relatedPost.coverImage || getDefaultImage(relatedPost.category);
+                    const relatedCategoryLabel = categoryLabels[relatedPost.category] || relatedPost.category;
+                    return `
+                      <article class="card">
+                        <div class="card-image-wrap">
+                          <img src="${relatedImg}" alt="${relatedPost.title}" loading="lazy">
+                          <div class="card-image-overlay"></div>
+                        </div>
+                        <div class="card-body">
+                          <span class="blog-category">${relatedCategoryLabel}</span>
+                          <h3>${relatedPost.title}</h3>
+                          <p>${relatedPost.excerpt || ''}</p>
+                          <a href="blog-post.html?id=${relatedPost.id}" class="card-link">Lire la suite</a>
+                        </div>
+                      </article>
+                    `;
+                  }).join('')}
+                </div>
+              `;
+            } else {
+              relatedContainer.innerHTML = '';
+            }
+          } catch (error) {
+            if (container) {
+              container.innerHTML = '<p class="text-muted text-center">Erreur lors du chargement de l\'article.</p>';
+            }
+            console.error(error);
+          }
+        }
+
+        await loadPost();
+      });
+    </script>
+</body>
+</html>

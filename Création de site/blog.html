@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Découvrez les activités, projets, rencontres et initiatives qui font vivre le club Le Monde du Travail.">
+    <meta name="keywords" content="blog, actualités, club, monde du travail, activités, projets, ateliers, conférences">
+    <title>Blog - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <a href="login.html" class="btn-cta">Espace Membre</a>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Accueil</a>
+            <a href="about.html">À Propos</a>
+            <a href="job.html">Métiers & Orientation</a>
+            <a href="formations.html">Formations</a>
+            <a href="forum.html">Forum</a>
+            <a href="blog.html" aria-current="page">Blog</a>
+            <a href="login.html">Connexion</a>
+
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content">
+        <section class="hero hero-visual">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&q=80" alt="Blog et actualités du club" loading="eager">
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <span class="hero-label">Blog</span>
+                    <h1>Le Blog du Monde du Travail</h1>
+                    <p>Découvrez les activités, projets, rencontres et initiatives qui font vivre notre club.</p>
+                    <div class="hero-actions">
+                        <a href="#articles" class="btn btn-primary btn-lg">Découvrir nos activités</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="articles">
+            <div class="container page-content">
+                <div class="blog-controls">
+                    <div class="blog-search">
+                        <input type="text" id="blogSearch" class="form-input" placeholder="Rechercher un article...">
+                    </div>
+                    <div class="blog-filters" id="blogCategoryFilters">
+                        <button class="filter-chip active" data-category="">Toutes</button>
+                        <button class="filter-chip" data-category="CLUB">Activités du club</button>
+                        <button class="filter-chip" data-category="FORMATION">Formations</button>
+                        <button class="filter-chip" data-category="ATELIER">Ateliers</button>
+                        <button class="filter-chip" data-category="RENCONTRE">Rencontres</button>
+                        <button class="filter-chip" data-category="CONFERENCE">Conférences</button>
+                        <button class="filter-chip" data-category="VISITE">Visites</button>
+                        <button class="filter-chip" data-category="PROJET">Projets</button>
+                        <button class="filter-chip" data-category="TEMOIGNAGE">Témoignages</button>
+                        <button class="filter-chip" data-category="ANNONCE">Annonces</button>
+                    </div>
+                </div>
+
+                <div id="featuredPost" class="blog-featured"></div>
+
+                <div class="cards-grid" id="blogContainer">
+                    <p class="text-muted text-center">Chargement...</p>
+                </div>
+
+                <div class="pagination" id="blogPagination"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Le Monde du Travail</h4>
+                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+            </div>
+            <div class="footer-col">
+                <h4>Ressources</h4>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="blog.html">Blog</a>
+    
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/frontend-api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const container = document.getElementById('blogContainer');
+        const featuredContainer = document.getElementById('featuredPost');
+        const paginationContainer = document.getElementById('blogPagination');
+        const searchInput = document.getElementById('blogSearch');
+        const categoryFilters = document.getElementById('blogCategoryFilters');
+
+        const categoryLabels = {
+          CLUB: 'Activités du club',
+          FORMATION: 'Formations',
+          ATELIER: 'Ateliers',
+          RENCONTRE: 'Rencontres',
+          CONFERENCE: 'Conférences',
+          VISITE: 'Visites',
+          PROJET: 'Projets',
+          TEMOIGNAGE: 'Témoignages',
+          ANNONCE: 'Annonces'
+        };
+
+        const categoryIcons = {
+          CLUB: '🏛️',
+          FORMATION: '📚',
+          ATELIER: '🎤',
+          RENCONTRE: '🤝',
+          CONFERENCE: '🌍',
+          VISITE: '🏢',
+          PROJET: '🚀',
+          TEMOIGNAGE: '💬',
+          ANNONCE: '📢'
+        };
+
+        const defaultImages = {
+          CLUB: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
+          FORMATION: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80',
+          ATELIER: 'https://images.unsplash.com/photo-1521737711867-e3b97375f052?w=800&q=80',
+          RENCONTRE: 'https://images.unsplash.com/photo-1528605248644-14dd04022db1?w=800&q=80',
+          CONFERENCE: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=800&q=80',
+          VISITE: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
+          PROJET: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
+          TEMOIGNAGE: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
+          ANNONCE: 'https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=800&q=80'
+        };
+
+        let currentCategory = '';
+        let currentSearch = '';
+        let currentPage = 1;
+
+        function getDefaultImage(category) {
+          return defaultImages[category] || defaultImages['CLUB'];
+        }
+
+        function formatDate(dateStr) {
+          if (!dateStr) return '';
+          const date = new Date(dateStr);
+          return date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function renderFeatured(post) {
+          if (!post) {
+            featuredContainer.innerHTML = '';
+            return;
+          }
+
+          const img = post.coverImage || getDefaultImage(post.category);
+          const categoryLabel = categoryLabels[post.category] || post.category;
+          const categoryIcon = categoryIcons[post.category] || '📄';
+
+          featuredContainer.innerHTML = `
+            <article class="blog-featured-card">
+              <div class="blog-featured-image">
+                <img src="${img}" alt="${post.title}" loading="eager">
+                <div class="blog-featured-overlay"></div>
+              </div>
+              <div class="blog-featured-content">
+                <span class="blog-category">${categoryIcon} ${categoryLabel}</span>
+                <h2>${post.title}</h2>
+                <p>${post.excerpt || ''}</p>
+                <div class="blog-meta">
+                  <span>✍️ ${post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu'}</span>
+                  <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
+                </div>
+                <a href="blog-post.html?id=${post.id}" class="btn btn-primary btn-lg">Lire l'article</a>
+              </div>
+            </article>
+          `;
+        }
+
+        function renderPagination(pagination) {
+          if (!pagination || pagination.totalPages <= 1) {
+            paginationContainer.innerHTML = '';
+            return;
+          }
+
+          const { page, totalPages } = pagination;
+          let html = '';
+
+          if (page > 1) {
+            html += `<button class="pagination-btn" data-page="${page - 1}">Précédent</button>`;
+          }
+
+          for (let i = 1; i <= totalPages; i++) {
+            if (i === page) {
+              html += `<button class="pagination-btn active" disabled>${i}</button>`;
+            } else {
+              html += `<button class="pagination-btn" data-page="${i}">${i}</button>`;
+            }
+          }
+
+          if (page < totalPages) {
+            html += `<button class="pagination-btn" data-page="${page + 1}">Suivant</button>`;
+          }
+
+          paginationContainer.innerHTML = html;
+
+          paginationContainer.querySelectorAll('.pagination-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const page = parseInt(btn.dataset.page, 10);
+              if (page) {
+                currentPage = page;
+                loadPosts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            });
+          });
+        }
+
+        async function loadPosts() {
+          try {
+            const params = {
+              page: currentPage,
+              limit: 9,
+              category: currentCategory || undefined,
+              search: currentSearch || undefined,
+              featured: false
+            };
+
+            const response = await window.Api.blog.getAll(params);
+            const result = response.data || [];
+            const posts = result.posts || [];
+            const pagination = result.pagination || {};
+
+            if (!container) return;
+
+            if (posts.length === 0) {
+              container.innerHTML = '<p class="text-muted text-center">Aucun article disponible pour le moment.</p>';
+              featuredContainer.innerHTML = '';
+              paginationContainer.innerHTML = '';
+              return;
+            }
+
+            const featuredPost = posts.find(p => p.featured) || posts[0];
+
+            if (featuredPost && currentPage === 1) {
+              renderFeatured(featuredPost);
+            } else {
+              renderFeatured(null);
+            }
+
+            container.innerHTML = posts.map(post => {
+              const img = post.coverImage || getDefaultImage(post.category);
+              const categoryLabel = categoryLabels[post.category] || post.category;
+              const categoryIcon = categoryIcons[post.category] || '📄';
+
+              return `
+                <article class="card" data-blog-post-id="${post.id}">
+                  <div class="card-image-wrap">
+                    <img src="${img}" alt="${post.title}" loading="lazy">
+                    <div class="card-image-overlay"></div>
+                  </div>
+                  <div class="card-body">
+                    <span class="blog-category">${categoryIcon} ${categoryLabel}</span>
+                    <h3>${post.title}</h3>
+                    <p>${post.excerpt || post.content.substring(0, 150) + '...'}</p>
+                    <div class="blog-meta">
+                      <span>✍️ ${post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu'}</span>
+                      <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
+                    </div>
+                    <a href="blog-post.html?id=${post.id}" class="card-link">Lire la suite</a>
+                  </div>
+                </article>
+              `;
+            }).join('');
+
+            renderPagination(pagination);
+          } catch (error) {
+            if (container) {
+              container.innerHTML = '<p class="text-muted text-center">Erreur lors du chargement des articles.</p>';
+            }
+            console.error(error);
+          }
+        }
+
+        if (categoryFilters) {
+          categoryFilters.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+              categoryFilters.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+              chip.classList.add('active');
+              currentCategory = chip.dataset.category || '';
+              currentPage = 1;
+              loadPosts();
+            });
+          });
+        }
+
+        if (searchInput) {
+          let searchTimeout;
+          searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+              currentSearch = e.target.value.trim();
+              currentPage = 1;
+              loadPosts();
+            }, 300);
+          });
+        }
+
+        await loadPosts();
+      });
+    </script>
+</body>
+</html>

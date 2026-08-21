@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Espace membre du club Le Monde du Travail : connexion, inscription et demande d'adhésion pour accéder au forum et aux formations.">
+    <meta name="keywords" content="connexion, inscription, membre, espace membre, adhésion, club">
+    <title>Espace Membre - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Accueil</a>
+            <a href="about.html">À Propos</a>
+            <a href="job.html">Métiers & Orientation</a>
+            <a href="formations.html">Formations</a>
+            <a href="forum.html">Forum</a>
+            <a href="blog.html">Blog</a>
+            <a href="login.html" aria-current="page">Connexion</a>
+
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content">
+        <section class="hero hero-visual">
+            <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1400&q=80" alt="Connexion espace membre" loading="lazy">
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <span class="hero-label">Espace Membre</span>
+                    <h1>Bienvenue</h1>
+                    <p>Rejoignez une communauté dynamique de jeunes qui se préparent au monde professionnel.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="login-container">
+                    <div class="login-box">
+                        <h2>Connexion</h2>
+                        <form id="loginForm" novalidate autocomplete="off">
+                            <div class="form-group">
+                                <label for="loginEmail" class="form-label">Email</label>
+                                <input type="email" id="loginEmail" name="email" class="form-input" placeholder="votre@email.com" required autocomplete="off">
+                                <span class="form-error" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword" class="form-label">Mot de passe</label>
+                                <input type="password" id="loginPassword" name="password" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="off">
+                                <span class="form-error" role="alert"></span>
+                            </div>
+                            <button type="button" id="loginSubmitBtn" class="btn btn-primary btn-full">Accéder à l'espace club</button>
+                        </form>
+                    </div>
+
+                    <div class="info-box">
+                        <h2>Pas encore membre ?</h2>
+                        <p>Rejoignez une communauté dynamique de jeunes qui se préparent au monde professionnel.</p>
+                        <ul class="mission-list">
+                            <li>Accès au forum d'échange</li>
+                            <li>Formations exclusives en leadership</li>
+                            <li>Conseils en orientation personnalisés</li>
+                        </ul>
+                        <p><small>Note : Toute inscription doit être validée manuellement par nos administrateurs.</small></p>
+                        <button type="button" id="btnRegister" class="btn btn-register">Envoyer une demande d'adhésion</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div id="loginDebug" style="display:none; margin-top: 1rem; padding: 0.5rem; background: #f5f5f5; border-radius: 0.5rem; font-size: 0.875rem; color: #333;"></div>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Le Monde du Travail</h4>
+                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+            </div>
+            <div class="footer-col">
+                <h4>Ressources</h4>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="blog.html">Blog</a>
+    
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/frontend-api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      (function() {
+        'use strict';
+
+        function debugLog(message) {
+          const debugEl = document.getElementById('loginDebug');
+          const text = '[login] ' + message;
+          console.log(text);
+          if (debugEl) debugEl.textContent = text;
+        }
+
+        async function handleLogin(email, password) {
+          debugLog('Tentative de connexion: ' + email);
+
+          if (!window.Api || !window.Api.auth || typeof window.Api.auth.login !== 'function') {
+            const msg = 'Interface API non chargée. Veuillez rafraîchir la page.';
+            const errorEl = document.querySelector('#loginForm .form-error');
+            if (errorEl) errorEl.textContent = msg;
+            console.error(msg);
+            return;
+          }
+
+          const submitBtn = document.getElementById('loginSubmitBtn');
+          const originalText = submitBtn.textContent;
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Connexion en cours...';
+
+          const errorEl = document.querySelector('#loginForm .form-error');
+          if (errorEl) errorEl.textContent = '';
+
+          try {
+            const response = await window.Api.auth.login(email, password);
+            window.Api.setToken(response.data.accessToken);
+            debugLog('Connexion réussie, redirection...');
+
+            const role = response.data.user.role;
+            window.location.href = 'index.html';
+          } catch (error) {
+            const errorMessage = error.message || 'Email ou mot de passe incorrect';
+            debugLog('Erreur: ' + errorMessage);
+            console.error('Login error:', error);
+            if (errorEl) errorEl.textContent = errorMessage;
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
+        }
+
+        async function initLogin() {
+          const form = document.getElementById('loginForm');
+          const submitBtn = document.getElementById('loginSubmitBtn');
+          const emailInput = document.getElementById('loginEmail');
+          const passwordInput = document.getElementById('loginPassword');
+
+          debugLog('Script chargé');
+          debugLog('Formulaire: ' + (form ? 'oui' : 'non') + ', Api: ' + (window.Api ? 'oui' : 'non'));
+
+          if (!form || !window.Api) {
+            const message = 'Interface API non chargée. Ouvrez cette page via http://localhost:5500/login.html';
+            const errorEl = form ? form.querySelector('.form-error') : null;
+            if (errorEl) errorEl.textContent = message;
+            debugLog(message);
+            return;
+          }
+
+          let isSubmitting = false;
+
+          async function onTryLogin() {
+            if (isSubmitting) return;
+            const email = (emailInput.value || '').trim();
+            const password = passwordInput.value || '';
+            if (!email || !password) {
+              const errorEl = form.querySelector('.form-error');
+              if (errorEl) errorEl.textContent = 'Veuillez remplir tous les champs.';
+              console.warn('Champs manquants');
+              return;
+            }
+            isSubmitting = true;
+            await handleLogin(email, password);
+            isSubmitting = false;
+          }
+
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            onTryLogin();
+          });
+
+          submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            onTryLogin();
+          });
+
+          const btnRegister = document.getElementById('btnRegister');
+          if (btnRegister) {
+            btnRegister.addEventListener('click', function() {
+              console.log('Register clicked');
+              alert("Votre demande d'adhésion a été prise en compte. Elle sera validée sous peu.");
+            });
+          }
+
+          // Vérifier un token existant
+          try {
+            const token = window.Api.getToken();
+            debugLog('Token présent: ' + (token ? 'oui' : 'non'));
+
+            if (token) {
+              debugLog('Token trouvé, vérification...');
+              const userResponse = await window.Api.auth.getCurrentUser();
+              const user = userResponse.data;
+                window.location.href = 'index.html';
+            }
+          } catch (error) {
+            window.Api.removeToken();
+          }
+
+          console.log('Login initialized successfully');
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initLogin);
+        } else {
+          initLogin();
+        }
+      })();
+    </script>
+</body>
+</html>

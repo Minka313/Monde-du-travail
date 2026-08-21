@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Métiers - Administration</title>
+    <link rel="icon" type="image/png" href="../Création de site/logo.png">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div id="admin-root" class="hidden">
+        <aside class="sidebar">
+            <div class="sidebar-header">Admin</div>
+            <nav class="sidebar-nav" id="admin-nav"></nav>
+            <div class="sidebar-footer">
+                <button class="nav-item" id="admin-logout-btn">Déconnexion</button>
+            </div>
+        </aside>
+        <div class="main">
+            <header class="topbar">
+                <div style="font-weight:600;" id="admin-page-title">Métiers</div>
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <span style="color:var(--color-muted);font-size:0.9rem;" id="admin-user-name"></span>
+                    <a href="../../Création de site/index.html" class="btn btn-ghost">Voir le site</a>
+                </div>
+            </header>
+            <main class="content" id="admin-content"></main>
+        </div>
+    </div>
+
+    <div id="admin-loading" class="loading-screen">
+        <div style="text-align:center;">
+            <div style="font-size:1.25rem;font-weight:600;">Vérification de la session...</div>
+            <div style="color:var(--color-muted);margin-top:0.5rem;">Merci de patienter</div>
+        </div>
+    </div>
+
+    <div id="admin-denied" class="access-denied-screen hidden">
+        <div style="text-align:center;max-width:420px;padding:2rem;">
+            <h2 style="color:var(--color-danger);">Accès refusé</h2>
+            <p style="color:var(--color-muted);margin:1rem 0;">Votre compte n'a pas les droits nécessaires pour accéder à cette plateforme.</p>
+            <a href="../../Création de site/index.html" class="btn">Retour au site</a>
+        </div>
+    </div>
+
+    <script src="../js/admin-auth.js"></script>
+    <script src="../js/admin-app.js"></script>
+    <script src="../js/admin-pages.js"></script>
+    <script>
+      (function() {
+        'use strict';
+        document.addEventListener('DOMContentLoaded', async function() {
+          const allowed = await AdminApp.guard();
+          if (!allowed) return;
+          AdminRouter.navigate('metiers');
+        });
+      })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Forum d'échange du club Le Monde du Travail : discussions sur l'orientation, les métiers, les formations et la vie professionnelle.">
+    <meta name="keywords" content="forum, discussion, échange, orientation, métiers, formations, club">
+    <title>Forum - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <a href="login.html" class="btn-cta">Espace Membre</a>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Accueil</a>
+            <a href="about.html">À Propos</a>
+            <a href="job.html">Métiers & Orientation</a>
+            <a href="formations.html">Formations</a>
+            <a href="forum.html" aria-current="page">Forum</a>
+            <a href="blog.html">Blog</a>
+            <a href="login.html">Connexion</a>
+
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content">
+        <section class="forum-hero">
+            <div class="container">
+                <span class="section-label">Communauté</span>
+                <h1>Forum du Club</h1>
+                <p>Posez vos questions, partagez vos expériences et échangez avec la communauté autour de l’orientation, des métiers et des formations.</p>
+                <a href="forum-create.html" class="btn btn-primary btn-lg">+ Nouvelle discussion</a>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="forum-toolbar">
+                    <div class="forum-search">
+                        <span class="forum-search-icon">🔍</span>
+                        <input type="search" id="forumSearch" placeholder="Rechercher un sujet, un mot-clé ou une catégorie..." aria-label="Rechercher dans le forum">
+                    </div>
+                    <div class="forum-toolbar-actions">
+                        <select id="forumSort" class="form-input" style="min-width: 220px;" aria-label="Trier les discussions">
+                            <option value="latest">Plus récents</option>
+                            <option value="activity">Dernière activité</option>
+                            <option value="popular">Plus populaires</option>
+                            <option value="views">Plus vus</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="forum-layout">
+                    <div class="forum-main">
+                        <div id="categoriesSection">
+                            <div class="forum-section-title">
+                                <h2>Catégories du forum</h2>
+                            </div>
+                            <div id="categoriesContainer" class="forum-categories-grid">
+                                <p class="text-muted">Chargement des catégories...</p>
+                            </div>
+                        </div>
+
+                        <div class="forum-section-title">
+                            <h2>Discussions récentes</h2>
+                        </div>
+                        <div id="topicsContainer" class="forum-topic-list">
+                            <p class="text-muted">Chargement...</p>
+                        </div>
+                        <div id="paginationContainer" class="forum-pagination" role="navigation" aria-label="Pagination du forum"></div>
+                    </div>
+
+                    <aside class="forum-sidebar" aria-label="Filtres du forum">
+                        <div class="forum-filter">
+                            <h3>Filtrer</h3>
+                            <div class="forum-filter-actions">
+                                <button class="forum-filter-btn" data-filter="all" aria-current="true">Tous les sujets</button>
+                                <button class="forum-filter-btn" data-filter="pinned">Épinglés</button>
+                                <button class="forum-filter-btn" data-filter="resolved">Résolus</button>
+                                <button class="forum-filter-btn" data-filter="locked">Verrouillés</button>
+                            </div>
+                        </div>
+                        <div class="forum-filter">
+                            <h3>Statistiques</h3>
+                            <p class="text-muted" id="forumStats">Chargement...</p>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Le Monde du Travail</h4>
+                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+            </div>
+            <div class="footer-col">
+                <h4>Ressources</h4>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="blog.html">Blog</a>
+    
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/frontend-api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const topicsContainer = document.getElementById('topicsContainer');
+        const paginationContainer = document.getElementById('paginationContainer');
+        const forumSearch = document.getElementById('forumSearch');
+        const forumSort = document.getElementById('forumSort');
+        const forumStats = document.getElementById('forumStats');
+        const filterButtons = document.querySelectorAll('.forum-filter-btn');
+
+        let currentPage = 1;
+        let currentCategory = null;
+        let currentStatus = 'all';
+        let searchDebounce = null;
+
+        function formatDate(dateString) {
+          if (!dateString) return '';
+          const date = new Date(dateString);
+          const now = new Date();
+          const diff = now - date;
+          const minutes = Math.floor(diff / 60000);
+          const hours = Math.floor(diff / 3600000);
+          const days = Math.floor(diff / 86400000);
+
+          if (minutes < 1) return 'À l\'instant';
+          if (minutes < 60) return `Il y a ${minutes} min`;
+          if (hours < 24) return `Il y a ${hours} h`;
+          if (days < 7) return `Il y a ${days} j`;
+          return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+
+        function renderBadges(topic) {
+          const badges = [];
+          if (topic.isPinned) {
+            badges.push('<span class="forum-badge forum-badge--pinned">Épinglé</span>');
+          }
+          if (topic.isResolved) {
+            badges.push('<span class="forum-badge forum-badge--resolved">Résolu</span>');
+          }
+          if (topic.isLocked) {
+            badges.push('<span class="forum-badge forum-badge--locked">Verrouillé</span>');
+          }
+          if (topic.category) {
+            badges.push(`<span class="forum-badge forum-badge--category">${escapeHtml(topic.category)}</span>`);
+          }
+          if (topic.tags && topic.tags.length) {
+            topic.tags.slice(0, 3).forEach(tag => {
+              badges.push(`<span class="forum-badge">#${escapeHtml(tag)}</span>`);
+            });
+          }
+          return badges.join('');
+        }
+
+        function escapeHtml(text) {
+          const div = document.createElement('div');
+          div.textContent = text;
+          return div.innerHTML;
+        }
+
+        function renderPagination(pagination) {
+          if (!pagination || pagination.pages <= 1) {
+            paginationContainer.innerHTML = '';
+            return;
+          }
+
+          const { page, pages } = pagination;
+          let html = '';
+
+          html += `<button ${page === 1 ? 'disabled' : ''} data-page="${page - 1}">Précédent</button>`;
+
+          for (let i = 1; i <= pages; i++) {
+            if (i === 1 || i === pages || (i >= page - 1 && i <= page + 1)) {
+              html += `<button ${i === page ? 'aria-current="true"' : ''} data-page="${i}">${i}</button>`;
+            } else if (i === page - 2 || i === page + 2) {
+              html += `<span style="color: var(--color-gray-500);">…</span>`;
+            }
+          }
+
+          html += `<button ${page === pages ? 'disabled' : ''} data-page="${page + 1}">Suivant</button>`;
+          paginationContainer.innerHTML = html;
+
+          paginationContainer.querySelectorAll('button[data-page]').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const page = parseInt(btn.getAttribute('data-page'), 10);
+              if (!isNaN(page) && page >= 1 && page <= pagination.pages) {
+                currentPage = page;
+                loadTopics();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            });
+          });
+        }
+
+        function renderTopicCard(topic) {
+          const authorName = topic.author ? `${escapeHtml(topic.author.firstName)} ${escapeHtml(topic.author.lastName)}` : 'Utilisateur';
+          return `
+            <a class="forum-topic-card" href="forum-topic.html?id=${topic.id}" aria-label="Sujet : ${escapeHtml(topic.title)}">
+              <div class="forum-topic-main">
+                <div class="forum-topic-title">${escapeHtml(topic.title)}</div>
+                <div class="forum-topic-meta">
+                  <span class="author">${authorName}</span>
+                  <span>·</span>
+                  <span>${formatDate(topic.createdAt)}</span>
+                </div>
+                <div class="forum-badges">${renderBadges(topic)}</div>
+              </div>
+              <div class="forum-topic-stats">
+                <div class="forum-stat" title="Réponses">
+                  <span>💬</span> ${topic.replyCount || 0}
+                </div>
+                <div class="forum-stat" title="Vues">
+                  <span>👁️</span> ${topic.views || 0}
+                </div>
+              </div>
+            </a>
+          `;
+        }
+
+        async function loadCategories() {
+          try {
+            const response = await window.Api.forum.getCategories();
+            const categories = response.data || [];
+
+            if (!categories.length) {
+              categoriesContainer.innerHTML = '<p class="text-muted">Aucune catégorie pour le moment.</p>';
+              return;
+            }
+
+            const categoryLabels = {
+              'Orientation & Métiers': 'Orientation',
+              'Vie du Club & Contributions': 'Vie du club',
+              'Formations': 'Formations',
+              'Entrepreneuriat': 'Entrepreneuriat',
+              'Opportunités': 'Opportunités',
+              'Vie professionnelle': 'Vie professionnelle',
+            };
+
+            categoriesContainer.innerHTML = categories.map(cat => {
+              const label = categoryLabels[cat.name] || cat.name;
+              return `
+                <button class="forum-category-card" data-category="${escapeHtml(cat.name)}" aria-label="Catégorie ${escapeHtml(label)}">
+                  <h3>${escapeHtml(label)}</h3>
+                  <p>Discussions et conseils</p>
+                  <div class="forum-category-meta">${cat.count} discussion${cat.count > 1 ? 's' : ''}</div>
+                </button>
+              `;
+            }).join('');
+
+            categoriesContainer.querySelectorAll('.forum-category-card').forEach(card => {
+              card.addEventListener('click', () => {
+                const category = card.getAttribute('data-category');
+                currentCategory = category;
+                currentPage = 1;
+                document.getElementById('forumSearch').value = '';
+                loadTopics();
+                document.querySelector('.forum-filter-btn[data-filter="all"]')?.click();
+              });
+            });
+          } catch (error) {
+            categoriesContainer.innerHTML = '<p class="text-muted">Erreur lors du chargement des catégories.</p>';
+          }
+        }
+
+        async function loadTopics() {
+          try {
+            const search = forumSearch.value.trim();
+            const sort = forumSort.value;
+
+            topicsContainer.innerHTML = '<p class="text-muted">Chargement...</p>';
+            paginationContainer.innerHTML = '';
+
+            const response = await window.Api.forum.getAll({
+              category: currentCategory,
+              search: search || undefined,
+              status: currentStatus !== 'all' ? currentStatus : undefined,
+              page: currentPage,
+              limit: 10,
+              sort,
+            });
+
+            const topics = response.data || [];
+
+            if (!topics.length) {
+              topicsContainer.innerHTML = '<div class="forum-empty"><p>Aucune discussion trouvée.</p></div>';
+              return;
+            }
+
+            topicsContainer.innerHTML = topics.map(renderTopicCard).join('');
+            renderPagination(response.pagination);
+          } catch (error) {
+            topicsContainer.innerHTML = '<div class="forum-empty"><p>Erreur lors du chargement des discussions.</p></div>';
+          }
+        }
+
+        async function loadStats() {
+          try {
+            const [categoriesRes, topicsRes] = await Promise.all([
+              window.Api.forum.getCategories(),
+              window.Api.forum.getAll({ page: 1, limit: 1 }),
+            ]);
+
+            const categories = categoriesRes.data || [];
+            const totalTopics = topicsRes.pagination?.total || 0;
+
+            forumStats.textContent = `${totalTopics} discussion${totalTopics > 1 ? 's' : ''} dans ${categories.length} catégorie${categories.length > 1 ? 's' : ''}.`;
+          } catch (error) {
+            forumStats.textContent = 'Statistiques indisponibles.';
+          }
+        }
+
+        forumSearch.addEventListener('input', () => {
+          clearTimeout(searchDebounce);
+          searchDebounce = setTimeout(() => {
+            currentPage = 1;
+            loadTopics();
+          }, 250);
+        });
+
+        forumSort.addEventListener('change', () => {
+          currentPage = 1;
+          loadTopics();
+        });
+
+        filterButtons.forEach(btn => {
+          btn.addEventListener('click', () => {
+            filterButtons.forEach(b => {
+              b.setAttribute('aria-current', 'false');
+            });
+            btn.setAttribute('aria-current', 'true');
+            currentStatus = btn.getAttribute('data-filter');
+            currentPage = 1;
+            loadTopics();
+          });
+        });
+
+        loadCategories();
+        loadTopics();
+        loadStats();
+      });
+    </script>
+</body>
+</html>

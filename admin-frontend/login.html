@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Administration - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="../Création de site/logo.png">
+    <link rel="stylesheet" href="../Création de site/css/styles.css">
+    <style>
+      .admin-login-hero {
+        background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary) 100%);
+        color: var(--color-white);
+        padding: var(--space-16) 0 var(--space-12);
+        text-align: center;
+      }
+      .admin-login-hero h1 {
+        color: var(--color-white);
+        margin-bottom: var(--space-4);
+      }
+      .admin-login-hero p {
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 640px;
+        margin: 0 auto;
+        font-size: 1.125rem;
+        line-height: 1.6;
+      }
+      .admin-login-box {
+        background: var(--color-white);
+        border-radius: var(--radius-xl);
+        padding: var(--space-8);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--color-gray-200);
+      }
+      .admin-login-actions {
+        margin-top: var(--space-6);
+        text-align: center;
+      }
+      .admin-login-actions a {
+        color: var(--color-gray-600);
+        font-size: 0.9rem;
+      }
+      .admin-login-actions a:hover {
+        color: var(--color-primary);
+      }
+    </style>
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="../Création de site/index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="../Création de site/logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <a href="../Création de site/index.html">Accueil</a>
+            <a href="../Création de site/about.html">À Propos</a>
+            <a href="../Création de site/job.html">Métiers & Orientation</a>
+            <a href="../Création de site/formations.html">Formations</a>
+            <a href="../Création de site/forum.html">Forum</a>
+            <a href="../Création de site/blog.html">Blog</a>
+            <a href="../Création de site/login.html">Connexion</a>
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content">
+        <section class="admin-login-hero">
+            <div class="container">
+                <span class="hero-label">Administration</span>
+                <h1>Plateforme d'administration</h1>
+                <p>Accès réservé aux administrateurs et modérateurs du club Le Monde du Travail.</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <div class="login-container">
+                    <div class="admin-login-box">
+                        <h2>Connexion administrateur</h2>
+                        <form id="adminLoginForm" novalidate autocomplete="off" action="#">
+                            <div class="form-group">
+                                <label for="adminEmail" class="form-label">Email</label>
+                                <input type="email" id="adminEmail" name="email" class="form-input" placeholder="admin@mondedutravail.com" required autocomplete="off">
+                                <span class="form-error" role="alert"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="adminPassword" class="form-label">Mot de passe</label>
+                                <input type="password" id="adminPassword" name="password" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="off">
+                                <span class="form-error" role="alert"></span>
+                            </div>
+                            <button type="button" id="adminLoginBtn" class="btn btn-primary btn-full">Se connecter</button>
+                            <div class="form-error" id="adminLoginError" role="alert" style="margin-top: 1rem;"></div>
+                        </form>
+                        <div class="admin-login-actions">
+                            <a href="../Création de site/index.html">Retour au site public</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Le Monde du Travail</h4>
+                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="../Création de site/index.html">Accueil</a>
+                <a href="../Création de site/about.html">À Propos</a>
+                <a href="../Création de site/formations.html">Formations</a>
+                <a href="../Création de site/forum.html">Forum</a>
+            </div>
+            <div class="footer-col">
+                <h4>Ressources</h4>
+                <a href="../Création de site/job.html">Métiers & Orientation</a>
+                <a href="../Création de site/blog.html">Blog</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </footer>
+
+    <script src="../Création de site/js/config.js"></script>
+    <script src="../Création de site/js/frontend-api.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-app.js"></script>
+    <script>
+      (function() {
+        'use strict';
+
+        async function handleLogin(email, password) {
+          const submitBtn = document.getElementById('adminLoginBtn');
+          const originalText = submitBtn.textContent;
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Connexion en cours...';
+
+          const errorEl = document.getElementById('adminLoginError');
+          if (errorEl) errorEl.textContent = '';
+
+          try {
+            const response = await window.AdminApp.login(email, password);
+            const user = response.data.user;
+            
+            // Stocker le refreshToken en localStorage pour file://
+            if (response.data.refreshToken && window.AdminApi.setRefreshToken) {
+              window.AdminApi.setRefreshToken(response.data.refreshToken);
+            }
+            
+            if (!window.AdminApp.isAdminUser(user)) {
+              window.AdminApi.removeTokens();
+              errorEl.textContent = 'Accès refusé : ce compte n\'a pas les droits d\'administration.';
+              submitBtn.disabled = false;
+              submitBtn.textContent = originalText;
+              return;
+            }
+            window.location.href = 'index.html';
+          } catch (error) {
+            errorEl.textContent = error.message || 'Email ou mot de passe incorrect';
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+          }
+        }
+
+        async function initLogin() {
+          if (window.AdminApi && window.AdminApi.isLoggedIn()) {
+            try {
+              const response = await window.AdminApi.auth.me();
+              const user = response.data;
+              if (user && window.AdminApp.isAdminUser(user)) {
+                window.location.href = 'index.html';
+                return;
+              } else {
+                window.AdminApi.removeToken();
+              }
+            } catch (error) {
+              window.AdminApi.removeToken();
+            }
+          }
+        }
+
+        async function bindForm() {
+          const form = document.getElementById('adminLoginForm');
+          const submitBtn = document.getElementById('adminLoginBtn');
+          const emailInput = document.getElementById('adminEmail');
+          const passwordInput = document.getElementById('adminPassword');
+
+          if (!form) return;
+
+          let isSubmitting = false;
+
+          async function onTryLogin() {
+            if (isSubmitting) return;
+            const email = (emailInput.value || '').trim();
+            const password = passwordInput.value || '';
+            if (!email || !password) {
+              const errorEl = document.getElementById('adminLoginError');
+              if (errorEl) errorEl.textContent = 'Veuillez remplir tous les champs.';
+              return;
+            }
+            isSubmitting = true;
+            await handleLogin(email, password);
+            isSubmitting = false;
+          }
+
+          form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            onTryLogin();
+          });
+
+          submitBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            onTryLogin();
+          });
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', async () => {
+            await initLogin();
+            await bindForm();
+          });
+        } else {
+          initLogin();
+          bindForm();
+        }
+      })();
+    </script>
+</body>
+</html>

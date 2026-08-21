@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formations et soft skills du club Le Monde du Travail : leadership, communication, gestion du stress, entrepreneuriat et développement personnel.">
+    <meta name="keywords" content="formations, soft skills, leadership, communication, gestion du stress, entrepreneuriat, développement personnel">
+    <title>Formations - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <a href="login.html" class="btn-cta">Espace Membre</a>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Accueil</a>
+            <a href="about.html">À Propos</a>
+            <a href="job.html">Métiers & Orientation</a>
+            <a href="formations.html" aria-current="page">Formations</a>
+            <a href="forum.html">Forum</a>
+            <a href="blog.html">Blog</a>
+            <a href="login.html">Connexion</a>
+
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content">
+        <section class="hero hero-visual">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1400&q=80" alt="Formations et compétences" loading="eager">
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <span class="hero-label">Formations</span>
+                    <h1>Formations & Soft Skills</h1>
+                    <p>Parce que le diplôme ne suffit pas, le club vous forme aux compétences indispensables pour s'épanouir professionnellement.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-editorial">
+            <div class="container page-content">
+                <div class="centered-editorial animate-in">
+                    <span class="section-label">Développez vos talents</span>
+                    <h2>Les compétences humaines et techniques essentielles pour réussir</h2>
+                    <p>Des formations pratiques pour développer les compétences qui font la différence dans le monde professionnel.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container page-content">
+                <div class="cards-grid" id="formationsGrid">
+                    <p class="text-muted text-center">Chargement...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-alt">
+            <div class="container page-content">
+                <div class="section-header">
+                    <span class="section-label">Conseils</span>
+                    <h2>Conseils & Prise de conscience</h2>
+                    <p>Nous aidons la jeune génération à mieux comprendre les enjeux actuels pour réussir demain.</p>
+                </div>
+                <div class="section-box section-box--yellow">
+                    <p class="geopolitique">"Une meilleure compréhension du monde passe aussi par l'analyse de la géopolitique mondiale. Comprendre les dynamiques internationales permet de mieux anticiper les mutations professionnelles."</p>
+                </div>
+                <div class="motivation-box mt-2">
+                    <h3>Le saviez-vous ?</h3>
+                    <p>85% de la réussite professionnelle vient des Soft Skills. Préparez-vous dès maintenant avec nous !</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Le Monde du Travail</h4>
+                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+            </div>
+            <div class="footer-col">
+                <h4>Ressources</h4>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="blog.html">Blog</a>
+    
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/frontend-api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const container = document.getElementById('formationsGrid');
+        const filter = document.getElementById('formationFilter');
+
+        const formationImages = {
+          'Énergies renouvelables': 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&q=80',
+          'Prise de parole en public': 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80',
+          'Leadership & Management': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80',
+          'Développement personnel': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80',
+          'Entrepreneuriat': 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&q=80',
+          'Communication efficace': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80',
+        };
+
+        try {
+          const response = await window.Api.formations.getAll();
+          let formations = response.data || [];
+
+          const seen = new Set();
+          formations = formations.filter(f => {
+            const key = `${f.title}-${f.category || 'default'}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+
+          if (!container) return;
+
+          if (formations.length === 0) {
+            container.innerHTML = '<p class="text-muted text-center">Aucune formation disponible pour le moment.</p>';
+            return;
+          }
+
+          container.innerHTML = formations.map(formation => {
+            const img = formationImages[formation.title] || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80';
+            return `
+              <article class="card" data-filter-item="formation">
+                <div class="card-image-wrap">
+                  <img src="${img}" alt="${formation.title}" loading="lazy">
+                  <div class="card-image-overlay"></div>
+                </div>
+                <div class="card-body">
+                  <div class="card-icon">${formation.icon || '📘'}</div>
+                  <h3>${formation.title}</h3>
+                  <p>${formation.description}</p>
+                </div>
+              </article>
+            `;
+          }).join('');
+        } catch (error) {
+          if (container) {
+            container.innerHTML = '<p class="text-muted text-center">Erreur lors du chargement des formations.</p>';
+          }
+        }
+      });
+    </script>
+</body>
+</html>

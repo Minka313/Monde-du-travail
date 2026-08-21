@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Créer une nouvelle discussion sur le forum Le Monde du Travail">
+    <title>Nouvelle discussion - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <a href="login.html" class="btn-cta">Espace Membre</a>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Accueil</a>
+            <a href="about.html">À Propos</a>
+            <a href="job.html">Métiers & Orientation</a>
+            <a href="formations.html">Formations</a>
+            <a href="forum.html" aria-current="page">Forum</a>
+            <a href="blog.html">Blog</a>
+            <a href="login.html">Connexion</a>
+
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content">
+        <section class="section">
+            <div class="container" style="max-width: 800px;">
+                <div class="forum-form">
+                    <h2>Nouvelle discussion</h2>
+                    <form id="topicForm">
+                        <div class="forum-form-group">
+                            <label for="topicTitle">Titre</label>
+                            <input type="text" id="topicTitle" required minlength="3" placeholder="Ex : Comment préparer sa candidature en alternance ?">
+                        </div>
+
+                        <div class="forum-form-group">
+                            <label for="topicCategory">Catégorie</label>
+                            <select id="topicCategory" required>
+                                <option value="">Choisir une catégorie</option>
+                                <option value="Orientation & Métiers">Orientation & Métiers</option>
+                                <option value="Formations">Formations</option>
+                                <option value="Entrepreneuriat">Entrepreneuriat</option>
+                                <option value="Opportunités">Opportunités</option>
+                                <option value="Vie professionnelle">Vie professionnelle</option>
+                                <option value="Vie du Club & Contributions">Vie du Club & Contributions</option>
+                            </select>
+                        </div>
+
+                        <div class="forum-form-group">
+                            <label for="topicTags">Tags <span style="font-weight: 400; color: var(--color-gray-500);">(séparés par des virgules)</span></label>
+                            <input type="text" id="topicTags" placeholder="Ex : alternance, candidature, CV">
+                            <small style="color: var(--color-gray-500);">Optionnel. Ajoutez des mots-clés pour faciliter la recherche.</small>
+                        </div>
+
+                        <div class="forum-form-group">
+                            <label for="topicContent">Contenu</label>
+                            <textarea id="topicContent" required minlength="10" placeholder="Décrivez votre question ou votre sujet en détail..."></textarea>
+                        </div>
+
+                        <div class="forum-form-actions">
+                            <a class="btn btn-ghost" href="forum.html">Annuler</a>
+                            <button type="submit" class="btn btn-primary">Publier la discussion</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Le Monde du Travail</h4>
+                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+            </div>
+            <div class="footer-col">
+                <h4>Ressources</h4>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="blog.html">Blog</a>
+    
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/frontend-api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('topicForm');
+        const categorySelect = document.getElementById('topicCategory');
+        const params = new URLSearchParams(window.location.search);
+        const categoryParam = params.get('category');
+
+        if (!window.Api.getToken()) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        if (categoryParam) {
+          categorySelect.value = categoryParam;
+        }
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const title = document.getElementById('topicTitle').value.trim();
+          const category = categorySelect.value;
+          const content = document.getElementById('topicContent').value.trim();
+          const tagsRaw = document.getElementById('topicTags').value.trim();
+          const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+          if (!title || !category || !content) {
+            alert('Veuillez remplir tous les champs obligatoires.');
+            return;
+          }
+
+          const submitBtn = form.querySelector('button[type="submit"]');
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Publication...';
+
+          try {
+            await window.Api.forum.createTopic({ title, category, content, tags });
+            window.location.href = 'forum.html';
+          } catch (error) {
+            alert(error.message || 'Erreur lors de la création du sujet.');
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Publier la discussion';
+          }
+        });
+      });
+    </script>
+</body>
+</html>

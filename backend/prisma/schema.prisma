@@ -1,0 +1,378 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MembershipRequest {
+  id         String           @id @default(cuid())
+  userId     String
+  motivation String
+  status     MembershipStatus @default(PENDING)
+  reviewedBy String?
+  reviewedAt DateTime?
+  createdAt  DateTime         @default(now())
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("membership_requests")
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  type        EventType
+  location    String
+  eventDate   DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdById String
+  createdBy   User      @relation("EventCreator", fields: [createdById], references: [id])
+
+  @@map("events")
+}
+
+model Job {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  category    JobCategory
+  icon        String?
+  status      ContentStatus @default(DRAFT)
+  createdById String?
+  createdBy   User?         @relation("JobCreator", fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([status])
+  @@map("jobs")
+}
+
+model Formation {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  category    String?
+  icon        String?
+  status      ContentStatus @default(DRAFT)
+  createdById String?
+  createdBy   User?         @relation("FormationCreator", fields: [createdById], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([status])
+  @@map("formations")
+}
+
+model Post {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  excerpt     String?
+  content     String
+  coverImage  String?
+  gallery     String[]
+  category    PostCategory
+  status      PostStatus   @default(DRAFT)
+  featured    Boolean      @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  authorId    String
+  author      User         @relation(fields: [authorId], references: [id])
+
+  @@index([status])
+  @@index([publishedAt])
+  @@index([category])
+  @@map("posts")
+}
+
+model Topic {
+  id             String   @id @default(cuid())
+  title          String
+  content        String
+  category       String
+  replyCount     Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  authorId       String
+  isLocked       Boolean  @default(false)
+  isPinned       Boolean  @default(false)
+  isResolved     Boolean  @default(false)
+  lastActivityAt DateTime @default(now())
+  tags           String[] @default([])
+  views          Int      @default(0)
+  replies        Reply[]
+  author         User     @relation(fields: [authorId], references: [id])
+
+  @@index([category])
+  @@index([isPinned])
+  @@index([lastActivityAt])
+  @@map("topics")
+}
+
+model Reply {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  topicId   String
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@map("replies")
+}
+
+model AdminRole {
+  id               String                @id @default(cuid())
+  name             String                @unique
+  description      String?
+  isSystem         Boolean               @default(false)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  requiresApproval Boolean               @default(false)
+  permissions      AdminRolePermission[]
+  userRoles        UserAdminRole[]
+
+  @@map("admin_roles")
+}
+
+model Permission {
+  id          String                @id @default(cuid())
+  code        String                @unique
+  module      String
+  action      String
+  description String?
+  createdAt   DateTime              @default(now())
+  roles       AdminRolePermission[]
+
+  @@map("permissions")
+}
+
+model AdminRolePermission {
+  id           String     @id @default(cuid())
+  adminRoleId  String
+  permissionId String
+  createdAt    DateTime   @default(now())
+  adminRole    AdminRole  @relation(fields: [adminRoleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([adminRoleId, permissionId])
+  @@map("admin_role_permissions")
+}
+
+model UserAdminRole {
+  id              String              @id @default(cuid())
+  userId          String
+  adminRoleId     String
+  assignedBy      String?
+  assignedAt      DateTime            @default(now())
+  expiresAt       DateTime?
+  isActive        Boolean             @default(true)
+  rejectionReason String?
+  reviewedAt      DateTime?
+  reviewedBy      String?
+  status          UserAdminRoleStatus @default(PENDING)
+  role            AdminRole           @relation(fields: [adminRoleId], references: [id], onDelete: Cascade)
+  assignedByUser  User?               @relation("AdminRoleAssignment", fields: [assignedBy], references: [id])
+  reviewedByUser  User?               @relation("AdminRoleReviewer", fields: [reviewedBy], references: [id])
+  user            User                @relation("UserAdminRoles", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, adminRoleId])
+  @@map("user_admin_roles")
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  email              String              @unique
+  password           String
+  firstName          String
+  lastName           String
+  role               Role                @default(MEMBER)
+  isActive           Boolean             @default(false)
+  isVerified         Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  lastLoginAt        DateTime?
+  approvalSteps      ApprovalStep[]
+  createdApprovals   ApprovalWorkflow[]  @relation("ApprovalCreatedBy")
+  reviewedApprovals  ApprovalWorkflow[]  @relation("ApprovalReviewedBy")
+  auditLogs          AuditLog[]
+  events             Event[]             @relation("EventCreator")
+  memberships        MembershipRequest[]
+  posts              Post[]
+  replies            Reply[]
+  topics             Topic[]
+  assignedRoles      UserAdminRole[]     @relation("AdminRoleAssignment")
+  reviewedAdminRoles UserAdminRole[]     @relation("AdminRoleReviewer")
+  adminRoles         UserAdminRole[]     @relation("UserAdminRoles")
+  createdFormations  Formation[]         @relation("FormationCreator")
+  createdJobs        Job[]               @relation("JobCreator")
+
+  @@map("users")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  module     String
+  resource   String?
+  resourceId String?
+  ipAddress  String?
+  userAgent  String?
+  metadata   Json?
+  result     String
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// Paramètres de plateforme (clé/valeur). Les paramètres sensibles
+// (maintenance, sécurité) exigent une ré-authentification pour être modifiés.
+model Setting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  category    String   @default("general")
+  label       String?
+  isSensitive Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model ApprovalWorkflow {
+  id           String           @id @default(cuid())
+  resourceType String
+  resourceId   String
+  action       String
+  status       ApprovalStatus   @default(PENDING)
+  priority     ApprovalPriority @default(NORMAL)
+  comment      String?
+  metadata     Json?
+  createdById  String
+  reviewedById String?
+  reviewedAt   DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  steps        ApprovalStep[]
+  createdBy    User             @relation("ApprovalCreatedBy", fields: [createdById], references: [id])
+  reviewedBy   User?            @relation("ApprovalReviewedBy", fields: [reviewedById], references: [id])
+
+  @@unique([resourceType, resourceId, action])
+  @@map("approval_workflows")
+}
+
+model ApprovalStep {
+  id           String             @id @default(cuid())
+  workflowId   String
+  approverRole String
+  approverId   String?
+  status       ApprovalStepStatus @default(PENDING)
+  comment      String?
+  reviewedAt   DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  approver     User?              @relation(fields: [approverId], references: [id])
+  workflow     ApprovalWorkflow   @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@unique([workflowId, approverRole])
+  @@map("approval_steps")
+}
+
+// Rôle de base du compte. Les rôles administratifs spécialisés
+// (ADMIN_FORMATION, ADMIN_METIER, ADMIN_BLOG, ADMIN_FORUM...) vivent
+// uniquement dans AdminRole/UserAdminRole : c'est la table RBAC qui fait foi.
+// ADMIN = membre du staff (au moins un rôle admin approuvé ou rôle de base).
+enum Role {
+  ADMIN
+  MEMBER
+  VISITOR
+  ULTRA_ADMIN
+}
+
+enum MembershipStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EventType {
+  ATELIER
+  CONFERENCE
+  RENCONTRE
+  FORMATION
+}
+
+enum JobCategory {
+  TECH
+  ENERGIE
+  FINANCE
+  SECURITE
+  SANTE
+  EDUCATION
+  AUTRE
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// Cycle de vie éditorial des formations et métiers :
+// DRAFT (brouillon) → PENDING_REVIEW (soumis à validation) → PUBLISHED
+// Un contenu publié peut être dépublié (retour brouillon) ou archivé.
+enum ContentStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PostCategory {
+  CLUB
+  FORMATION
+  ATELIER
+  RENCONTRE
+  CONFERENCE
+  VISITE
+  PROJET
+  TEMOIGNAGE
+  ANNONCE
+}
+
+enum UserAdminRoleStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+  REVOKED
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum ApprovalPriority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum ApprovalStepStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SKIPPED
+}
