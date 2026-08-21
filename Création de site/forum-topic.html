@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discussion du forum Le Monde du Travail">
+    <title>Sujet - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <a href="login.html" class="btn-cta">Espace Membre</a>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Accueil</a>
+            <a href="about.html">À Propos</a>
+            <a href="job.html">Métiers & Orientation</a>
+            <a href="formations.html">Formations</a>
+            <a href="forum.html" aria-current="page">Forum</a>
+            <a href="blog.html">Blog</a>
+            <a href="login.html">Connexion</a>
+
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content">
+        <section class="section">
+            <div class="container">
+                <div id="topicContainer">
+                    <p class="text-muted">Chargement...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Le Monde du Travail</h4>
+                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+            </div>
+            <div class="footer-col">
+                <h4>Ressources</h4>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="blog.html">Blog</a>
+    
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/frontend-api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('topicContainer');
+        const params = new URLSearchParams(window.location.search);
+        const topicId = params.get('id');
+
+        if (!topicId) {
+          container.innerHTML = '<div class="forum-empty"><p>Sujet introuvable.</p></div>';
+          return;
+        }
+
+        function escapeHtml(text) {
+          const div = document.createElement('div');
+          div.textContent = text;
+          return div.innerHTML;
+        }
+
+        function formatDate(dateString) {
+          if (!dateString) return '';
+          return new Date(dateString).toLocaleString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+        }
+
+        function renderBadges(topic) {
+          const badges = [];
+          if (topic.isPinned) badges.push('<span class="forum-badge forum-badge--pinned">Épinglé</span>');
+          if (topic.isResolved) badges.push('<span class="forum-badge forum-badge--resolved">Résolu</span>');
+          if (topic.isLocked) badges.push('<span class="forum-badge forum-badge--locked">Verrouillé</span>');
+          if (topic.category) badges.push(`<span class="forum-badge forum-badge--category">${escapeHtml(topic.category)}</span>`);
+          if (topic.tags && topic.tags.length) {
+            topic.tags.slice(0, 5).forEach(tag => badges.push(`<span class="forum-badge">#${escapeHtml(tag)}</span>`));
+          }
+          return badges.join('');
+        }
+
+        function renderReply(reply, isAuthor = false) {
+          const authorName = reply.author ? `${escapeHtml(reply.author.firstName)} ${escapeHtml(reply.author.lastName)}` : 'Utilisateur';
+          return `
+            <div class="forum-reply">
+              <div class="forum-reply-header">
+                <div>
+                  <div class="forum-reply-author">${escapeHtml(authorName)}</div>
+                  <div class="forum-reply-date">${formatDate(reply.createdAt)}</div>
+                </div>
+              </div>
+              <div class="forum-reply-body">${escapeHtml(reply.content)}</div>
+            </div>
+          `;
+        }
+
+        async function loadTopic() {
+          try {
+            const response = await window.Api.forum.getById(topicId);
+            const topic = response.data;
+
+            if (!topic) {
+              container.innerHTML = '<div class="forum-empty"><p>Sujet non trouvé.</p></div>';
+              return;
+            }
+
+            const authorName = topic.author ? `${escapeHtml(topic.author.firstName)} ${escapeHtml(topic.author.lastName)}` : 'Utilisateur';
+            const token = window.Api.getToken();
+            const canReply = token && !topic.isLocked;
+
+            container.innerHTML = `
+              <div class="forum-topic-detail">
+                <div class="forum-topic-header">
+                  <div class="forum-badges">${renderBadges(topic)}</div>
+                  <h1 style="margin-top: var(--space-4);">${escapeHtml(topic.title)}</h1>
+                  <div class="forum-topic-meta">
+                    <span class="author">Par ${escapeHtml(authorName)}</span>
+                    <span>·</span>
+                    <span>${formatDate(topic.createdAt)}</span>
+                    <span>·</span>
+                    <span>${topic.views || 0} vue${(topic.views || 0) > 1 ? 's' : ''}</span>
+                    <span>·</span>
+                    <span>${topic.replyCount || 0} réponse${(topic.replyCount || 0) > 1 ? 's' : ''}</span>
+                  </div>
+                  <div class="forum-topic-actions">
+                    <a class="btn btn-outline btn-sm" href="forum.html">← Retour au forum</a>
+                    ${token ? `<a class="btn btn-primary btn-sm" href="forum-create.html?category=${encodeURIComponent(topic.category || '')}">+ Nouvelle discussion</a>` : ''}
+                  </div>
+                </div>
+                <div class="forum-topic-body">${escapeHtml(topic.content)}</div>
+              </div>
+
+              <div class="forum-section-title">
+                <h2>Réponses (${topic.replyCount || 0})</h2>
+              </div>
+
+              <div id="repliesContainer" class="forum-replies">
+                ${topic.replies && topic.replies.length ? topic.replies.map(reply => renderReply(reply)).join('') : '<p class="text-muted">Aucune réponse pour le moment.</p>'}
+              </div>
+
+              ${canReply ? `
+                <div class="forum-reply-form">
+                  <h3>Ajouter une réponse</h3>
+                  <form id="replyForm">
+                    <div class="forum-form-group">
+                      <label for="replyContent">Votre réponse</label>
+                      <textarea id="replyContent" required minlength="1" placeholder="Rédigez votre réponse..."></textarea>
+                    </div>
+                    <div class="forum-form-actions">
+                      <button type="submit" class="btn btn-primary">Publier la réponse</button>
+                    </div>
+                  </form>
+                </div>
+              ` : !token ? `
+                <div class="forum-login-prompt">
+                  <p>Vous devez être <a href="login.html">connecté</a> pour répondre à cette discussion.</p>
+                </div>
+              ` : `
+                <div class="forum-login-prompt">
+                  <p>Ce sujet est verrouillé. Les réponses ne sont plus acceptées.</p>
+                </div>
+              `}
+            `;
+
+            const replyForm = document.getElementById('replyForm');
+            if (replyForm) {
+              replyForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const content = document.getElementById('replyContent').value.trim();
+                if (!content) return;
+
+                const submitBtn = replyForm.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Publication...';
+
+                try {
+                  await window.Api.forum.createReply(topicId, { content });
+                  document.getElementById('replyContent').value = '';
+                  loadTopic();
+                } catch (error) {
+                  alert(error.message || 'Erreur lors de la publication de la réponse.');
+                } finally {
+                  submitBtn.disabled = false;
+                  submitBtn.textContent = 'Publier la réponse';
+                }
+              });
+            }
+          } catch (error) {
+            container.innerHTML = '<div class="forum-empty"><p>Erreur lors du chargement du sujet.</p></div>';
+          }
+        }
+
+        loadTopic();
+      });
+    </script>
+</body>
+</html>

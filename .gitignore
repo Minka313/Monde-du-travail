@@ -1,0 +1,27 @@
+# Dépendances (reconstruites avec `npm install` — 145 Mo, inutiles à versionner)
+node_modules/
+
+# Secrets — JAMAIS dans git (contient JWT_SECRET, mots de passe base...)
+.env
+backend/.env
+*.env.local
+
+# Fichiers générés / régénérables
+backend/coverage/
+dist/
+build/
+
+# Logs
+backend/logs/
+*.log
+
+# Sauvegardes locales de la base
+backups/
+*.sql.gz
+
+# Fichiers système/éditeur
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
