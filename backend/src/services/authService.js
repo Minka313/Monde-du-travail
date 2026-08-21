@@ -7,9 +7,10 @@ const AuditService = require('./auditService');
 const RbacService = require('./rbacService');
 
 class AuthService {
-  // Inscription d'un nouveau membre
+  // Inscription d'un nouveau membre : le compte reste inactif et une demande
+  // d'adhésion est créée pour validation par un administrateur.
   static async register(userData) {
-    const { email, password, firstName, lastName } = userData;
+    const { email, password, firstName, lastName, motivation } = userData;
 
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -30,6 +31,12 @@ class AuthService {
         role: 'MEMBER',
         isActive: false,
         isVerified: false,
+        memberships: {
+          create: {
+            motivation: motivation || '',
+            status: 'PENDING',
+          },
+        },
       },
       select: {
         id: true,
@@ -41,7 +48,7 @@ class AuthService {
       },
     });
 
-    logger.info('Nouvelle inscription', { userId: user.id, email: user.email });
+    logger.info('Nouvelle inscription (demande d\'adhésion créée)', { userId: user.id, email: user.email });
 
     return user;
   }

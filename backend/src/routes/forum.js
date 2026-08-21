@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const forumController = require('../controllers/forumController');
-const { authenticate, authorizeMember, authorizeAdmin } = require('../middleware/auth');
+const { authenticate, authorize, authorizeMember, authorizeAdmin } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
 const validate = require('../middleware/validate');
@@ -33,12 +33,13 @@ router.use(authenticate, authorizeMember);
 router.post('/', validate(topicSchema), forumController.createTopic);
 router.post('/:topicId/replies', validate(replySchema), forumController.createReply);
 
-// Routes admin/modérateur
-router.put('/:id/pin', authorizeAdmin, AdminApprovalMiddleware.middleware, requireModulePermission('forum'), forumController.togglePin);
-router.put('/:id/resolve', authorizeAdmin, AdminApprovalMiddleware.middleware, requireModulePermission('forum'), forumController.toggleResolved);
-router.put('/:id/lock', authorizeAdmin, AdminApprovalMiddleware.middleware, requireModulePermission('forum'), forumController.toggleLock);
+// Routes modération : permission précise requise (forum.moderate),
+// pas seulement l'accès au module
+router.put('/:id/pin', authorizeAdmin, AdminApprovalMiddleware.middleware, requireModulePermission('forum'), authorize('forum.moderate'), forumController.togglePin);
+router.put('/:id/resolve', authorizeAdmin, AdminApprovalMiddleware.middleware, requireModulePermission('forum'), authorize('forum.moderate'), forumController.toggleResolved);
+router.put('/:id/lock', authorizeAdmin, AdminApprovalMiddleware.middleware, requireModulePermission('forum'), authorize('forum.moderate'), forumController.toggleLock);
 
-// Routes admin avec permissions RBAC
-router.delete('/:id', authorizeAdmin, AdminApprovalMiddleware.middleware, requireModulePermission('forum'), forumController.deleteTopic);
+// Suppression : forum.delete
+router.delete('/:id', authorizeAdmin, AdminApprovalMiddleware.middleware, requireModulePermission('forum'), authorize('forum.delete'), forumController.deleteTopic);
 
 module.exports = router;

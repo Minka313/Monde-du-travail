@@ -86,6 +86,31 @@
                         </ul>
                         <p><small>Note : Toute inscription doit être validée manuellement par nos administrateurs.</small></p>
                         <button type="button" id="btnRegister" class="btn btn-register">Envoyer une demande d'adhésion</button>
+
+                        <form id="registerForm" novalidate autocomplete="off" style="display:none; margin-top:1rem; text-align:left;">
+                            <div class="form-group">
+                                <label for="regFirstName" class="form-label">Prénom</label>
+                                <input type="text" id="regFirstName" class="form-input" placeholder="Aminata" required minlength="2">
+                            </div>
+                            <div class="form-group">
+                                <label for="regLastName" class="form-label">Nom</label>
+                                <input type="text" id="regLastName" class="form-input" placeholder="Diallo" required minlength="2">
+                            </div>
+                            <div class="form-group">
+                                <label for="regEmail" class="form-label">Email</label>
+                                <input type="email" id="regEmail" class="form-input" placeholder="votre@email.com" required autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="regPassword" class="form-label">Mot de passe</label>
+                                <input type="password" id="regPassword" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password">
+                            </div>
+                            <div class="form-group">
+                                <label for="regMotivation" class="form-label">Votre motivation (facultatif)</label>
+                                <textarea id="regMotivation" class="form-input" rows="3" placeholder="Pourquoi souhaitez-vous rejoindre le club ?"></textarea>
+                            </div>
+                            <span class="form-error" id="registerError" role="alert"></span>
+                            <button type="submit" class="btn btn-primary btn-full">Envoyer ma demande</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -217,8 +242,42 @@
           const btnRegister = document.getElementById('btnRegister');
           if (btnRegister) {
             btnRegister.addEventListener('click', function() {
-              console.log('Register clicked');
-              alert("Votre demande d'adhésion a été prise en compte. Elle sera validée sous peu.");
+              const registerForm = document.getElementById('registerForm');
+              registerForm.style.display = registerForm.style.display === 'none' ? 'block' : 'none';
+              if (registerForm.style.display === 'block') {
+                registerForm.querySelector('input').focus();
+              }
+            });
+          }
+
+          const registerForm = document.getElementById('registerForm');
+          if (registerForm) {
+            registerForm.addEventListener('submit', async function(e) {
+              e.preventDefault();
+              const errorEl = document.getElementById('registerError');
+              errorEl.textContent = '';
+
+              const data = {
+                firstName: (document.getElementById('regFirstName').value || '').trim(),
+                lastName: (document.getElementById('regLastName').value || '').trim(),
+                email: (document.getElementById('regEmail').value || '').trim(),
+                password: document.getElementById('regPassword').value || '',
+                motivation: (document.getElementById('regMotivation').value || '').trim(),
+              };
+
+              if (!data.firstName || !data.lastName || !data.email || !data.password) {
+                errorEl.textContent = 'Veuillez remplir tous les champs obligatoires.';
+                return;
+              }
+
+              try {
+                await window.Api.auth.register(data);
+                registerForm.reset();
+                registerForm.style.display = 'none';
+                alert("Votre demande d'adhésion a bien été envoyée. Elle sera examinée par un administrateur : vous pourrez vous connecter dès qu'elle est validée.");
+              } catch (error) {
+                errorEl.textContent = error.message || "Erreur lors de l'envoi de la demande.";
+              }
             });
           }
 

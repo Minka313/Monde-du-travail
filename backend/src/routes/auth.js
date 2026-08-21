@@ -12,6 +12,7 @@ const registerSchema = z.object({
     password: z.string().min(6, 'Le mot de passe doit contenir au moins 6 caractères'),
     firstName: z.string().min(2, 'Prénom requis'),
     lastName: z.string().min(2, 'Nom requis'),
+    motivation: z.string().max(1000, 'Motivation trop longue (max 1000 caractères)').optional(),
   }),
 });
 

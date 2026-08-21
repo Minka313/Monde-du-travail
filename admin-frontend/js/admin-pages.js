@@ -96,12 +96,53 @@
   }
 
   async function loadDashboard() {
+    // Chaque appel dégrade indépendamment : un refus de permission ne doit
+    // pas vider tout le tableau de bord.
+    const safely = promise => promise.catch(() => null);
     const [stats, pendingMemberships, pendingAdmins, posts] = await Promise.all([
-      window.AdminApi.admin.getStats(),
-      window.AdminApi.admin.getPendingMemberships(),
-      window.AdminApi.admin.getPendingAdmins(),
-      window.AdminApi.admin.getAllPosts({ limit: 5 }),
-    ]).catch(() => []);
+      safely(window.AdminApi.admin.getStats()),
+      safely(window.AdminApi.admin.getPendingMemberships()),
+      safely(window.AdminApi.admin.getPendingAdmins()),
+      safely(window.AdminApi.admin.getAllPosts({ limit: 5 })),
+    ]);
+
+    const user = window.AdminApp.currentUser;
+    const canApproveMemberships = window.AdminApp.hasPermission(user, 'membership.approve');
+    const memberships = pendingMemberships?.data || [];
+
+    const membershipCard = `
+      <div class="card" style="margin-top:1.5rem;">
+        <div class="card-header">
+          <h2>Demandes d'adhésion</h2>
+          <span class="badge ${memberships.length > 0 ? 'badge-warning' : 'badge-muted'}">${memberships.length} en attente</span>
+        </div>
+        ${memberships.length === 0
+          ? '<div class="empty-state">Aucune demande en attente 🎉</div>'
+          : canApproveMemberships || memberships.length === 0
+            ? `<div class="table-wrapper">
+                 <table>
+                   <thead><tr><th>Candidat</th><th>Email</th><th>Motivation</th><th>Date</th><th>Actions</th></tr></thead>
+                   <tbody>
+                     ${memberships.map(m => `
+                       <tr>
+                         <td>${escapeHtml(m.user?.firstName || '')} ${escapeHtml(m.user?.lastName || '')}</td>
+                         <td>${escapeHtml(m.user?.email || '')}</td>
+                         <td style="max-width:280px;">${escapeHtml((m.motivation || '—').slice(0, 120))}${(m.motivation || '').length > 120 ? '…' : ''}</td>
+                         <td>${new Date(m.createdAt).toLocaleDateString('fr-FR')}</td>
+                         <td>
+                           ${canApproveMemberships ? `
+                             <button class="btn btn-success btn-sm" data-approve-membership="${m.id}">Approuver</button>
+                             <button class="btn btn-danger btn-sm" data-reject-membership="${m.id}">Refuser</button>
+                           ` : '<span class="text-muted">Lecture seule</span>'}
+                         </td>
+                       </tr>
+                     `).join('')}
+                   </tbody>
+                 </table>
+               </div>`
+            : '<div class="empty-state">Consultation réservée</div>'}
+      </div>
+    `;
 
     return `
       <div class="card">
@@ -116,6 +157,7 @@
           <div class="card"><strong>${pendingAdmins?.data?.length ?? 0}</strong><div class="text-muted">Admins en attente</div></div>
         </div>
       </div>
+      ${membershipCard}
     `;
   }
 
@@ -740,6 +782,35 @@
   }
 
   function bindPageEvents(module) {
+    if (module === 'dashboard') {
+      document.querySelectorAll('[data-approve-membership]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-approve-membership');
+          try {
+            await window.AdminApi.admin.approveMembership(id);
+            showToast('Adhésion approuvée — compte activé', 'success');
+            loadPage('dashboard');
+          } catch (error) {
+            showToast(error.message, 'error');
+          }
+        });
+      });
+
+      document.querySelectorAll('[data-reject-membership]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-reject-membership');
+          if (!confirm('Refuser cette demande d\'adhésion ?')) return;
+          try {
+            await window.AdminApi.admin.rejectMembership(id);
+            showToast('Adhésion refusée', 'warning');
+            loadPage('dashboard');
+          } catch (error) {
+            showToast(error.message, 'error');
+          }
+        });
+      });
+    }
+
     if (module === 'formations' || module === 'jobs') {
       const statusFilter = document.getElementById('content-status-filter');
       if (statusFilter) {

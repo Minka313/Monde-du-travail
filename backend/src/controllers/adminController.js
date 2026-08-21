@@ -218,6 +218,12 @@ class AdminController {
         },
       });
 
+      // L'approbation active le compte : le membre peut enfin se connecter
+      await prisma.user.update({
+        where: { id: membership.userId },
+        data: { isActive: true, isVerified: true },
+      });
+
       await AuditService.log({
         userId: req.user.id,
         action: 'membership.approve',
@@ -225,12 +231,12 @@ class AdminController {
         resource: 'MembershipRequest',
         resourceId: req.params.id,
         result: 'APPROVED',
-        metadata: { userId: membership.userId },
+        metadata: { userId: membership.userId, accountActivated: true },
       });
 
       res.json({
         success: true,
-        message: 'Demande d\'adhésion approuvée',
+        message: 'Demande d\'adhésion approuvée — compte activé',
         data: updated,
       });
     } catch (error) {
