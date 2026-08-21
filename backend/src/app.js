@@ -88,6 +88,10 @@ app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
 
+// Mode maintenance (paramètre platform.maintenanceMode, bypass admin)
+const { maintenanceMode } = require('./middleware/maintenance');
+app.use(maintenanceMode);
+
 // ===== ROUTES =====
 
 // Health check

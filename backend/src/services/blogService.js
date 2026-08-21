@@ -420,6 +420,28 @@ class BlogService {
       count: c._count.category
     }));
   }
+  static async archivePost(id) {
+    const post = await prisma.post.findUnique({ where: { id } });
+    if (!post) {
+      throw new NotFoundError('Article non trouvé');
+    }
+    if (post.status === 'ARCHIVED') {
+      throw new BadRequestError('Cet article est déjà archivé');
+    }
+
+    return prisma.post.update({
+      where: { id },
+      data: { status: 'ARCHIVED' },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        status: true,
+        updatedAt: true,
+      },
+    });
+  }
+
 }
 
 module.exports = BlogService;

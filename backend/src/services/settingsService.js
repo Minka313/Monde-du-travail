@@ -53,6 +53,12 @@ class SettingsService {
       data: { value },
     });
 
+    // Effet immédiat du basculement du mode maintenance
+    if (key === 'platform.maintenanceMode') {
+      const { resetMaintenanceCache } = require('../middleware/maintenance');
+      resetMaintenanceCache();
+    }
+
     logger.info('Paramètre mis à jour', { key, sensitive: existing.isSensitive });
     return updated;
   }

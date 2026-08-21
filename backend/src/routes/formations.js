@@ -4,6 +4,7 @@ const formationController = require('../controllers/formationController');
 const { authenticate, authorize, optionalAuth } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
+const requireReauth = require('../middleware/reauth');
 const validate = require('../middleware/validate');
 const { z } = require('zod');
 
@@ -13,6 +14,12 @@ const formationSchema = z.object({
     description: z.string().min(10, 'Description requise'),
     icon: z.string().optional(),
     category: z.string().max(100).optional(),
+  }),
+});
+
+const bulkDeleteSchema = z.object({
+  body: z.object({
+    ids: z.array(z.string()).min(1, 'Au moins un identifiant requis').max(100, '100 suppressions maximum par lot'),
   }),
 });
 
@@ -30,6 +37,9 @@ router.get('/:id', optionalAuth, formationController.getFormationById);
 router.post('/', ...adminGate, authorize('formation.create'), validate(formationSchema), formationController.createFormation);
 router.put('/:id', ...adminGate, authorize('formation.update'), validate(formationSchema), formationController.updateFormation);
 router.delete('/:id', ...adminGate, authorize('formation.delete'), formationController.deleteFormation);
+
+// Suppression massive : action critique (double confirmation par mot de passe)
+router.post('/bulk-delete', ...adminGate, authorize('formation.delete'), requireReauth, validate(bulkDeleteSchema), formationController.bulkDeleteFormations);
 
 // Workflow éditorial
 router.post('/:id/submit', ...adminGate, authorize('formation.update'), formationController.submitFormation);

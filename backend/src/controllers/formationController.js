@@ -218,6 +218,29 @@ class FormationController {
       next(error);
     }
   }
+
+  // Suppression massive : action critique (double confirmation par mot de passe)
+  static async bulkDeleteFormations(req, res, next) {
+    try {
+      const { ids } = req.body;
+      const deleted = await formationService.deleteFormations(ids);
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'formation.bulkDelete',
+        module: 'formation',
+        resource: 'Formation',
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: `DELETED_${deleted}`,
+        metadata: { ids, count: deleted },
+      });
+
+      res.json({ success: true, message: `${deleted} formation(s) supprimée(s)`, data: { deleted } });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = FormationController;

@@ -413,10 +413,25 @@ class RbacService {
     });
   }
 
-  static async getAuditLogs({ page = 1, limit = 20, userId, module, action, result, from, to } = {}) {
+  static async getAuditLogs({ page = 1, limit = 20, userId, email, module, action, result, from, to } = {}) {
     const pageNum = Math.max(1, parseInt(page, 10) || 1);
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
     const skip = (pageNum - 1) * limitNum;
+
+    const empty = {
+      logs: [],
+      pagination: { page: pageNum, limit: limitNum, total: 0, totalPages: 0 },
+    };
+
+    // Filtre par acteur : résout l'email en identifiant
+    if (email) {
+      const target = await prisma.user.findFirst({
+        where: { email: { contains: email, mode: 'insensitive' } },
+        select: { id: true },
+      });
+      if (!target) return empty;
+      userId = target.id;
+    }
 
     const where = {};
     if (userId) where.userId = userId;

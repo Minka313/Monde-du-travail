@@ -218,6 +218,29 @@ class JobController {
       next(error);
     }
   }
+
+  // Suppression massive : action critique (double confirmation par mot de passe)
+  static async bulkDeleteJobs(req, res, next) {
+    try {
+      const { ids } = req.body;
+      const deleted = await jobService.deleteJobs(ids);
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'metier.bulkDelete',
+        module: 'metier',
+        resource: 'Job',
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: `DELETED_${deleted}`,
+        metadata: { ids, count: deleted },
+      });
+
+      res.json({ success: true, message: `${deleted} métier(s) supprimé(s)`, data: { deleted } });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = JobController;
