@@ -188,6 +188,12 @@ class FormationService {
     await prisma.formation.delete({ where: { id } });
   }
 
+  // Suppression massive (action critique : ré-authentification au niveau route)
+  static async deleteFormations(ids) {
+    const result = await prisma.formation.deleteMany({ where: { id: { in: ids } } });
+    return result.count;
+  }
+
   static async getFormationOrThrow(id) {
     const formation = await prisma.formation.findUnique({ where: { id } });
     if (!formation) {

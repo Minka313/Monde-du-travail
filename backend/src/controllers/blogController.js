@@ -1,4 +1,5 @@
 const BlogService = require('../services/blogService');
+const AuditService = require('../services/auditService');
 
 class BlogController {
   static async getPosts(req, res, next) {
@@ -107,6 +108,29 @@ class BlogController {
       const { id } = req.params;
       const post = await BlogService.unpublishPost(id);
       res.json({ success: true, message: 'Article dépublié avec succès', data: post });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async archivePost(req, res, next) {
+    try {
+      const { id } = req.params;
+      const post = await BlogService.archivePost(id);
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'blog.archive',
+        module: 'blog',
+        resource: 'Post',
+        resourceId: id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'ARCHIVED',
+        metadata: { title: post.title },
+      });
+
+      res.json({ success: true, message: 'Article archivé avec succès', data: post });
     } catch (error) {
       next(error);
     }

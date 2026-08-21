@@ -37,5 +37,6 @@ router.put('/:id', authorize('blog.update'), validate(postSchema), BlogControlle
 router.delete('/:id', authorize('blog.delete'), BlogController.deletePost);
 router.post('/:id/publish', authorize('blog.publish'), BlogController.publishPost);
 router.post('/:id/unpublish', authorize('blog.publish'), BlogController.unpublishPost);
+router.post('/:id/archive', authorize('blog.archive'), BlogController.archivePost);
 
 module.exports = router;

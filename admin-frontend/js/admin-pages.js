@@ -232,7 +232,10 @@
       <div class="card">
         <div class="card-header">
           <h2>${config.title}</h2>
-          <button class="btn" id="btn-create-content" data-content-module="${moduleKey}">Ajouter</button>
+          <div style="display:flex;gap:0.5rem;">
+            ${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? '<button class="btn btn-danger" id="btn-bulk-delete" style="display:none;">Supprimer la sélection (<span id="bulk-count">0</span>)</button>' : ''}
+            <button class="btn" id="btn-create-content" data-content-module="${moduleKey}">Ajouter</button>
+          </div>
         </div>
         <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
           <label>Statut&nbsp;
@@ -245,12 +248,13 @@
         </div>
         <div class="table-wrapper">
           <table>
-            <thead><tr><th>Titre</th><th>Catégorie</th><th>Statut</th><th>Auteur</th><th>Mise à jour</th><th>Actions</th></tr></thead>
+            <thead><tr>${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? '<th></th>' : ''}<th>Titre</th><th>Catégorie</th><th>Statut</th><th>Auteur</th><th>Mise à jour</th><th>Actions</th></tr></thead>
             <tbody>
               ${items.length === 0
-                ? '<tr><td colspan="6"><div class="empty-state">Aucun contenu</div></td></tr>'
+                ? `<tr><td colspan="7"><div class="empty-state">Aucun contenu</div></td></tr>`
                 : items.map(item => `
                   <tr>
+                    ${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? `<td><input type="checkbox" class="content-select" value="${item.id}"></td>` : ''}
                     <td>${escapeHtml(item.title)}</td>
                     <td>${categoryCell(item)}</td>
                     <td>${contentStatusBadge(item.status)}</td>
@@ -694,7 +698,7 @@
   }
 
   // ===== Journal d'audit =====
-  const logFilters = { module: '', action: '', from: '', to: '', page: 1 };
+  const logFilters = { module: '', action: '', email: '', from: '', to: '', page: 1 };
 
   async function loadLogs() {
     const response = await window.AdminApi.rbac.getAuditLogs({ ...logFilters, limit: 50 });
@@ -708,6 +712,7 @@
           <span class="badge badge-primary">${pagination.total} événements</span>
         </div>
         <div style="display:flex;gap:0.8rem;align-items:flex-end;margin-bottom:1rem;flex-wrap:wrap;">
+          <label>Acteur<input type="text" id="log-email-filter" placeholder="email…" value="${escapeHtml(logFilters.email)}"></label>
           <label>Module<input type="text" id="log-module-filter" placeholder="formation, users…" value="${escapeHtml(logFilters.module)}"></label>
           <label>Action<input type="text" id="log-action-filter" placeholder="publish, delete…" value="${escapeHtml(logFilters.action)}"></label>
           <label>Du<input type="date" id="log-from-filter" value="${logFilters.from}"></label>
@@ -812,6 +817,34 @@
     }
 
     if (module === 'formations' || module === 'jobs') {
+      // Suppression massive : les cases cochées alimentent le bouton d'action
+      const bulkButton = document.getElementById('btn-bulk-delete');
+      const bulkCount = document.getElementById('bulk-count');
+      const updateBulkButton = () => {
+        const checked = document.querySelectorAll('.content-select:checked');
+        if (bulkButton) bulkButton.style.display = checked.length > 0 ? '' : 'none';
+        if (bulkCount) bulkCount.textContent = checked.length;
+      };
+      document.querySelectorAll('.content-select').forEach(cb => {
+        cb.addEventListener('change', updateBulkButton);
+      });
+
+      if (bulkButton) {
+        bulkButton.addEventListener('click', async () => {
+          const ids = Array.from(document.querySelectorAll('.content-select:checked')).map(cb => cb.value);
+          if (ids.length === 0) return;
+          if (!confirm(`Supprimer définitivement ${ids.length} élément(s) ? Cette action demande votre mot de passe.`)) return;
+          const client = module === 'formations' ? window.AdminApi.formations : window.AdminApi.jobs;
+          try {
+            const res = await client.removeBulk(ids);
+            showToast(res.message, 'warning');
+            loadPage(module);
+          } catch (error) {
+            showToast(error.message, 'error');
+          }
+        });
+      }
+
       const statusFilter = document.getElementById('content-status-filter');
       if (statusFilter) {
         statusFilter.addEventListener('change', () => {
@@ -954,6 +987,7 @@
 
     if (module === 'logs') {
       document.getElementById('log-apply-filters')?.addEventListener('click', () => {
+        logFilters.email = document.getElementById('log-email-filter')?.value || '';
         logFilters.module = document.getElementById('log-module-filter')?.value || '';
         logFilters.action = document.getElementById('log-action-filter')?.value || '';
         logFilters.from = document.getElementById('log-from-filter')?.value || '';

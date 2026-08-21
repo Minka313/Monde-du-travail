@@ -188,6 +188,12 @@ class JobService {
     await prisma.job.delete({ where: { id } });
   }
 
+  // Suppression massive (action critique : ré-authentification au niveau route)
+  static async deleteJobs(ids) {
+    const result = await prisma.job.deleteMany({ where: { id: { in: ids } } });
+    return result.count;
+  }
+
   static async getJobOrThrow(id) {
     const job = await prisma.job.findUnique({ where: { id } });
     if (!job) {

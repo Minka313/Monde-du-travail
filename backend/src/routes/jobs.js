@@ -4,6 +4,7 @@ const jobController = require('../controllers/jobController');
 const { authenticate, authorize, optionalAuth } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
+const requireReauth = require('../middleware/reauth');
 const validate = require('../middleware/validate');
 const { z } = require('zod');
 
@@ -13,6 +14,12 @@ const jobSchema = z.object({
     description: z.string().min(10, 'Description requise'),
     category: z.enum(['TECH', 'ENERGIE', 'FINANCE', 'SECURITE', 'SANTE', 'EDUCATION', 'AUTRE']),
     icon: z.string().optional(),
+  }),
+});
+
+const bulkDeleteSchema = z.object({
+  body: z.object({
+    ids: z.array(z.string()).min(1, 'Au moins un identifiant requis').max(100, '100 suppressions maximum par lot'),
   }),
 });
 
@@ -30,6 +37,9 @@ router.get('/:id', optionalAuth, jobController.getJobById);
 router.post('/', ...adminGate, authorize('metier.create'), validate(jobSchema), jobController.createJob);
 router.put('/:id', ...adminGate, authorize('metier.update'), validate(jobSchema), jobController.updateJob);
 router.delete('/:id', ...adminGate, authorize('metier.delete'), jobController.deleteJob);
+
+// Suppression massive : action critique (double confirmation par mot de passe)
+router.post('/bulk-delete', ...adminGate, authorize('metier.delete'), requireReauth, validate(bulkDeleteSchema), jobController.bulkDeleteJobs);
 
 // Workflow éditorial
 router.post('/:id/submit', ...adminGate, authorize('metier.update'), jobController.submitJob);
