@@ -1,11 +1,10 @@
 const jwt = require('jsonwebtoken');
 const { UnauthorizedError, ForbiddenError } = require('../utils/errors');
 const { authorize } = require('./rbac');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../config/database');
 const RbacService = require('../services/rbacService');
 const AuditService = require('../services/auditService');
 
-const prisma = new PrismaClient();
 
 // Un compte est considéré administrateur s'il a le rôle de base ADMIN/ULTRA_ADMIN
 // OU au moins un rôle admin effectif dans la table RBAC.

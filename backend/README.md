@@ -38,7 +38,13 @@ Variables importantes :
 ### Migrations
 
 ```bash
-npx prisma migrate dev --name init
+npm run prisma:migrate
+```
+
+Pour appliquer les migrations existantes dans un environnement de déploiement :
+
+```bash
+npm run prisma:migrate:deploy
 ```
 
 ### Seed (données initiales)

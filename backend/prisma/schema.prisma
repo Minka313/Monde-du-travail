@@ -36,34 +36,60 @@ model Event {
 }
 
 model Job {
-  id          String        @id @default(cuid())
-  title       String
-  description String
-  category    JobCategory
-  icon        String?
-  status      ContentStatus @default(DRAFT)
-  createdById String?
-  createdBy   User?         @relation("JobCreator", fields: [createdById], references: [id])
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id             String        @id @default(cuid())
+  title          String
+  description    String
+  content        String?
+  category       JobCategory
+  domain         String?
+  icon           String?
+  image          String?
+  salary         String?
+  skills         String[]      @default([])
+  prerequisites  String?
+  studies        String?
+  advantages     String?
+  disadvantages  String?
+  subProfessions String[]      @default([])
+  videoUrl       String?
+  location       String?
+  status         ContentStatus @default(DRAFT)
+  createdById    String?
+  createdBy      User?         @relation("JobCreator", fields: [createdById], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@index([status])
+  @@index([category])
   @@map("jobs")
 }
 
 model Formation {
-  id          String        @id @default(cuid())
-  title       String
-  description String
-  category    String?
-  icon        String?
-  status      ContentStatus @default(DRAFT)
-  createdById String?
-  createdBy   User?         @relation("FormationCreator", fields: [createdById], references: [id])
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id             String        @id @default(cuid())
+  title          String
+  description    String
+  content        String?
+  category       String?
+  icon           String?
+  image          String?
+  startDate      DateTime?
+  endDate        DateTime?
+  duration       String?
+  location       String?
+  objectives     String?
+  prerequisites  String?
+  targetAudience String?
+  syllabus       Json?
+  certification  String?
+  videoUrl       String?
+  status         ContentStatus @default(DRAFT)
+  createdById    String?
+  createdBy      User?         @relation("FormationCreator", fields: [createdById], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   @@index([status])
+  @@index([category])
   @@map("formations")
 }
 
@@ -194,6 +220,8 @@ model User {
   role               Role                @default(MEMBER)
   isActive           Boolean             @default(false)
   isVerified         Boolean             @default(false)
+  twoFactorEnabled   Boolean             @default(false)
+  twoFactorSecret    String?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   lastLoginAt        DateTime?
@@ -322,6 +350,7 @@ enum JobCategory {
 
 enum PostStatus {
   DRAFT
+  PENDING_REVIEW
   PUBLISHED
   ARCHIVED
 }

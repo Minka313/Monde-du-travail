@@ -12,8 +12,20 @@ const jobSchema = z.object({
   body: z.object({
     title: z.string().min(3, 'Titre requis'),
     description: z.string().min(10, 'Description requise'),
-    category: z.enum(['TECH', 'ENERGIE', 'FINANCE', 'SECURITE', 'SANTE', 'EDUCATION', 'AUTRE']),
-    icon: z.string().optional(),
+    content: z.string().optional().nullable(),
+    category: z.enum(['TECH', 'ENERGIE', 'FINANCE', 'SECURITE', 'SANTE', 'EDUCATION', 'AUTRE']).optional().default('TECH'),
+    domain: z.string().optional().nullable(),
+    icon: z.string().optional().nullable(),
+    image: z.string().optional().nullable(),
+    salary: z.string().optional().nullable(),
+    skills: z.union([z.array(z.string()), z.string()]).optional().nullable(),
+    prerequisites: z.string().optional().nullable(),
+    studies: z.string().optional().nullable(),
+    advantages: z.string().optional().nullable(),
+    disadvantages: z.string().optional().nullable(),
+    subProfessions: z.union([z.array(z.string()), z.string()]).optional().nullable(),
+    videoUrl: z.string().optional().nullable(),
+    location: z.string().optional().nullable(),
   }),
 });
 
@@ -27,6 +39,7 @@ const adminGate = [authenticate, AdminApprovalMiddleware.middleware, requireModu
 
 // Routes publiques : uniquement le contenu publié
 router.get('/', jobController.getPublishedJobs);
+router.get('/domains', jobController.getDomains);
 
 // Liste admin (filtres statut / mes créations / recherche) — avant /:id
 router.get('/admin/list', ...adminGate, authorize('metier.read'), jobController.getJobsForAdmin);

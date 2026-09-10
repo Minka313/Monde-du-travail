@@ -5,6 +5,7 @@ const { UnauthorizedError, ConflictError, BadRequestError } = require('../utils/
 const logger = require('../utils/logger');
 const AuditService = require('./auditService');
 const RbacService = require('./rbacService');
+const totp = require('../utils/totp');
 
 class AuthService {
   // Inscription d'un nouveau membre : le compte reste inactif et une demande
@@ -73,6 +74,27 @@ class AuthService {
       throw new UnauthorizedError('Votre compte n\'est pas encore activé. Veuillez contacter un administrateur.');
     }
 
+    // Si le 2FA est activé sur le compte, émettre un jeton temporaire scoped
+    if (user.twoFactorEnabled && user.twoFactorSecret) {
+      const tempToken = jwt.sign(
+        { id: user.id, email: user.email, scope: '2fa_verification' },
+        process.env.JWT_SECRET,
+        { expiresIn: '5m' }
+      );
+
+      return {
+        require2FA: true,
+        tempToken,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+        },
+      };
+    }
+
     const accessToken = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
@@ -107,6 +129,84 @@ class AuthService {
     logger.info('Connexion réussie', { userId: user.id, email: user.email });
 
     // Contexte administratif effectif (permissions + rôles admin) pour l'UI
+    const { permissions, adminRoles } = await RbacService.getUserAdminContext(user.id);
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        permissions,
+        adminRoles,
+      },
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  // Connexion étape 2 : validation du code 2FA
+  static async login2FA(tempToken, code, ipAddress, userAgent) {
+    if (!tempToken || !code) {
+      throw new BadRequestError('Jeton temporaire et code à 6 chiffres requis');
+    }
+
+    let payload;
+    try {
+      payload = jwt.verify(tempToken, process.env.JWT_SECRET);
+    } catch (err) {
+      throw new UnauthorizedError('Session temporaire 2FA expirée ou invalide');
+    }
+
+    if (payload.scope !== '2fa_verification') {
+      throw new UnauthorizedError('Jeton invalide pour la vérification 2FA');
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: payload.id },
+    });
+
+    if (!user || !user.isActive) {
+      throw new UnauthorizedError('Utilisateur introuvable ou compte inactif');
+    }
+
+    const isValid = totp.verifyTOTP(code, user.twoFactorSecret);
+    if (!isValid) {
+      throw new UnauthorizedError('Code 2FA incorrect ou expiré');
+    }
+
+    const accessToken = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRE || '7d' }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user.id },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d' }
+    );
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
+    await AuditService.log({
+      userId: user.id,
+      action: 'auth.login.2fa',
+      module: 'Auth',
+      resource: 'User',
+      resourceId: user.id,
+      ipAddress: ipAddress || null,
+      userAgent: userAgent || null,
+      result: 'SUCCESS',
+      metadata: { email: user.email, role: user.role },
+    });
+
+    logger.info('Connexion 2FA réussie', { userId: user.id, email: user.email });
+
     const { permissions, adminRoles } = await RbacService.getUserAdminContext(user.id);
 
     return {

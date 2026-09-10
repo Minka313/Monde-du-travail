@@ -1,42 +1,26 @@
 const RbacService = require('../services/rbacService');
-const { PrismaClient } = require('@prisma/client');
-
-const prisma = new PrismaClient();
+const prisma = require('../config/database');
 
 class SuperDashboardController {
   static async getGlobalStats(req, res, next) {
     try {
       const stats = await RbacService.getStats();
 
+      // Seuls les compteurs d'états spécifiques non fournis par getStats sont exécutés
       const [
-        totalPosts,
         publishedPosts,
         draftPosts,
-        totalTopics,
-        totalEvents,
-        totalJobs,
-        totalFormations,
         pendingMemberships,
       ] = await Promise.all([
-        prisma.post.count(),
         prisma.post.count({ where: { status: 'PUBLISHED' } }),
         prisma.post.count({ where: { status: 'DRAFT' } }),
-        prisma.topic.count(),
-        prisma.event.count(),
-        prisma.job.count(),
-        prisma.formation.count(),
         prisma.membershipRequest.count({ where: { status: 'PENDING' } }),
       ]);
 
       const data = {
         ...stats,
-        totalPosts,
         publishedPosts,
         draftPosts,
-        totalTopics,
-        totalEvents,
-        totalJobs,
-        totalFormations,
         pendingMemberships,
       };
 

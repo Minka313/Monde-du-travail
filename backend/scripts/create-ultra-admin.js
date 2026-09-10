@@ -4,21 +4,23 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = 'khadimoulbarham@gmail.com';
-  const password = 'NoBayeNoLife313';
-  const hashedPassword = await bcrypt.hash(password, 12);
+  const email = process.env.ULTRA_ADMIN_EMAIL?.trim();
+  const password = process.env.ULTRA_ADMIN_PASSWORD?.trim();
+
+  if (!email || !password) {
+    throw new Error('ULTRA_ADMIN_EMAIL et ULTRA_ADMIN_PASSWORD doivent être définis');
+  }
 
   const user = await prisma.user.upsert({
     where: { email },
     update: {
-      password: hashedPassword,
       role: 'ULTRA_ADMIN',
       isActive: true,
       isVerified: true,
     },
     create: {
       email,
-      password: hashedPassword,
+      password: await bcrypt.hash(password, 12),
       firstName: 'Khadimoul',
       lastName: 'Barham',
       role: 'ULTRA_ADMIN',

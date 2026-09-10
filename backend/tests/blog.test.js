@@ -61,6 +61,7 @@ describe('Blog Integration', () => {
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
       expect(response.body.data.title).toBe('Test Blog Post from Jest');
+      expect(response.body.data.status).toBe('DRAFT');
       postId = response.body.data.id;
     });
 
@@ -94,9 +95,8 @@ describe('Blog Integration', () => {
   describe('GET /api/blog/:id', () => {
     it('should return post by id', async () => {
       const response = await request(app).get(`/api/blog/${postId}`);
-      expect(response.status).toBe(200);
-      expect(response.body.success).toBe(true);
-      expect(response.body.data.id).toBe(postId);
+      expect(response.status).toBe(404);
+      expect(response.body.success).toBe(false);
     });
 
     it('should return 404 for non-existent post', async () => {
@@ -130,6 +130,7 @@ describe('Blog Integration', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
+      expect(response.body.data.status).toBe('PUBLISHED');
     });
   });
 

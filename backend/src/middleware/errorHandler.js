@@ -6,8 +6,8 @@ const errorHandler = (err, req, res, next) => {
     return next();
   }
 
-  let error = { ...err };
-  error.message = err.message || 'Erreur serveur interne';
+  let statusCode = err.statusCode || 500;
+  let message = err.message || 'Erreur serveur interne';
 
   logger.error('Erreur serveur', {
     error: err.message,
@@ -18,20 +18,19 @@ const errorHandler = (err, req, res, next) => {
   });
 
   if (err.code === 'P2002') {
-    error = new BadRequestError('Cette ressource existe déjà');
-  }
-  if (err.code === 'P2025') {
-    error = new NotFoundError('Ressource non trouvée');
+    statusCode = 400;
+    message = 'Cette ressource existe déjà';
+  } else if (err.code === 'P2025') {
+    statusCode = 404;
+    message = 'Ressource non trouvée';
+  } else if (err.name === 'ZodError') {
+    statusCode = 400;
+    message = err.errors?.map((e) => e.message).join(', ') || 'Validation invalide';
   }
 
-  if (err.name === 'ZodError') {
-    const message = err.errors?.map((e) => e.message).join(', ') || 'Validation invalide';
-    error = new BadRequestError(message);
-  }
-
-  res.status(error.statusCode || 500).json({
+  res.status(statusCode).json({
     success: false,
-    message: error.message,
+    message,
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   });
 };

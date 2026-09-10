@@ -91,9 +91,49 @@ class BlogService {
     return this.getAllPosts({ page, limit, category, search, featured, status: 'PUBLISHED' });
   }
 
+  static async getPostsForAdmin({ status, category, search, mine, userId, page = 1, limit = 50 } = {}) {
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 50));
+    const skip = (pageNum - 1) * limitNum;
+
+    const where = {};
+    if (status && status !== 'ALL') where.status = status;
+    if (category) where.category = category;
+    if (mine === 'true' || mine === true) where.authorId = userId;
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: 'insensitive' } },
+        { excerpt: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [posts, total] = await Promise.all([
+      prisma.post.findMany({
+        where,
+        skip,
+        take: limitNum,
+        orderBy: { updatedAt: 'desc' },
+        include: {
+          author: { select: { id: true, firstName: true, lastName: true } },
+        },
+      }),
+      prisma.post.count({ where }),
+    ]);
+
+    return {
+      posts,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages: Math.ceil(total / limitNum),
+      },
+    };
+  }
+
   static async getPostById(id) {
     const post = await prisma.post.findUnique({
-      where: { id },
+      where: { id, status: 'PUBLISHED' },
       select: {
         id: true,
         title: true,
@@ -128,7 +168,7 @@ class BlogService {
 
   static async getPostBySlug(slug) {
     const post = await prisma.post.findUnique({
-      where: { slug },
+      where: { slug, status: 'PUBLISHED' },
       select: {
         id: true,
         title: true,
@@ -163,7 +203,7 @@ class BlogService {
 
   static async getRelatedPosts(postId, category, limit = 4) {
     const post = await prisma.post.findUnique({
-      where: { id: postId },
+      where: { id: postId, status: 'PUBLISHED' },
       select: { category: true, status: true }
     });
 
@@ -202,7 +242,7 @@ class BlogService {
   }
 
   static async createPost(data, authorId) {
-    const { title, excerpt, content, coverImage, gallery, category, status, featured, publishedAt } = data;
+    const { title, excerpt, content, coverImage, gallery, category, featured } = data;
 
     const slug = BlogService.generateSlug(title);
     const existing = await prisma.post.findUnique({ where: { slug } });
@@ -219,9 +259,9 @@ class BlogService {
         coverImage: coverImage || null,
         gallery: gallery || [],
         category,
-        status: status || 'DRAFT',
+        status: 'DRAFT',
         featured: featured || false,
-        publishedAt: status === 'PUBLISHED' ? (publishedAt ? new Date(publishedAt) : new Date()) : null,
+        publishedAt: null,
         authorId
       },
       select: {
@@ -259,10 +299,19 @@ class BlogService {
       throw new NotFoundError('Article non trouvé');
     }
 
-    const updateData = { ...data };
+    const { title, excerpt, content, coverImage, gallery, category, featured } = data;
+    const updateData = {
+      ...(title !== undefined && { title }),
+      ...(excerpt !== undefined && { excerpt }),
+      ...(content !== undefined && { content }),
+      ...(coverImage !== undefined && { coverImage }),
+      ...(gallery !== undefined && { gallery }),
+      ...(category !== undefined && { category }),
+      ...(featured !== undefined && { featured }),
+    };
 
-    if (updateData.title && updateData.title !== existing.title) {
-      const newSlug = BlogService.generateSlug(updateData.title);
+    if (title && title !== existing.title) {
+      const newSlug = BlogService.generateSlug(title);
       const slugExists = await prisma.post.findFirst({
         where: { slug: newSlug, id: { not: id } }
       });
@@ -270,14 +319,6 @@ class BlogService {
         throw new BadRequestError('Un article avec ce titre existe déjà');
       }
       updateData.slug = newSlug;
-    }
-
-    if (updateData.status === 'PUBLISHED' && existing.status !== 'PUBLISHED') {
-      updateData.publishedAt = new Date();
-    }
-
-    if (updateData.status && updateData.status !== 'PUBLISHED') {
-      updateData.publishedAt = null;
     }
 
     const post = await prisma.post.update({
@@ -312,11 +353,43 @@ class BlogService {
     return post;
   }
 
+  static async submitPost(id) {
+    const post = await prisma.post.findUnique({ where: { id } });
+    if (!post) {
+      throw new NotFoundError('Article non trouvé');
+    }
+    if (post.status === 'PENDING_REVIEW') {
+      throw new BadRequestError('Cet article est déjà en attente de validation');
+    }
+    if (post.status === 'PUBLISHED') {
+      throw new BadRequestError('Cet article est déjà publié');
+    }
+
+    return prisma.post.update({
+      where: { id },
+      data: { status: 'PENDING_REVIEW' },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        status: true,
+        updatedAt: true,
+      },
+    });
+  }
+
   static async deletePost(id) {
     const post = await prisma.post.findUnique({ where: { id } });
     if (!post) {
       throw new NotFoundError('Article non trouvé');
     }
+
+    await prisma.approvalWorkflow.deleteMany({
+      where: {
+        resourceType: 'Post',
+        resourceId: id,
+      },
+    });
 
     await prisma.post.delete({ where: { id } });
     logger.info('Article supprimé', { postId: id });
@@ -357,6 +430,16 @@ class BlogService {
           }
         }
       }
+    });
+
+    await prisma.approvalWorkflow.updateMany({
+      where: {
+        resourceType: 'Post',
+        resourceId: id,
+        action: 'publish',
+        status: 'PENDING',
+      },
+      data: { status: 'CANCELLED', reviewedAt: new Date() },
     });
 
     logger.info('Article publié', { postId: id });

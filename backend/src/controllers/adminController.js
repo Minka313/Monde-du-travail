@@ -1,7 +1,6 @@
 const adminService = require('../services/adminService');
 const AuditService = require('../services/auditService');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../config/database');
 
 class AdminController {
   static async getAllAdmins(req, res, next) {
@@ -330,6 +329,46 @@ class AdminController {
           total,
           pages: Math.ceil(total / parseInt(limit, 10)) || 1,
         },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async createAdmin(req, res, next) {
+    try {
+      const assignment = await adminService.createAdmin(req.body, req.user.id);
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'admin.create',
+        module: 'Admin',
+        resource: 'UserAdminRole',
+        resourceId: assignment.id,
+        result: 'CREATED',
+        metadata: {
+          targetEmail: assignment.user.email,
+          targetRole: assignment.role.name,
+          assignedUserId: assignment.user.id,
+        },
+      });
+
+      res.status(201).json({
+        success: true,
+        message: `Administrateur ${assignment.user.firstName} ${assignment.user.lastName} créé avec succès`,
+        data: assignment,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getAdminAuditLogs(req, res, next) {
+    try {
+      const logs = await adminService.getAdminAuditLogs(req.params.id, req.query.limit);
+      res.json({
+        success: true,
+        data: logs,
       });
     } catch (error) {
       next(error);

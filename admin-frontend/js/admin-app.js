@@ -5,7 +5,7 @@
   // (null = accessible à tout compte admin authentifié).
   // La source de vérité est le backend : ces permissions viennent de /auth/me.
   const MODULE_PERMISSIONS = {
-    dashboard: null,
+    dashboard: 'admin.global',
     formations: 'formation.read',
     metiers: 'metier.read',
     blog: 'blog.read',
@@ -99,12 +99,16 @@
         if (root) root.classList.remove('hidden');
 
         const userName = document.getElementById('admin-user-name');
-        if (userName) userName.textContent = `${user.firstName} ${user.lastName}`;
+        if (userName) {
+          const roleLabel = window.AdminPages?.formatUserRole ? window.AdminPages.formatUserRole(user) : (user.role === 'ULTRA_ADMIN' ? '👑 Ultra Admin' : user.role);
+          userName.textContent = `${user.firstName} ${user.lastName} • ${roleLabel}`;
+        }
 
-        AdminPages.buildSidebar('dashboard', this.authorizedModules);
-        await AdminPages.loadPage('dashboard');
-
-        document.getElementById('admin-logout-btn')?.addEventListener('click', () => this.logout());
+        const logoutBtn = document.getElementById('admin-logout-btn');
+        if (logoutBtn && !logoutBtn.dataset.bound) {
+          logoutBtn.dataset.bound = 'true';
+          logoutBtn.addEventListener('click', () => this.logout());
+        }
 
         return true;
       } catch (error) {

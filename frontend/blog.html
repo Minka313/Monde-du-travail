@@ -31,16 +31,28 @@
 </header>
 
 <nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
     <div class="nav-inner">
         <div class="nav-links" id="navLinks">
-            <a href="index.html">Accueil</a>
-            <a href="about.html">À Propos</a>
-            <a href="job.html">Métiers & Orientation</a>
-            <a href="formations.html">Formations</a>
-            <a href="forum.html">Forum</a>
-            <a href="blog.html" aria-current="page">Blog</a>
-            <a href="login.html">Connexion</a>
-
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.png" alt="Logo Le Monde du Travail" class="mobile-nav-logo">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+                <a href="blog.html" aria-current="page">Blog</a>
+            </div>
+            <div class="mobile-nav-footer">
+                <a href="login.html" class="btn-mobile-cta">Espace Membre</a>
+                <a href="../admin-frontend/login.html" class="mobile-admin-sublink">Espace Administration &rarr;</a>
+            </div>
         </div>
     </div>
 </nav>
@@ -64,19 +76,20 @@
             <div class="container page-content">
                 <div class="blog-controls">
                     <div class="blog-search">
-                        <input type="text" id="blogSearch" class="form-input" placeholder="Rechercher un article...">
+                        <span class="blog-search-icon">🔍</span>
+                        <input type="text" id="blogSearch" placeholder="Rechercher un article, un sujet...">
                     </div>
                     <div class="blog-filters" id="blogCategoryFilters">
-                        <button class="filter-chip active" data-category="">Toutes</button>
-                        <button class="filter-chip" data-category="CLUB">Activités du club</button>
-                        <button class="filter-chip" data-category="FORMATION">Formations</button>
-                        <button class="filter-chip" data-category="ATELIER">Ateliers</button>
-                        <button class="filter-chip" data-category="RENCONTRE">Rencontres</button>
-                        <button class="filter-chip" data-category="CONFERENCE">Conférences</button>
-                        <button class="filter-chip" data-category="VISITE">Visites</button>
-                        <button class="filter-chip" data-category="PROJET">Projets</button>
-                        <button class="filter-chip" data-category="TEMOIGNAGE">Témoignages</button>
-                        <button class="filter-chip" data-category="ANNONCE">Annonces</button>
+                        <button class="filter-chip active" data-category="">✨ Tout afficher</button>
+                        <button class="filter-chip" data-category="CLUB">🏛️ Activités du club</button>
+                        <button class="filter-chip" data-category="FORMATION">📚 Formations</button>
+                        <button class="filter-chip" data-category="ATELIER">🎤 Ateliers</button>
+                        <button class="filter-chip" data-category="RENCONTRE">🤝 Rencontres</button>
+                        <button class="filter-chip" data-category="CONFERENCE">🌍 Conférences</button>
+                        <button class="filter-chip" data-category="VISITE">🏢 Visites</button>
+                        <button class="filter-chip" data-category="PROJET">🚀 Projets</button>
+                        <button class="filter-chip" data-category="TEMOIGNAGE">💬 Témoignages</button>
+                        <button class="filter-chip" data-category="ANNONCE">📢 Annonces</button>
                     </div>
                 </div>
 
@@ -184,22 +197,22 @@
             return;
           }
 
-          const img = post.coverImage || getDefaultImage(post.category);
+          const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
           const categoryLabel = categoryLabels[post.category] || post.category;
           const categoryIcon = categoryIcons[post.category] || '📄';
 
           featuredContainer.innerHTML = `
             <article class="blog-featured-card">
               <div class="blog-featured-image">
-                <img src="${img}" alt="${post.title}" loading="eager">
+                <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="eager">
                 <div class="blog-featured-overlay"></div>
               </div>
               <div class="blog-featured-content">
-                <span class="blog-category">${categoryIcon} ${categoryLabel}</span>
-                <h2>${post.title}</h2>
-                <p>${post.excerpt || ''}</p>
+                <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
+                <h2>${escapeHtml(post.title)}</h2>
+                <p>${escapeHtml(post.excerpt)}</p>
                 <div class="blog-meta">
-                  <span>✍️ ${post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu'}</span>
+                  <span>✍️ ${escapeHtml(post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu')}</span>
                   <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
                 </div>
                 <a href="blog-post.html?id=${post.id}" class="btn btn-primary btn-lg">Lire l'article</a>
@@ -258,14 +271,19 @@
             };
 
             const response = await window.Api.blog.getAll(params);
-            const result = response.data || [];
-            const posts = result.posts || [];
-            const pagination = result.pagination || {};
+            const posts = response.data || [];
+            const pagination = response.pagination || {};
 
             if (!container) return;
 
             if (posts.length === 0) {
-              container.innerHTML = '<p class="text-muted text-center">Aucun article disponible pour le moment.</p>';
+              container.innerHTML = `
+                <div class="blog-empty-state">
+                  <div class="empty-icon">📰</div>
+                  <h3>Aucun article disponible</h3>
+                  <p>Aucune publication ne correspond à vos filtres pour le moment. Revenez bientôt pour découvrir les nouveaux articles du club !</p>
+                </div>
+              `;
               featuredContainer.innerHTML = '';
               paginationContainer.innerHTML = '';
               return;
@@ -280,22 +298,22 @@
             }
 
             container.innerHTML = posts.map(post => {
-              const img = post.coverImage || getDefaultImage(post.category);
+              const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
               const categoryLabel = categoryLabels[post.category] || post.category;
               const categoryIcon = categoryIcons[post.category] || '📄';
 
               return `
                 <article class="card" data-blog-post-id="${post.id}">
                   <div class="card-image-wrap">
-                    <img src="${img}" alt="${post.title}" loading="lazy">
+                    <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy">
                     <div class="card-image-overlay"></div>
                   </div>
                   <div class="card-body">
-                    <span class="blog-category">${categoryIcon} ${categoryLabel}</span>
-                    <h3>${post.title}</h3>
-                    <p>${post.excerpt || post.content.substring(0, 150) + '...'}</p>
+                    <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
+                    <h3>${escapeHtml(post.title)}</h3>
+                    <p>${escapeHtml(post.excerpt || `${post.content.substring(0, 150)}...`)}</p>
                     <div class="blog-meta">
-                      <span>✍️ ${post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu'}</span>
+                      <span>✍️ ${escapeHtml(post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu')}</span>
                       <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
                     </div>
                     <a href="blog-post.html?id=${post.id}" class="card-link">Lire la suite</a>

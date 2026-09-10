@@ -31,16 +31,28 @@
 </header>
 
 <nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
     <div class="nav-inner">
         <div class="nav-links" id="navLinks">
-            <a href="index.html">Accueil</a>
-            <a href="about.html">À Propos</a>
-            <a href="job.html">Métiers & Orientation</a>
-            <a href="formations.html">Formations</a>
-            <a href="forum.html">Forum</a>
-            <a href="blog.html">Blog</a>
-            <a href="login.html">Connexion</a>
-
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.png" alt="Logo Le Monde du Travail" class="mobile-nav-logo">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+                <a href="blog.html" aria-current="page">Blog</a>
+            </div>
+            <div class="mobile-nav-footer">
+                <a href="login.html" class="btn-mobile-cta">Espace Membre</a>
+                <a href="../admin-frontend/login.html" class="mobile-admin-sublink">Espace Administration &rarr;</a>
+            </div>
         </div>
     </div>
 </nav>
@@ -142,7 +154,9 @@
 
         function renderGallery(gallery) {
           if (!gallery || gallery.length === 0) return '';
-          const images = gallery.map(url => `<img src="${url}" alt="Galerie" loading="lazy">`).join('');
+          const images = gallery
+            .map(url => `<img src="${escapeHtml(safeUrl(url))}" alt="Galerie" loading="lazy">`)
+            .join('');
           return `<div class="blog-gallery">${images}</div>`;
         }
 
@@ -171,7 +185,7 @@
               return;
             }
 
-            const img = post.coverImage || getDefaultImage(post.category);
+            const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
             const categoryLabel = categoryLabels[post.category] || post.category;
             const categoryIcon = categoryIcons[post.category] || '📄';
 
@@ -180,19 +194,19 @@
             container.innerHTML = `
               <article class="blog-post">
                 <header class="blog-post-header">
-                  <span class="blog-category">${categoryIcon} ${categoryLabel}</span>
-                  <h1>${post.title}</h1>
+                  <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
+                  <h1>${escapeHtml(post.title)}</h1>
                   <div class="blog-meta">
-                    <span>✍️ ${post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu'}</span>
+                    <span>✍️ ${escapeHtml(post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu')}</span>
                     <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
                   </div>
                 </header>
                 <div class="blog-post-image">
-                  <img src="${img}" alt="${post.title}" loading="eager">
+                  <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="eager">
                 </div>
                 <div class="blog-post-content">
-                  ${post.excerpt ? `<p class="blog-post-excerpt">${post.excerpt}</p>` : ''}
-                  <div class="blog-post-body">${post.content}</div>
+                  ${post.excerpt ? `<p class="blog-post-excerpt">${escapeHtml(post.excerpt)}</p>` : ''}
+                  <div class="blog-post-body">${escapeHtml(post.content)}</div>
                 </div>
                 ${renderGallery(post.gallery)}
               </article>
@@ -206,18 +220,18 @@
                 <h3 class="text-center mt-2">Articles associés</h3>
                 <div class="cards-grid mt-1">
                   ${related.map(relatedPost => {
-                    const relatedImg = relatedPost.coverImage || getDefaultImage(relatedPost.category);
+                    const relatedImg = safeUrl(relatedPost.coverImage || getDefaultImage(relatedPost.category), getDefaultImage(relatedPost.category));
                     const relatedCategoryLabel = categoryLabels[relatedPost.category] || relatedPost.category;
                     return `
                       <article class="card">
                         <div class="card-image-wrap">
-                          <img src="${relatedImg}" alt="${relatedPost.title}" loading="lazy">
+                          <img src="${escapeHtml(relatedImg)}" alt="${escapeHtml(relatedPost.title)}" loading="lazy">
                           <div class="card-image-overlay"></div>
                         </div>
                         <div class="card-body">
-                          <span class="blog-category">${relatedCategoryLabel}</span>
-                          <h3>${relatedPost.title}</h3>
-                          <p>${relatedPost.excerpt || ''}</p>
+                          <span class="blog-category">${escapeHtml(relatedCategoryLabel)}</span>
+                          <h3>${escapeHtml(relatedPost.title)}</h3>
+                          <p>${escapeHtml(relatedPost.excerpt)}</p>
                           <a href="blog-post.html?id=${relatedPost.id}" class="card-link">Lire la suite</a>
                         </div>
                       </article>

@@ -1,71 +1,131 @@
-(function() {
+(function () {
   'use strict';
 
   // ===== Mobile Menu =====
-  function initMobileMenu() {
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.nav-links');
-    if (!hamburger || !navLinks) return;
+  // ===== Robust Delegated Mobile Menu =====
+  function getMobileNavElements() {
+    return {
+      hamburger: document.querySelector('.hamburger'),
+      navLinks: document.querySelector('.nav-links'),
+      overlay: document.getElementById('navOverlay') || (() => {
+        let el = document.createElement('div');
+        el.id = 'navOverlay';
+        el.className = 'nav-overlay';
+        document.body.appendChild(el);
+        return el;
+      })()
+    };
+  }
 
-    function openMenu() {
-      navLinks.classList.add('open');
+  function openMobileMenu() {
+    const { hamburger, navLinks } = getMobileNavElements();
+    if (!navLinks) return;
+    navLinks.classList.add('open');
+    if (hamburger) {
+      hamburger.classList.add('active');
       hamburger.setAttribute('aria-expanded', 'true');
-      const firstLink = navLinks.querySelector('a');
-      if (firstLink) firstLink.focus();
     }
+    document.body.classList.add('nav-open');
+  }
 
-    function closeMenu() {
-      navLinks.classList.remove('open');
+  function closeMobileMenu() {
+    const { hamburger, navLinks } = getMobileNavElements();
+    if (navLinks) navLinks.classList.remove('open');
+    if (hamburger) {
+      hamburger.classList.remove('active');
       hamburger.setAttribute('aria-expanded', 'false');
-      hamburger.focus();
+    }
+    document.body.classList.remove('nav-open');
+  }
+
+  function toggleMobileMenu() {
+    const { navLinks } = getMobileNavElements();
+    if (navLinks && navLinks.classList.contains('open')) {
+      closeMobileMenu();
+    } else {
+      openMobileMenu();
+    }
+  }
+
+  let mobileListenersAttached = false;
+  function initMobileMenu() {
+    // Ensure overlay element exists in DOM
+    let overlay = document.getElementById('navOverlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'navOverlay';
+      overlay.className = 'nav-overlay';
+      document.body.appendChild(overlay);
     }
 
-    hamburger.addEventListener('click', () => {
-      const isOpen = navLinks.classList.toggle('open');
-      hamburger.setAttribute('aria-expanded', String(isOpen));
-      if (isOpen) {
-        const firstLink = navLinks.querySelector('a');
-        if (firstLink) firstLink.focus();
-      } else {
-        hamburger.focus();
-      }
-    });
+    if (mobileListenersAttached) return;
+    mobileListenersAttached = true;
 
     document.addEventListener('click', (e) => {
-      if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
-        closeMenu();
+      const hamburger = e.target.closest('.hamburger');
+      if (hamburger) {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMobileMenu();
+        return;
       }
-    });
 
-    navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        closeMenu();
-      });
+      const closeBtn = e.target.closest('#mobileNavClose');
+      if (closeBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeMobileMenu();
+        return;
+      }
+
+      const overlay = e.target.closest('#navOverlay');
+      if (overlay) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeMobileMenu();
+        return;
+      }
+
+      const navLink = e.target.closest('.nav-links a');
+      if (navLink) {
+        closeMobileMenu();
+        return;
+      }
+
+      // Tap outside open navigation modal
+      const navLinks = document.querySelector('.nav-links');
+      if (navLinks && navLinks.classList.contains('open')) {
+        if (!navLinks.contains(e.target)) {
+          closeMobileMenu();
+        }
+      }
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-        closeMenu();
+      const navLinks = document.querySelector('.nav-links');
+      if (!navLinks || !navLinks.classList.contains('open')) return;
+
+      if (e.key === 'Escape') {
+        closeMobileMenu();
+        return;
       }
-    });
 
-    // Focus trap basique
-    navLinks.addEventListener('keydown', (e) => {
-      if (e.key !== 'Tab' || !navLinks.classList.contains('open')) return;
+      if (e.key === 'Tab') {
+        const focusable = Array.from(navLinks.querySelectorAll('a, button'));
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
 
-      const focusable = Array.from(navLinks.querySelectorAll('a, button'));
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
+        if (e.shiftKey) {
+          if (document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          }
+        } else {
+          if (document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
         }
       }
     });
@@ -108,18 +168,31 @@
     const nodesToReplace = [];
     let node;
     while ((node = walker.nextNode())) {
-      if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE') continue;
+      if (node.parentElement.tagName === 'SCRIPT' || node.parentElement.tagName === 'STYLE' || node.parentElement.tagName === 'MARK') continue;
       if (node.textContent.toLowerCase().includes(query)) {
         nodesToReplace.push(node);
       }
     }
+    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     nodesToReplace.forEach(node => {
-      const span = document.createElement('span');
-      span.innerHTML = node.textContent.replace(
-        new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'),
-        '<mark>$1</mark>'
-      );
-      node.parentNode.replaceChild(span, node);
+      const parent = node.parentNode;
+      if (!parent) return;
+      const text = node.textContent;
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+      text.replace(regex, (match, p1, offset) => {
+        if (offset > lastIndex) {
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex, offset)));
+        }
+        const mark = document.createElement('mark');
+        mark.textContent = match;
+        fragment.appendChild(mark);
+        lastIndex = offset + match.length;
+      });
+      if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+      }
+      parent.replaceChild(fragment, node);
     });
   }
 
@@ -217,9 +290,13 @@
   }
 
   function escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    if (text == null) return '';
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 
   function showConfirm(message, title) {
@@ -268,12 +345,19 @@
   function initForumInteractions() {
     document.querySelectorAll('[data-topic]').forEach(topic => {
       topic.addEventListener('click', () => {
-        showAlert('info', 'Cette fonctionnalité sera disponible prochainement.');
+        const topicId = topic.getAttribute('data-topic');
+        if (topicId) {
+          window.location.href = `forum-topic.html?id=${encodeURIComponent(topicId)}`;
+        } else {
+          window.location.href = 'forum.html';
+        }
       });
     });
     const newTopicBtn = document.querySelector('[data-new-topic]');
     if (newTopicBtn) {
-      newTopicBtn.addEventListener('click', () => showAlert('info', 'Cette fonctionnalité sera disponible prochainement.'));
+      newTopicBtn.addEventListener('click', () => {
+        window.location.href = 'forum-create.html';
+      });
     }
   }
 
@@ -299,6 +383,50 @@
     });
   }
 
+  // ===== Navigation Auth State =====
+  // Seul l'ULTRA_ADMIN voit les liens Administration.
+  // Tous les autres utilisateurs gardent le nav par défaut (Connexion + Espace Membre).
+  async function initNavAuth() {
+    if (!window.Api) return;
+    const token = window.Api.getToken();
+    if (!token) return;
+
+    try {
+      const res = await window.Api.auth.me();
+      const user = res?.data;
+      if (!user || user.role !== 'ULTRA_ADMIN') return;
+
+      // — Nav link : remplacer "Connexion" par "Administration" —
+      const navLinks = document.getElementById('navLinks');
+      if (navLinks) {
+        const loginLink = Array.from(navLinks.querySelectorAll('a')).find(a => a.getAttribute('href') === 'login.html');
+        if (loginLink) {
+          loginLink.href = '../admin-frontend/index.html';
+          loginLink.innerHTML = '🛡️ Administration';
+          loginLink.style.color = 'var(--color-primary)';
+          loginLink.style.fontWeight = '600';
+        }
+      }
+
+      // — Header CTA : remplacer "Espace Membre" par "Administration" —
+      const headerBtn = document.querySelector('.header-actions .btn-cta');
+      if (headerBtn) {
+        headerBtn.href = '../admin-frontend/index.html';
+        headerBtn.innerHTML = '🛡️ Administration';
+      }
+    } catch (e) {
+      // Token invalide → nettoyage silencieux, le nav reste par défaut
+      window.Api.removeToken();
+    }
+  }
+
+  let initialized = false;
+  function safeInit() {
+    if (initialized) return;
+    initialized = true;
+    init();
+  }
+
   function init() {
     initMobileMenu();
     initActiveNav();
@@ -306,14 +434,20 @@
     initFilters();
     initForumInteractions();
     initScrollReveal();
+    initNavAuth();
   }
 
+  document.addEventListener('layout:loaded', () => {
+    safeInit();
+    initMobileMenu();
+    initActiveNav();
+  });
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      document.addEventListener('layout:loaded', init, { once: true });
+      setTimeout(safeInit, 50);
     });
   } else {
-    document.addEventListener('layout:loaded', init, { once: true });
+    setTimeout(safeInit, 50);
   }
 
   window.showAlert = showAlert;

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le Monde du Travail — Redirection…</title>
+    <meta http-equiv="refresh" content="0;url=frontend/index.html">
+    <link rel="icon" type="image/png" href="frontend/logo.png">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #0f172a;
+            color: #f8fafc;
+            text-align: center;
+        }
+        .loader {
+            padding: 2rem;
+        }
+        a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="loader">
+        <p>Redirection vers le site public <a href="frontend/index.html">Le Monde du Travail</a>…</p>
+    </div>
+    <script>
+        location.replace('frontend/index.html');
+    </script>
+</body>
+</html>

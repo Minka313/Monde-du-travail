@@ -1,6 +1,8 @@
 const prisma = require('../config/database');
 const { NotFoundError, ForbiddenError, BadRequestError } = require('../utils/errors');
 const RbacService = require('./rbacService');
+const EmailService = require('./emailService');
+const logger = require('../utils/logger');
 
 class ApprovalService {
   static async createApprovalRequest(data) {
@@ -197,6 +199,26 @@ class ApprovalService {
 
       // Exécuter l'action approuvée
       await this.executeApprovedAction(workflow);
+
+      // Notification email au créateur
+      if (workflow.createdById) {
+        try {
+          const creator = await prisma.user.findUnique({ where: { id: workflow.createdById } });
+          const reviewer = await prisma.user.findUnique({ where: { id: userId } });
+          if (creator && creator.email) {
+            EmailService.notifyApproval({
+              to: creator.email,
+              recipientName: `${creator.firstName} ${creator.lastName}`.trim(),
+              resourceType: workflow.resourceType,
+              title: workflow.comment || workflow.resourceType,
+              reviewerName: reviewer ? `${reviewer.firstName} ${reviewer.lastName}`.trim() : 'Ultra Admin',
+              comment,
+            }).catch(e => logger.warn('Email notify error', { error: e.message }));
+          }
+        } catch (e) {
+          logger.warn('Failed to dispatch approval notification email', { error: e.message });
+        }
+      }
     }
 
     // Log d'audit
@@ -248,6 +270,26 @@ class ApprovalService {
         reviewedAt: new Date(),
       },
     });
+
+    // Notification email au créateur
+    if (workflow.createdById) {
+      try {
+        const creator = await prisma.user.findUnique({ where: { id: workflow.createdById } });
+        const reviewer = await prisma.user.findUnique({ where: { id: userId } });
+        if (creator && creator.email) {
+          EmailService.notifyRejection({
+            to: creator.email,
+            recipientName: `${creator.firstName} ${creator.lastName}`.trim(),
+            resourceType: workflow.resourceType,
+            title: workflow.comment || workflow.resourceType,
+            reviewerName: reviewer ? `${reviewer.firstName} ${reviewer.lastName}`.trim() : 'Ultra Admin',
+            reason: comment,
+          }).catch(e => logger.warn('Email notify error', { error: e.message }));
+        }
+      } catch (e) {
+        logger.warn('Failed to dispatch rejection notification email', { error: e.message });
+      }
+    }
 
     // Log d'audit
     await RbacService.createAuditLog({
@@ -311,6 +353,11 @@ class ApprovalService {
         await prisma.job.update({
           where: { id: workflow.resourceId },
           data: { status: 'PUBLISHED' },
+        });
+      } else if (workflow.resourceType === 'Post' || workflow.resourceType === 'Blog') {
+        await prisma.post.update({
+          where: { id: workflow.resourceId },
+          data: { status: 'PUBLISHED', publishedAt: new Date() },
         });
       }
     }

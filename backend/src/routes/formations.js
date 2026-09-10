@@ -12,8 +12,20 @@ const formationSchema = z.object({
   body: z.object({
     title: z.string().min(3, 'Titre requis'),
     description: z.string().min(10, 'Description requise'),
-    icon: z.string().optional(),
-    category: z.string().max(100).optional(),
+    content: z.string().optional().nullable(),
+    icon: z.string().optional().nullable(),
+    image: z.string().optional().nullable(),
+    category: z.string().max(100).optional().nullable(),
+    startDate: z.string().optional().nullable(),
+    endDate: z.string().optional().nullable(),
+    duration: z.string().optional().nullable(),
+    location: z.string().optional().nullable(),
+    objectives: z.string().optional().nullable(),
+    prerequisites: z.string().optional().nullable(),
+    targetAudience: z.string().optional().nullable(),
+    syllabus: z.any().optional().nullable(),
+    certification: z.string().optional().nullable(),
+    videoUrl: z.string().optional().nullable(),
   }),
 });
 
@@ -27,6 +39,7 @@ const adminGate = [authenticate, AdminApprovalMiddleware.middleware, requireModu
 
 // Routes publiques : uniquement le contenu publié
 router.get('/', formationController.getPublishedFormations);
+router.get('/categories', formationController.getCategories);
 
 // Liste admin (filtres statut / mes créations / recherche) — avant /:id
 router.get('/admin/list', ...adminGate, authorize('formation.read'), formationController.getFormationsForAdmin);

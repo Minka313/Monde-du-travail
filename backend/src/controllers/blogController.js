@@ -1,5 +1,7 @@
 const BlogService = require('../services/blogService');
 const AuditService = require('../services/auditService');
+const ApprovalService = require('../services/approvalService');
+const { BadRequestError } = require('../utils/errors');
 
 class BlogController {
   static async getPosts(req, res, next) {
@@ -11,6 +13,29 @@ class BlogController {
         category,
         search,
         featured
+      });
+
+      res.json({
+        success: true,
+        data: result.posts,
+        pagination: result.pagination
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getPostsForAdmin(req, res, next) {
+    try {
+      const { page, limit, category, search, mine, status } = req.query;
+      const result = await BlogService.getPostsForAdmin({
+        page,
+        limit,
+        category,
+        search,
+        mine,
+        status,
+        userId: req.user.id,
       });
 
       res.json({
@@ -67,7 +92,20 @@ class BlogController {
     try {
       const authorId = req.user.id;
       const post = await BlogService.createPost(req.body, authorId);
-      res.status(201).json({ success: true, message: 'Article créé avec succès', data: post });
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'blog.create',
+        module: 'blog',
+        resource: 'Post',
+        resourceId: post.id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'SUCCESS',
+        metadata: { title: post.title },
+      });
+
+      res.status(201).json({ success: true, message: 'Article créé (brouillon)', data: post });
     } catch (error) {
       next(error);
     }
@@ -77,6 +115,19 @@ class BlogController {
     try {
       const { id } = req.params;
       const post = await BlogService.updatePost(id, req.body);
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'blog.update',
+        module: 'blog',
+        resource: 'Post',
+        resourceId: post.id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'SUCCESS',
+        metadata: { title: post.title },
+      });
+
       res.json({ success: true, message: 'Article mis à jour avec succès', data: post });
     } catch (error) {
       next(error);
@@ -87,7 +138,54 @@ class BlogController {
     try {
       const { id } = req.params;
       await BlogService.deletePost(id);
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'blog.delete',
+        module: 'blog',
+        resource: 'Post',
+        resourceId: id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'DELETED',
+      });
+
       res.json({ success: true, message: 'Article supprimé avec succès' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async submitPost(req, res, next) {
+    try {
+      const { id } = req.params;
+      const post = await BlogService.submitPost(id);
+
+      try {
+        await ApprovalService.createApprovalRequest({
+          resourceType: 'Post',
+          resourceId: post.id,
+          action: 'publish',
+          createdById: req.user.id,
+          comment: `Publication de l'article « ${post.title} »`,
+        });
+      } catch (error) {
+        if (!(error instanceof BadRequestError)) throw error;
+      }
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'blog.submit',
+        module: 'blog',
+        resource: 'Post',
+        resourceId: post.id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'PENDING',
+        metadata: { title: post.title },
+      });
+
+      res.json({ success: true, message: 'Article soumis à validation', data: post });
     } catch (error) {
       next(error);
     }
@@ -97,6 +195,19 @@ class BlogController {
     try {
       const { id } = req.params;
       const post = await BlogService.publishPost(id);
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'blog.publish',
+        module: 'blog',
+        resource: 'Post',
+        resourceId: post.id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'PUBLISHED',
+        metadata: { title: post.title },
+      });
+
       res.json({ success: true, message: 'Article publié avec succès', data: post });
     } catch (error) {
       next(error);
@@ -107,6 +218,19 @@ class BlogController {
     try {
       const { id } = req.params;
       const post = await BlogService.unpublishPost(id);
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'blog.unpublish',
+        module: 'blog',
+        resource: 'Post',
+        resourceId: post.id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'UNPUBLISHED',
+        metadata: { title: post.title },
+      });
+
       res.json({ success: true, message: 'Article dépublié avec succès', data: post });
     } catch (error) {
       next(error);

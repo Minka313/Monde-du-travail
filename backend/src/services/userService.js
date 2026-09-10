@@ -100,8 +100,14 @@ class UserService {
 
   // Mise à jour du profil : liste blanche stricte de champs.
   // (jamais role/isActive/isVerified par ici : endpoints dédiés + permissions)
-  static async updateUser(id, data) {
-    await this.getUserById(id);
+  static async updateUser(id, data, requesterId) {
+    const user = await this.getUserById(id);
+    const ultraEmail = process.env.ULTRA_ADMIN_EMAIL?.trim();
+    if (user.role === 'ULTRA_ADMIN' || (ultraEmail && user.email === ultraEmail)) {
+      if (requesterId && user.id !== requesterId) {
+        throw new ForbiddenError('Impossible de modifier le profil d\'un compte Ultra Admin');
+      }
+    }
     const { firstName, lastName } = data;
 
     return prisma.user.update({
@@ -134,13 +140,13 @@ class UserService {
       throw new NotFoundError('Utilisateur non trouvé');
     }
 
-    if (!active) {
-      if (user.id === requesterId) {
-        throw new ForbiddenError('Impossible de désactiver votre propre compte');
-      }
-      if (user.role === 'ULTRA_ADMIN') {
-        throw new ForbiddenError('Impossible de désactiver un compte Ultra Admin');
-      }
+    const ultraEmail = process.env.ULTRA_ADMIN_EMAIL?.trim();
+    if (user.role === 'ULTRA_ADMIN' || (ultraEmail && user.email === ultraEmail)) {
+      throw new ForbiddenError('Impossible de modifier le statut d\'un compte Ultra Admin');
+    }
+
+    if (!active && user.id === requesterId) {
+      throw new ForbiddenError('Impossible de désactiver votre propre compte');
     }
 
     if (user.isActive === active) {
@@ -180,8 +186,9 @@ class UserService {
       throw new ForbiddenError('Impossible de supprimer votre propre compte');
     }
 
-    if (user.role === 'ULTRA_ADMIN') {
-      throw new ForbiddenError('Impossible de supprimer un compte Ultra Admin');
+    const ultraEmail = process.env.ULTRA_ADMIN_EMAIL?.trim();
+    if (user.role === 'ULTRA_ADMIN' || (ultraEmail && user.email === ultraEmail)) {
+      throw new ForbiddenError('Impossible de supprimer le compte Ultra Admin');
     }
 
     await prisma.user.delete({
