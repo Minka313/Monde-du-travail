@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explorez les métiers et orientations du club Le Monde du Travail : cybersécurité, énergies renouvelables, comptabilité, développement web et plus encore.">
+    <meta name="keywords" content="métiers, orientation, cybersécurité, énergies renouvelables, comptabilité, développement web, emploi">
+    <title>Métiers & Orientation - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <a href="login.html" class="btn-cta">Espace Membre</a>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.png" alt="Logo Le Monde du Travail" class="mobile-nav-logo">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="job.html" aria-current="page">Métiers & Orientation</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="mobile-nav-footer">
+                <a href="login.html" class="btn-mobile-cta">Espace Membre</a>
+                <a href="../admin-frontend/login.html" class="mobile-admin-sublink">Espace Administration &rarr;</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content">
+        <section class="hero hero-visual">
+            <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1400&q=80" alt="Orientation professionnelle" loading="eager">
+            <div class="hero-inner">
+                <div class="hero-content">
+                    <span class="hero-label">Orientation</span>
+                    <h1>Métiers & Orientations</h1>
+                    <p>Découvrez des métiers dans divers domaines pour maximiser vos chances de réussite dans un univers compétitif.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container page-content">
+                <div class="section-header">
+                    <span class="section-label">Explorez</span>
+                    <h2>Explorez votre futur</h2>
+                    <p>Des fiches métiers pour vous aider à choisir la voie qui vous correspond</p>
+                </div>
+
+                <div class="filter-bar" style="margin-bottom: 0.75rem;">
+                    <label for="jobFilter" class="form-label filter-label">Catégorie :</label>
+                    <select id="jobFilter" class="form-select" data-filter="#jobsContainer">
+                        <option value="">Toutes les catégories</option>
+                        <option value="TECH">Technologie & Digital</option>
+                        <option value="SECURITE">Sécurité & Cyber</option>
+                        <option value="FINANCE">Finance & Gestion</option>
+                        <option value="ENERGIE">Énergie & Environnement</option>
+                        <option value="SANTE">Santé</option>
+                        <option value="EDUCATION">Éducation</option>
+                        <option value="AUTRE">Autre</option>
+                    </select>
+                </div>
+
+                <div id="domainPillsContainer" class="domain-pills-bar">
+                    <!-- Généré dynamiquement -->
+                </div>
+
+                <div class="cards-grid" id="jobsContainer">
+                    <p class="text-muted text-center">Chargement des dossiers métiers...</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-alt">
+            <div class="container page-content text-center">
+                <span class="section-label">Besoin d'aide ?</span>
+                <h2 class="mt-1">Besoin d'aide pour choisir votre orientation ?</h2>
+                <p class="text-muted mb-1">Nos conseillers et professionnels en activité sont disponibles pour vous orienter et répondre à vos questions.</p>
+                <a href="forum.html" class="btn btn-primary">Échanger sur le forum</a>
+            </div>
+        </section>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h4>Le Monde du Travail</h4>
+                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigation</h4>
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+            </div>
+            <div class="footer-col">
+                <h4>Ressources</h4>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="blog.html">Blog</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/frontend-api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const container = document.getElementById('jobsContainer');
+        const filter = document.getElementById('jobFilter');
+        const domainPillsContainer = document.getElementById('domainPillsContainer');
+
+        let currentDomain = '';
+        let allJobs = [];
+
+        const jobImages = {
+          TECH: [
+            'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&q=80',
+            'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=80',
+            'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&q=80',
+            'https://images.unsplash.com/photo-1559028012-481c04fa702d?w=600&q=80'
+          ],
+          ENERGIE: [
+            'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&q=80',
+            'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=600&q=80'
+          ],
+          FINANCE: [
+            'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80',
+            'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&q=80'
+          ],
+          SECURITE: [
+            'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=600&q=80',
+            'https://images.unsplash.com/photo-1510511459019-5dda7724fd87?w=600&q=80'
+          ],
+          SANTE: ['https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=600&q=80'],
+          EDUCATION: ['https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&q=80'],
+          AUTRE: ['https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&q=80']
+        };
+
+        function getJobImage(job) {
+          const cat = job.category || 'AUTRE';
+          const list = jobImages[cat] || jobImages['AUTRE'];
+          const idx = Math.abs(String(job.id || '1').split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % list.length;
+          return list[idx];
+        }
+
+        function getYoutubeEmbedUrl(url) {
+          if (!url) return null;
+          try {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) {
+              return `https://www.youtube-nocookie.com/embed/${match[2]}`;
+            }
+          } catch (e) {}
+          return null;
+        }
+
+        const jobsMap = {};
+
+        function openJobDetailModal(job) {
+          const existing = document.getElementById('job-dossier-overlay');
+          if (existing) existing.remove();
+
+          const img = safeUrl(job.image || getJobImage(job), '');
+          const embedUrl = getYoutubeEmbedUrl(job.videoUrl);
+
+          const overlay = document.createElement('div');
+          overlay.id = 'job-dossier-overlay';
+          overlay.className = 'dossier-overlay';
+
+          const skillsArray = Array.isArray(job.skills) ? job.skills : (job.skills ? String(job.skills).split(',').map(s => s.trim()) : []);
+          const subArray = Array.isArray(job.subProfessions) ? job.subProfessions : (job.subProfessions ? String(job.subProfessions).split(',').map(s => s.trim()) : []);
+
+          overlay.innerHTML = `
+            <div class="dossier-modal" role="dialog" aria-modal="true" aria-labelledby="dossier-title-header">
+              <!-- Hero -->
+              <div class="dossier-hero" style="background-image: url('${escapeHtml(img)}');">
+                <div class="dossier-hero-overlay"></div>
+                <button type="button" class="dossier-close-btn" id="dossier-close-x" aria-label="Fermer le dossier">&times;</button>
+                <div class="dossier-hero-content">
+                  <div>
+                    <span class="dossier-domain-pill">
+                      <span>${escapeHtml(job.icon || '💼')}</span>
+                      <span>${escapeHtml(job.domain || job.category || 'Métier')}</span>
+                    </span>
+                  </div>
+                  <h2 class="dossier-title" id="dossier-title-header">${escapeHtml(job.title)}</h2>
+                  <div class="dossier-meta-tags">
+                    ${job.salary ? `<span class="dossier-meta-tag">💰 <strong>${escapeHtml(job.salary)}</strong></span>` : ''}
+                    ${job.location ? `<span class="dossier-meta-tag">📍 ${escapeHtml(job.location)}</span>` : ''}
+                    <span class="dossier-meta-tag">🏷️ Catégorie ${escapeHtml(job.category)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Navigation Tabs -->
+              <div class="dossier-tabs" role="tablist">
+                <button class="dossier-tab active" data-tab="tab-overview" role="tab">📌 Aperçu & Missions</button>
+                <button class="dossier-tab" data-tab="tab-studies" role="tab">🎓 Études & Diplômes</button>
+                <button class="dossier-tab" data-tab="tab-proscons" role="tab">⚖️ Réalités & Débouchés</button>
+                <button class="dossier-tab" data-tab="tab-subprofessions" role="tab">🧭 Sous-métiers (${subArray.length})</button>
+                ${embedUrl ? `<button class="dossier-tab" data-tab="tab-video" role="tab">🎬 Immersion Vidéo</button>` : ''}
+              </div>
+
+              <!-- Content Body -->
+              <div class="dossier-body">
+                <!-- Tab 1: Aperçu & Missions -->
+                <div class="dossier-tab-content active" id="tab-overview">
+                  <div class="dossier-section">
+                    <h3 class="dossier-section-title">En quoi consiste ce métier ?</h3>
+                    <p style="font-size:1.02rem;color:#334155;line-height:1.7;">${escapeHtml(job.description)}</p>
+                  </div>
+
+                  ${job.content ? `
+                    <div class="dossier-section">
+                      <h3 class="dossier-section-title">Missions quotidiennes & Activités clés</h3>
+                      <div class="dossier-text-block">${escapeHtml(job.content)}</div>
+                    </div>
+                  ` : ''}
+
+                  ${skillsArray.length > 0 ? `
+                    <div class="dossier-section">
+                      <h3 class="dossier-section-title">Compétences techniques et humaines recherchées</h3>
+                      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                        ${skillsArray.map(s => `<span style="background:#f1f5f9;color:#334155;font-size:0.85rem;font-weight:600;padding:0.35rem 0.75rem;border-radius:6px;border:1px solid #cbd5e1;">${escapeHtml(s)}</span>`).join('')}
+                      </div>
+                    </div>
+                  ` : ''}
+
+                  ${job.prerequisites ? `
+                    <div class="dossier-section">
+                      <h3 class="dossier-section-title">Prérequis & Profil conseillé</h3>
+                      <div class="dossier-text-block" style="border-left:4px solid #6366f1;">${escapeHtml(job.prerequisites)}</div>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <!-- Tab 2: Études & Cursus -->
+                <div class="dossier-tab-content" id="tab-studies">
+                  <div class="dossier-section">
+                    <h3 class="dossier-section-title">Quelles formations et filières privilégier ?</h3>
+                    <div class="dossier-text-block" style="border-left:4px solid #3b82f6;">
+                      ${job.studies ? escapeHtml(job.studies) : "Ce métier est accessible via des cursus universitaires (Licence, Master), des écoles spécialisées ou des parcours certifiants intensifs. Rapprochez-vous de nos conseillers pour identifier l'école partenaire adaptée à votre profil."}
+                    </div>
+                  </div>
+
+                  <div class="dossier-section" style="background:#f0f9ff;border:1px solid #bae6fd;padding:1.25rem;border-radius:10px;">
+                    <h4 style="color:#0369a1;margin-bottom:0.5rem;font-size:1rem;">💡 Passerelles de formation au sein du Club</h4>
+                    <p style="color:#0c4a6e;font-size:0.9rem;line-height:1.6;margin:0 0 0.85rem 0;">Découvrez les formations professionnelles dispensées par Le Monde du Travail pour acquérir les compétences indispensables à ce poste.</p>
+                    <a href="formations.html?search=${encodeURIComponent(job.title)}" class="btn btn-sm" style="background:#0284c7;color:#fff;display:inline-flex;align-items:center;gap:0.4rem;">
+                      Explorer les formations associées &rarr;
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Tab 3: Avantages & Inconvénients -->
+                <div class="dossier-tab-content" id="tab-proscons">
+                  <div class="dossier-section">
+                    <h3 class="dossier-section-title">La réalité du terrain : ce qu'il faut savoir</h3>
+                    <p style="color:#64748b;font-size:0.9rem;margin-bottom:1rem;">Tout métier comporte ses atouts majeurs et ses exigences spécifiques. Voici une analyse lucide pour vous aider à décider en toute sérénité :</p>
+                    
+                    <div class="pros-cons-grid">
+                      <div class="pros-box">
+                        <h4>✓ Points forts & Avantages</h4>
+                        <p>${job.advantages ? escapeHtml(job.advantages) : "Métier stimulant avec de fortes perspectives d'évolution professionnelle, autonomie d'action et reconnaissance valorisante."}</p>
+                      </div>
+                      <div class="cons-box">
+                        <h4>⚠ Points de vigilance & Contraintes</h4>
+                        <p>${job.disadvantages ? escapeHtml(job.disadvantages) : "Exige un investissement continu, une capacité à gérer les imprévus et une veille permanente face aux évolutions du secteur."}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  ${job.salary ? `
+                    <div class="dossier-section" style="background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:10px;margin-top:1.25rem;">
+                      <h4 style="color:#0f172a;margin-bottom:0.4rem;font-size:0.95rem;">📊 Rémunération indicative</h4>
+                      <p style="font-size:1.15rem;font-weight:700;color:#059669;margin:0;">${escapeHtml(job.salary)}</p>
+                      <span style="font-size:0.8rem;color:#64748b;display:block;margin-top:0.25rem;">* Les grilles varient selon l'expérience, la taille de la structure et les responsabilités d'encadrement.</span>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <!-- Tab 4: Sous-métiers -->
+                <div class="dossier-tab-content" id="tab-subprofessions">
+                  <div class="dossier-section">
+                    <h3 class="dossier-section-title">Spécialisations & Métiers connexes</h3>
+                    <p style="color:#64748b;font-size:0.92rem;margin-bottom:1rem;">Ce domaine offre plusieurs branches d'expertise. Vous pouvez orienter votre carrière vers l'une des spécialisations suivantes :</p>
+                    
+                    ${subArray.length > 0 ? `
+                      <div class="subprofessions-grid">
+                        ${subArray.map(sub => `
+                          <div class="subprofession-chip">
+                            <span>🔹</span>
+                            <span>${escapeHtml(sub)}</span>
+                          </div>
+                        `).join('')}
+                      </div>
+                    ` : `
+                      <p class="text-muted">Des branches de spécialisations transversales sont accessibles selon votre montée en compétences.</p>
+                    `}
+                  </div>
+                </div>
+
+                <!-- Tab 5: Vidéo -->
+                ${embedUrl ? `
+                  <div class="dossier-tab-content" id="tab-video">
+                    <div class="dossier-section">
+                      <h3 class="dossier-section-title">Immersion en vidéo</h3>
+                      <p style="color:#64748b;font-size:0.9rem;margin-bottom:1rem;">Découvrez le quotidien, les enjeux et les témoignages de professionnels en action :</p>
+                      <div class="dossier-video-container">
+                        <iframe src="${embedUrl}" title="Immersion ${escapeHtml(job.title)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                      </div>
+                    </div>
+                  </div>
+                ` : ''}
+              </div>
+
+              <!-- Footer -->
+              <div class="dossier-footer">
+                <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+                  <a href="formations.html" class="btn btn-outline btn-sm">🎓 Voir les formations liées</a>
+                  <a href="forum.html" class="btn btn-outline btn-sm">💬 Poser une question</a>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" id="dossier-close-footer">Fermer le dossier</button>
+              </div>
+            </div>
+          `;
+
+          document.body.appendChild(overlay);
+
+          // Force reflow for transition
+          setTimeout(() => overlay.classList.add('active'), 10);
+
+          // Tab switching
+          overlay.querySelectorAll('.dossier-tab').forEach(tabBtn => {
+            tabBtn.addEventListener('click', () => {
+              overlay.querySelectorAll('.dossier-tab').forEach(b => b.classList.remove('active'));
+              overlay.querySelectorAll('.dossier-tab-content').forEach(c => c.classList.remove('active'));
+
+              tabBtn.classList.add('active');
+              const targetId = tabBtn.getAttribute('data-tab');
+              const targetContent = overlay.querySelector(`#${targetId}`);
+              if (targetContent) targetContent.classList.add('active');
+            });
+          });
+
+          // Close modal
+          const closeModal = () => {
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.remove(), 250);
+          };
+
+          overlay.querySelector('#dossier-close-x').addEventListener('click', closeModal);
+          overlay.querySelector('#dossier-close-footer').addEventListener('click', closeModal);
+          overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeModal();
+          });
+          document.addEventListener('keydown', function escHandler(e) {
+            if (e.key === 'Escape') {
+              closeModal();
+              document.removeEventListener('keydown', escHandler);
+            }
+          });
+        }
+
+        async function loadDomains() {
+          try {
+            const res = await window.Api.jobs.getDomains();
+            const domains = res.data || [];
+            if (!domainPillsContainer) return;
+
+            domainPillsContainer.innerHTML = `
+              <button type="button" class="domain-pill ${currentDomain === '' ? 'active' : ''}" data-domain="">
+                🌟 Tous les dossiers (${allJobs.length})
+              </button>
+              ${domains.map(d => {
+                const count = allJobs.filter(j => j.domain === d).length;
+                return `
+                  <button type="button" class="domain-pill ${currentDomain === d ? 'active' : ''}" data-domain="${escapeHtml(d)}">
+                    📁 ${escapeHtml(d)} ${count > 0 ? `(${count})` : ''}
+                  </button>
+                `;
+              }).join('')}
+            `;
+
+            domainPillsContainer.querySelectorAll('.domain-pill').forEach(btn => {
+              btn.addEventListener('click', () => {
+                domainPillsContainer.querySelectorAll('.domain-pill').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentDomain = btn.getAttribute('data-domain') || '';
+                renderCards();
+              });
+            });
+          } catch (e) {
+            console.warn('Could not load domains', e);
+          }
+        }
+
+        function renderCards() {
+          if (!container) return;
+          const categoryVal = filter ? filter.value : '';
+
+          let filtered = allJobs;
+          if (categoryVal) {
+            filtered = filtered.filter(j => (j.category || '').toUpperCase() === categoryVal.toUpperCase());
+          }
+          if (currentDomain) {
+            filtered = filtered.filter(j => j.domain === currentDomain);
+          }
+
+          if (filtered.length === 0) {
+            container.innerHTML = `
+              <div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;background:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;">
+                <p style="font-size:1.1rem;color:#475569;margin-bottom:0.5rem;">Aucun métier ne correspond aux filtres sélectionnés.</p>
+                <button type="button" class="btn btn-outline btn-sm" id="btn-reset-filters">Réinitialiser les filtres</button>
+              </div>
+            `;
+            const resetBtn = document.getElementById('btn-reset-filters');
+            if (resetBtn) {
+              resetBtn.addEventListener('click', () => {
+                if (filter) filter.value = '';
+                currentDomain = '';
+                if (domainPillsContainer) {
+                  domainPillsContainer.querySelectorAll('.domain-pill').forEach(b => b.classList.remove('active'));
+                  const first = domainPillsContainer.querySelector('.domain-pill');
+                  if (first) first.classList.add('active');
+                }
+                renderCards();
+              });
+            }
+            return;
+          }
+
+          container.innerHTML = filtered.map(job => {
+            const img = safeUrl(job.image || getJobImage(job), '');
+            const skillsPreview = (Array.isArray(job.skills) && job.skills.length > 0)
+              ? `<div style="display:flex;flex-wrap:wrap;gap:0.3rem;margin-top:0.6rem;">
+                  ${job.skills.slice(0, 3).map(s => `<span style="background:#f1f5f9;color:#475569;font-size:0.75rem;padding:0.15rem 0.45rem;border-radius:4px;border:1px solid #e2e8f0;">${escapeHtml(s)}</span>`).join('')}
+                  ${job.skills.length > 3 ? `<span style="font-size:0.75rem;color:#94a3b8;align-self:center;">+${job.skills.length - 3}</span>` : ''}
+                 </div>`
+              : '';
+
+            const domainLabel = job.domain || job.category;
+
+            return `
+              <article class="card job-card" style="display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:transform 0.2s ease, box-shadow 0.2s ease;" data-id="${job.id}">
+                <div>
+                  <div class="card-image-wrap" style="position:relative;">
+                    <img src="${escapeHtml(img)}" alt="${escapeHtml(job.title)}" loading="lazy">
+                    <div class="card-image-overlay"></div>
+                    ${domainLabel ? `
+                      <span style="position:absolute;top:10px;left:10px;background:rgba(15,23,42,0.85);color:#f8fafc;font-size:0.72rem;font-weight:600;padding:0.25rem 0.55rem;border-radius:4px;backdrop-filter:blur(4px);">
+                        📁 ${escapeHtml(domainLabel)}
+                      </span>
+                    ` : ''}
+                  </div>
+                  <div class="card-body">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+                      <span style="font-size:1.4rem;">${escapeHtml(job.icon || '💼')}</span>
+                      ${job.salary ? `<span style="font-size:0.75rem;color:#059669;background:#ecfdf5;font-weight:600;padding:0.2rem 0.5rem;border-radius:4px;">${escapeHtml(job.salary.split('-')[0])}</span>` : ''}
+                    </div>
+                    <h3 style="margin-top:0.25rem;font-size:1.15rem;color:#0f172a;">${escapeHtml(job.title)}</h3>
+                    <p style="color:#64748b;font-size:0.88rem;line-height:1.55;margin-top:0.35rem;">${escapeHtml(job.description)}</p>
+                    ${skillsPreview}
+                  </div>
+                </div>
+                <div style="padding:0 1.25rem 1.25rem 1.25rem;">
+                  <button type="button" class="btn btn-outline btn-sm btn-job-detail" data-id="${job.id}" style="width:100%;text-align:center;padding:0.65rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
+                    <span>Consulter le dossier complet</span>
+                    <span>&rarr;</span>
+                  </button>
+                </div>
+              </article>
+            `;
+          }).join('');
+
+          // Wire click on whole card or button
+          container.querySelectorAll('.job-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+              const id = card.getAttribute('data-id');
+              const j = jobsMap[id];
+              if (j) openJobDetailModal(j);
+            });
+          });
+        }
+
+        async function loadAllJobs() {
+          try {
+            const res = await window.Api.jobs.getAll();
+            const jobs = res.data || [];
+
+            const seen = new Set();
+            allJobs = jobs.filter(job => {
+              const key = `${job.title}-${job.category}`;
+              if (seen.has(key)) return false;
+              seen.add(key);
+              return true;
+            });
+
+            allJobs.forEach(j => { jobsMap[j.id] = j; });
+
+            await loadDomains();
+            renderCards();
+
+            // Check if URL specifies job or domain
+            const urlParams = new URLSearchParams(window.location.search);
+            const domainParam = urlParams.get('domain');
+            const jobParam = urlParams.get('job');
+
+            if (domainParam) {
+              currentDomain = domainParam;
+              if (domainPillsContainer) {
+                const targetPill = Array.from(domainPillsContainer.querySelectorAll('.domain-pill')).find(p => p.getAttribute('data-domain') === domainParam);
+                if (targetPill) {
+                  domainPillsContainer.querySelectorAll('.domain-pill').forEach(b => b.classList.remove('active'));
+                  targetPill.classList.add('active');
+                }
+              }
+              renderCards();
+            }
+
+            if (jobParam) {
+              const matched = allJobs.find(j => j.id === jobParam || j.title.toLowerCase().includes(jobParam.toLowerCase()));
+              if (matched) openJobDetailModal(matched);
+            }
+
+          } catch (err) {
+            if (container) {
+              container.innerHTML = '<p class="text-muted text-center">Impossible de charger les dossiers métiers. Veuillez réessayer ultérieurement.</p>';
+            }
+          }
+        }
+
+        if (filter) {
+          filter.addEventListener('change', renderCards);
+        }
+
+        await loadAllJobs();
+      });
+    </script>
+</body>
+</html>

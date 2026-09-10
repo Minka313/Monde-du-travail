@@ -4,14 +4,29 @@
   async function includeFragment(selector, url) {
     const el = document.querySelector(selector);
     if (!el) return Promise.resolve();
+    // Ne pas recharger si l'élément possède déjà la structure moderne complète
+    if (selector.includes('nav') && el.querySelector('.mobile-nav-menu')) {
+      return Promise.resolve();
+    }
+    if (!selector.includes('nav') && el.children && el.children.length > 0 && el.textContent.trim().length > 0) {
+      return Promise.resolve();
+    }
     try {
       const response = await fetch(url);
       if (!response.ok) throw new Error('Fragment load failed: ' + response.status);
       const html = await response.text();
       el.outerHTML = html;
+      if (selector.includes('nav')) {
+        const current = window.location.pathname.split('/').pop() || 'index.html';
+        document.querySelectorAll('.mobile-nav-menu a, .nav-links a').forEach(link => {
+          if (link.getAttribute('href') === current) {
+            link.setAttribute('aria-current', 'page');
+          }
+        });
+      }
       return Promise.resolve();
     } catch (error) {
-      console.error(error);
+      // Ignorer silencieusement si inaccessible (ex. protocole file://)
       return Promise.resolve();
     }
   }

@@ -8,8 +8,19 @@ class FormationController {
   // Liste publique : uniquement le contenu publié
   static async getPublishedFormations(req, res, next) {
     try {
-      const formations = await formationService.getPublishedFormations(req.query.category);
+      const filter = req.query.category || req.query.search ? req.query : undefined;
+      const formations = await formationService.getPublishedFormations(filter);
       res.json({ success: true, data: formations });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Liste des catégories existantes
+  static async getCategories(req, res, next) {
+    try {
+      const categories = await formationService.getCategories();
+      res.json({ success: true, data: categories });
     } catch (error) {
       next(error);
     }

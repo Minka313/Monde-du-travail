@@ -31,23 +31,35 @@
 </header>
 
 <nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
     <div class="nav-inner">
         <div class="nav-links" id="navLinks">
-            <a href="index.html">Accueil</a>
-            <a href="about.html" aria-current="page">À Propos</a>
-            <a href="job.html">Métiers & Orientation</a>
-            <a href="formations.html">Formations</a>
-            <a href="forum.html">Forum</a>
-            <a href="blog.html">Blog</a>
-            <a href="login.html">Connexion</a>
-
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.png" alt="Logo Le Monde du Travail" class="mobile-nav-logo">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html" aria-current="page">À Propos</a>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="mobile-nav-footer">
+                <a href="login.html" class="btn-mobile-cta">Espace Membre</a>
+                <a href="../admin-frontend/login.html" class="mobile-admin-sublink">Espace Administration &rarr;</a>
+            </div>
         </div>
     </div>
 </nav>
 
     <main id="main-content">
         <section class="hero hero-visual">
-            <img src="photo/contexte de création.jpeg" alt="Équipe et collaboration" loading="eager">
+            <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1400&q=80" alt="Équipe et collaboration" loading="eager">
             <div class="hero-inner">
                 <div class="hero-content">
                     <span class="hero-label">Notre Histoire</span>
@@ -65,7 +77,7 @@
                         <h2>Contexte de création</h2>
                         <p>Le club a été fondé sur un constat simple : le monde professionnel est de plus en plus compétitif. Il est devenu vital pour les jeunes de se préparer très tôt pour affronter ces réalités. Le Monde du Travail est né de la volonté de créer un espace d'apprentissage, d'échange et de préparation concret pour la jeunesse.</p>
                     </div>
-                    <img src="photo/contexte de création.jpeg" alt="Équipe et collaboration" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1400&q=80" alt="Équipe et collaboration" loading="lazy">
                 </div>
 
                 <div class="split-section split-section--reverse animate-in animate-delay-1">
@@ -74,7 +86,7 @@
                         <h2>Notre Mission & Motivations</h2>
                         <p>Notre mission est de devenir une <span class="highlight">plateforme de vulgarisation</span> de l'idéologie du travail. Nous voulons former le maximum de jeunes aux compétences de demain : leadership, communication, esprit critique, innovation et citoyenneté active.</p>
                     </div>
-                    <img src="photo/Citoyenneté.jpeg" alt="Mission et motivations" loading="lazy">
+                    <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="Mission et motivations" loading="lazy">
                 </div>
             </div>
         </section>

@@ -1,4 +1,5 @@
 const forumService = require('../services/forumService');
+const AuditService = require('../services/auditService');
 
 class ForumController {
   static async getAllTopics(req, res, next) {
@@ -66,6 +67,20 @@ class ForumController {
   static async deleteTopic(req, res, next) {
     try {
       await forumService.deleteTopic(req.params.id);
+
+      if (req.user) {
+        await AuditService.log({
+          userId: req.user.id,
+          action: 'forum.delete',
+          module: 'forum',
+          resource: 'Topic',
+          resourceId: req.params.id,
+          ipAddress: req.ip,
+          userAgent: req.get('user-agent'),
+          result: 'DELETED',
+        });
+      }
+
       res.json({
         success: true,
         message: 'Sujet supprimé',
@@ -78,6 +93,21 @@ class ForumController {
   static async togglePin(req, res, next) {
     try {
       const topic = await forumService.togglePin(req.params.id);
+
+      if (req.user) {
+        await AuditService.log({
+          userId: req.user.id,
+          action: 'forum.pin',
+          module: 'forum',
+          resource: 'Topic',
+          resourceId: topic.id,
+          ipAddress: req.ip,
+          userAgent: req.get('user-agent'),
+          result: topic.isPinned ? 'PINNED' : 'UNPINNED',
+          metadata: { title: topic.title, isPinned: topic.isPinned },
+        });
+      }
+
       res.json({
         success: true,
         message: topic.isPinned ? 'Sujet épinglé' : 'Sujet désépinglé',
@@ -91,6 +121,21 @@ class ForumController {
   static async toggleResolved(req, res, next) {
     try {
       const topic = await forumService.toggleResolved(req.params.id);
+
+      if (req.user) {
+        await AuditService.log({
+          userId: req.user.id,
+          action: 'forum.resolve',
+          module: 'forum',
+          resource: 'Topic',
+          resourceId: topic.id,
+          ipAddress: req.ip,
+          userAgent: req.get('user-agent'),
+          result: topic.isResolved ? 'RESOLVED' : 'UNRESOLVED',
+          metadata: { title: topic.title, isResolved: topic.isResolved },
+        });
+      }
+
       res.json({
         success: true,
         message: topic.isResolved ? 'Sujet marqué comme résolu' : 'Sujet marqué comme non résolu',
@@ -104,6 +149,21 @@ class ForumController {
   static async toggleLock(req, res, next) {
     try {
       const topic = await forumService.toggleLock(req.params.id);
+
+      if (req.user) {
+        await AuditService.log({
+          userId: req.user.id,
+          action: 'forum.lock',
+          module: 'forum',
+          resource: 'Topic',
+          resourceId: topic.id,
+          ipAddress: req.ip,
+          userAgent: req.get('user-agent'),
+          result: topic.isLocked ? 'LOCKED' : 'UNLOCKED',
+          metadata: { title: topic.title, isLocked: topic.isLocked },
+        });
+      }
+
       res.json({
         success: true,
         message: topic.isLocked ? 'Sujet verrouillé' : 'Sujet déverrouillé',

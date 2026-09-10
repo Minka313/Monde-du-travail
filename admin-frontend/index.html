@@ -2,33 +2,57 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="robots" content="noindex, nofollow">
-    <title>Administration - Le Monde du Travail</title>
-    <link rel="icon" type="image/png" href="../Création de site/logo.png">
-    <link rel="stylesheet" href="css/admin.css">
+    <title>Administration — Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="../frontend/logo.png">
+    <link rel="stylesheet" href="css/admin.css?v=2.1.0">
 </head>
 <body>
     <div id="admin-root" class="hidden">
-        <aside class="sidebar">
-            <div class="sidebar-header">Admin</div>
+        <!-- Sidebar Navigation (Drawer on mobile) -->
+        <aside class="sidebar" id="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <img src="../frontend/logo.png" alt="Logo" class="sidebar-logo">
+                    <span>Admin LMT</span>
+                </div>
+                <button class="sidebar-close-btn" id="admin-sidebar-close" aria-label="Fermer le menu">&times;</button>
+            </div>
             <nav class="sidebar-nav" id="admin-nav"></nav>
             <div class="sidebar-footer">
-                <button class="nav-item" id="admin-logout-btn">Déconnexion</button>
+                <button class="nav-item nav-logout-item" id="admin-logout-btn">
+                    <span>🚪</span> Déconnexion
+                </button>
             </div>
         </aside>
+
+        <!-- Backdrop for mobile drawer -->
+        <div id="admin-sidebar-backdrop" class="sidebar-backdrop"></div>
+
+        <!-- Main Content Area -->
         <div class="main">
             <header class="topbar">
-                <div style="font-weight:600;" id="admin-page-title">Tableau de bord</div>
-                <div style="display:flex;align-items:center;gap:1rem;">
-                    <span style="color:var(--color-muted);font-size:0.9rem;" id="admin-user-name"></span>
-                    <a href="../Création de site/index.html" class="btn btn-ghost">Voir le site</a>
+                <div class="topbar-left">
+                    <button class="admin-menu-toggle" id="admin-sidebar-toggle" aria-label="Ouvrir le menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <h1 class="topbar-title" id="admin-page-title">Tableau de bord</h1>
+                </div>
+                <div class="topbar-actions">
+                    <span class="topbar-user" id="admin-user-name"></span>
+                    <a href="../frontend/index.html" class="btn btn-ghost btn-sm topbar-site-link">
+                        <span>🌐</span> <span class="site-link-text">Voir le site</span>
+                    </a>
                 </div>
             </header>
             <main class="content" id="admin-content"></main>
         </div>
     </div>
 
+    <!-- Loading Screen -->
     <div id="admin-loading" class="loading-screen">
         <div style="text-align:center;">
             <div style="font-size:1.25rem;font-weight:600;">Vérification de la session...</div>
@@ -36,16 +60,25 @@
         </div>
     </div>
 
+    <!-- Access Denied Screen -->
     <div id="admin-denied" class="access-denied-screen hidden">
         <div style="text-align:center;max-width:420px;padding:2rem;">
             <h2 style="color:var(--color-danger);">Accès refusé</h2>
             <p style="color:var(--color-muted);margin:1rem 0;">Votre compte n'a pas les droits nécessaires pour accéder à cette plateforme.</p>
-            <a href="../Création de site/index.html" class="btn">Retour au site</a>
+            <a href="../frontend/index.html" class="btn">Retour au site</a>
         </div>
     </div>
 
     <script src="js/admin-auth.js"></script>
     <script src="js/admin-app.js"></script>
     <script src="js/admin-pages.js"></script>
+    <script src="js/admin-router.js"></script>
+    <script>
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => window.AdminRouter.init());
+        } else {
+            window.AdminRouter.init();
+        }
+    </script>
 </body>
 </html>

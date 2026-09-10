@@ -80,9 +80,21 @@ describe('Critical actions - reauth & garde-fous', () => {
       secondUltraAssignmentId = assignment.id;
     });
 
-    it('donne aussi un rôle ultra au requérant pour la suite (self-revoke test)', async () => {
+    it('refuse l auto-attribution du rôle ultra', async () => {
       const ultraRole = await prisma.adminRole.findUnique({ where: { name: 'ULTRA_ADMIN' } });
-      const assignment = await RbacService.assignRoleToUser(ultra.id, ultraRole.id, ultra.id);
+      await expect(
+        RbacService.assignRoleToUser(ultra.id, ultraRole.id, ultra.id)
+      ).rejects.toThrow(/s.?attribuer soi-même/i);
+
+      const assignment = await prisma.userAdminRole.create({
+        data: {
+          userId: ultra.id,
+          adminRoleId: ultraRole.id,
+          assignedBy: ultra.id,
+          status: 'APPROVED',
+          isActive: true,
+        },
+      });
       ultraOwnAssignmentId = assignment.id;
     });
 

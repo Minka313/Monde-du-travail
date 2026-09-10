@@ -8,8 +8,19 @@ class JobController {
   // Liste publique : uniquement le contenu publié
   static async getPublishedJobs(req, res, next) {
     try {
-      const jobs = await jobService.getPublishedJobs(req.query.category);
+      const filter = req.query.category || req.query.domain || req.query.search ? req.query : undefined;
+      const jobs = await jobService.getPublishedJobs(filter);
       res.json({ success: true, data: jobs });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Liste des domaines existants
+  static async getDomains(req, res, next) {
+    try {
+      const domains = await jobService.getDomains();
+      res.json({ success: true, data: domains });
     } catch (error) {
       next(error);
     }

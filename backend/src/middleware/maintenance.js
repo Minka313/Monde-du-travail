@@ -26,20 +26,21 @@ function resetMaintenanceCache() {
 
 // Routes toujours accessibles (connexion et paramètres pour sortir du mode)
 const ALWAYS_ALLOWED = [
-  '/api/auth/login',
-  '/api/auth/refresh',
-  '/api/auth/me',
-  '/api/auth/logout',
-  '/api/settings',
+  '/auth/login',
+  '/auth/register',
+  '/auth/refresh',
+  '/auth/me',
+  '/auth/logout',
+  '/settings',
 ];
 
 const maintenanceMode = async (req, res, next) => {
+  if (ALWAYS_ALLOWED.some(p => req.path === p || req.path.startsWith(p + '/'))) {
+    return next();
+  }
+
   try {
     if (!(await isMaintenanceActive())) return next();
-
-    if (ALWAYS_ALLOWED.some(p => req.path === p || req.path.startsWith(p + '/'))) {
-      return next();
-    }
 
     // Les administrateurs autorisés passent : ils doivent pouvoir intervenir
     const authHeader = req.headers.authorization;
@@ -58,7 +59,10 @@ const maintenanceMode = async (req, res, next) => {
       }
     }
   } catch (error) {
-    // Token invalide ou erreur : traité comme visiteur
+    if (error.code?.startsWith('P') || error.name === 'PrismaClientInitializationError') {
+      return next(error);
+    }
+    // Token invalide : traité comme visiteur
   }
 
   return res.status(503).json({

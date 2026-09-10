@@ -8,12 +8,14 @@ PROJET="$(cd "$(dirname "$0")/.." && pwd)"
 source_env="$PROJET/backend/.env"
 dest="$PROJET/backups"
 
-# Extraction de DATABASE_URL depuis le .env (sans l'exposer dans les logs)
-if [[ ! -f "$source_env" ]]; then
-  echo "❌ $source_env introuvable" >&2
+# Extraction robuste de DATABASE_URL depuis le .env (avec ou sans guillemets)
+raw_url=$(grep -E '^[[:space:]]*DATABASE_URL=' "$source_env" | head -1 | sed -E 's/^[[:space:]]*DATABASE_URL=["'"'"']?([^"'"'"']+)["'"'"']?[[:space:]]*$/\1/')
+DB_URL=$(echo "$raw_url" | sed -E 's/([?&])schema=public(&|$)/\1/' | sed 's/[?&]$//')
+
+if [[ -z "$DB_URL" ]]; then
+  echo "❌ DATABASE_URL introuvable ou invalide dans $source_env" >&2
   exit 1
 fi
-DB_URL=$(grep '^DATABASE_URL' "$source_env" | head -1 | cut -d'"' -f2 | sed 's/?schema=public//')
 
 mkdir -p "$dest"
 horodatage=$(date +%Y%m%d-%H%M%S)

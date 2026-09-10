@@ -81,42 +81,38 @@ class ForumService {
   }
 
   static async getTopicById(id) {
-    const topic = await prisma.topic.findUnique({
-      where: { id },
-      include: {
-        author: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-          },
-        },
-        replies: {
-          include: {
-            author: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-              },
+    try {
+      return await prisma.topic.update({
+        where: { id },
+        data: { views: { increment: 1 } },
+        include: {
+          author: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
             },
           },
-          orderBy: { createdAt: 'asc' },
+          replies: {
+            include: {
+              author: {
+                select: {
+                  id: true,
+                  firstName: true,
+                  lastName: true,
+                },
+              },
+            },
+            orderBy: { createdAt: 'asc' },
+          },
         },
-      },
-    });
-
-    if (!topic) {
-      throw new NotFoundError('Sujet non trouvé');
+      });
+    } catch (err) {
+      if (err.code === 'P2025') {
+        throw new NotFoundError('Sujet non trouvé');
+      }
+      throw err;
     }
-
-    // Incrémenter les vues
-    await prisma.topic.update({
-      where: { id },
-      data: { views: { increment: 1 } },
-    });
-
-    return topic;
   }
 
   static async createTopic(data, userId) {
@@ -153,31 +149,31 @@ class ForumService {
       throw new BadRequestError('Ce sujet est verrouillé et n\'accepte plus de réponses');
     }
 
-    const reply = await prisma.reply.create({
-      data: {
-        ...data,
-        authorId: userId,
-        topicId,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
+    const [reply] = await prisma.$transaction([
+      prisma.reply.create({
+        data: {
+          ...data,
+          authorId: userId,
+          topicId,
+        },
+        include: {
+          author: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+            },
           },
         },
-      },
-    });
-
-    // Mettre à jour le compteur de réponses et la dernière activité
-    await prisma.topic.update({
-      where: { id: topicId },
-      data: {
-        replyCount: { increment: 1 },
-        lastActivityAt: new Date(),
-      },
-    });
+      }),
+      prisma.topic.update({
+        where: { id: topicId },
+        data: {
+          replyCount: { increment: 1 },
+          lastActivityAt: new Date(),
+        },
+      }),
+    ]);
 
     return reply;
   }

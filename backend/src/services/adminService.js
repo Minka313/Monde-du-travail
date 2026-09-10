@@ -1,7 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = require('../config/database');
 const RbacService = require('./rbacService');
-const { NotFoundError, ForbiddenError } = require('../utils/errors');
+const { NotFoundError, ForbiddenError, BadRequestError } = require('../utils/errors');
 
 class AdminService {
   // Garde-fous communs aux actions destructrices sur une attribution :
@@ -21,13 +20,25 @@ class AdminService {
       throw new NotFoundError('Administrateur non trouvé');
     }
 
+    if (reviewerId && assignment.user.id === reviewerId && assignment.role.name === 'ULTRA_ADMIN') {
+      throw new ForbiddenError('Impossible de révoquer son propre rôle Ultra Admin');
+    }
+
+    const ultraEmail = process.env.ULTRA_ADMIN_EMAIL?.trim();
+    if (ultraEmail && assignment.user.email.toLowerCase() === ultraEmail.toLowerCase()) {
+      throw new ForbiddenError(`Impossible de ${action || 'modifier'} le compte ou le rôle de l'Ultra Admin`);
+    }
+
     if (assignment.role.name === 'ULTRA_ADMIN') {
-      if (assignment.userId === reviewerId) {
-        throw new ForbiddenError(`Impossible de ${action} votre propre rôle Ultra Admin`);
-      }
-      const otherUltras = await RbacService.countOtherUltras(assignment.userId);
-      if (otherUltras === 0) {
-        throw new ForbiddenError('Impossible de retirer le dernier Ultra Admin de la plateforme');
+      const remainingCount = await prisma.userAdminRole.count({
+        where: {
+          role: { name: 'ULTRA_ADMIN' },
+          status: 'APPROVED',
+          id: { not: adminRoleId },
+        },
+      });
+      if (remainingCount < 1) {
+        throw new ForbiddenError('Impossible de révoquer le dernier rôle Ultra Admin');
       }
     }
 
@@ -112,13 +123,21 @@ class AdminService {
   }
 
   static async approveAdmin(adminRoleId, reviewedById) {
+    const reviewer = await prisma.user.findUnique({
+      where: { id: reviewedById },
+      select: { role: true },
+    });
+    if (!reviewer || reviewer.role !== 'ULTRA_ADMIN') {
+      throw new ForbiddenError('Seul l\'Ultra Admin est habilité à approuver un administrateur');
+    }
+
     const userAdminRole = await prisma.userAdminRole.findUnique({
       where: { id: adminRoleId },
       include: { user: true, role: true },
     });
 
     if (!userAdminRole) {
-      throw new Error('Administrateur non trouvé');
+      throw new NotFoundError('Administrateur non trouvé');
     }
 
     const updated = await prisma.userAdminRole.update({
@@ -144,13 +163,7 @@ class AdminService {
   }
 
   static async rejectAdmin(adminRoleId, reviewedById, reason) {
-    const userAdminRole = await prisma.userAdminRole.findUnique({
-      where: { id: adminRoleId },
-    });
-
-    if (!userAdminRole) {
-      throw new Error('Administrateur non trouvé');
-    }
+    await this.guardCriticalAssignment(adminRoleId, reviewedById, 'rejeter');
 
     const updated = await prisma.userAdminRole.update({
       where: { id: adminRoleId },
@@ -248,6 +261,113 @@ class AdminService {
     await RbacService.syncUserRole(updated.userId);
 
     return updated;
+  }
+
+  static async createAdmin(data, createdById) {
+    const { email, password, firstName, lastName } = data;
+    const roleName = data.roleName || data.role;
+
+    if (!email || !password || !firstName || !lastName || !roleName) {
+      throw new BadRequestError('Tous les champs sont obligatoires (email, mot de passe, prénom, nom, rôle)');
+    }
+
+    if (password.length < 8) {
+      throw new BadRequestError('Le mot de passe doit contenir au moins 8 caractères');
+    }
+
+    const bcrypt = require('bcrypt');
+    const targetRole = await prisma.adminRole.findUnique({
+      where: { name: roleName },
+    });
+
+    if (!targetRole) {
+      throw new NotFoundError(`Rôle administratif « ${roleName} » introuvable`);
+    }
+
+    if (targetRole.name === 'ULTRA_ADMIN') {
+      throw new ForbiddenError('Impossible de créer un compte Ultra Admin par ce formulaire');
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Rechercher si l'utilisateur existe déjà
+    let user = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+
+    if (user) {
+      if (user.role === 'ULTRA_ADMIN') {
+        throw new ForbiddenError('Ce compte est déjà Ultra Admin et ne peut être modifié');
+      }
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          firstName,
+          lastName,
+          password: hashedPassword,
+          role: 'ADMIN',
+          isActive: true,
+          isVerified: true,
+        },
+      });
+    } else {
+      user = await prisma.user.create({
+        data: {
+          email: normalizedEmail,
+          password: hashedPassword,
+          firstName,
+          lastName,
+          role: 'ADMIN',
+          isActive: true,
+          isVerified: true,
+        },
+      });
+    }
+
+    // Assigner le rôle fonctionnel demandé
+    const assignment = await prisma.userAdminRole.upsert({
+      where: {
+        userId_adminRoleId: {
+          userId: user.id,
+          adminRoleId: targetRole.id,
+        },
+      },
+      update: {
+        status: 'APPROVED',
+        isActive: true,
+        assignedBy: createdById,
+        reviewedBy: createdById,
+        reviewedAt: new Date(),
+      },
+      create: {
+        userId: user.id,
+        adminRoleId: targetRole.id,
+        assignedBy: createdById,
+        status: 'APPROVED',
+        isActive: true,
+        reviewedBy: createdById,
+        reviewedAt: new Date(),
+      },
+      include: {
+        user: { select: { id: true, email: true, firstName: true, lastName: true, role: true, isActive: true } },
+        role: { select: { id: true, name: true, description: true } },
+      },
+    });
+
+    await RbacService.syncUserRole(user.id);
+
+    return assignment;
+  }
+
+  static async getAdminAuditLogs(adminUserId, limit = 25) {
+    const logs = await prisma.auditLog.findMany({
+      where: { userId: adminUserId },
+      orderBy: { createdAt: 'desc' },
+      take: parseInt(limit, 10) || 25,
+      include: {
+        user: { select: { id: true, email: true, firstName: true, lastName: true } },
+      },
+    });
+    return logs;
   }
 
   static async getStats() {

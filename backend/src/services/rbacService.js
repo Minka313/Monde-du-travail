@@ -70,9 +70,17 @@ class RbacService {
   static async syncUserRole(userId) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, role: true },
+      select: { id: true, role: true, email: true },
     });
     if (!user) return;
+
+    const ultraEmail = process.env.ULTRA_ADMIN_EMAIL?.trim();
+    if (ultraEmail && user.email === ultraEmail) {
+      if (user.role !== 'ULTRA_ADMIN') {
+        await prisma.user.update({ where: { id: userId }, data: { role: 'ULTRA_ADMIN' } });
+      }
+      return;
+    }
 
     const effectiveAssignments = await prisma.userAdminRole.findMany({
       where: { userId, ...EFFECTIVE_ASSIGNMENT_WHERE },
@@ -88,19 +96,16 @@ class RbacService {
       return;
     }
 
-    // Perte du statut ultra (la révocation du dernier ultra est bloquée en amont)
-    if (user.role === 'ULTRA_ADMIN') {
-      await prisma.user.update({ where: { id: userId }, data: { role: 'ADMIN' } });
-      user.role = 'ADMIN';
-      logger.info('Utilisateur rétrogradé depuis ULTRA_ADMIN (plus de rôle ultra effectif)', { userId });
-    }
-
-    if (effectiveAssignments.length > 0 && user.role !== 'ADMIN') {
-      await prisma.user.update({ where: { id: userId }, data: { role: 'ADMIN' } });
-      logger.info('Utilisateur promu ADMIN (rôle admin effectif)', { userId });
-    } else if (effectiveAssignments.length === 0 && user.role === 'ADMIN') {
-      await prisma.user.update({ where: { id: userId }, data: { role: 'MEMBER' } });
-      logger.info('Utilisateur rétrogradé MEMBER (plus aucun rôle admin effectif)', { userId });
+    if (effectiveAssignments.length > 0) {
+      if (user.role !== 'ADMIN') {
+        await prisma.user.update({ where: { id: userId }, data: { role: 'ADMIN' } });
+        logger.info('Utilisateur promu ADMIN (rôle admin effectif)', { userId });
+      }
+    } else {
+      if (user.role !== 'MEMBER') {
+        await prisma.user.update({ where: { id: userId }, data: { role: 'MEMBER' } });
+        logger.info('Utilisateur rétrogradé MEMBER (plus aucun rôle admin effectif)', { userId });
+      }
     }
   }
 
@@ -299,14 +304,29 @@ class RbacService {
   }
 
   static async assignRoleToUser(userId, adminRoleId, assignedBy, expiresAt) {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const [user, actor] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId } }),
+      prisma.user.findUnique({ where: { id: assignedBy }, select: { role: true } }),
+    ]);
     if (!user) {
       throw new NotFoundError('Utilisateur non trouvé');
+    }
+    if (!actor) {
+      throw new ForbiddenError('L\'acteur de l\'attribution est introuvable');
     }
 
     const role = await prisma.adminRole.findUnique({ where: { id: adminRoleId } });
     if (!role) {
       throw new NotFoundError('Rôle non trouvé');
+    }
+
+    if (role.name === 'ULTRA_ADMIN') {
+      if (userId === assignedBy) {
+        throw new ForbiddenError('Impossible de s\'attribuer soi-même le rôle ULTRA_ADMIN');
+      }
+      if (actor.role !== 'ULTRA_ADMIN') {
+        throw new ForbiddenError('Seul un ULTRA_ADMIN peut attribuer le rôle ULTRA_ADMIN');
+      }
     }
 
     // Les rôles soumis à approbation restent PENDING jusqu'à validation ;
@@ -356,6 +376,20 @@ class RbacService {
   }
 
   static async removeRoleFromUser(userId, adminRoleId) {
+    const [user, role] = await Promise.all([
+      prisma.user.findUnique({ where: { id: userId }, select: { role: true, email: true } }),
+      prisma.adminRole.findUnique({ where: { id: adminRoleId }, select: { name: true } }),
+    ]);
+
+    const ultraEmail = process.env.ULTRA_ADMIN_EMAIL?.trim();
+    if (
+      user?.role === 'ULTRA_ADMIN' ||
+      role?.name === 'ULTRA_ADMIN' ||
+      (ultraEmail && user?.email === ultraEmail)
+    ) {
+      throw new ForbiddenError('Impossible de retirer le rôle de l\'Ultra Admin');
+    }
+
     await prisma.userAdminRole.delete({
       where: {
         userId_adminRoleId: {

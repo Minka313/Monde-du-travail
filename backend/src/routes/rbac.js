@@ -45,7 +45,7 @@ router.put('/roles/:id', authorize('admins.update'), requireReauth, validate(rol
 router.delete('/roles/:id', authorize('admins.delete'), requireReauth, RbacController.deleteRole);
 
 router.get('/users/:id/roles', authorize('admins.read'), RbacController.getUserRoles);
-router.post('/users/roles', authorize('admins.assign'), validate(assignRoleSchema), RbacController.assignRole);
+router.post('/users/roles', authorize('admins.assign'), validate(assignRoleSchema), requireReauth, RbacController.assignRole);
 router.post('/users/roles/remove', authorize('admins.assign'), validate(assignRoleSchema), RbacController.removeRole);
 
 router.get('/audit-logs', authorize('logs.read'), RbacController.getAuditLogs);

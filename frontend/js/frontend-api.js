@@ -67,6 +67,28 @@
     localStorage.removeItem('accessToken');
   }
 
+  function escapeHtml(value) {
+    if (value == null) return '';
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function safeUrl(value, fallback = '') {
+    try {
+      const url = new URL(value, window.location.href);
+      return ['http:', 'https:'].includes(url.protocol) ? url.href : fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  window.escapeHtml = escapeHtml;
+  window.safeUrl = safeUrl;
+
   async function refreshToken() {
     if (isRefreshing) return;
     isRefreshing = true;
@@ -211,16 +233,36 @@ return headers;
 
     // Métiers
     jobs: {
-      getAll: (category) => {
-        const query = category ? `?category=${encodeURIComponent(category)}` : '';
-        return apiRequestWithRefresh(`/jobs${query}`);
+      getAll: (params = {}) => {
+        if (typeof params === 'string') {
+          const q = params ? `?category=${encodeURIComponent(params)}` : '';
+          return apiRequestWithRefresh(`/jobs${q}`);
+        }
+        const query = new URLSearchParams();
+        if (params.category) query.set('category', params.category);
+        if (params.domain) query.set('domain', params.domain);
+        if (params.search) query.set('search', params.search);
+        const qs = query.toString();
+        return apiRequestWithRefresh(`/jobs${qs ? `?${qs}` : ''}`);
       },
+      getDomains: () => apiRequestWithRefresh('/jobs/domains'),
       getById: (id) => apiRequestWithRefresh(`/jobs/${id}`),
     },
 
     // Formations
     formations: {
-      getAll: () => apiRequestWithRefresh('/formations'),
+      getAll: (params = {}) => {
+        if (typeof params === 'string') {
+          const q = params ? `?category=${encodeURIComponent(params)}` : '';
+          return apiRequestWithRefresh(`/formations${q}`);
+        }
+        const query = new URLSearchParams();
+        if (params.category) query.set('category', params.category);
+        if (params.search) query.set('search', params.search);
+        const qs = query.toString();
+        return apiRequestWithRefresh(`/formations${qs ? `?${qs}` : ''}`);
+      },
+      getCategories: () => apiRequestWithRefresh('/formations/categories'),
       getById: (id) => apiRequestWithRefresh(`/formations/${id}`),
     },
 

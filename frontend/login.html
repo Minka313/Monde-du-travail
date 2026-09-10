@@ -30,16 +30,28 @@
 </header>
 
 <nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
     <div class="nav-inner">
         <div class="nav-links" id="navLinks">
-            <a href="index.html">Accueil</a>
-            <a href="about.html">À Propos</a>
-            <a href="job.html">Métiers & Orientation</a>
-            <a href="formations.html">Formations</a>
-            <a href="forum.html">Forum</a>
-            <a href="blog.html">Blog</a>
-            <a href="login.html" aria-current="page">Connexion</a>
-
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.png" alt="Logo Le Monde du Travail" class="mobile-nav-logo">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="mobile-nav-footer">
+                <a href="login.html" class="btn-mobile-cta" aria-current="page">Espace Membre</a>
+                <a href="../admin-frontend/login.html" class="mobile-admin-sublink">Espace Administration &rarr;</a>
+            </div>
         </div>
     </div>
 </nav>
@@ -74,6 +86,13 @@
                             </div>
                             <button type="button" id="loginSubmitBtn" class="btn btn-primary btn-full">Accéder à l'espace club</button>
                         </form>
+
+                        <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--color-gray-200);text-align:center;">
+                            <p style="color:var(--color-gray-600);font-size:0.875rem;margin-bottom:0.6rem;">Vous faites partie de l'équipe d'administration ?</p>
+                            <a href="../admin-frontend/login.html" class="btn btn-outline btn-full" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;font-size:0.9rem;">
+                                <span>🛡️</span> Accéder au portail Administrateur
+                            </a>
+                        </div>
                     </div>
 
                     <div class="info-box">
@@ -183,8 +202,25 @@
             window.Api.setToken(response.data.accessToken);
             debugLog('Connexion réussie, redirection...');
 
-            const role = response.data.user.role;
-            window.location.href = 'index.html';
+            const user = response.data?.user;
+            const isUltraAdmin = user?.role === 'ULTRA_ADMIN';
+            const adminRoles = user?.adminRoles || [];
+            const isSpecializedAdmin = adminRoles.length > 0 || user?.role === 'ADMIN';
+
+            if (isUltraAdmin) {
+              localStorage.setItem('adminAccessToken', response.data.accessToken);
+              window.location.href = '../admin-frontend/index.html#dashboard';
+            } else if (isSpecializedAdmin) {
+              localStorage.setItem('adminAccessToken', response.data.accessToken);
+              let targetHash = 'formations';
+              if (adminRoles.includes('ADMIN_FORMATION')) targetHash = 'formations';
+              else if (adminRoles.includes('ADMIN_METIER')) targetHash = 'metiers';
+              else if (adminRoles.includes('ADMIN_BLOG')) targetHash = 'blog';
+              else if (adminRoles.includes('ADMIN_FORUM')) targetHash = 'forum';
+              window.location.href = '../admin-frontend/index.html#' + targetHash;
+            } else {
+              window.location.href = 'index.html';
+            }
           } catch (error) {
             const errorMessage = error.message || 'Email ou mot de passe incorrect';
             debugLog('Erreur: ' + errorMessage);
@@ -289,9 +325,36 @@
 
             if (token) {
               debugLog('Token trouvé, vérification...');
-              const userResponse = await window.Api.auth.getCurrentUser();
-              const user = userResponse.data;
-                window.location.href = 'index.html';
+              const userResponse = await window.Api.auth.me();
+              const user = userResponse?.data;
+              if (user) {
+                const isAdmin = ['ADMIN', 'ULTRA_ADMIN'].includes(user.role) || (user.adminRoles && user.adminRoles.length > 0);
+                const loginContainer = document.querySelector('.login-container');
+                if (loginContainer) {
+                  loginContainer.innerHTML = `
+                    <div style="max-width:520px;margin:2rem auto;padding:2.5rem;text-align:center;background:#fff;border-radius:1rem;box-shadow:var(--shadow-sm);border:1px solid var(--color-gray-200);width:100%;">
+                      <div style="font-size:3rem;margin-bottom:0.75rem;">👤</div>
+                      <h2 style="margin:0 0 0.5rem 0;">Session active</h2>
+                      <p style="color:var(--color-gray-600);font-size:0.95rem;margin-bottom:1.5rem;">
+                        Vous êtes actuellement connecté en tant que <strong>${(user.firstName || '') + ' ' + (user.lastName || '')}</strong><br>
+                        <span style="font-size:0.85rem;color:var(--color-gray-500);">${user.email || ''}</span>
+                      </p>
+                      <div style="display:flex;flex-direction:column;gap:0.75rem;max-width:320px;margin:0 auto;">
+                        ${isAdmin ? `<a href="../admin-frontend/index.html" class="btn btn-primary" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;"><span>🛡️</span> Panneau d'Administration</a>` : ''}
+                        <a href="index.html" class="btn btn-outline">Retourner à l'accueil</a>
+                        <button type="button" id="btnActiveLogout" class="btn btn-danger" style="margin-top:0.5rem;">Se déconnecter</button>
+                      </div>
+                    </div>
+                  `;
+                  document.getElementById('btnActiveLogout')?.addEventListener('click', async () => {
+                    try { await window.Api.auth.logout(); } catch(e) {}
+                    window.Api.removeToken();
+                    localStorage.removeItem('adminAccessToken');
+                    window.location.reload();
+                  });
+                  return;
+                }
+              }
             }
           } catch (error) {
             window.Api.removeToken();

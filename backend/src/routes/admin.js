@@ -11,7 +11,9 @@ router.use(AdminApprovalMiddleware.middleware);
 
 // Gestion des administrateurs et de leurs rôles
 router.get('/admins', authorize('admins.read'), adminController.getAllAdmins);
+router.post('/admins', authorize(['admins.create', '*']), adminController.createAdmin);
 router.get('/admins/pending', authorize(['admins.read', 'admins.approve']), adminController.getPendingAdmins);
+router.get('/admins/:id/logs', authorize(['logs.read', 'admins.read', '*']), adminController.getAdminAuditLogs);
 router.post('/admins/:id/approve', authorize('admins.approve'), adminController.approveAdmin);
 router.post('/admins/:id/reject', authorize('admins.approve'), adminController.rejectAdmin);
 router.post('/admins/:id/suspend', authorize('admins.suspend'), adminController.suspendAdmin);

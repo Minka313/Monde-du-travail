@@ -19,9 +19,8 @@ const rbacRoutes = require('./routes/rbac');
 const approvalRoutes = require('./routes/approvals');
 const superDashboardRoutes = require('./routes/superDashboard');
 const settingsRoutes = require('./routes/settings');
-const { PrismaClient } = require('@prisma/client');
-
-const prisma = new PrismaClient();
+const twoFactorRoutes = require('./routes/twoFactorRoutes');
+const prisma = require('./config/database');
 const app = express();
 
 // ===== MIDDLEWARES GLOBAUX =====
@@ -90,7 +89,7 @@ app.use(cookieParser());
 
 // Mode maintenance (paramètre platform.maintenanceMode, bypass admin)
 const { maintenanceMode } = require('./middleware/maintenance');
-app.use(maintenanceMode);
+app.use('/api', maintenanceMode);
 
 // ===== ROUTES =====
 
@@ -112,6 +111,7 @@ app.use('/api/rbac', rbacRoutes);
 app.use('/api/approvals', approvalRoutes);
 app.use('/api/super-dashboard', superDashboardRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/admin/2fa', twoFactorRoutes);
 
 // ===== GESTION DES ERREURS =====
 
@@ -140,15 +140,17 @@ if (require.main === module) {
   });
 
   // Graceful shutdown
-  process.on('SIGINT', async () => {
+  const shutdown = () => {
     console.log('\nArrêt du serveur...');
-    server.close(() => {
+    server.close(async () => {
+      await prisma.$disconnect();
       console.log('Serveur arrêté');
       process.exit(0);
     });
-  });
-}
+  };
 
-module.exports = app;
+  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+}
 
 module.exports = { app, prisma };

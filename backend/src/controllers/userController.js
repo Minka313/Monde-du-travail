@@ -39,7 +39,7 @@ class UserController {
 
   static async updateUser(req, res, next) {
     try {
-      const user = await userService.updateUser(req.params.id, req.body);
+      const user = await userService.updateUser(req.params.id, req.body, req.user.id);
 
       await AuditService.log({
         userId: req.user.id,

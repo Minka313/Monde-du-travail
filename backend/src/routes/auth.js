@@ -33,9 +33,17 @@ const refreshSchema = z.object({
   }),
 });
 
+const login2FASchema = z.object({
+  body: z.object({
+    tempToken: z.string().min(10, 'Jeton temporaire requis'),
+    code: z.string().length(6, 'Le code doit contenir 6 chiffres'),
+  }),
+});
+
 // Routes
 router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
+router.post('/login-2fa', validate(login2FASchema), authController.login2FA);
 router.post('/refresh', validate(refreshSchema), authController.refresh);
 router.post('/logout', authenticate, authController.logout);
 router.get('/me', authenticate, authController.me);

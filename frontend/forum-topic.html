@@ -30,16 +30,28 @@
 </header>
 
 <nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
     <div class="nav-inner">
         <div class="nav-links" id="navLinks">
-            <a href="index.html">Accueil</a>
-            <a href="about.html">À Propos</a>
-            <a href="job.html">Métiers & Orientation</a>
-            <a href="formations.html">Formations</a>
-            <a href="forum.html" aria-current="page">Forum</a>
-            <a href="blog.html">Blog</a>
-            <a href="login.html">Connexion</a>
-
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.png" alt="Logo Le Monde du Travail" class="mobile-nav-logo">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html" aria-current="page">Forum</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="mobile-nav-footer">
+                <a href="login.html" class="btn-mobile-cta">Espace Membre</a>
+                <a href="../admin-frontend/login.html" class="mobile-admin-sublink">Espace Administration &rarr;</a>
+            </div>
         </div>
     </div>
 </nav>
@@ -95,9 +107,13 @@
         }
 
         function escapeHtml(text) {
-          const div = document.createElement('div');
-          div.textContent = text;
-          return div.innerHTML;
+          if (text == null) return '';
+          return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
         }
 
         function formatDate(dateString) {
@@ -212,7 +228,7 @@
                 submitBtn.textContent = 'Publication...';
 
                 try {
-                  await window.Api.forum.createReply(topicId, { content });
+                  await window.Api.forum.createReply(topicId, content);
                   document.getElementById('replyContent').value = '';
                   loadTopic();
                 } catch (error) {
