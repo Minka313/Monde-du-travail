@@ -1,0 +1,18 @@
+{
+  "name": "monde-du-travail",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plateforme web et API pour Le Monde du Travail",
+  "scripts": {
+    "build": "cd backend && npm install && npx prisma generate",
+    "vercel-build": "cd backend && npm install && npx prisma generate",
+    "start": "cd backend && npm start",
+    "dev": "cd backend && npm run dev"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}
