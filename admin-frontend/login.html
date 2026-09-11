@@ -55,7 +55,40 @@
     .admin-login-actions a:hover {
       color: var(--color-primary);
     }
+
+    /* Toggle mot de passe */
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper .form-input {
+      padding-right: 3rem;
+    }
+    .toggle-password-btn {
+      position: absolute;
+      right: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--color-gray-400);
+      padding: 0.25rem;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s;
+    }
+    .toggle-password-btn:hover {
+      color: var(--color-primary);
+    }
+    .toggle-password-btn svg {
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+    }
   </style>
+
 </head>
 
 <body>
@@ -193,6 +226,45 @@
   <script src="js/admin-auth.js"></script>
   <script src="js/admin-app.js"></script>
   <script src="../frontend/js/main.js"></script>
+  <!-- Toggle mot de passe admin -->
+  <script>
+    (function() {
+      'use strict';
+      const EYE_OPEN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+      const EYE_CLOSED = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+
+      function wrapWithToggle(inputEl) {
+        if (!inputEl || inputEl.type !== 'password') return;
+        if (inputEl.parentElement.classList.contains('password-wrapper')) return;
+        const wrapper = document.createElement('div');
+        wrapper.className = 'password-wrapper';
+        inputEl.parentNode.insertBefore(wrapper, inputEl);
+        wrapper.appendChild(inputEl);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'toggle-password-btn';
+        btn.setAttribute('aria-label', 'Afficher / masquer le mot de passe');
+        btn.innerHTML = EYE_OPEN;
+        btn.addEventListener('click', function() {
+          const isHidden = inputEl.type === 'password';
+          inputEl.type = isHidden ? 'text' : 'password';
+          btn.innerHTML = isHidden ? EYE_CLOSED : EYE_OPEN;
+        });
+        wrapper.appendChild(btn);
+      }
+
+      function init() {
+        document.querySelectorAll('input[type="password"]').forEach(wrapWithToggle);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+
   <script>
     (function () {
       'use strict';
