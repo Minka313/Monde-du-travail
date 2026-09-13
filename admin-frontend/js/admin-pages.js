@@ -151,68 +151,298 @@
   }
 
   async function loadDashboard() {
-    // Chaque appel dégrade indépendamment : un refus de permission ne doit
-    // pas vider tout le tableau de bord.
-    const safely = promise => promise.catch(() => null);
-    const [stats, pendingMemberships, pendingAdmins, posts] = await Promise.all([
+    // Récupération résiliente en parallèle de toutes les métriques en direct
+    const safely = (promise, fallback = null) => promise.catch(() => fallback);
+    const [superStatsRes, legacyStatsRes, pendingMembershipsRes, pendingAdminsRes, alertsRes, activitiesRes] = await Promise.all([
+      safely(window.AdminApi.superDashboard?.getStats()),
       safely(window.AdminApi.admin.getStats()),
       safely(window.AdminApi.admin.getPendingMemberships()),
       safely(window.AdminApi.admin.getPendingAdmins()),
-      safely(window.AdminApi.admin.getAllPosts({ limit: 5 })),
+      safely(window.AdminApi.superDashboard?.getAlerts()),
+      safely(window.AdminApi.superDashboard?.getActivities(8)),
     ]);
 
     const user = window.AdminApp.currentUser;
     const canApproveMemberships = window.AdminApp.hasPermission(user, 'membership.approve');
-    const memberships = pendingMemberships?.data || [];
+    const isUltraAdmin = user?.role === 'ULTRA_ADMIN';
 
-    const membershipCard = `
-      <div class="card" style="margin-top:1.5rem;">
-        <div class="card-header">
-          <h2>Demandes d'adhésion</h2>
-          <span class="badge ${memberships.length > 0 ? 'badge-warning' : 'badge-muted'}">${memberships.length} en attente</span>
-        </div>
-        ${memberships.length === 0
-        ? '<div class="empty-state">Aucune demande en attente 🎉</div>'
-        : canApproveMemberships || memberships.length === 0
-          ? `<div class="table-wrapper">
-                 <table>
-                   <thead><tr><th>Candidat</th><th>Email</th><th>Motivation</th><th>Date</th><th>Actions</th></tr></thead>
-                   <tbody>
-                     ${memberships.map(m => `
-                       <tr>
-                         <td>${escapeHtml(m.user?.firstName || '')} ${escapeHtml(m.user?.lastName || '')}</td>
-                         <td>${escapeHtml(m.user?.email || '')}</td>
-                         <td style="max-width:280px;">${escapeHtml((m.motivation || '—').slice(0, 120))}${(m.motivation || '').length > 120 ? '…' : ''}</td>
-                         <td>${new Date(m.createdAt).toLocaleDateString('fr-FR')}</td>
-                         <td>
-                           ${canApproveMemberships ? `
-                             <button class="btn btn-success btn-sm" data-approve-membership="${m.id}">Approuver</button>
-                             <button class="btn btn-danger btn-sm" data-reject-membership="${m.id}">Refuser</button>
-                           ` : '<span class="text-muted">Lecture seule</span>'}
-                         </td>
-                       </tr>
-                     `).join('')}
-                   </tbody>
-                 </table>
-               </div>`
-          : '<div class="empty-state">Consultation réservée</div>'}
-      </div>
-    `;
+    const superData = superStatsRes?.data || {};
+    const legacyData = legacyStatsRes?.data || {};
+
+    const activeMembers = superData.activeUsers ?? legacyData.activeMembers ?? 0;
+    const totalUsers = superData.totalUsers ?? activeMembers;
+    const publishedFormations = superData.publishedFormations ?? 0;
+    const draftFormations = superData.draftFormations ?? 0;
+    const publishedJobs = superData.publishedJobs ?? 0;
+    const draftJobs = superData.draftJobs ?? 0;
+    const publishedPosts = superData.publishedPosts ?? 0;
+    const draftPosts = superData.draftPosts ?? 0;
+    const totalTopics = superData.totalTopics ?? legacyData.totalTopics ?? 0;
+    const totalAdmins = superData.totalAdmins ?? 1;
+    const pendingAdminsCount = superData.pendingAdmins ?? pendingAdminsRes?.data?.length ?? 0;
+    const pendingApprovalsCount = superData.pendingApprovals ?? 0;
+    const isMaintenance = superData.isMaintenance === true;
+
+    const memberships = pendingMembershipsRes?.data || [];
+    const alerts = alertsRes?.data || [];
+    const activities = activitiesRes?.data || [];
+
+    const activityIcons = {
+      AUTH: '🔐',
+      MEMBERSHIP: '📋',
+      FORMATION: '📚',
+      JOB: '💼',
+      BLOG: '📝',
+      FORUM: '💬',
+      USER: '👥',
+      ADMIN: '🛡️',
+      SETTINGS: '⚙️',
+      APPROVAL: '✅',
+    };
 
     return `
-      <div class="card">
-        <div class="card-header">
-          <h2>Tableau de bord</h2>
-          <span class="badge badge-primary">${escapeHtml(formatUserRole(window.AdminApp.currentUser))}</span>
+      <div class="dash-container">
+        <!-- Hero Header Ultra Admin -->
+        <div class="dash-hero">
+          <div class="dash-hero-info">
+            <h2>Bonjour, ${escapeHtml(user?.firstName || 'Administrateur')} 👋</h2>
+            <p>Supervision globale, gouvernance et pilotage opérationnel en temps réel.</p>
+          </div>
+          <div class="dash-hero-actions">
+            <span class="dash-status-pill ${isMaintenance ? 'status-maintenance' : 'status-online'}" id="dash-status-indicator">
+              ${isMaintenance ? '🔴 Mode Maintenance Actif' : '🟢 Plateforme Opérationnelle'}
+            </span>
+            <span class="badge badge-primary" style="padding:0.45rem 0.85rem;font-size:0.82rem;">
+              ${escapeHtml(formatUserRole(user))}
+            </span>
+            ${isUltraAdmin ? `
+              <button class="btn btn-sm" id="dash-toggle-maint" style="background:${isMaintenance ? '#16a34a' : 'rgba(255,255,255,0.15)'};color:#ffffff;border:none;cursor:pointer;">
+                ${isMaintenance ? 'Désactiver Maintenance' : 'Basculer Maintenance'}
+              </button>
+            ` : ''}
+            <button class="btn btn-sm" id="dash-refresh-btn" style="background:rgba(255,255,255,0.15);color:#ffffff;border:none;cursor:pointer;" title="Rafraîchir les métriques">
+              🔄 Actualiser
+            </button>
+          </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;">
-          <div class="card"><strong>${stats?.data?.activeMembers ?? '-'}</strong><div class="text-muted">Membres actifs</div></div>
-          <div class="card"><strong>${stats?.data?.pendingRequests ?? '-'}</strong><div class="text-muted">Adhésions en attente</div></div>
-          <div class="card"><strong>${stats?.data?.totalTopics ?? '-'}</strong><div class="text-muted">Sujets forum</div></div>
-          <div class="card"><strong>${pendingAdmins?.data?.length ?? 0}</strong><div class="text-muted">Admins en attente</div></div>
+
+        <!-- Actions Rapides Opérationnelles (100% Cliquables) -->
+        <div class="dash-quick-section">
+          <div class="dash-quick-title">⚡ Actions Rapides Opérationnelles</div>
+          <div class="dash-quick-bar">
+            <button class="dash-quick-btn btn-accent" id="dash-btn-new-formation">
+              <span>📚</span> <span>+ Nouvelle Formation</span>
+            </button>
+            <button class="dash-quick-btn btn-accent" id="dash-btn-new-job">
+              <span>💼</span> <span>+ Nouveau Métier</span>
+            </button>
+            <button class="dash-quick-btn btn-accent" id="dash-btn-new-post">
+              <span>📝</span> <span>+ Rédiger Article</span>
+            </button>
+            <button class="dash-quick-btn" id="dash-btn-goto-admins">
+              <span>🛡️</span> <span>Gérer Admins & Droits</span>
+            </button>
+            <button class="dash-quick-btn" id="dash-btn-goto-logs">
+              <span>📋</span> <span>Journal d'Audit</span>
+            </button>
+            <button class="dash-quick-btn" id="dash-btn-goto-settings">
+              <span>⚙️</span> <span>Paramètres Système</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Alertes Opérationnelles (si présentes) -->
+        ${alerts.length > 0 ? `
+          <div class="dash-alerts-container">
+            ${alerts.map(a => `
+              <div class="dash-alert dash-alert-${a.type || 'info'}">
+                <div style="display:flex;align-items:center;gap:0.6rem;">
+                  <span style="font-size:1.1rem;">${a.type === 'danger' ? '🚨' : a.type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+                  <div>
+                    <strong>${escapeHtml(a.title)}</strong> : ${escapeHtml(a.message)}
+                  </div>
+                </div>
+                ${a.targetModule ? `
+                  <button class="btn btn-sm ${a.type === 'danger' ? 'btn-danger' : a.type === 'warning' ? 'btn-warning' : 'btn-primary'}" data-dash-navigate="${a.targetModule}">
+                    Traiter maintenant →
+                  </button>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+
+        <!-- Grille des KPIs Stratégiques (100% Cliquables vers les modules) -->
+        <div class="dash-kpi-grid">
+          <div class="dash-kpi-card" data-dash-navigate="users" title="Gérer les utilisateurs">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">👥</span> Membres & Actifs</span>
+              <span class="dash-kpi-arrow">→</span>
+            </div>
+            <div class="dash-kpi-value">${activeMembers}</div>
+            <div class="dash-kpi-footer">
+              <span>Sur ${totalUsers} inscrits au total</span>
+              <span class="badge badge-success">Actifs</span>
+            </div>
+          </div>
+
+          <div class="dash-kpi-card" data-dash-action="scroll-memberships" title="Examiner les demandes d'adhésion">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">📋</span> Adhésions en attente</span>
+              <span class="dash-kpi-arrow">↓</span>
+            </div>
+            <div class="dash-kpi-value">${memberships.length}</div>
+            <div class="dash-kpi-footer">
+              <span>Candidatures à valider</span>
+              <span class="badge ${memberships.length > 0 ? 'badge-warning' : 'badge-muted'}">${memberships.length > 0 ? 'Action requise' : 'À jour'}</span>
+            </div>
+          </div>
+
+          <div class="dash-kpi-card" data-dash-navigate="formations" title="Gérer le catalogue de formations">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">📚</span> Formations Actives</span>
+              <span class="dash-kpi-arrow">→</span>
+            </div>
+            <div class="dash-kpi-value">${publishedFormations}</div>
+            <div class="dash-kpi-footer">
+              <span>${draftFormations} formation(s) en brouillon</span>
+              <span class="badge badge-primary">Catalogue</span>
+            </div>
+          </div>
+
+          <div class="dash-kpi-card" data-dash-navigate="metiers" title="Gérer les fiches métiers et débouchés">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">💼</span> Fiches Métiers</span>
+              <span class="dash-kpi-arrow">→</span>
+            </div>
+            <div class="dash-kpi-value">${publishedJobs}</div>
+            <div class="dash-kpi-footer">
+              <span>${draftJobs} en cours de rédaction</span>
+              <span class="badge badge-primary">Orientation</span>
+            </div>
+          </div>
+
+          <div class="dash-kpi-card" data-dash-navigate="blog" title="Gérer les publications du blog">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">📝</span> Articles de Blog</span>
+              <span class="dash-kpi-arrow">→</span>
+            </div>
+            <div class="dash-kpi-value">${publishedPosts}</div>
+            <div class="dash-kpi-footer">
+              <span>${draftPosts} brouillon(s) à relire</span>
+              <span class="badge badge-primary">Éditorial</span>
+            </div>
+          </div>
+
+          <div class="dash-kpi-card" data-dash-navigate="forum" title="Modérer et animer les discussions">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">💬</span> Forum & Entraide</span>
+              <span class="dash-kpi-arrow">→</span>
+            </div>
+            <div class="dash-kpi-value">${totalTopics}</div>
+            <div class="dash-kpi-footer">
+              <span>Sujets ouverts & résolus</span>
+              <span class="badge badge-success">Communauté</span>
+            </div>
+          </div>
+
+          <div class="dash-kpi-card" data-dash-navigate="admins" title="Gérer les administrateurs et rôles RBAC">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">🛡️</span> Administrateurs</span>
+              <span class="dash-kpi-arrow">→</span>
+            </div>
+            <div class="dash-kpi-value">${totalAdmins}</div>
+            <div class="dash-kpi-footer">
+              <span>${pendingAdminsCount} demande(s) de rôle</span>
+              <span class="badge ${pendingAdminsCount > 0 ? 'badge-warning' : 'badge-muted'}">Gouvernance</span>
+            </div>
+          </div>
+
+          <div class="dash-kpi-card" data-dash-navigate="approvals" title="Consulter les workflows de validation">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">✅</span> Approbations</span>
+              <span class="dash-kpi-arrow">→</span>
+            </div>
+            <div class="dash-kpi-value">${pendingApprovalsCount}</div>
+            <div class="dash-kpi-footer">
+              <span>Validations en souffrance</span>
+              <span class="badge ${pendingApprovalsCount > 0 ? 'badge-warning' : 'badge-muted'}">Workflows</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Split : Adhésions Récentes & Flux d'Activité Récente -->
+        <div class="dash-split-grid">
+          <!-- Colonne Gauche : Table des Demandes d'Adhésion -->
+          <div class="card" id="dash-memberships-section">
+            <div class="card-header">
+              <h2>Demandes d'adhésion</h2>
+              <span class="badge ${memberships.length > 0 ? 'badge-warning' : 'badge-muted'}">${memberships.length} en attente</span>
+            </div>
+            ${memberships.length === 0
+              ? '<div class="empty-state">Aucune demande en attente — toutes les candidatures sont traitées 🎉</div>'
+              : canApproveMemberships || memberships.length === 0
+                ? `<div class="table-wrapper">
+                     <table>
+                       <thead><tr><th>Candidat</th><th>Email</th><th>Motivation</th><th>Date</th><th>Actions</th></tr></thead>
+                       <tbody>
+                         ${memberships.map(m => `
+                           <tr>
+                             <td><strong>${escapeHtml(m.user?.firstName || '')} ${escapeHtml(m.user?.lastName || '')}</strong></td>
+                             <td>${escapeHtml(m.user?.email || '')}</td>
+                             <td style="max-width:260px;">${escapeHtml((m.motivation || '—').slice(0, 110))}${(m.motivation || '').length > 110 ? '…' : ''}</td>
+                             <td>${new Date(m.createdAt).toLocaleDateString('fr-FR')}</td>
+                             <td>
+                               ${canApproveMemberships ? `
+                                 <button class="btn btn-success btn-sm" data-approve-membership="${m.id}">Approuver</button>
+                                 <button class="btn btn-danger btn-sm" data-reject-membership="${m.id}">Refuser</button>
+                               ` : '<span class="text-muted">Lecture seule</span>'}
+                             </td>
+                           </tr>
+                         `).join('')}
+                       </tbody>
+                     </table>
+                   </div>`
+                : '<div class="empty-state">Consultation réservée</div>'}
+          </div>
+
+          <!-- Colonne Droite : Flux d'Activité et Audit de Sécurité -->
+          <div class="card" id="dash-activity-section">
+            <div class="card-header">
+              <h2>Activité Récente & Sécurité</h2>
+              <span class="badge badge-muted">${activities.length} événements</span>
+            </div>
+            ${activities.length === 0
+              ? '<div class="empty-state">Aucune activité récente enregistrée</div>'
+              : `<div class="dash-activity-list">
+                   ${activities.map(act => {
+                     const icon = activityIcons[act.module] || '📋';
+                     const userName = act.user ? `${escapeHtml(act.user.firstName || '')} ${escapeHtml(act.user.lastName || '')}`.trim() : 'Système';
+                     const timeStr = new Date(act.createdAt).toLocaleString('fr-FR', {
+                       day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+                     });
+                     return `
+                       <div class="dash-activity-item">
+                         <span class="dash-activity-icon">${icon}</span>
+                         <div class="dash-activity-details">
+                           <div class="dash-activity-action">${escapeHtml(act.action)}</div>
+                           <div class="dash-activity-meta">
+                             Par <strong>${userName}</strong> • ${timeStr} • <span class="badge badge-sm ${act.result === 'SUCCESS' ? 'badge-success' : 'badge-danger'}">${escapeHtml(act.result)}</span>
+                           </div>
+                         </div>
+                       </div>
+                     `;
+                   }).join('')}
+                 </div>
+                 <div style="margin-top:1.25rem;">
+                   <button class="btn btn-ghost btn-sm" id="dash-view-all-logs" style="width:100%;text-align:center;justify-content:center;">
+                     Consulter le journal d'audit complet →
+                   </button>
+                 </div>`
+            }
+          </div>
         </div>
       </div>
-      ${membershipCard}
     `;
   }
 
@@ -1834,12 +2064,95 @@
 
   function bindPageEvents(module) {
     if (module === 'dashboard') {
+      // Navigation interactive depuis les cartes KPI et alertes
+      document.querySelectorAll('[data-dash-navigate]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = el.getAttribute('data-dash-navigate');
+          if (target && window.AdminRouter) {
+            window.AdminRouter.navigate(target);
+          }
+        });
+      });
+
+      // Défilement automatique et focus sur la table des adhésions
+      document.querySelectorAll('[data-dash-action="scroll-memberships"]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById('dash-memberships-section');
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.style.transition = 'box-shadow 0.3s ease';
+            target.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.4)';
+            setTimeout(() => { target.style.boxShadow = ''; }, 1500);
+          }
+        });
+      });
+
+      // Actions Rapides Opérationnelles
+      document.getElementById('dash-btn-new-formation')?.addEventListener('click', () => {
+        openContentModal('formations');
+      });
+
+      document.getElementById('dash-btn-new-job')?.addEventListener('click', () => {
+        openContentModal('jobs');
+      });
+
+      document.getElementById('dash-btn-new-post')?.addEventListener('click', () => {
+        openBlogPostModal();
+      });
+
+      document.getElementById('dash-btn-goto-admins')?.addEventListener('click', () => {
+        window.AdminRouter?.navigate('admins');
+      });
+
+      document.getElementById('dash-btn-goto-logs')?.addEventListener('click', () => {
+        window.AdminRouter?.navigate('logs');
+      });
+
+      document.getElementById('dash-btn-goto-settings')?.addEventListener('click', () => {
+        window.AdminRouter?.navigate('settings');
+      });
+
+      document.getElementById('dash-view-all-logs')?.addEventListener('click', () => {
+        window.AdminRouter?.navigate('logs');
+      });
+
+      // Bouton Actualiser en direct
+      document.getElementById('dash-refresh-btn')?.addEventListener('click', () => {
+        showToast('Actualisation des métriques en direct...', 'info');
+        loadPage('dashboard');
+      });
+
+      // Bascule rapide du mode maintenance
+      document.getElementById('dash-toggle-maint')?.addEventListener('click', async () => {
+        try {
+          const settingsRes = await window.AdminApi.settings.getAll();
+          const maintSetting = (settingsRes.data || []).find(s => s.key === 'platform.maintenanceMode');
+          const isCurrentlyMaint = maintSetting?.value === 'true';
+          const nextVal = !isCurrentlyMaint;
+
+          const promptMsg = nextVal
+            ? 'Activer le mode maintenance ? Le public ne pourra plus accéder au site.'
+            : 'Désactiver le mode maintenance ? La plateforme sera de nouveau accessible à tous.';
+
+          if (!confirm(promptMsg)) return;
+
+          await window.AdminApi.settings.update('platform.maintenanceMode', nextVal ? 'true' : 'false');
+          showToast(nextVal ? 'Mode maintenance activé' : 'Plateforme réouverte avec succès', 'success');
+          loadPage('dashboard');
+        } catch (err) {
+          showToast(err.message || 'Impossible de modifier le mode maintenance', 'error');
+        }
+      });
+
+      // Approbation d'adhésion
       document.querySelectorAll('[data-approve-membership]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.getAttribute('data-approve-membership');
           try {
             await window.AdminApi.admin.approveMembership(id);
-            showToast('Adhésion approuvée — compte activé', 'success');
+            showToast('Adhésion approuvée — compte membre activé', 'success');
             loadPage('dashboard');
           } catch (error) {
             showToast(error.message, 'error');
@@ -1847,6 +2160,7 @@
         });
       });
 
+      // Refus d'adhésion
       document.querySelectorAll('[data-reject-membership]').forEach(btn => {
         btn.addEventListener('click', async () => {
           const id = btn.getAttribute('data-reject-membership');

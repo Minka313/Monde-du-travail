@@ -231,6 +231,11 @@
         body: JSON.stringify({ password }),
       }),
     },
+    superDashboard: {
+      getStats: () => apiRequestWithRefresh('/super-dashboard/stats'),
+      getActivities: (limit = 10) => apiRequestWithRefresh(`/super-dashboard/activities?limit=${limit}`),
+      getAlerts: () => apiRequestWithRefresh('/super-dashboard/alerts'),
+    },
     admin: {
       getStats: () => apiRequestWithRefresh('/admin/stats'),
       getPendingMemberships: () => apiRequestWithRefresh('/admin/memberships/pending'),

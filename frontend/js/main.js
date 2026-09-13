@@ -433,10 +433,30 @@
     checkScroll();
   }
 
-  // ===== Animated Number Counters (Non-Blocking Single Run) =====
-  function initCounters() {
+  // ===== Animated Number Counters & Live Verified Stats Sync =====
+  async function initCounters() {
     const counters = document.querySelectorAll('[data-count-to]:not([data-counter-ready])');
     if (!counters.length) return;
+
+    // Synchronisation en direct avec la base de données
+    const apiBase = window.AppConfig?.API_BASE || '/api';
+    try {
+      const res = await fetch(`${apiBase}/public-stats`);
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.success && json.data) {
+          const stats = json.data;
+          document.querySelectorAll('[data-stat-key]').forEach(el => {
+            const key = el.getAttribute('data-stat-key');
+            if (stats[key] !== undefined && stats[key] !== null) {
+              el.setAttribute('data-count-to', stats[key]);
+            }
+          });
+        }
+      }
+    } catch (e) {
+      // Tolérance aux pannes : fallback gracieux vers les valeurs locales vérifiées
+    }
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
