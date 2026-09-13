@@ -6,8 +6,8 @@ Le backend Express interagit avec Supabase via **Prisma ORM**.
 
 ## Architecture & Paramètres d'Environnement
 Dans `backend/.env` :
-- `DATABASE_URL` : Chaîne de connexion PostgreSQL vers le cluster Supabase (ex: `postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require`).
-- `DIRECT_URL` : Même URL directe pour les migrations et synchronisations Prisma (`directUrl` dans `schema.prisma`).
+- `DATABASE_URL` : Chaîne de connexion PostgreSQL vers le pooler transactionnel Supabase (ex: `postgresql://postgres.[PROJECT-REF]:[PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true&connection_limit=5&pool_timeout=20`). **Obligatoire en Serverless (Vercel) pour éviter l'erreur EMAXCONNSESSION (limite 15 connexions en session mode)**.
+- `DIRECT_URL` : URL directe sur le port 5432 utilisée exclusivement par Prisma pour les migrations (`directUrl` dans `schema.prisma`).
 - `SUPABASE_URL` : URL de l'API Supabase (pour intégrations client ou stockage de fichiers).
 - `SUPABASE_ANON_KEY` : Clé publique anonyme Supabase.
 

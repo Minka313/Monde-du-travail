@@ -14,7 +14,7 @@ Sur le dashboard de votre projet Vercel (**Project Settings > Environment Variab
 
 | Variable | Valeur / Description | Environnements |
 | :--- | :--- | :--- |
-| `DATABASE_URL` | `postgresql://postgres:BayeMoyMinka@db.vbyileuqgzooedcwjoxe.supabase.co:5432/postgres?sslmode=require` | Production, Preview, Development |
+| `DATABASE_URL` | `postgresql://postgres.vbyileuqgzooedcwjoxe:BayeMoyMinka@aws-0-eu-west-2.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true&connection_limit=5&pool_timeout=20` | Production, Preview, Development |
 | `DIRECT_URL` | `postgresql://postgres:BayeMoyMinka@db.vbyileuqgzooedcwjoxe.supabase.co:5432/postgres?sslmode=require` | Production, Preview, Development |
 | `JWT_SECRET` | Clé secrète JWT complexe | Production, Preview, Development |
 | `JWT_REFRESH_SECRET` | Clé secrète Refresh JWT complexe | Production, Preview, Development |

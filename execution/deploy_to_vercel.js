@@ -38,7 +38,7 @@ async function apiRequest(endpoint, method = 'GET', body = null, extraHeaders = 
 const envVars = [
   {
     key: 'DATABASE_URL',
-    value: 'postgresql://postgres:BayeMoyMinka@db.vbyileuqgzooedcwjoxe.supabase.co:5432/postgres?sslmode=require',
+    value: 'postgresql://postgres.vbyileuqgzooedcwjoxe:BayeMoyMinka@aws-0-eu-west-2.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true&connection_limit=5&pool_timeout=20',
     type: 'encrypted',
     target: ['production', 'preview', 'development'],
   },
