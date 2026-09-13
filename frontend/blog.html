@@ -168,13 +168,13 @@
         const defaultImages = {
           CLUB: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
           FORMATION: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80',
-          ATELIER: 'https://images.unsplash.com/photo-1521737711867-e3b97375f052?w=800&q=80',
-          RENCONTRE: 'https://images.unsplash.com/photo-1528605248644-14dd04022db1?w=800&q=80',
+          ATELIER: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80',
+          RENCONTRE: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80',
           CONFERENCE: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=800&q=80',
           VISITE: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
           PROJET: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
           TEMOIGNAGE: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
-          ANNONCE: 'https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=800&q=80'
+          ANNONCE: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80'
         };
 
         let currentCategory = '';
@@ -324,10 +324,64 @@
 
             renderPagination(pagination);
           } catch (error) {
+            console.warn('API blog non joignable, affichage des articles de secours :', error);
             if (container) {
-              container.innerHTML = '<p class="text-muted text-center">Erreur lors du chargement des articles.</p>';
+              const fallbackPosts = [
+                {
+                  id: 'fb-post-1',
+                  title: 'Lancement officiel du Club Le Monde du Travail',
+                  excerpt: 'Retour sur la cérémonie de lancement du club et les ambitions qui animent notre communauté de jeunes professionnels.',
+                  category: 'CLUB',
+                  coverImage: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
+                  publishedAt: '2026-08-01',
+                  author: { firstName: 'Khadimoul', lastName: 'Barham' }
+                },
+                {
+                  id: 'fb-post-2',
+                  title: 'Conférence : Les métiers de demain en Afrique',
+                  excerpt: 'Quels sont les secteurs qui recruteront le plus dans les 10 prochaines années sur le continent africain ?',
+                  category: 'CONFERENCE',
+                  coverImage: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=800&q=80',
+                  publishedAt: '2026-08-25',
+                  author: { firstName: 'Khadimoul', lastName: 'Barham' }
+                },
+                {
+                  id: 'fb-post-3',
+                  title: 'Témoignage : « Le club a changé ma vision du travail »',
+                  excerpt: 'Fatou, membre depuis 6 mois, raconte comment le club a transformé son approche professionnelle.',
+                  category: 'TEMOIGNAGE',
+                  coverImage: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
+                  publishedAt: '2026-09-05',
+                  author: { firstName: 'Khadimoul', lastName: 'Barham' }
+                }
+              ];
+
+              renderFeatured(fallbackPosts[0]);
+
+              container.innerHTML = fallbackPosts.map(post => {
+                const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
+                const categoryLabel = categoryLabels[post.category] || post.category;
+                const categoryIcon = categoryIcons[post.category] || '📄';
+                return `
+                  <article class="card" data-blog-post-id="${post.id}">
+                    <div class="card-image-wrap">
+                      <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy">
+                      <div class="card-image-overlay"></div>
+                    </div>
+                    <div class="card-body">
+                      <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
+                      <h3>${escapeHtml(post.title)}</h3>
+                      <p>${escapeHtml(post.excerpt)}</p>
+                      <div class="blog-meta">
+                        <span>✍️ ${escapeHtml(post.author.firstName + ' ' + post.author.lastName)}</span>
+                        <span>📅 ${formatDate(post.publishedAt)}</span>
+                      </div>
+                      <a href="blog-post.html?id=${post.id}" class="card-link">Lire la suite</a>
+                    </div>
+                  </article>
+                `;
+              }).join('');
             }
-            console.error(error);
           }
         }
 

@@ -69,17 +69,36 @@
             </div>
         </section>
 
-        <section class="section section-editorial">
+        <section class="section section-editorial-compact">
             <div class="container page-content">
                 <div class="centered-editorial animate-in">
                     <span class="section-label">Développez vos talents</span>
-                    <h2>Les compétences humaines et techniques essentielles pour réussir</h2>
-                    <p>Des formations pratiques pour développer les compétences qui font la différence dans le monde professionnel.</p>
+                    <h2>Les compétences humaines et techniques pour réussir</h2>
+                    <p>Des programmes intensifs, axés sur la pratique et l'immersion professionnelle pour booster votre employabilité.</p>
+                </div>
+                
+                <!-- Ruban de fonctionnalités interactif éliminant le vide et apportant de la valeur -->
+                <div class="formation-features-grid animate-in animate-delay-1">
+                    <div class="feature-card">
+                        <div class="feature-icon-badge">💡</div>
+                        <h3>100% Pratique & Ateliers</h3>
+                        <p>Jeux de rôles, études de cas réels et simulations pour ancrer immédiatement les réflexes professionnels.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon-badge">🤝</div>
+                        <h3>Mentorat d'Experts</h3>
+                        <p>Des cadres et professionnels chevronnés en activité partagent leurs méthodes et leurs réseaux.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon-badge">📜</div>
+                        <h3>Certificats de Réussite</h3>
+                        <p>Validez chaque module avec une attestation reconnue à mettre en avant sur votre CV et profil LinkedIn.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="section">
+        <section class="section" style="padding-top: var(--space-8);">
             <div class="container page-content">
                 <div class="section-header">
                     <span class="section-label">Catalogue des formations</span>
@@ -92,7 +111,27 @@
                 </div>
 
                 <div class="cards-grid" id="formationsGrid">
-                    <p class="text-muted text-center">Chargement des programmes de formation...</p>
+                    <div class="skeleton-card">
+                        <div class="skeleton skeleton-img"></div>
+                        <div class="skeleton skeleton-badge"></div>
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
+                    </div>
+                    <div class="skeleton-card">
+                        <div class="skeleton skeleton-img"></div>
+                        <div class="skeleton skeleton-badge"></div>
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
+                    </div>
+                    <div class="skeleton-card">
+                        <div class="skeleton skeleton-img"></div>
+                        <div class="skeleton skeleton-badge"></div>
+                        <div class="skeleton skeleton-title"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text-sm"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -549,8 +588,19 @@
           }
 
         } catch (error) {
+          console.warn('API non disponible, affichage des formations de secours :', error);
           if (container) {
-            container.innerHTML = '<p class="text-muted text-center">Erreur lors du chargement des formations.</p>';
+            allFormations = [
+              { id: 'fb-1', title: 'Leadership & Management', description: 'Développez votre capacité à inspirer, à fédérer et à piloter des équipes vers des objectifs communs.', icon: '🤝', category: 'Management' },
+              { id: 'fb-2', title: 'Communication efficace', description: 'Améliorez vos interactions professionnelles et apprenez à transmettre vos messages clairement.', icon: '💬', category: 'Soft Skills' },
+              { id: 'fb-3', title: 'Prise de parole en public', description: 'Maîtrisez l\'art de la présentation et de l\'éloquence pour convaincre et captiver votre audience.', icon: '🗣️', category: 'Soft Skills' },
+              { id: 'fb-4', title: 'Entrepreneuriat', description: 'Apprenez à transformer vos idées en projets viables et à créer votre propre opportunité.', icon: '💡', category: 'Entrepreneuriat' },
+              { id: 'fb-5', title: 'Développement personnel', description: 'Travaillez sur votre mindset, votre confiance en vous et votre capacité à vous dépasser.', icon: '🧠', category: 'Soft Skills' },
+              { id: 'fb-6', title: 'Énergies renouvelables & Métiers verts', description: 'Sensibilisez-vous aux enjeux énergétiques et aux métiers d\'avenir sur le continent africain.', icon: '🌱', category: 'Environnement' }
+            ];
+            allFormations.forEach(f => { formationsMap[f.id] = f; });
+            await loadCategories();
+            renderCards();
           }
         }
       });
