@@ -7,6 +7,7 @@
     return {
       hamburger: document.querySelector('.hamburger'),
       navLinks: document.querySelector('.nav-links'),
+      mainNav: document.querySelector('.main-nav'),
       overlay: document.getElementById('navOverlay') || (() => {
         let el = document.createElement('div');
         el.id = 'navOverlay';
@@ -18,9 +19,9 @@
   }
 
   function openMobileMenu() {
-    const { hamburger, navLinks } = getMobileNavElements();
-    if (!navLinks) return;
-    navLinks.classList.add('open');
+    const { hamburger, navLinks, mainNav } = getMobileNavElements();
+    if (navLinks) navLinks.classList.add('open');
+    if (mainNav) mainNav.classList.add('open');
     if (hamburger) {
       hamburger.classList.add('active');
       hamburger.setAttribute('aria-expanded', 'true');
@@ -29,8 +30,9 @@
   }
 
   function closeMobileMenu() {
-    const { hamburger, navLinks } = getMobileNavElements();
+    const { hamburger, navLinks, mainNav } = getMobileNavElements();
     if (navLinks) navLinks.classList.remove('open');
+    if (mainNav) mainNav.classList.remove('open');
     if (hamburger) {
       hamburger.classList.remove('active');
       hamburger.setAttribute('aria-expanded', 'false');
@@ -86,7 +88,7 @@
         return;
       }
 
-      const navLink = e.target.closest('.nav-links a');
+      const navLink = e.target.closest('.nav-links a, .mobile-nav-menu a, .btn-mobile-cta');
       if (navLink) {
         closeMobileMenu();
         return;
@@ -95,9 +97,15 @@
       // Tap outside open navigation modal
       const navLinks = document.querySelector('.nav-links');
       if (navLinks && navLinks.classList.contains('open')) {
-        if (!navLinks.contains(e.target)) {
+        if (!navLinks.contains(e.target) && !e.target.closest('.hamburger')) {
           closeMobileMenu();
         }
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768 && document.body.classList.contains('nav-open')) {
+        closeMobileMenu();
       }
     });
 
@@ -399,40 +407,19 @@
   }
 
   // ===== Dynamic Header Scroll Morphing (RAF Throttled) =====
-  // ===== Dynamic Header Scroll Morphing & Smart Reveal (RAF Throttled) =====
   function initHeaderScrollEffect() {
     const header = document.querySelector('.site-header');
     if (!header) return;
 
-    let lastScrollY = window.scrollY;
     let ticking = false;
 
     function checkScroll() {
       const currentScrollY = window.scrollY;
-      const delta = currentScrollY - lastScrollY;
-
       if (currentScrollY > 20) {
         header.classList.add('scrolled');
       } else {
         header.classList.remove('scrolled');
       }
-
-      // Smart-sticky : réapparaît instantanément dès qu'on remonte un peu vers le haut
-      if (!document.body.classList.contains('nav-open')) {
-        if (currentScrollY <= 30) {
-          header.classList.remove('header-hidden');
-        } else if (delta > 8 && currentScrollY > 90) {
-          // Scroll vers le bas → masquer discrètement pour aérer l'écran
-          header.classList.add('header-hidden');
-        } else if (delta < -4) {
-          // Scroll vers le haut (même minime !) → faire réapparaître la navbar immédiatement
-          header.classList.remove('header-hidden');
-        }
-      } else {
-        header.classList.remove('header-hidden');
-      }
-
-      lastScrollY = currentScrollY;
       ticking = false;
     }
 
