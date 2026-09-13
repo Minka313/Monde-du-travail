@@ -87,6 +87,16 @@
       height: 20px;
       pointer-events: none;
     }
+
+    /* Neutralisation absolue du fond jaune d'autofill navigateur */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+      -webkit-text-fill-color: var(--color-gray-900) !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
   </style>
 
 </head>
@@ -151,17 +161,21 @@
               <h2>Connexion administrateur</h2>
             </div>
             <form id="adminLoginForm" novalidate autocomplete="off" action="#">
+              <!-- Pièges anti-autofill pour capturer l'injection automatique des gestionnaires de mots de passe -->
+              <input type="text" name="fake_admin_username_trap" id="fake_admin_username_trap" value="" tabindex="-1" autocomplete="off" style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;margin:0;padding:0;" aria-hidden="true">
+              <input type="password" name="fake_admin_password_trap" id="fake_admin_password_trap" value="" tabindex="-1" autocomplete="new-password" style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;margin:0;padding:0;" aria-hidden="true">
+
               <div id="stepCredentials">
                 <div class="form-group">
                   <label for="adminEmail" class="form-label">Email</label>
-                  <input type="email" id="adminEmail" name="email" class="form-input"
-                    placeholder="admin@mondedutravail.com" required autocomplete="off">
+                  <input type="email" id="adminEmail" name="adm_user_identity" class="form-input"
+                    placeholder="admin@mondedutravail.com" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" onmousedown="this.removeAttribute('readonly');" ontouchstart="this.removeAttribute('readonly');">
                   <span class="form-error" role="alert"></span>
                 </div>
                 <div class="form-group">
                   <label for="adminPassword" class="form-label">Mot de passe</label>
-                  <input type="password" id="adminPassword" name="password" class="form-input" placeholder="••••••••"
-                    required minlength="6" autocomplete="off">
+                  <input type="password" id="adminPassword" name="adm_user_challenge" class="form-input" placeholder="••••••••"
+                    required minlength="6" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" onmousedown="this.removeAttribute('readonly');" ontouchstart="this.removeAttribute('readonly');">
                   <span class="form-error" role="alert"></span>
                 </div>
                 <button type="button" id="adminLoginBtn" class="btn btn-primary btn-full">Se connecter</button>
@@ -423,6 +437,33 @@
 
         if (!form) return;
 
+        // Anti-autofill actif : vider systématiquement les champs tant que l'utilisateur n'a pas tapé activement
+        let userHasTyped = false;
+        function onUserInput() {
+          userHasTyped = true;
+          if (emailInput) emailInput.removeAttribute('readonly');
+          if (passwordInput) passwordInput.removeAttribute('readonly');
+        }
+
+        emailInput.addEventListener('input', onUserInput);
+        passwordInput.addEventListener('input', onUserInput);
+        emailInput.addEventListener('focus', () => emailInput.removeAttribute('readonly'));
+        passwordInput.addEventListener('focus', () => passwordInput.removeAttribute('readonly'));
+
+        function wipeCredentials() {
+          if (!userHasTyped) {
+            if (emailInput) emailInput.value = '';
+            if (passwordInput) passwordInput.value = '';
+          }
+        }
+
+        wipeCredentials();
+        window.addEventListener('pageshow', wipeCredentials);
+        setTimeout(wipeCredentials, 60);
+        setTimeout(wipeCredentials, 180);
+        setTimeout(wipeCredentials, 350);
+        setTimeout(wipeCredentials, 700);
+
         let isSubmitting = false;
 
         async function onTryLogin() {
@@ -431,7 +472,7 @@
           const password = passwordInput.value || '';
           if (!email || !password) {
             const errorEl = document.getElementById('adminLoginError');
-            if (errorEl) errorEl.textContent = 'Veuillez remplir tous les champs.';
+            if (errorEl) errorEl.textContent = 'Veuillez saisir votre email et votre mot de passe administrateur.';
             return;
           }
           isSubmitting = true;
@@ -451,6 +492,20 @@
         submitBtn.addEventListener('click', function (e) {
           e.preventDefault();
           onTryLogin();
+        });
+
+        // Touche Entrée dans le mot de passe soumet, dans l'email passe au mot de passe
+        passwordInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            onTryLogin();
+          }
+        });
+        emailInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            passwordInput.focus();
+          }
         });
 
         submit2FABtn.addEventListener('click', function (e) {

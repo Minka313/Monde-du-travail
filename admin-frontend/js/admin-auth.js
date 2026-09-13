@@ -58,7 +58,7 @@
           </p>
           <form id="reauth-form" style="margin:0;">
             <div style="margin-bottom:18px;">
-              <input type="password" id="reauth-password-input" placeholder="Mot de passe administrateur" required autocomplete="current-password"
+              <input type="password" id="reauth-password-input" name="adm_reauth_challenge" placeholder="Mot de passe administrateur" required autocomplete="new-password"
                 style="width:100%;box-sizing:border-box;padding:10px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;outline:none;" />
             </div>
             <div style="display:flex;justify-content:flex-end;gap:10px;">
