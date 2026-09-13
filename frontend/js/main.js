@@ -398,54 +398,51 @@
     updateProgress();
   }
 
-  // ===== Dynamic Header Scroll Morphing =====
+  // ===== Dynamic Header Scroll Morphing (RAF Throttled) =====
   function initHeaderScrollEffect() {
     const header = document.querySelector('.site-header');
     if (!header) return;
+    let ticking = false;
     function checkScroll() {
       if (window.scrollY > 20) {
         header.classList.add('scrolled');
       } else {
         header.classList.remove('scrolled');
       }
+      ticking = false;
     }
-    window.addEventListener('scroll', checkScroll, { passive: true });
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(checkScroll);
+        ticking = true;
+      }
+    }, { passive: true });
     checkScroll();
   }
 
-  // ===== Dynamic Card Spotlight Cursor Follower =====
-  function initCardSpotlight() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    document.addEventListener('mousemove', (e) => {
-      const target = e.target.closest('.card, .formation-card, .article-card, .feature-card, .section-box');
-      if (!target) return;
-      const rect = target.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      target.style.setProperty('--mouse-x', `${x}px`);
-      target.style.setProperty('--mouse-y', `${y}px`);
-    }, { passive: true });
-  }
-
-  // ===== Animated Number Counters =====
+  // ===== Animated Number Counters (Non-Blocking Single Run) =====
   function initCounters() {
-    const counters = document.querySelectorAll('[data-count-to]');
+    const counters = document.querySelectorAll('[data-count-to]:not([data-counter-ready])');
     if (!counters.length) return;
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          animateCounter(entry.target);
-          observer.unobserve(entry.target);
+          const el = entry.target;
+          observer.unobserve(el);
+          animateCounter(el);
         }
       });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.1 });
 
-    counters.forEach(el => observer.observe(el));
+    counters.forEach(el => {
+      el.setAttribute('data-counter-ready', 'true');
+      observer.observe(el);
+    });
 
     function animateCounter(el) {
       const targetVal = parseFloat(el.getAttribute('data-count-to')) || 0;
-      const duration = parseInt(el.getAttribute('data-duration'), 10) || 1600;
+      const duration = 1200;
       const startTime = performance.now();
 
       function easeOutExpo(t) {
@@ -467,41 +464,6 @@
 
       requestAnimationFrame(update);
     }
-  }
-
-  // ===== Scroll Reveal & Dynamic Observer =====
-  function initScrollReveal() {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, {
-      threshold: 0.08,
-      rootMargin: '0px 0px -30px 0px'
-    });
-
-    function observeElements() {
-      document.querySelectorAll('.section-header, .card, .formation-card, .feature-card, .section-box, .stat-card, .topic, .skill-item, .impact-item, .split-section').forEach(el => {
-        if (!el.classList.contains('reveal') && !el.classList.contains('revealed')) {
-          el.classList.add('reveal');
-          observer.observe(el);
-        }
-      });
-    }
-
-    observeElements();
-
-    // Observer pour les cartes ou données chargées dynamiquement via API
-    const domObserver = new MutationObserver(() => {
-      observeElements();
-      initCounters();
-    });
-    domObserver.observe(document.body, { childList: true, subtree: true });
   }
 
   // ===== Navigation Auth State =====
@@ -551,14 +513,12 @@
   function init() {
     initScrollProgressBar();
     initHeaderScrollEffect();
-    initCardSpotlight();
     initCounters();
     initMobileMenu();
     initActiveNav();
     initSearch();
     initFilters();
     initForumInteractions();
-    initScrollReveal();
     initNavAuth();
   }
 
@@ -568,11 +528,9 @@
     initActiveNav();
   });
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(safeInit, 50);
-    });
+    document.addEventListener('DOMContentLoaded', safeInit);
   } else {
-    setTimeout(safeInit, 50);
+    safeInit();
   }
 
   window.showAlert = showAlert;

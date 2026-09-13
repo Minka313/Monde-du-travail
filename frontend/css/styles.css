@@ -1561,53 +1561,20 @@ p {
   opacity: 0;
 }
 
-/* ===== REVEAL & STAGGER CASCADE SYSTEM ===== */
+/* ===== PERFORMANCE & FLUID VISIBILITY ===== */
 .reveal {
-  opacity: 0;
-  transform: translateY(28px) scale(0.985);
-  filter: blur(4px);
-  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+  transform: none;
+  filter: none;
 }
 
 .reveal.revealed {
   opacity: 1;
-  transform: translateY(0) scale(1);
-  filter: blur(0);
+  transform: none;
+  filter: none;
 }
 
-/* Stagger cascade in grid containers */
-.cards-grid > .reveal:nth-child(1),
-.formation-features-grid > .reveal:nth-child(1),
-.impact-grid > .reveal:nth-child(1) {
-  transition-delay: 50ms;
-}
-.cards-grid > .reveal:nth-child(2),
-.formation-features-grid > .reveal:nth-child(2),
-.impact-grid > .reveal:nth-child(2) {
-  transition-delay: 130ms;
-}
-.cards-grid > .reveal:nth-child(3),
-.formation-features-grid > .reveal:nth-child(3),
-.impact-grid > .reveal:nth-child(3) {
-  transition-delay: 210ms;
-}
-.cards-grid > .reveal:nth-child(4),
-.formation-features-grid > .reveal:nth-child(4),
-.impact-grid > .reveal:nth-child(4) {
-  transition-delay: 290ms;
-}
-.cards-grid > .reveal:nth-child(5),
-.formation-features-grid > .reveal:nth-child(5) {
-  transition-delay: 370ms;
-}
-.cards-grid > .reveal:nth-child(6),
-.formation-features-grid > .reveal:nth-child(6) {
-  transition-delay: 450ms;
-}
-
-/* ===== LIVING AURORA & AMBIENT MESH ENGINE ===== */
+/* ===== LIVING AURORA & AMBIENT MESH ENGINE (FAST GPU GRADIENT) ===== */
 .hero-visual {
   position: relative;
   overflow: hidden;
@@ -1619,131 +1586,36 @@ p {
   overflow: hidden;
   pointer-events: none;
   z-index: 1;
+  background: radial-gradient(circle at 85% 20%, rgba(245, 158, 11, 0.18) 0%, transparent 50%),
+              radial-gradient(circle at 15% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
 }
 
 .hero-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(70px);
-  opacity: 0.5;
-  will-change: transform;
+  display: none;
 }
 
-.hero-orb-amber {
-  width: clamp(280px, 32vw, 520px);
-  height: clamp(280px, 32vw, 520px);
-  top: -8%;
-  right: -4%;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.6) 0%, rgba(217, 119, 6, 0.2) 65%, transparent 100%);
-  animation: floatOrbAmber 14s infinite alternate ease-in-out;
-}
-
-.hero-orb-indigo {
-  width: clamp(300px, 38vw, 580px);
-  height: clamp(300px, 38vw, 580px);
-  bottom: -12%;
-  left: -8%;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.55) 0%, rgba(79, 70, 229, 0.2) 65%, transparent 100%);
-  animation: floatOrbIndigo 17s infinite alternate-reverse ease-in-out;
-}
-
-.hero-orb-cyan {
-  width: clamp(200px, 24vw, 380px);
-  height: clamp(200px, 24vw, 380px);
-  top: 35%;
-  left: 42%;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.45) 0%, rgba(14, 165, 233, 0.15) 65%, transparent 100%);
-  animation: floatOrbCyan 12s infinite alternate ease-in-out;
-}
-
-@keyframes floatOrbAmber {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-35px, 25px) scale(1.08); }
-  100% { transform: translate(-70px, -15px) scale(0.96); }
-}
-
-@keyframes floatOrbIndigo {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(45px, -35px) scale(1.12); }
-  100% { transform: translate(75px, 20px) scale(0.92); }
-}
-
-@keyframes floatOrbCyan {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-25px, -30px) scale(1.15); }
-  100% { transform: translate(25px, 35px) scale(0.88); }
-}
-
-/* ===== CARD SPOTLIGHT & CRYSTALLINE SHEEN ENGINE ===== */
+/* ===== CARD HOVER & SMOOTH ELEVATION ===== */
 .card, .formation-card, .article-card, .feature-card, .section-box {
   position: relative;
   overflow: hidden;
-  will-change: transform, box-shadow;
-  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.38s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.3s ease;
-}
-
-/* Dynamic Cursor Spotlight */
-.card::before, .formation-card::before, .article-card::before, .feature-card::before {
-  content: '';
-  position: absolute;
-  top: var(--mouse-y, -1000px);
-  left: var(--mouse-x, -1000px);
-  width: 380px;
-  height: 380px;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.14) 0%, rgba(99, 102, 241, 0.06) 50%, transparent 75%);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  z-index: 1;
-}
-
-.card:hover::before, .formation-card:hover::before, .article-card:hover::before, .feature-card:hover::before {
-  opacity: 1;
-}
-
-/* Crystalline Light Sweep */
-.card::after, .formation-card::after, .article-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -150%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    115deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0) 35%,
-    rgba(255, 255, 255, 0.32) 50%,
-    rgba(255, 255, 255, 0) 65%,
-    transparent 100%
-  );
-  transform: skewX(-20deg);
-  pointer-events: none;
-  z-index: 2;
-  transition: left 0.75s cubic-bezier(0.2, 1, 0.2, 1);
-}
-
-.card:hover::after, .formation-card:hover::after, .article-card:hover::after {
-  left: 150%;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s ease;
 }
 
 .card:hover, .formation-card:hover, .article-card:hover {
-  transform: translateY(-8px) scale(1.012);
-  box-shadow: 0 24px 40px -12px rgba(15, 43, 70, 0.16),
-              0 10px 22px -6px rgba(245, 158, 11, 0.12),
-              0 0 0 1px rgba(245, 158, 11, 0.25);
-  border-color: rgba(245, 158, 11, 0.45);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(15, 43, 70, 0.12),
+              0 0 0 1px rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.4);
 }
 
 .card .card-image-wrap img, .formation-card img, .article-card img {
-  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .card:hover .card-image-wrap img, .formation-card:hover img, .article-card:hover img {
-  transform: scale(1.065);
+  transform: scale(1.03);
 }
 
 .card-link {
