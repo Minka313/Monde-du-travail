@@ -361,6 +361,17 @@
     }
   }
 
+  // ===== Universal Image Fallback =====
+  // Intercepte silencieusement toute image défaillante (404/réseau) et la remplace par une photo officielle vérifiée
+  window.addEventListener('error', function (e) {
+    if (e.target && e.target.tagName === 'IMG') {
+      const img = e.target;
+      if (img.dataset.fallbackApplied) return;
+      img.dataset.fallbackApplied = 'true';
+      img.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80';
+    }
+  }, true);
+
   // ===== Scroll Reveal =====
   function initScrollReveal() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -374,13 +385,25 @@
       });
     }, {
       threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
+      rootMargin: '0px 0px -40px 0px'
     });
 
-    document.querySelectorAll('.section-header, .card, .section-box, .stat-card, .topic, .skill-item').forEach(el => {
-      el.classList.add('reveal');
-      observer.observe(el);
+    function observeElements() {
+      document.querySelectorAll('.section-header, .card, .formation-card, .feature-card, .section-box, .stat-card, .topic, .skill-item').forEach(el => {
+        if (!el.classList.contains('reveal') && !el.classList.contains('revealed')) {
+          el.classList.add('reveal');
+          observer.observe(el);
+        }
+      });
+    }
+
+    observeElements();
+
+    // Observer pour les cartes chargées dynamiquement via API
+    const domObserver = new MutationObserver(() => {
+      observeElements();
     });
+    domObserver.observe(document.body, { childList: true, subtree: true });
   }
 
   // ===== Navigation Auth State =====

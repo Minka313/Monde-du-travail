@@ -194,6 +194,15 @@
         height: 20px;
         pointer-events: none;
       }
+      /* Suppression du fond jaune d'autofill natif pour un style propre */
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover, 
+      input:-webkit-autofill:focus,
+      input:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+        -webkit-text-fill-color: var(--color-gray-900) !important;
+        transition: background-color 5000s ease-in-out 0s;
+      }
     </style>
     <script>
       (function() {
@@ -268,7 +277,7 @@
             const msg = error.message || 'Email ou mot de passe incorrect.';
             // Si l'email n'est pas trouvé / compte inexistant → proposer l'adhésion
             if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('trouvé') || msg.toLowerCase().includes('incorrect')) {
-              showLoginError(msg + ' — Pas encore inscrit ? Envoyez une demande d'adhésion ci-contre.');
+              showLoginError(msg + " — Pas encore inscrit ? Envoyez une demande d'adhésion ci-contre.");
               // Pré-remplir l'email dans le formulaire d'inscription
               const regEmail = document.getElementById('regEmail');
               if (regEmail) regEmail.value = email;

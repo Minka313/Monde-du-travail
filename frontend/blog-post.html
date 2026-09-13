@@ -135,13 +135,13 @@
           const defaultImages = {
             CLUB: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
             FORMATION: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80',
-            ATELIER: 'https://images.unsplash.com/photo-1521737711867-e3b97375f052?w=800&q=80',
-            RENCONTRE: 'https://images.unsplash.com/photo-1528605248644-14dd04022db1?w=800&q=80',
+            ATELIER: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80',
+            RENCONTRE: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80',
             CONFERENCE: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=800&q=80',
             VISITE: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
             PROJET: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
             TEMOIGNAGE: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
-            ANNONCE: 'https://images.unsplash.com/photo-1504711434969-e33886168d6c?w=800&q=80'
+            ANNONCE: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80'
           };
           return defaultImages[category] || defaultImages['CLUB'];
         }
@@ -243,10 +243,19 @@
               relatedContainer.innerHTML = '';
             }
           } catch (error) {
+            console.warn('Erreur chargement article, affichage état de secours :', error);
             if (container) {
-              container.innerHTML = '<p class="text-muted text-center">Erreur lors du chargement de l\'article.</p>';
+              container.innerHTML = `
+                <div style="text-align:center;padding:3rem 1.5rem;background:#ffffff;border-radius:1rem;border:1px solid var(--color-gray-200);max-width:640px;margin:2rem auto;">
+                  <div style="font-size:3rem;margin-bottom:1rem;">📰</div>
+                  <h2 style="font-size:1.5rem;margin-bottom:0.75rem;color:var(--color-gray-900);">Article momentanément indisponible</h2>
+                  <p style="color:var(--color-gray-600);margin-bottom:1.5rem;line-height:1.6;">
+                    Nous n'avons pas pu charger cet article. Il a peut-être été déplacé ou mis à jour par l'équipe de rédaction.
+                  </p>
+                  <a href="blog.html" class="btn btn-primary btn-lg">Découvrir tous les articles du blog &rarr;</a>
+                </div>
+              `;
             }
-            console.error(error);
           }
         }
 
