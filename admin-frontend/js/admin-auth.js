@@ -296,6 +296,15 @@
         const qs = query.toString();
         return apiRequestWithRefresh(`/rbac/audit-logs${qs ? `?${qs}` : ''}`);
       },
+      getMentors: () => apiRequestWithRefresh('/rbac/mentors'),
+      nominateMentor: (userId) => apiRequestWithRefresh('/rbac/mentors/nominate', {
+        method: 'POST',
+        body: JSON.stringify({ userId }),
+      }),
+      revokeMentor: (userId) => apiRequestWithRefresh('/rbac/mentors/revoke', {
+        method: 'POST',
+        body: JSON.stringify({ userId }),
+      }),
     },
     approvals: {
       getPending: () => apiRequestWithRefresh('/approvals/pending'),

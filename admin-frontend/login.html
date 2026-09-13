@@ -249,6 +249,8 @@
 
       function wrapWithToggle(inputEl) {
         if (!inputEl || inputEl.type !== 'password') return;
+        // Ne jamais envelopper les leurres anti-autofill ou champs masqués
+        if (inputEl.getAttribute('aria-hidden') === 'true' || inputEl.name?.includes('trap') || inputEl.id?.includes('trap') || inputEl.tabIndex === -1) return;
         if (inputEl.parentElement.classList.contains('password-wrapper')) return;
         const wrapper = document.createElement('div');
         wrapper.className = 'password-wrapper';
@@ -268,7 +270,7 @@
       }
 
       function init() {
-        document.querySelectorAll('input[type="password"]').forEach(wrapWithToggle);
+        document.querySelectorAll('input[type="password"]:not([aria-hidden="true"]):not([name*="trap"]):not([id*="trap"])').forEach(wrapWithToggle);
       }
 
       if (document.readyState === 'loading') {
