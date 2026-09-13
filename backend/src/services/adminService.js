@@ -275,7 +275,7 @@ class AdminService {
       throw new BadRequestError('Le mot de passe doit contenir au moins 8 caractères');
     }
 
-    const bcrypt = require('bcrypt');
+    const bcrypt = require('bcryptjs');
     const targetRole = await prisma.adminRole.findUnique({
       where: { name: roleName },
     });

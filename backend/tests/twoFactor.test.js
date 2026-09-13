@@ -2,7 +2,7 @@ const request = require('supertest');
 const { app } = require('../src/app');
 const prisma = require('../src/config/database');
 const totp = require('../src/utils/totp');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 describe('Two-Factor Authentication (2FA / TOTP)', () => {
   let userToken;

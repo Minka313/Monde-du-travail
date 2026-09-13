@@ -133,8 +133,9 @@
 
   // ===== Active Nav Link =====
   function initActiveNav() {
-    const current = window.location.pathname.split('/').pop() || 'index.html';
-    document.querySelectorAll('.nav-links a').forEach(link => {
+    const path = window.location.pathname.split('/').pop() || 'index.html';
+    const current = path.endsWith('.html') ? path : (path ? `${path}.html` : 'index.html');
+    document.querySelectorAll('.nav-links a, .mobile-nav-menu a').forEach(link => {
       const href = link.getAttribute('href');
       if (href === current) {
         link.setAttribute('aria-current', 'page');

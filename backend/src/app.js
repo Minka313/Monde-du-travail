@@ -112,6 +112,7 @@ app.use('/api/approvals', approvalRoutes);
 app.use('/api/super-dashboard', superDashboardRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/admin/2fa', twoFactorRoutes);
+app.use('/api/2fa', twoFactorRoutes);
 
 // ===== GESTION DES ERREURS =====
 

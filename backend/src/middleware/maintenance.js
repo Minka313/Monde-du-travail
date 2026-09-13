@@ -11,12 +11,17 @@ let cache = { value: false, at: 0 };
 
 async function isMaintenanceActive() {
   if (Date.now() - cache.at < CACHE_TTL_MS) return cache.value;
-  const setting = await prisma.setting.findUnique({
-    where: { key: 'platform.maintenanceMode' },
-    select: { value: true },
-  });
-  cache = { value: setting?.value === 'true', at: Date.now() };
-  return cache.value;
+  try {
+    const setting = await prisma.setting.findUnique({
+      where: { key: 'platform.maintenanceMode' },
+      select: { value: true },
+    });
+    cache = { value: setting?.value === 'true', at: Date.now() };
+    return cache.value;
+  } catch (error) {
+    // En cas de réveil de base ou latence temporaire, repli gracieux sans 500
+    return cache.value || false;
+  }
 }
 
 // À appeler quand le paramètre change pour un effet immédiat

@@ -17,7 +17,8 @@
       const html = await response.text();
       el.outerHTML = html;
       if (selector.includes('nav')) {
-        const current = window.location.pathname.split('/').pop() || 'index.html';
+        const path = window.location.pathname.split('/').pop() || 'index.html';
+        const current = path.endsWith('.html') ? path : (path ? `${path}.html` : 'index.html');
         document.querySelectorAll('.mobile-nav-menu a, .nav-links a').forEach(link => {
           if (link.getAttribute('href') === current) {
             link.setAttribute('aria-current', 'page');

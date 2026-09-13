@@ -151,6 +151,7 @@ model Reply {
   author    User     @relation(fields: [authorId], references: [id])
   topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
+  @@index([topicId])
   @@map("replies")
 }
 
@@ -260,6 +261,8 @@ model AuditLog {
   user       User?    @relation(fields: [userId], references: [id])
 
   @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([module, createdAt])
   @@map("audit_logs")
 }
 
