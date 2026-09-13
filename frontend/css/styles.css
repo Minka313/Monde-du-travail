@@ -224,10 +224,16 @@ p {
   -webkit-backdrop-filter: blur(14px) saturate(160%);
   border-bottom: 1px solid rgba(226, 232, 240, 0.5);
   z-index: 1000;
-  transition: background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.35s cubic-bezier(0.16, 1, 0.3, 1),
               backdrop-filter 0.35s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
               border-bottom-color 0.3s ease;
+  will-change: transform;
+}
+
+.site-header.header-hidden {
+  transform: translateY(-100%);
 }
 
 .site-header.scrolled {
@@ -2618,6 +2624,12 @@ input:-webkit-autofill:active {
 .btn-register:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
+}
+
+#registerForm,
+#transferNotice,
+.info-box {
+  scroll-margin-top: calc(var(--header-height) + 16px);
 }
 
 /* ===== FORUM ===== */
