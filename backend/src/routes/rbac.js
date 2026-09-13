@@ -37,12 +37,22 @@ const assignRoleSchema = z.object({
   }),
 });
 
+const mentorSchema = z.object({
+  body: z.object({
+    userId: z.string().min(1, 'ID utilisateur requis'),
+  }),
+});
+
 router.get('/roles', authorize('admins.read'), RbacController.getRoles);
 router.get('/roles/:id', authorize('admins.read'), RbacController.getRole);
 router.post('/roles', authorize('admins.create'), validate(roleCreateSchema), RbacController.createRole);
 // Modifier ou supprimer un rôle touche aux permissions : action critique
 router.put('/roles/:id', authorize('admins.update'), requireReauth, validate(roleUpdateSchema), RbacController.updateRole);
 router.delete('/roles/:id', authorize('admins.delete'), requireReauth, RbacController.deleteRole);
+
+router.get('/mentors', authorize('admins.read'), RbacController.getMentors);
+router.post('/mentors/nominate', authorize('admins.assign'), validate(mentorSchema), RbacController.nominateMentor);
+router.post('/mentors/revoke', authorize('admins.assign'), validate(mentorSchema), RbacController.revokeMentor);
 
 router.get('/users/:id/roles', authorize('admins.read'), RbacController.getUserRoles);
 router.post('/users/roles', authorize('admins.assign'), validate(assignRoleSchema), requireReauth, RbacController.assignRole);

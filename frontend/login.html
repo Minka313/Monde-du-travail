@@ -228,6 +228,8 @@
         /* ─── Utilitaire : wraps un input password avec un bouton toggle ─── */
         function wrapWithToggle(inputEl) {
           if (!inputEl || inputEl.type !== 'password') return;
+          // Ne jamais envelopper les leurres anti-autofill ou champs masqués
+          if (inputEl.getAttribute('aria-hidden') === 'true' || inputEl.name?.includes('trap') || inputEl.id?.includes('trap') || inputEl.tabIndex === -1) return;
           if (inputEl.parentElement.classList.contains('password-wrapper')) return;
 
           const wrapper = document.createElement('div');
@@ -409,8 +411,8 @@
 
         /* ─── Initialisation ─── */
         async function initLogin() {
-          // Ajout du toggle mot de passe sur tous les champs password de la page
-          document.querySelectorAll('input[type="password"]').forEach(wrapWithToggle);
+          // Ajout du toggle mot de passe sur tous les vrais champs password de la page
+          document.querySelectorAll('input[type="password"]:not([aria-hidden="true"]):not([name*="trap"]):not([id*="trap"])').forEach(wrapWithToggle);
 
           const form = document.getElementById('loginForm');
           const submitBtn = document.getElementById('loginSubmitBtn');

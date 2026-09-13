@@ -16,6 +16,7 @@ class StatsController {
         activeMembers,
         totalTopics,
         totalReplies,
+        mentorsCount,
       ] = await Promise.all([
         prisma.formation.count({ where: { status: 'PUBLISHED' } }),
         prisma.event.count(),
@@ -24,6 +25,13 @@ class StatsController {
         prisma.user.count({ where: { isActive: true } }),
         prisma.topic.count(),
         prisma.reply.count(),
+        prisma.userAdminRole.count({
+          where: {
+            role: { name: 'MENTOR_EXPERT' },
+            status: 'APPROVED',
+            isActive: true,
+          },
+        }),
       ]);
 
       // Calcul des formations et ateliers pratiques
@@ -43,6 +51,7 @@ class StatsController {
         articles: publishedPosts,
         totalOrientationGuides,
         members: activeMembers,
+        mentors: mentorsCount,
         topics: totalTopics,
         replies: totalReplies,
         totalInteractions: totalCommunityInteractions,

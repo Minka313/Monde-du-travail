@@ -524,6 +524,7 @@ class RbacService {
       totalEvents,
       totalJobs,
       totalFormations,
+      totalMentors,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.user.count({ where: { isActive: true } }),
@@ -533,12 +534,20 @@ class RbacService {
       prisma.event.count(),
       prisma.job.count(),
       prisma.formation.count(),
+      prisma.userAdminRole.count({
+        where: {
+          role: { name: 'MENTOR_EXPERT' },
+          status: 'APPROVED',
+          isActive: true,
+        },
+      }),
     ]);
 
     return {
       totalUsers,
       activeUsers,
       totalAdmins,
+      totalMentors,
       totalPosts,
       totalTopics,
       totalEvents,

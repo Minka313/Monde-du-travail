@@ -153,13 +153,14 @@
   async function loadDashboard() {
     // Récupération résiliente en parallèle de toutes les métriques en direct
     const safely = (promise, fallback = null) => promise.catch(() => fallback);
-    const [superStatsRes, legacyStatsRes, pendingMembershipsRes, pendingAdminsRes, alertsRes, activitiesRes] = await Promise.all([
+    const [superStatsRes, legacyStatsRes, pendingMembershipsRes, pendingAdminsRes, alertsRes, activitiesRes, mentorsRes] = await Promise.all([
       safely(window.AdminApi.superDashboard?.getStats()),
       safely(window.AdminApi.admin.getStats()),
       safely(window.AdminApi.admin.getPendingMemberships()),
       safely(window.AdminApi.admin.getPendingAdmins()),
       safely(window.AdminApi.superDashboard?.getAlerts()),
       safely(window.AdminApi.superDashboard?.getActivities(8)),
+      safely(window.AdminApi.rbac?.getMentors()),
     ]);
 
     const user = window.AdminApp.currentUser;
@@ -182,6 +183,9 @@
     const pendingAdminsCount = superData.pendingAdmins ?? pendingAdminsRes?.data?.length ?? 0;
     const pendingApprovalsCount = superData.pendingApprovals ?? 0;
     const isMaintenance = superData.isMaintenance === true;
+
+    const mentors = mentorsRes?.data || [];
+    const totalMentors = superData.totalMentors ?? mentors.length;
 
     const memberships = pendingMembershipsRes?.data || [];
     const alerts = alertsRes?.data || [];
@@ -238,6 +242,9 @@
             </button>
             <button class="dash-quick-btn btn-accent" id="dash-btn-new-post">
               <span>📝</span> <span>+ Rédiger Article</span>
+            </button>
+            <button class="dash-quick-btn btn-accent" id="dash-btn-nominate-mentor">
+              <span>🎓</span> <span>+ Nommer un Mentor</span>
             </button>
             <button class="dash-quick-btn" id="dash-btn-goto-admins">
               <span>🛡️</span> <span>Gérer Admins & Droits</span>
@@ -369,6 +376,18 @@
               <span class="badge ${pendingApprovalsCount > 0 ? 'badge-warning' : 'badge-muted'}">Workflows</span>
             </div>
           </div>
+
+          <div class="dash-kpi-card" data-dash-action="scroll-mentors" title="Consulter le collège des Mentors & Experts">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">🎓</span> Mentors & Experts</span>
+              <span class="dash-kpi-arrow">↓</span>
+            </div>
+            <div class="dash-kpi-value">${totalMentors}</div>
+            <div class="dash-kpi-footer">
+              <span>${mentors.length} mentor(s) actif(s)</span>
+              <span class="badge badge-accent">Partenaires</span>
+            </div>
+          </div>
         </div>
 
         <!-- Section Split : Adhésions Récentes & Flux d'Activité Récente -->
@@ -441,6 +460,91 @@
                  </div>`
             }
           </div>
+        </div>
+
+        <!-- Section Spéciale : Collège des Mentors & Experts d'Industrie -->
+        <div class="card" id="dash-mentors-section" style="margin-top: 1.5rem;">
+          <div class="card-header" style="flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              <h2>🎓 Collège des Mentors & Experts d'Industrie</h2>
+              <span class="badge badge-mentor">${mentors.length} membres distingués</span>
+            </div>
+            ${(isUltraAdmin || canApproveMemberships) ? `
+              <button class="btn btn-sm btn-primary" id="dash-btn-open-nominate-modal">
+                <span>🎓</span> <span>+ Nommer un Mentor & Expert</span>
+              </button>
+            ` : ''}
+          </div>
+          <p style="color: var(--color-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+            Statut honorifique récompensant les professionnels et mentors actifs du club. Leurs contributions réelles alimentent la reconnaissance communautaire et la vitrine publique.
+          </p>
+          ${mentors.length === 0 ? `
+            <div class="empty-state" style="padding: 2.5rem 1rem;">
+              <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎓</div>
+              <p><strong>Aucun Mentor & Expert désigné pour le moment.</strong></p>
+              <p style="color: var(--color-muted); max-width: 480px; margin: 0.5rem auto 1.25rem;">
+                Distinguez dès maintenant un membre ou intervenant pour reconnaître son apport d'expérience et lui permettre d'animer le club.
+              </p>
+              ${(isUltraAdmin || canApproveMemberships) ? `
+                <button class="btn btn-primary btn-sm" id="dash-btn-open-nominate-empty">
+                  Nommer le premier Mentor
+                </button>
+              ` : ''}
+            </div>
+          ` : `
+            <div class="mentor-card-grid">
+              ${mentors.map(m => {
+                const u = m.user || {};
+                const initials = ((u.firstName?.[0] || '') + (u.lastName?.[0] || '')).toUpperCase() || 'M';
+                const assignedDate = m.assignedAt ? new Date(m.assignedAt).toLocaleDateString('fr-FR') : '—';
+                const met = m.metrics || {};
+                return `
+                  <div class="mentor-card">
+                    <div class="mentor-card-header">
+                      <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div class="mentor-avatar">${initials}</div>
+                        <div>
+                          <div style="font-weight: 700; color: var(--color-text); font-size: 1rem;">
+                            ${escapeHtml(u.firstName || '')} ${escapeHtml(u.lastName || '')}
+                          </div>
+                          <div style="font-size: 0.8rem; color: var(--color-muted);">${escapeHtml(u.email || '')}</div>
+                        </div>
+                      </div>
+                      <span class="badge badge-mentor">🎓 Mentor</span>
+                    </div>
+
+                    <div class="mentor-metrics-row">
+                      <div class="mentor-metric-item">
+                        <strong>${met.postsCount ?? 0}</strong>
+                        <span>Articles</span>
+                      </div>
+                      <div class="mentor-metric-item">
+                        <strong>${met.formationsCount ?? 0}</strong>
+                        <span>Formations</span>
+                      </div>
+                      <div class="mentor-metric-item">
+                        <strong>${met.jobsCount ?? 0}</strong>
+                        <span>Métiers</span>
+                      </div>
+                      <div class="mentor-metric-item">
+                        <strong>${met.forumTotalInteractions ?? 0}</strong>
+                        <span>Forum</span>
+                      </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; font-size: 0.8rem; color: var(--color-muted);">
+                      <span>Nommé le ${assignedDate}</span>
+                      ${(isUltraAdmin || canApproveMemberships) ? `
+                        <button class="btn btn-sm btn-outline-danger" data-mentor-revoke="${u.id}" data-mentor-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
+                          Révoquer
+                        </button>
+                      ` : ''}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
         </div>
       </div>
     `;
@@ -1309,7 +1413,10 @@
                   <td>${escapeHtml(u.email)}</td>
                   <td>
                     <span class="badge badge-primary">${u.role}</span>
-                    ${(u.adminRoles || []).map(r => `<span class="badge badge-muted">${escapeHtml(r)}</span>`).join(' ')}
+                    ${(u.adminRoles || []).map(r => r === 'MENTOR_EXPERT'
+                      ? `<span class="badge badge-mentor">🎓 Mentor</span>`
+                      : `<span class="badge badge-muted">${escapeHtml(r)}</span>`
+                    ).join(' ')}
                   </td>
                   <td>
                     ${u.isActive ? '<span class="badge badge-success">Actif</span>' : '<span class="badge badge-danger">Désactivé</span>'}
@@ -1322,6 +1429,11 @@
         : `<button class="btn btn-success btn-sm" data-user-action="activate" data-user-id="${u.id}">Activer</button>`) : ''}
                     ${can('users.verify') && !u.isVerified ? `<button class="btn btn-sm" data-user-action="verify" data-user-id="${u.id}">Vérifier</button>` : ''}
                     ${can('admins.assign') ? `<button class="btn btn-sm" data-user-action="roles" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}">Rôles</button>` : ''}
+                    ${can('admins.assign') ? (
+                      (u.adminRoles || []).includes('MENTOR_EXPERT')
+                        ? `<button class="btn btn-outline-danger btn-sm" data-user-action="revoke-mentor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" title="Révoquer le statut de Mentor">Révoquer Mentor</button>`
+                        : `<button class="btn btn-sm" data-user-action="nominate-mentor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1px solid #f59e0b;font-weight:600;" title="Nommer au rang de Mentor & Expert">🎓 Nommer Mentor</button>`
+                    ) : ''}
                     ${can('users.delete') && u.id !== user.id ? `<button class="btn btn-danger btn-sm" data-user-action="delete" data-user-id="${u.id}">Supprimer</button>` : ''}
                   </td>
                 </tr>
@@ -1402,6 +1514,78 @@
         }
       });
     });
+  }
+
+  // Modale de distinction d'un Mentor & Expert d'Industrie
+  async function openNominateMentorModal() {
+    try {
+      const usersRes = await window.AdminApi.users.getAll({ limit: 100 });
+      const allUsers = usersRes?.data || [];
+
+      const overlay = document.createElement('div');
+      overlay.id = 'nominate-mentor-modal';
+      overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(3px);';
+      overlay.innerHTML = `
+        <div class="card" style="max-width:540px;width:92%;padding:1.5rem;max-height:90vh;overflow:auto;border-top:4px solid #f59e0b;">
+          <div class="card-header" style="margin-bottom:1rem;">
+            <h2>🎓 Nommer un Mentor & Expert</h2>
+          </div>
+          <p style="color:var(--color-muted);font-size:0.88rem;margin-bottom:1.25rem;">
+            Sélectionnez un membre ou un administrateur pour l'élever au rang officiel de <strong>Mentor & Expert d'Industrie</strong>. Ce statut confère des droits d'animation pédagogique et met en valeur son expertise sur la plateforme.
+          </p>
+
+          <div style="margin-bottom:1.25rem;">
+            <label style="display:block;font-weight:600;margin-bottom:0.4rem;">Choisir l'utilisateur :</label>
+            <select id="nominate-user-select" style="width:100%;padding:0.6rem;border:1px solid var(--color-border);border-radius:0.4rem;background:var(--color-surface);font-size:0.95rem;">
+              <option value="">-- Sélectionner un utilisateur --</option>
+              ${allUsers.map(u => {
+                const isMentor = (u.adminRoles || []).includes('MENTOR_EXPERT');
+                return `<option value="${u.id}" ${isMentor ? 'disabled' : ''}>
+                  ${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)} (${escapeHtml(u.email)}) - [${u.role}] ${isMentor ? '⭐ Déjà Mentor' : ''}
+                </option>`;
+              }).join('')}
+            </select>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;gap:0.75rem;margin-top:1.5rem;">
+            <button class="btn btn-ghost" id="nominate-close-btn">Annuler</button>
+            <button class="btn btn-primary" id="nominate-confirm-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706);border:none;">
+              🎓 Confirmer la nomination
+            </button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      overlay.querySelector('#nominate-close-btn').addEventListener('click', () => overlay.remove());
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+
+      overlay.querySelector('#nominate-confirm-btn').addEventListener('click', async () => {
+        const select = overlay.querySelector('#nominate-user-select');
+        const userId = select.value;
+        if (!userId) {
+          showToast('Veuillez sélectionner un utilisateur', 'warning');
+          return;
+        }
+
+        const confirmBtn = overlay.querySelector('#nominate-confirm-btn');
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Nomination en cours...';
+
+        try {
+          const res = await window.AdminApi.rbac.nominateMentor(userId);
+          showToast(res.message || 'Mentor nommé avec succès !', 'success');
+          overlay.remove();
+          loadPage('dashboard');
+        } catch (err) {
+          showToast(err.message || 'Erreur lors de la nomination', 'error');
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = '🎓 Confirmer la nomination';
+        }
+      });
+    } catch (e) {
+      showToast('Impossible de charger les utilisateurs : ' + (e.message || e), 'error');
+    }
   }
 
   async function openApprovalPreviewModal(workflowId) {
@@ -2174,6 +2358,43 @@
           }
         });
       });
+
+      // Défilement automatique vers le collège des mentors
+      document.querySelectorAll('[data-dash-action="scroll-mentors"]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById('dash-mentors-section');
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.style.transition = 'box-shadow 0.3s ease';
+            target.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.4)';
+            setTimeout(() => { target.style.boxShadow = ''; }, 1500);
+          }
+        });
+      });
+
+      // Boutons pour ouvrir la modale de nomination de mentor
+      ['dash-btn-nominate-mentor', 'dash-btn-open-nominate-modal', 'dash-btn-open-nominate-empty'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', () => {
+          openNominateMentorModal();
+        });
+      });
+
+      // Révocation de statut mentor depuis le dashboard
+      document.querySelectorAll('[data-mentor-revoke]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const userId = btn.getAttribute('data-mentor-revoke');
+          const name = btn.getAttribute('data-mentor-name') || 'ce mentor';
+          if (!confirm(`Révoquer le statut de Mentor & Expert de ${name} ?`)) return;
+          try {
+            const res = await window.AdminApi.rbac.revokeMentor(userId);
+            showToast(res.message || 'Statut révoqué avec succès', 'warning');
+            loadPage('dashboard');
+          } catch (err) {
+            showToast(err.message || 'Erreur lors de la révocation', 'error');
+          }
+        });
+      });
     }
 
     if (module === 'formations' || module === 'jobs' || module === 'metiers') {
@@ -2494,6 +2715,31 @@
             openUserRolesModal(userId, userName);
             return;
           }
+
+          if (action === 'nominate-mentor') {
+            if (!confirm(`Nommer ${userName} au rang officiel de Mentor & Expert d'Industrie ?`)) return;
+            try {
+              const res = await window.AdminApi.rbac.nominateMentor(userId);
+              showToast(res.message || 'Mentor nommé avec succès !', 'success');
+              loadPage('users');
+            } catch (error) {
+              showToast(error.message, 'error');
+            }
+            return;
+          }
+
+          if (action === 'revoke-mentor') {
+            if (!confirm(`Révoquer le statut de Mentor & Expert de ${userName} ?`)) return;
+            try {
+              const res = await window.AdminApi.rbac.revokeMentor(userId);
+              showToast(res.message || 'Statut de Mentor révoqué', 'warning');
+              loadPage('users');
+            } catch (error) {
+              showToast(error.message, 'error');
+            }
+            return;
+          }
+
           if (action === 'delete' && !confirm('Supprimer définitivement ce compte ?')) return;
 
           const messages = {

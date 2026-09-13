@@ -148,6 +148,218 @@ class RbacController {
       next(error);
     }
   }
+
+  static async getMentors(req, res, next) {
+    try {
+      const prisma = require('../config/database');
+      const mentorAssignments = await prisma.userAdminRole.findMany({
+        where: {
+          role: { name: 'MENTOR_EXPERT' },
+          status: 'APPROVED',
+          isActive: true,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+              role: true,
+              createdAt: true,
+              lastLoginAt: true,
+            },
+          },
+          assignedByUser: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+        orderBy: { assignedAt: 'desc' },
+      });
+
+      const mentorsWithMetrics = await Promise.all(
+        mentorAssignments.map(async (assignment) => {
+          const userId = assignment.user.id;
+          const [postsCount, formationsCount, jobsCount, eventsCount, topicsCount, repliesCount] =
+            await Promise.all([
+              prisma.post.count({ where: { authorId: userId } }),
+              prisma.formation.count({ where: { createdById: userId } }),
+              prisma.job.count({ where: { createdById: userId } }),
+              prisma.event.count({ where: { createdById: userId } }),
+              prisma.topic.count({ where: { authorId: userId } }),
+              prisma.reply.count({ where: { authorId: userId } }),
+            ]);
+
+          const totalContributions =
+            postsCount + formationsCount + jobsCount + eventsCount + topicsCount + repliesCount;
+
+          return {
+            id: assignment.id,
+            userId: assignment.user.id,
+            user: assignment.user,
+            assignedAt: assignment.assignedAt,
+            assignedByUser: assignment.assignedByUser,
+            metrics: {
+              postsCount,
+              formationsCount,
+              jobsCount,
+              eventsCount,
+              forumTopicsCount: topicsCount,
+              forumRepliesCount: repliesCount,
+              forumTotalInteractions: topicsCount + repliesCount,
+              totalContributions,
+            },
+          };
+        })
+      );
+
+      res.json({ success: true, data: mentorsWithMetrics });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async nominateMentor(req, res, next) {
+    try {
+      const prisma = require('../config/database');
+      const { userId } = req.body;
+      if (!userId) {
+        return res.status(400).json({ success: false, message: 'ID utilisateur requis' });
+      }
+
+      const targetUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, email: true, firstName: true, lastName: true, role: true },
+      });
+
+      if (!targetUser) {
+        return res.status(404).json({ success: false, message: 'Utilisateur introuvable' });
+      }
+
+      let mentorRole = await prisma.adminRole.findUnique({
+        where: { name: 'MENTOR_EXPERT' },
+      });
+
+      if (!mentorRole) {
+        mentorRole = await prisma.adminRole.create({
+          data: {
+            name: 'MENTOR_EXPERT',
+            description: 'Mentor & Expert d’Industrie - Accompagnement, création de formations et fiches métiers',
+            isSystem: true,
+            requiresApproval: false,
+          },
+        });
+      }
+
+      const assignment = await prisma.userAdminRole.upsert({
+        where: {
+          userId_adminRoleId: {
+            userId,
+            adminRoleId: mentorRole.id,
+          },
+        },
+        update: {
+          status: 'APPROVED',
+          isActive: true,
+          assignedBy: req.user.id,
+          assignedAt: new Date(),
+          reviewedBy: req.user.id,
+          reviewedAt: new Date(),
+          rejectionReason: null,
+        },
+        create: {
+          userId,
+          adminRoleId: mentorRole.id,
+          status: 'APPROVED',
+          isActive: true,
+          assignedBy: req.user.id,
+          assignedAt: new Date(),
+          reviewedBy: req.user.id,
+          reviewedAt: new Date(),
+        },
+      });
+
+      await RbacService.syncUserRole(userId);
+
+      AuditService.log({
+        userId: req.user.id,
+        action: 'rbac.mentor.nominate',
+        module: 'RBAC',
+        resource: 'UserAdminRole',
+        resourceId: assignment.id,
+        result: 'SUCCESS',
+        metadata: {
+          targetUserId: userId,
+          targetEmail: targetUser.email,
+          nominatedBy: req.user.id,
+        },
+      }).catch(() => {});
+
+      res.status(200).json({
+        success: true,
+        message: `${targetUser.firstName} ${targetUser.lastName} a été nommé(e) Mentor & Expert d'Industrie`,
+        data: assignment,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async revokeMentor(req, res, next) {
+    try {
+      const prisma = require('../config/database');
+      const { userId } = req.body;
+      if (!userId) {
+        return res.status(400).json({ success: false, message: 'ID utilisateur requis' });
+      }
+
+      const mentorRole = await prisma.adminRole.findUnique({
+        where: { name: 'MENTOR_EXPERT' },
+      });
+
+      if (mentorRole) {
+        await prisma.userAdminRole.updateMany({
+          where: {
+            userId,
+            adminRoleId: mentorRole.id,
+          },
+          data: {
+            isActive: false,
+            status: 'REJECTED',
+            rejectionReason: 'Statut de Mentor retiré par un administrateur',
+            reviewedBy: req.user.id,
+            reviewedAt: new Date(),
+          },
+        });
+      }
+
+      await RbacService.syncUserRole(userId);
+
+      AuditService.log({
+        userId: req.user.id,
+        action: 'rbac.mentor.revoke',
+        module: 'RBAC',
+        resource: 'UserAdminRole',
+        result: 'SUCCESS',
+        metadata: {
+          targetUserId: userId,
+          revokedBy: req.user.id,
+        },
+      }).catch(() => {});
+
+      res.json({
+        success: true,
+        message: 'Statut de Mentor & Expert révoqué avec succès',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = RbacController;
