@@ -372,7 +372,103 @@
     }
   }, true);
 
-  // ===== Scroll Reveal =====
+  // ===== Top Scroll Reading Progress Bar =====
+  function initScrollProgressBar() {
+    let bar = document.getElementById('scrollProgressBar');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.id = 'scrollProgressBar';
+      document.body.prepend(bar);
+    }
+    let ticking = false;
+    function updateProgress() {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      bar.style.width = Math.min(Math.max(progress, 0), 100) + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateProgress);
+        ticking = true;
+      }
+    }, { passive: true });
+    updateProgress();
+  }
+
+  // ===== Dynamic Header Scroll Morphing =====
+  function initHeaderScrollEffect() {
+    const header = document.querySelector('.site-header');
+    if (!header) return;
+    function checkScroll() {
+      if (window.scrollY > 20) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    }
+    window.addEventListener('scroll', checkScroll, { passive: true });
+    checkScroll();
+  }
+
+  // ===== Dynamic Card Spotlight Cursor Follower =====
+  function initCardSpotlight() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    document.addEventListener('mousemove', (e) => {
+      const target = e.target.closest('.card, .formation-card, .article-card, .feature-card, .section-box');
+      if (!target) return;
+      const rect = target.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      target.style.setProperty('--mouse-x', `${x}px`);
+      target.style.setProperty('--mouse-y', `${y}px`);
+    }, { passive: true });
+  }
+
+  // ===== Animated Number Counters =====
+  function initCounters() {
+    const counters = document.querySelectorAll('[data-count-to]');
+    if (!counters.length) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    counters.forEach(el => observer.observe(el));
+
+    function animateCounter(el) {
+      const targetVal = parseFloat(el.getAttribute('data-count-to')) || 0;
+      const duration = parseInt(el.getAttribute('data-duration'), 10) || 1600;
+      const startTime = performance.now();
+
+      function easeOutExpo(t) {
+        return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+      }
+
+      function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentVal = Math.round(targetVal * easeOutExpo(progress));
+        el.textContent = currentVal.toLocaleString('fr-FR');
+
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          el.textContent = targetVal.toLocaleString('fr-FR');
+        }
+      }
+
+      requestAnimationFrame(update);
+    }
+  }
+
+  // ===== Scroll Reveal & Dynamic Observer =====
   function initScrollReveal() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
@@ -384,12 +480,12 @@
         }
       });
     }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -40px 0px'
+      threshold: 0.08,
+      rootMargin: '0px 0px -30px 0px'
     });
 
     function observeElements() {
-      document.querySelectorAll('.section-header, .card, .formation-card, .feature-card, .section-box, .stat-card, .topic, .skill-item').forEach(el => {
+      document.querySelectorAll('.section-header, .card, .formation-card, .feature-card, .section-box, .stat-card, .topic, .skill-item, .impact-item, .split-section').forEach(el => {
         if (!el.classList.contains('reveal') && !el.classList.contains('revealed')) {
           el.classList.add('reveal');
           observer.observe(el);
@@ -399,9 +495,10 @@
 
     observeElements();
 
-    // Observer pour les cartes chargées dynamiquement via API
+    // Observer pour les cartes ou données chargées dynamiquement via API
     const domObserver = new MutationObserver(() => {
       observeElements();
+      initCounters();
     });
     domObserver.observe(document.body, { childList: true, subtree: true });
   }
@@ -451,6 +548,10 @@
   }
 
   function init() {
+    initScrollProgressBar();
+    initHeaderScrollEffect();
+    initCardSpotlight();
+    initCounters();
     initMobileMenu();
     initActiveNav();
     initSearch();
