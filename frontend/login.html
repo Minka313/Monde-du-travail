@@ -81,12 +81,12 @@
 
                             <div class="form-group">
                                 <label for="loginEmail" class="form-label">Email</label>
-                                <input type="email" id="loginEmail" name="email" class="form-input" placeholder="votre@email.com" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly');">
+                                <input type="email" id="loginEmail" name="usr_login_identity" class="form-input" placeholder="votre@email.com" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" onmousedown="this.removeAttribute('readonly');" ontouchstart="this.removeAttribute('readonly');">
                                 <span class="form-error" role="alert"></span>
                             </div>
                             <div class="form-group">
                                 <label for="loginPassword" class="form-label">Mot de passe</label>
-                                <input type="password" id="loginPassword" name="password" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');">
+                                <input type="password" id="loginPassword" name="usr_login_challenge" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" onmousedown="this.removeAttribute('readonly');" ontouchstart="this.removeAttribute('readonly');">
                                 <span class="form-error" role="alert"></span>
                             </div>
                             <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-full">Accéder à l'espace club</button>
@@ -360,14 +360,29 @@
           if (!form) return;
 
           // Protection stricte contre l'autofill sauvage : forcer les champs à vide
+          let userHasTyped = false;
+          function onUserInput() {
+            userHasTyped = true;
+            if (emailInput) emailInput.removeAttribute('readonly');
+            if (passwordInput) passwordInput.removeAttribute('readonly');
+          }
+          emailInput.addEventListener('input', onUserInput);
+          passwordInput.addEventListener('input', onUserInput);
+          emailInput.addEventListener('focus', () => emailInput.removeAttribute('readonly'));
+          passwordInput.addEventListener('focus', () => passwordInput.removeAttribute('readonly'));
+
           function clearCredentials() {
-            if (emailInput) emailInput.value = '';
-            if (passwordInput) passwordInput.value = '';
+            if (!userHasTyped) {
+              if (emailInput) emailInput.value = '';
+              if (passwordInput) passwordInput.value = '';
+            }
           }
           clearCredentials();
           window.addEventListener('pageshow', clearCredentials);
           setTimeout(clearCredentials, 60);
-          setTimeout(clearCredentials, 250);
+          setTimeout(clearCredentials, 180);
+          setTimeout(clearCredentials, 350);
+          setTimeout(clearCredentials, 700);
           if (window.Api && window.Api.getToken()) {
             try {
               const userResponse = await window.Api.auth.me();
@@ -425,9 +440,15 @@
           form.addEventListener('submit', function(e) { e.preventDefault(); onTryLogin(); });
           submitBtn.addEventListener('click', function(e) { e.preventDefault(); onTryLogin(); });
 
-          // Enter dans le champ password déclenche la connexion
+          // Enter dans le champ password déclenche la connexion, Enter dans email avance au password
           passwordInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') { e.preventDefault(); onTryLogin(); }
+          });
+          emailInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              passwordInput.focus();
+            }
           });
 
           // Bouton "Envoyer une demande d'adhésion" → affiche le formulaire

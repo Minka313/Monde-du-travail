@@ -1043,6 +1043,20 @@ p {
   box-shadow: 0 0 0 3px rgba(15, 43, 70, 0.1);
 }
 
+/* Neutraliser totalement la coloration jaune indésirable de l'autofill navigateur */
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover, 
+.form-input:-webkit-autofill:focus, 
+.form-input:-webkit-autofill:active,
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: var(--color-gray-900) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 .form-textarea {
   min-height: 120px;
   resize: vertical;
