@@ -16,6 +16,7 @@
 <a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
 
 <header data-layout="header" class="site-header">
+    <div id="scrollProgressBar"></div>
     <div class="header-inner">
         <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
             <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
@@ -31,7 +32,6 @@
 </header>
 
 <nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
-    <div class="nav-overlay" id="navOverlay"></div>
     <div class="nav-inner">
         <div class="nav-links" id="navLinks">
             <div class="mobile-nav-header">
@@ -43,7 +43,7 @@
             </div>
             <div class="mobile-nav-menu">
                 <a href="index.html">Accueil</a>
-                <a href="about.html" aria-current="page">À Propos</a>
+                <a href="about.html">À Propos</a>
                 <a href="job.html">Métiers & Orientation</a>
                 <a href="formations.html">Formations</a>
                 <a href="forum.html">Forum</a>
@@ -60,14 +60,55 @@
     <main id="main-content">
         <section class="hero hero-visual">
             <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1400&q=80" alt="Équipe et collaboration" loading="eager">
+            <div class="hero-aurora" aria-hidden="true">
+                <div class="hero-orb hero-orb-amber"></div>
+                <div class="hero-orb hero-orb-indigo"></div>
+                <div class="hero-orb hero-orb-cyan"></div>
+            </div>
             <div class="hero-inner">
                 <div class="hero-content">
-                    <span class="hero-label">Notre Histoire</span>
+                    <span class="hero-label">🌟 Notre Histoire & Vision</span>
                     <h1>À Propos du Club</h1>
                     <p>Découvrez notre histoire, notre mission et nos valeurs au service de la jeunesse et de l'avenir professionnel.</p>
                 </div>
             </div>
         </section>
+
+        <!-- Bandeau d'Impact Chiffré & Compteurs Animés -->
+        <div class="container">
+            <section class="impact-section reveal" aria-label="Chiffres clés du Club">
+                <div class="impact-grid">
+                    <div class="impact-item">
+                        <div class="impact-num-wrapper">
+                            <span class="impact-prefix">+</span>
+                            <span class="impact-number" data-count-to="500">500</span>
+                        </div>
+                        <div class="impact-label">Heures de Formation & Ateliers</div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-num-wrapper">
+                            <span class="impact-number" data-count-to="12000">12 000</span>
+                            <span class="impact-suffix">+</span>
+                        </div>
+                        <div class="impact-label">Jeunes Inspirés & Connectés</div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-num-wrapper">
+                            <span class="impact-number" data-count-to="98">98</span>
+                            <span class="impact-suffix">%</span>
+                        </div>
+                        <div class="impact-label">Taux d'Engagement & Réussite</div>
+                    </div>
+                    <div class="impact-item">
+                        <div class="impact-num-wrapper">
+                            <span class="impact-number" data-count-to="50">50</span>
+                            <span class="impact-suffix">+</span>
+                        </div>
+                        <div class="impact-label">Leaders d'Industrie Partenaires</div>
+                    </div>
+                </div>
+            </section>
+        </div>
 
         <section class="section section-editorial">
             <div class="container page-content">
@@ -108,7 +149,7 @@
                 <div class="section-box section-box--purple animate-in animate-delay-3">
                     <span class="section-label">Valeurs</span>
                     <h2>Nos Valeurs</h2>
-                    <div class="cards-grid">
+                    <div class="cards-grid reveal-stagger">
                         <div class="card">
                             <div class="card-icon">🌟</div>
                             <h3>Innovation</h3>
