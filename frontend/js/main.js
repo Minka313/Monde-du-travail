@@ -399,24 +399,50 @@
   }
 
   // ===== Dynamic Header Scroll Morphing (RAF Throttled) =====
+  // ===== Dynamic Header Scroll Morphing & Smart Reveal (RAF Throttled) =====
   function initHeaderScrollEffect() {
     const header = document.querySelector('.site-header');
     if (!header) return;
+
+    let lastScrollY = window.scrollY;
     let ticking = false;
+
     function checkScroll() {
-      if (window.scrollY > 20) {
+      const currentScrollY = window.scrollY;
+      const delta = currentScrollY - lastScrollY;
+
+      if (currentScrollY > 20) {
         header.classList.add('scrolled');
       } else {
         header.classList.remove('scrolled');
       }
+
+      // Smart-sticky : réapparaît instantanément dès qu'on remonte un peu vers le haut
+      if (!document.body.classList.contains('nav-open')) {
+        if (currentScrollY <= 30) {
+          header.classList.remove('header-hidden');
+        } else if (delta > 8 && currentScrollY > 90) {
+          // Scroll vers le bas → masquer discrètement pour aérer l'écran
+          header.classList.add('header-hidden');
+        } else if (delta < -4) {
+          // Scroll vers le haut (même minime !) → faire réapparaître la navbar immédiatement
+          header.classList.remove('header-hidden');
+        }
+      } else {
+        header.classList.remove('header-hidden');
+      }
+
+      lastScrollY = currentScrollY;
       ticking = false;
     }
+
     window.addEventListener('scroll', () => {
       if (!ticking) {
         window.requestAnimationFrame(checkScroll);
         ticking = true;
       }
     }, { passive: true });
+
     checkScroll();
   }
 

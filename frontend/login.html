@@ -290,7 +290,7 @@
             }
 
             // Scroll fluide vers le formulaire d'adhésion
-            registerForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            registerForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             // Donner le focus sur le premier champ vide
             setTimeout(() => {
@@ -344,19 +344,11 @@
             }
           } catch (error) {
             const msg = error.message || 'Email ou mot de passe incorrect.';
-            const isUnrecognizedOrInactive = msg.toLowerCase().includes('not found') ||
-                                            msg.toLowerCase().includes('trouvé') ||
-                                            msg.toLowerCase().includes('incorrect') ||
-                                            msg.toLowerCase().includes('activé');
-            if (isUnrecognizedOrInactive) {
-              showLoginError("Compte introuvable ou inactif — Votre demande d'adhésion a été ouverte ci-dessous avec vos informations pré-remplies !");
-              transferCredentialsToRegister(
-                true,
-                "💡 Vous n'avez pas encore de compte membre ou vos identifiants sont introuvables. Votre formulaire d'adhésion a été ouvert avec vos informations pré-remplies ! Complétez simplement votre prénom et nom pour nous rejoindre."
-              );
-            } else {
-              showLoginError(msg);
-            }
+            showLoginError("Compte introuvable ou non activé — Votre demande d'adhésion a été ouverte ci-dessous avec vos informations pré-remplies !");
+            transferCredentialsToRegister(
+              true,
+              "💡 Vous n'avez pas encore de compte membre ou vos identifiants sont introuvables. Votre formulaire d'adhésion a été ouvert avec vos informations pré-remplies ! Complétez simplement votre prénom et votre nom pour nous rejoindre."
+            );
           } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
