@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const prisma = require('../config/database');
 
 // Double confirmation des actions critiques : la requête doit porter le mot

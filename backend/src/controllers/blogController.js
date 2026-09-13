@@ -6,6 +6,7 @@ const { BadRequestError } = require('../utils/errors');
 class BlogController {
   static async getPosts(req, res, next) {
     try {
+      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
       const { page, limit, category, search, featured, status } = req.query;
       const result = await BlogService.getPublishedPosts({
         page,
@@ -60,6 +61,7 @@ class BlogController {
 
   static async getPostBySlug(req, res, next) {
     try {
+      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
       const { slug } = req.params;
       const post = await BlogService.getPostBySlug(slug);
       res.json({ success: true, data: post });
@@ -70,6 +72,7 @@ class BlogController {
 
   static async getRelatedPosts(req, res, next) {
     try {
+      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
       const { id } = req.params;
       const { limit } = req.query;
       const posts = await BlogService.getRelatedPosts(id, undefined, limit || 4);
@@ -81,6 +84,7 @@ class BlogController {
 
   static async getCategories(req, res, next) {
     try {
+      res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=600');
       const categories = await BlogService.getCategories();
       res.json({ success: true, data: categories });
     } catch (error) {

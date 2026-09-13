@@ -36,12 +36,52 @@
       "dest": "/admin-frontend/$1"
     },
     {
+      "src": "/css/(.*)",
+      "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800" },
+      "dest": "/frontend/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800" },
+      "dest": "/frontend/js/$1"
+    },
+    {
+      "src": "/fragments/(.*)",
+      "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800" },
+      "dest": "/frontend/fragments/$1"
+    },
+    {
+      "src": "/logo.png",
+      "headers": { "Cache-Control": "public, max-age=604800, stale-while-revalidate=2592000" },
+      "dest": "/frontend/logo.png"
+    },
+    {
+      "src": "^/(about|formations|job|blog|blog-post|forum|forum-topic|forum-create|login)$",
+      "dest": "/frontend/$1.html"
+    },
+    {
+      "src": "^/(about|formations|job|blog|blog-post|forum|forum-topic|forum-create|login)\\.html$",
+      "dest": "/frontend/$1.html"
+    },
+    {
+      "src": "^/(metiers|orientation)(\\.html)?$",
+      "dest": "/frontend/job.html"
+    },
+    {
+      "src": "^/(connexion|adhesion)(\\.html)?$",
+      "dest": "/frontend/login.html"
+    },
+    {
       "src": "/frontend/(.*)",
       "dest": "/frontend/$1"
     },
     {
+      "src": "/$",
+      "dest": "/frontend/index.html"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "/frontend/$1"
     }
   ]
 }

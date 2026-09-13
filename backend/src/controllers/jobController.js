@@ -8,6 +8,7 @@ class JobController {
   // Liste publique : uniquement le contenu publié
   static async getPublishedJobs(req, res, next) {
     try {
+      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
       const filter = req.query.category || req.query.domain || req.query.search ? req.query : undefined;
       const jobs = await jobService.getPublishedJobs(filter);
       res.json({ success: true, data: jobs });
@@ -19,6 +20,7 @@ class JobController {
   // Liste des domaines existants
   static async getDomains(req, res, next) {
     try {
+      res.setHeader('Cache-Control', 's-maxage=120, stale-while-revalidate=600');
       const domains = await jobService.getDomains();
       res.json({ success: true, data: domains });
     } catch (error) {

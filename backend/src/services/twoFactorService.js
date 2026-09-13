@@ -1,4 +1,5 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
+const QRCode = require('qrcode');
 const prisma = require('../config/database');
 const totp = require('../utils/totp');
 const { BadRequestError, NotFoundError, UnauthorizedError } = require('../utils/errors');
@@ -33,7 +34,8 @@ class TwoFactorService {
       data: { twoFactorSecret: secret },
     });
 
-    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(otpAuthUri)}`;
+    // Génération locale en mémoire : zéro fuite de secret vers un service tiers
+    const qrCodeUrl = await QRCode.toDataURL(otpAuthUri);
 
     return {
       secret,
