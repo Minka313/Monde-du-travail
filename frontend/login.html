@@ -48,7 +48,6 @@
                 <a href="formations.html">Formations</a>
                 <a href="forum.html">Forum</a>
                 <a href="blog.html">Blog</a>
-                <a href="login.html" class="nav-link-login" aria-current="page">Se connecter</a>
             </div>
             <div class="mobile-nav-footer">
                 <a href="login.html" class="btn-mobile-cta" aria-current="page">Se connecter / Espace Membre</a>
@@ -92,6 +91,10 @@
                             <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-full">Accéder à l'espace club</button>
                         </form>
 
+                        <div class="auth-switch-prompt">
+                            <span>Pas encore membre ?</span>
+                            <button type="button" id="btnSwitchToRegister" class="btn-link-register">Faire une demande d'adhésion &rarr;</button>
+                        </div>
 
                     </div>
 
@@ -105,6 +108,11 @@
                         </ul>
                         <p><small>Note : Toute inscription doit être validée manuellement par nos administrateurs.</small></p>
                         <button type="button" id="btnRegister" class="btn btn-register">Envoyer une demande d'adhésion</button>
+
+                        <div id="transferNotice" class="auth-transfer-banner" style="display:none;" role="status">
+                            <span class="auth-transfer-icon">💡</span>
+                            <span id="transferNoticeText"></span>
+                        </div>
 
                         <form id="registerForm" novalidate autocomplete="off" style="display:none; margin-top:1rem; text-align:left;">
                             <div class="form-group">
@@ -243,6 +251,62 @@
           wrapper.appendChild(btn);
         }
 
+        /* ─── Transfert automatique & bascule vers le formulaire d'adhésion ─── */
+        function transferCredentialsToRegister(openForm = true, customMessage = null) {
+          const emailInput = document.getElementById('loginEmail');
+          const passwordInput = document.getElementById('loginPassword');
+          const regEmail = document.getElementById('regEmail');
+          const regPassword = document.getElementById('regPassword');
+          const regFirstName = document.getElementById('regFirstName');
+          const regLastName = document.getElementById('regLastName');
+          const registerForm = document.getElementById('registerForm');
+          const btnRegister = document.getElementById('btnRegister');
+          const transferNotice = document.getElementById('transferNotice');
+          const transferNoticeText = document.getElementById('transferNoticeText');
+
+          const emailVal = (emailInput?.value || '').trim();
+          const passwordVal = passwordInput?.value || '';
+
+          if (emailVal && regEmail) {
+            regEmail.value = emailVal;
+          }
+          if (passwordVal && regPassword) {
+            regPassword.value = passwordVal;
+          }
+
+          if (openForm && registerForm) {
+            registerForm.style.display = 'block';
+            if (btnRegister) {
+              btnRegister.textContent = 'Masquer le formulaire';
+            }
+            if (transferNotice && transferNoticeText) {
+              if (customMessage) {
+                transferNoticeText.textContent = customMessage;
+                transferNotice.style.display = 'flex';
+              } else if (emailVal || passwordVal) {
+                transferNoticeText.textContent = "Vos informations saisies dans l'espace connexion ont été automatiquement transférées dans le formulaire d'adhésion.";
+                transferNotice.style.display = 'flex';
+              }
+            }
+
+            // Scroll fluide vers le formulaire d'adhésion
+            registerForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            // Donner le focus sur le premier champ vide
+            setTimeout(() => {
+              if (regFirstName && !regFirstName.value) {
+                regFirstName.focus();
+              } else if (regLastName && !regLastName.value) {
+                regLastName.focus();
+              } else if (regEmail && !regEmail.value) {
+                regEmail.focus();
+              } else if (regPassword && !regPassword.value) {
+                regPassword.focus();
+              }
+            }, 180);
+          }
+        }
+
         /* ─── Connexion ─── */
         async function handleLogin(email, password) {
           if (!window.Api || !window.Api.auth || typeof window.Api.auth.login !== 'function') {
@@ -280,12 +344,16 @@
             }
           } catch (error) {
             const msg = error.message || 'Email ou mot de passe incorrect.';
-            // Si l'email n'est pas trouvé / compte inexistant → proposer l'adhésion
-            if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('trouvé') || msg.toLowerCase().includes('incorrect')) {
-              showLoginError(msg + " — Pas encore inscrit ? Envoyez une demande d'adhésion ci-contre.");
-              // Pré-remplir l'email dans le formulaire d'inscription
-              const regEmail = document.getElementById('regEmail');
-              if (regEmail) regEmail.value = email;
+            const isUnrecognizedOrInactive = msg.toLowerCase().includes('not found') ||
+                                            msg.toLowerCase().includes('trouvé') ||
+                                            msg.toLowerCase().includes('incorrect') ||
+                                            msg.toLowerCase().includes('activé');
+            if (isUnrecognizedOrInactive) {
+              showLoginError("Compte introuvable ou inactif — Votre demande d'adhésion a été ouverte ci-dessous avec vos informations pré-remplies !");
+              transferCredentialsToRegister(
+                true,
+                "💡 Vous n'avez pas encore de compte membre ou vos identifiants sont introuvables. Votre formulaire d'adhésion a été ouvert avec vos informations pré-remplies ! Complétez simplement votre prénom et nom pour nous rejoindre."
+              );
             } else {
               showLoginError(msg);
             }
@@ -451,24 +519,38 @@
             }
           });
 
-          // Bouton "Envoyer une demande d'adhésion" → affiche le formulaire
+          // Raccourci vers le formulaire d'adhésion depuis le bloc connexion
+          const btnSwitchToRegister = document.getElementById('btnSwitchToRegister');
+          if (btnSwitchToRegister) {
+            btnSwitchToRegister.addEventListener('click', function(e) {
+              e.preventDefault();
+              transferCredentialsToRegister(
+                true,
+                "👋 Bienvenue ! Vos informations saisies ont été transférées. Renseignez votre prénom et votre nom pour finaliser votre demande d'adhésion."
+              );
+            });
+          }
+
+          // Bouton "Envoyer une demande d'adhésion" → affiche / masque le formulaire
           const btnRegister = document.getElementById('btnRegister');
           if (btnRegister) {
             btnRegister.addEventListener('click', function() {
               const registerForm = document.getElementById('registerForm');
               const isHidden = registerForm.style.display === 'none' || registerForm.style.display === '';
-              registerForm.style.display = isHidden ? 'block' : 'none';
-              btnRegister.textContent = isHidden ? 'Annuler' : 'Envoyer une demande d\'adhésion';
               if (isHidden) {
-                // Pré-remplir l'email si déjà saisi dans le champ connexion
-                const loginEmail = (document.getElementById('loginEmail').value || '').trim();
-                const regEmailEl = document.getElementById('regEmail');
-                if (loginEmail && regEmailEl && !regEmailEl.value) {
-                  regEmailEl.value = loginEmail;
-                }
-                registerForm.querySelector('input:not([value])').focus();
+                transferCredentialsToRegister(true);
+              } else {
+                registerForm.style.display = 'none';
+                btnRegister.textContent = "Envoyer une demande d'adhésion";
+                const transferNotice = document.getElementById('transferNotice');
+                if (transferNotice) transferNotice.style.display = 'none';
               }
             });
+          }
+
+          // Détection d'ancre #adhesion ou #register au chargement
+          if (window.location.hash === '#adhesion' || window.location.hash === '#register' || window.location.search.includes('action=register')) {
+            transferCredentialsToRegister(true);
           }
 
           // Formulaire d'inscription
