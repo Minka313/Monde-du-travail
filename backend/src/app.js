@@ -20,6 +20,7 @@ const approvalRoutes = require('./routes/approvals');
 const superDashboardRoutes = require('./routes/superDashboard');
 const settingsRoutes = require('./routes/settings');
 const twoFactorRoutes = require('./routes/twoFactorRoutes');
+const statsRoutes = require('./routes/stats');
 const prisma = require('./config/database');
 const app = express();
 
@@ -113,6 +114,8 @@ app.use('/api/super-dashboard', superDashboardRoutes);
 app.use('/api/settings', settingsRoutes);
 app.use('/api/admin/2fa', twoFactorRoutes);
 app.use('/api/2fa', twoFactorRoutes);
+app.use('/api/public-stats', statsRoutes);
+app.use('/api/stats', statsRoutes);
 
 // ===== GESTION DES ERREURS =====
 
