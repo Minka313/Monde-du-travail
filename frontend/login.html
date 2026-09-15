@@ -378,11 +378,11 @@
             }
           } catch (error) {
             const msg = error.message || 'Email ou mot de passe incorrect.';
-            showLoginError("Compte introuvable ou non activé — Votre demande d'adhésion a été ouverte ci-dessous avec vos informations pré-remplies !");
-            transferCredentialsToRegister(
-              true,
-              "💡 Vous n'avez pas encore de compte membre ou vos identifiants sont introuvables. Votre formulaire d'adhésion a été ouvert avec vos informations pré-remplies ! Complétez simplement votre prénom et votre nom pour nous rejoindre."
-            );
+            if (msg.includes('pas encore activé')) {
+              showLoginError("⏳ Votre compte n'est pas encore activé. Votre demande d'adhésion est en cours d'examen par notre équipe d'administration. Vous recevrez un email dès son approbation.");
+            } else {
+              showLoginError("Email ou mot de passe incorrect. Vérifiez vos identifiants ou cliquez sur « Mot de passe oublié ? ».");
+            }
           } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
@@ -391,18 +391,35 @@
 
         function showLoginError(msg) {
           const el = document.querySelector('#loginForm .form-error');
-          if (el) el.textContent = msg;
+          if (el) {
+            el.innerHTML = `<span>⚠️ ${escapeHtml(msg)}</span>`;
+            el.style.display = 'block';
+            el.style.background = '#fef2f2';
+            el.style.border = '1px solid #fecaca';
+            el.style.color = '#991b1b';
+            el.style.padding = '10px 14px';
+            el.style.borderRadius = '8px';
+            el.style.marginTop = '10px';
+            el.style.fontSize = '0.88rem';
+            el.style.lineHeight = '1.4';
+          }
         }
         function clearLoginError() {
           const el = document.querySelector('#loginForm .form-error');
-          if (el) el.textContent = '';
+          if (el) {
+            el.textContent = '';
+            el.style.display = 'none';
+          }
         }
 
         /* ─── Inscription / Demande d'adhésion ─── */
         async function handleRegister(data) {
           const errorEl = document.getElementById('registerError');
           const submitBtn = document.querySelector('#registerForm button[type="submit"]');
-          if (errorEl) errorEl.textContent = '';
+          if (errorEl) {
+            errorEl.textContent = '';
+            errorEl.style.display = 'none';
+          }
           if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Envoi en cours…'; }
 
           try {
@@ -435,7 +452,52 @@
               infoBox.appendChild(successDiv);
             }
           } catch (error) {
-            if (errorEl) errorEl.textContent = error.message || "Erreur lors de l'envoi. Réessayez.";
+            if (errorEl) {
+              errorEl.style.display = 'block';
+              errorEl.style.background = '#fef2f2';
+              errorEl.style.border = '1px solid #fecaca';
+              errorEl.style.color = '#991b1b';
+              errorEl.style.padding = '12px 14px';
+              errorEl.style.borderRadius = '8px';
+              errorEl.style.marginTop = '12px';
+              errorEl.style.marginBottom = '14px';
+              errorEl.style.fontSize = '0.88rem';
+              errorEl.style.lineHeight = '1.45';
+
+              const errMsg = error.message || "Erreur lors de l'envoi de votre demande.";
+
+              if (errMsg.includes('déjà utilisé')) {
+                errorEl.innerHTML = `
+                  <div style="display:flex;gap:8px;align-items:flex-start;">
+                    <span style="font-size:1.1rem;">⚠️</span>
+                    <div>
+                      <strong>Cette adresse email est déjà enregistrée.</strong><br>
+                      Votre candidature a déjà été déposée ou votre compte existe déjà.<br>
+                      <div style="margin-top:8px;">
+                        <a href="login.html" style="color:#0284c7;font-weight:600;text-decoration:underline;margin-right:12px;">Se connecter</a>
+                        <button type="button" id="btnForgotFromRegister" style="background:none;border:none;color:#0284c7;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;">Mot de passe oublié ?</button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+                document.getElementById('btnForgotFromRegister')?.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  openForgotModal();
+                });
+              } else {
+                errorEl.innerHTML = `
+                  <div style="display:flex;gap:8px;align-items:flex-start;">
+                    <span style="font-size:1.1rem;">⚠️</span>
+                    <div>
+                      <strong>Impossible de finaliser l'inscription :</strong><br>
+                      ${escapeHtml(errMsg)}<br>
+                      <span style="display:inline-block;margin-top:4px;color:#7f1d1d;font-size:0.84rem;">Vous pouvez corriger vos informations ci-dessus et cliquer à nouveau sur « Envoyer ma demande ».</span>
+                    </div>
+                  </div>
+                `;
+              }
+              errorEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
           } finally {
             if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Envoyer ma demande'; }
           }
@@ -590,6 +652,12 @@
 
             registerForm.addEventListener('submit', async function(e) {
               e.preventDefault();
+              const errorEl = document.getElementById('registerError');
+              if (errorEl) {
+                errorEl.style.display = 'none';
+                errorEl.textContent = '';
+              }
+
               const data = {
                 firstName: (document.getElementById('regFirstName').value || '').trim(),
                 lastName: (document.getElementById('regLastName').value || '').trim(),
@@ -598,18 +666,56 @@
                 motivation: (document.getElementById('regMotivation').value || '').trim(),
               };
 
-              if (!data.firstName || !data.lastName || !data.email || !data.password) {
-                const errorEl = document.getElementById('registerError');
-                if (errorEl) errorEl.textContent = 'Veuillez remplir tous les champs obligatoires (Prénom, Nom, Email, Mot de passe).';
+              function showRegFieldError(message, inputToFocus) {
+                if (errorEl) {
+                  errorEl.style.display = 'block';
+                  errorEl.style.background = '#fef2f2';
+                  errorEl.style.border = '1px solid #fecaca';
+                  errorEl.style.color = '#991b1b';
+                  errorEl.style.padding = '12px 14px';
+                  errorEl.style.borderRadius = '8px';
+                  errorEl.style.marginTop = '12px';
+                  errorEl.style.marginBottom = '14px';
+                  errorEl.style.fontSize = '0.88rem';
+                  errorEl.style.lineHeight = '1.45';
+                  errorEl.innerHTML = `<span style="font-size:1.1rem;">⚠️</span> <strong>${escapeHtml(message)}</strong>`;
+                  errorEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+                if (inputToFocus) inputToFocus.focus();
+              }
+
+              if (!data.firstName) {
+                showRegFieldError('Veuillez renseigner votre prénom.', document.getElementById('regFirstName'));
                 return;
               }
-              if (data.password.length < 8) {
-                const errorEl = document.getElementById('registerError');
-                if (errorEl) errorEl.textContent = 'Le mot de passe doit contenir au moins 8 caractères.';
+              if (!data.lastName) {
+                showRegFieldError('Veuillez renseigner votre nom.', document.getElementById('regLastName'));
+                return;
+              }
+              if (!data.email || !data.email.includes('@')) {
+                showRegFieldError('Veuillez renseigner une adresse email valide (ex : nom@exemple.com).', document.getElementById('regEmail'));
+                return;
+              }
+              if (!data.password || data.password.length < 8) {
+                showRegFieldError('Le mot de passe doit comporter au moins 8 caractères.', document.getElementById('regPassword'));
+                return;
+              }
+              if (!/[a-zA-Z]/.test(data.password) || !/[0-9]/.test(data.password)) {
+                showRegFieldError('Le mot de passe doit contenir au moins une lettre et au moins un chiffre.', document.getElementById('regPassword'));
                 return;
               }
 
               await handleRegister(data);
+            });
+
+            // Effacer le message d'erreur dès que l'utilisateur modifie un champ pour lui permettre de reprendre
+            ['regFirstName', 'regLastName', 'regEmail', 'regPassword', 'regMotivation'].forEach(id => {
+              document.getElementById(id)?.addEventListener('input', () => {
+                const errorEl = document.getElementById('registerError');
+                if (errorEl && errorEl.style.display !== 'none') {
+                  errorEl.style.display = 'none';
+                }
+              });
             });
           }
 
