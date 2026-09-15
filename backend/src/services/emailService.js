@@ -177,7 +177,8 @@ class EmailService {
     const dateStr = createdAt ? new Date(createdAt).toLocaleString('fr-FR', {
       day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
     }) : new Date().toLocaleString('fr-FR');
-    const targetUrl = adminUrl || 'https://mondedutravail.com/admin-frontend/index.html#approvals';
+    const baseUrl = (process.env.FRONTEND_URL || 'https://monde-du-travail.vercel.app').replace(/\/$/, '');
+    const targetUrl = adminUrl || `${baseUrl}/admin-frontend/index.html#approvals`;
 
     const motivationText = motivation && motivation.trim().length > 0
       ? motivation.replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -281,7 +282,8 @@ class EmailService {
   // 3. Email d'acceptation avec Mot de Bienvenue officiel de l'administrateur
   static async notifyCandidateMembershipApproved({ to, candidateName, welcomeMessage, loginUrl }) {
     const subject = `🎉 Félicitations ! Votre adhésion au club Le Monde du Travail est validée`;
-    const targetUrl = loginUrl || 'https://mondedutravail.com/frontend/login.html';
+    const baseUrl = (process.env.FRONTEND_URL || 'https://monde-du-travail.vercel.app').replace(/\/$/, '');
+    const targetUrl = loginUrl || `${baseUrl}/frontend/login.html`;
     const defaultWelcome = "C'est un réel plaisir de vous accueillir parmi nous ! Vos motivations et votre dynamisme correspondent parfaitement aux valeurs d'excellence, de partage d'expérience et d'entraide de notre club. Nous avons hâte de découvrir vos contributions et de vous accompagner dans votre parcours professionnel. Bienvenue dans la grande famille du Monde du Travail !";
     const welcomeText = (welcomeMessage && welcomeMessage.trim().length > 0 ? welcomeMessage : defaultWelcome)
       .replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -388,7 +390,8 @@ class EmailService {
   // 5. Email de réinitialisation de mot de passe (Forgot Password)
   static async notifyPasswordReset({ to, recipientName, resetUrl }) {
     const subject = `Réinitialisation de votre mot de passe 🔒 — Le Monde du Travail`;
-    const targetUrl = resetUrl || 'https://mondedutravail.com/frontend/login.html';
+    const baseUrl = (process.env.FRONTEND_URL || 'https://monde-du-travail.vercel.app').replace(/\/$/, '');
+    const targetUrl = resetUrl || `${baseUrl}/frontend/login.html`;
 
     const html = `
       <div style="margin:0;padding:20px;background:#f1f5f9;font-family:'Segoe UI',Roboto,Helvetica,sans-serif;">
