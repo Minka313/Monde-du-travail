@@ -384,6 +384,64 @@ class EmailService {
 
     return this.sendMail({ to, subject, html });
   }
+
+  // 5. Email de réinitialisation de mot de passe (Forgot Password)
+  static async notifyPasswordReset({ to, recipientName, resetUrl }) {
+    const subject = `Réinitialisation de votre mot de passe 🔒 — Le Monde du Travail`;
+    const targetUrl = resetUrl || 'https://mondedutravail.com/frontend/login.html';
+
+    const html = `
+      <div style="margin:0;padding:20px;background:#f1f5f9;font-family:'Segoe UI',Roboto,Helvetica,sans-serif;">
+        <div style="max-width:600px;margin:auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 15px rgba(0,0,0,0.05);">
+          <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);padding:28px 20px;text-align:center;">
+            <h1 style="color:#ffffff;margin:0;font-size:1.35rem;letter-spacing:0.5px;">LE MONDE DU TRAVAIL</h1>
+            <p style="color:#94a3b8;margin:5px 0 0;font-size:0.85rem;">Sécurité & Protection du Compte</p>
+          </div>
+
+          <div style="padding:28px 24px;">
+            <h2 style="color:#0f172a;margin:0 0 12px;font-size:1.25rem;">Bonjour ${recipientName || ''},</h2>
+            <p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0 0 18px;">
+              Une demande de réinitialisation de mot de passe a été initiée pour votre compte sur la plateforme <strong>Le Monde du Travail</strong>.
+            </p>
+
+            <div style="background:#f0f9ff;border:1px solid #bae6fd;border-left:4px solid #0284c7;border-radius:8px;padding:16px;margin-bottom:24px;">
+              <p style="margin:0;color:#0369a1;font-size:0.92rem;line-height:1.5;">
+                Pour définir un nouveau mot de passe et déverrouiller votre espace membre, veuillez cliquer sur le bouton ci-dessous :
+              </p>
+            </div>
+
+            <div style="text-align:center;margin:32px 0 24px;">
+              <a href="${targetUrl}" style="background:#0284c7;color:#ffffff;padding:14px 32px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-block;box-shadow:0 4px 12px rgba(2,132,199,0.35);font-size:1rem;">
+                Réinitialiser mon mot de passe &rarr;
+              </a>
+            </div>
+
+            <div style="background:#fffbeb;border:1px solid #fef3c7;border-radius:8px;padding:14px;font-size:0.85rem;color:#92400e;margin-bottom:20px;">
+              ⏳ <strong>Attention :</strong> Ce lien sécurisé est à usage unique et expire automatiquement dans <strong>15 minutes</strong>.
+            </div>
+
+            <p style="color:#64748b;font-size:0.85rem;line-height:1.5;margin:0 0 12px;">
+              Si le bouton ne fonctionne pas, copiez et collez ce lien directement dans votre navigateur :<br>
+              <a href="${targetUrl}" style="color:#0284c7;word-break:break-all;font-size:0.82rem;">${targetUrl}</a>
+            </p>
+
+            <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">
+
+            <p style="color:#94a3b8;font-size:0.82rem;line-height:1.5;margin:0;">
+              🛡️ <em>Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet email. Votre mot de passe actuel reste inchangé et votre compte est en sécurité.</em>
+            </p>
+          </div>
+
+          <div style="background:#f8fafc;padding:16px;text-align:center;border-top:1px solid #e2e8f0;font-size:0.78rem;color:#94a3b8;">
+            Le Monde du Travail &bull; Demain se prépare aujourd'hui.<br>
+            Identifiant concerné : ${to}
+          </div>
+        </div>
+      </div>
+    `;
+
+    return this.sendMail({ to, subject, html });
+  }
 }
 
 module.exports = EmailService;

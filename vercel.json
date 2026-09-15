@@ -61,11 +61,11 @@
       "dest": "/frontend/logo.png"
     },
     {
-      "src": "^/(about|formations|job|blog|blog-post|forum|forum-topic|forum-create|login)$",
+      "src": "^/(about|formations|job|blog|blog-post|forum|forum-topic|forum-create|login|reset-password)$",
       "dest": "/frontend/$1.html"
     },
     {
-      "src": "^/(about|formations|job|blog|blog-post|forum|forum-topic|forum-create|login)\\.html$",
+      "src": "^/(about|formations|job|blog|blog-post|forum|forum-topic|forum-create|login|reset-password)\\.html$",
       "dest": "/frontend/$1.html"
     },
     {

@@ -218,6 +218,14 @@ return headers;
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }),
+      forgotPassword: (email) => apiRequest('/auth/forgot-password', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+      }),
+      resetPassword: (token, newPassword) => apiRequest('/auth/reset-password', {
+        method: 'POST',
+        body: JSON.stringify({ token, newPassword }),
+      }),
       logout: () => apiRequestWithRefresh('/auth/logout', { method: 'POST' }),
       me: () => apiRequestWithRefresh('/auth/me'),
     },

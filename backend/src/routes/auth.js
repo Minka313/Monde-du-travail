@@ -40,10 +40,42 @@ const login2FASchema = z.object({
   }),
 });
 
+const rateLimit = require('express-rate-limit');
+
+// Limiteur de requêtes spécifique pour prévenir le spam d'envoi d'emails
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Trop de demandes de réinitialisation. Veuillez patienter 15 minutes avant de réessayer.',
+  },
+});
+
+const forgotPasswordSchema = z.object({
+  body: z.object({
+    email: z.string().email('Email invalide'),
+  }),
+});
+
+const resetPasswordSchema = z.object({
+  body: z.object({
+    token: z.string().min(10, 'Jeton de réinitialisation requis'),
+    newPassword: z.string()
+      .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+      .regex(/[a-zA-Z]/, 'Le mot de passe doit contenir au moins une lettre')
+      .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre'),
+  }),
+});
+
 // Routes
 router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
 router.post('/login-2fa', validate(login2FASchema), authController.login2FA);
+router.post('/forgot-password', forgotPasswordLimiter, validate(forgotPasswordSchema), authController.forgotPassword);
+router.post('/reset-password', validate(resetPasswordSchema), authController.resetPassword);
 router.post('/refresh', validate(refreshSchema), authController.refresh);
 router.post('/logout', authenticate, authController.logout);
 router.get('/me', authenticate, authController.me);

@@ -129,6 +129,43 @@ class AuthController {
       data: req.user,
     });
   }
+
+  // Demande de réinitialisation de mot de passe (Forgot Password)
+  static async forgotPassword(req, res, next) {
+    try {
+      const { email } = req.body;
+      const result = await authService.requestPasswordReset(
+        email,
+        req.ip || req.connection?.remoteAddress,
+        req.get('user-agent')
+      );
+      res.json({
+        success: true,
+        message: result.message,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Réinitialisation effective du mot de passe (Reset Password)
+  static async resetPassword(req, res, next) {
+    try {
+      const { token, newPassword } = req.body;
+      const result = await authService.resetPassword(
+        token,
+        newPassword,
+        req.ip || req.connection?.remoteAddress,
+        req.get('user-agent')
+      );
+      res.json({
+        success: true,
+        message: result.message,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = AuthController;
