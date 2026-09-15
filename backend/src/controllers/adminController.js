@@ -1,6 +1,7 @@
 const adminService = require('../services/adminService');
 const AuditService = require('../services/auditService');
 const EmailService = require('../services/emailService');
+const SuperDashboardController = require('./superDashboardController');
 const logger = require('../utils/logger');
 const prisma = require('../config/database');
 
@@ -205,27 +206,32 @@ class AdminController {
         });
       }
 
-      const updated = await prisma.membershipRequest.update({
-        where: { id: req.params.id },
-        data: {
-          status: 'APPROVED',
-          reviewedBy: req.user.id,
-          reviewedAt: new Date(),
-        },
-        include: {
-          user: {
-            select: { id: true, email: true, firstName: true, lastName: true },
+      // Parallélisation de la mise à jour de l'adhésion et de l'activation du compte
+      const [updated] = await Promise.all([
+        prisma.membershipRequest.update({
+          where: { id: req.params.id },
+          data: {
+            status: 'APPROVED',
+            reviewedBy: req.user.id,
+            reviewedAt: new Date(),
           },
-        },
-      });
+          include: {
+            user: {
+              select: { id: true, email: true, firstName: true, lastName: true },
+            },
+          },
+        }),
+        prisma.user.update({
+          where: { id: membership.userId },
+          data: { isActive: true, isVerified: true },
+        }),
+      ]);
 
-      // L'approbation active le compte : le membre peut enfin se connecter
-      await prisma.user.update({
-        where: { id: membership.userId },
-        data: { isActive: true, isVerified: true },
-      });
+      // Invalidation immédiate du cache mémoire des statistiques
+      SuperDashboardController.invalidateStatsCache?.();
 
-      await AuditService.log({
+      // Log d'audit asynchrone non-bloquant
+      AuditService.log({
         userId: req.user.id,
         action: 'membership.approve',
         module: 'Admin',
@@ -233,6 +239,8 @@ class AdminController {
         resourceId: req.params.id,
         result: 'APPROVED',
         metadata: { userId: membership.userId, accountActivated: true },
+      }).catch(err => {
+        logger.warn('Erreur log audit approbation adhésion', { error: err.message });
       });
 
       // Notification par email du candidat avec le mot de bienvenue de l'administrateur
@@ -283,7 +291,11 @@ class AdminController {
         },
       });
 
-      await AuditService.log({
+      // Invalidation immédiate du cache mémoire des statistiques
+      SuperDashboardController.invalidateStatsCache?.();
+
+      // Log d'audit asynchrone non-bloquant
+      AuditService.log({
         userId: req.user.id,
         action: 'membership.reject',
         module: 'Admin',
@@ -291,6 +303,8 @@ class AdminController {
         resourceId: req.params.id,
         result: 'REJECTED',
         metadata: { userId: membership.userId },
+      }).catch(err => {
+        logger.warn('Erreur log audit refus adhésion', { error: err.message });
       });
 
       // Notification par email du candidat avec le motif de refus

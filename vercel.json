@@ -32,6 +32,11 @@
       "dest": "/admin-frontend/index.html"
     },
     {
+      "src": "/admin-frontend/(css|js)/(.*)",
+      "headers": { "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400" },
+      "dest": "/admin-frontend/$1/$2"
+    },
+    {
       "src": "/admin-frontend/(.*)",
       "dest": "/admin-frontend/$1"
     },
