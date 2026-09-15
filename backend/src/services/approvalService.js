@@ -206,14 +206,14 @@ class ApprovalService {
           const creator = await prisma.user.findUnique({ where: { id: workflow.createdById } });
           const reviewer = await prisma.user.findUnique({ where: { id: userId } });
           if (creator && creator.email) {
-            EmailService.notifyApproval({
+            await EmailService.notifyApproval({
               to: creator.email,
               recipientName: `${creator.firstName} ${creator.lastName}`.trim(),
               resourceType: workflow.resourceType,
               title: workflow.comment || workflow.resourceType,
               reviewerName: reviewer ? `${reviewer.firstName} ${reviewer.lastName}`.trim() : 'Ultra Admin',
               comment,
-            }).catch(e => logger.warn('Email notify error', { error: e.message }));
+            });
           }
         } catch (e) {
           logger.warn('Failed to dispatch approval notification email', { error: e.message });
@@ -277,14 +277,14 @@ class ApprovalService {
         const creator = await prisma.user.findUnique({ where: { id: workflow.createdById } });
         const reviewer = await prisma.user.findUnique({ where: { id: userId } });
         if (creator && creator.email) {
-          EmailService.notifyRejection({
+          await EmailService.notifyRejection({
             to: creator.email,
             recipientName: `${creator.firstName} ${creator.lastName}`.trim(),
             resourceType: workflow.resourceType,
             title: workflow.comment || workflow.resourceType,
             reviewerName: reviewer ? `${reviewer.firstName} ${reviewer.lastName}`.trim() : 'Ultra Admin',
             reason: comment,
-          }).catch(e => logger.warn('Email notify error', { error: e.message }));
+          });
         }
       } catch (e) {
         logger.warn('Failed to dispatch rejection notification email', { error: e.message });

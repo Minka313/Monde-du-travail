@@ -52,21 +52,23 @@ class AuthService {
 
     logger.info('Nouvelle inscription (demande d\'adhésion créée)', { userId: user.id, email: user.email });
 
-    // Notifications par email (asynchrones pour fluidité de l'inscription)
-    Promise.all([
-      EmailService.notifyCandidateMembershipSubmitted({
-        to: user.email,
-        candidateName: user.firstName,
-      }),
-      EmailService.notifyAdminNewMembership({
-        candidateName: `${user.firstName} ${user.lastName}`,
-        candidateEmail: user.email,
-        motivation: motivation || '',
-        createdAt: user.createdAt,
-      }),
-    ]).catch(err => {
+    // Notifications par email (fiabilisées pour l'environnement Serverless Vercel)
+    try {
+      await Promise.allSettled([
+        EmailService.notifyCandidateMembershipSubmitted({
+          to: user.email,
+          candidateName: user.firstName,
+        }),
+        EmailService.notifyAdminNewMembership({
+          candidateName: `${user.firstName} ${user.lastName}`,
+          candidateEmail: user.email,
+          motivation: motivation || '',
+          createdAt: user.createdAt,
+        }),
+      ]);
+    } catch (err) {
       logger.warn('Erreur lors de l\'envoi des emails de notification d\'adhésion', { error: err.message });
-    });
+    }
 
     return user;
   }
