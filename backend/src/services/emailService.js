@@ -5,11 +5,9 @@ const logger = require('../utils/logger');
 class EmailService {
   static getEmailConfig() {
     return {
-      host: process.env.SMTP_HOST || null,
-      port: parseInt(process.env.SMTP_PORT, 10) || 587,
-      user: process.env.SMTP_USER || null,
-      pass: process.env.SMTP_PASS || null,
-      from: process.env.EMAIL_FROM || 'Le Monde du Travail <contact@lemondedutravail.com>',
+      resendApiKey: process.env.RESEND_API_KEY || null,
+      from: process.env.EMAIL_FROM || 'Le Monde du Travail <onboarding@resend.dev>',
+      adminEmail: process.env.ULTRA_ADMIN_EMAIL || process.env.DEFAULT_ADMIN_EMAIL || 'admin@mondedutravail.com',
     };
   }
 
@@ -18,17 +16,80 @@ class EmailService {
     const timestamp = new Date().toISOString();
     const messageId = `msg_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
 
+    const recipients = Array.isArray(to)
+      ? to
+      : (to ? to.split(',').map(e => e.trim()).filter(Boolean) : []);
+    const cleanText = text || html.replace(/<[^>]+>/g, '');
+
+    // 1. Envoi réel via l'API Resend si la clé d'API est configurée
+    if (config.resendApiKey) {
+      try {
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${config.resendApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: config.from,
+            to: recipients,
+            subject,
+            html,
+            text: cleanText,
+          }),
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+          logger.warn('Erreur de distribution renvoyée par l\'API Resend', {
+            status: response.status,
+            error: data,
+            to: recipients,
+            subject,
+          });
+          return {
+            success: false,
+            error: data.message || 'Erreur API Resend',
+            status: response.status,
+          };
+        }
+
+        logger.info('Email distribué avec succès via Resend', {
+          id: data.id,
+          to: recipients,
+          subject,
+        });
+
+        return {
+          success: true,
+          messageId: data.id,
+          mode: 'resend',
+        };
+      } catch (err) {
+        logger.error('Exception réseau lors de la communication avec Resend', {
+          error: err.message,
+          to: recipients,
+          subject,
+        });
+        return {
+          success: false,
+          error: err.message,
+        };
+      }
+    }
+
+    // 2. Mode simulation / Sandbox (fallback si aucune clé RESEND_API_KEY n'est configurée)
     const emailRecord = {
       messageId,
       timestamp,
       from: config.from,
-      to,
+      to: recipients,
       subject,
-      text: text || html.replace(/<[^>]+>/g, ''),
+      text: cleanText,
       html,
     };
 
-    // Log in sandbox log
     const logDir = path.resolve(__dirname, '../../logs');
     try {
       if (!fs.existsSync(logDir)) {
@@ -37,20 +98,20 @@ class EmailService {
       const logFile = path.join(logDir, 'sent_emails.log');
       fs.appendFileSync(logFile, JSON.stringify(emailRecord) + '\n', 'utf8');
     } catch (err) {
-      logger.warn('Impossible d\'écrire dans sent_emails.log', { error: err.message });
+      // Ignoré silencieusement en environnement Serverless (système de fichiers en lecture seule)
     }
 
-    logger.info('Notification email enregistrée', {
+    logger.info('Notification email simulée (Sandbox - RESEND_API_KEY manquante)', {
       messageId,
-      to,
+      to: recipients,
       subject,
-      mode: config.host ? 'smtp' : 'sandbox',
+      mode: 'sandbox',
     });
 
     return {
       success: true,
       messageId,
-      mode: config.host ? 'smtp' : 'sandbox',
+      mode: 'sandbox',
     };
   }
 

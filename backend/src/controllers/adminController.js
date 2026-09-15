@@ -245,13 +245,15 @@ class AdminController {
 
       // Notification par email du candidat avec le mot de bienvenue de l'administrateur
       const welcomeMessage = req.body?.welcomeMessage;
-      EmailService.notifyCandidateMembershipApproved({
-        to: membership.user.email,
-        candidateName: membership.user.firstName,
-        welcomeMessage,
-      }).catch(err => {
+      try {
+        await EmailService.notifyCandidateMembershipApproved({
+          to: membership.user.email,
+          candidateName: membership.user.firstName,
+          welcomeMessage,
+        });
+      } catch (err) {
         logger.warn('Erreur envoi email approbation adhésion', { error: err.message });
-      });
+      }
 
       res.json({
         success: true,
@@ -309,13 +311,15 @@ class AdminController {
 
       // Notification par email du candidat avec le motif de refus
       const reason = req.body?.reason;
-      EmailService.notifyCandidateMembershipRejected({
-        to: membership.user.email,
-        candidateName: membership.user.firstName,
-        reason,
-      }).catch(err => {
+      try {
+        await EmailService.notifyCandidateMembershipRejected({
+          to: membership.user.email,
+          candidateName: membership.user.firstName,
+          reason,
+        });
+      } catch (err) {
         logger.warn('Erreur envoi email refus adhésion', { error: err.message });
-      });
+      }
 
       res.json({
         success: true,

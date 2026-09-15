@@ -21,6 +21,9 @@ Sur le dashboard de votre projet Vercel (**Project Settings > Environment Variab
 | `SUPABASE_URL` | `https://vbyileuqgzooedcwjoxe.supabase.co` | Production, Preview, Development |
 | `SUPABASE_ANON_KEY` | `sb_publishable_n0L0_d-EP3swfxCszP4FaQ_Fd2kOUNW` | Production, Preview, Development |
 | `NODE_ENV` | `production` | Production |
+| `ULTRA_ADMIN_EMAIL` | `khadimoulbarham@gmail.com` (Email recevant les alertes d'adhésion) | Production, Preview, Development |
+| `RESEND_API_KEY` | Clé API Resend (`re_...` créée sur [resend.com](https://resend.com)) | Production, Preview, Development |
+| `EMAIL_FROM` | `Le Monde du Travail <onboarding@resend.dev>` (ou votre domaine vérifié) | Production, Preview, Development |
 
 ---
 
