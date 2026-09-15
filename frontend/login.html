@@ -84,7 +84,10 @@
                                 <span class="form-error" role="alert"></span>
                             </div>
                             <div class="form-group">
-                                <label for="loginPassword" class="form-label">Mot de passe</label>
+                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
+                                    <label for="loginPassword" class="form-label" style="margin-bottom:0;">Mot de passe</label>
+                                    <button type="button" id="btnOpenForgotModal" class="btn-link-forgot" style="background:none;border:none;color:#0284c7;font-size:0.82rem;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;">Mot de passe oublié ?</button>
+                                </div>
                                 <input type="password" id="loginPassword" name="usr_login_challenge" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" onmousedown="this.removeAttribute('readonly');" ontouchstart="this.removeAttribute('readonly');">
                                 <span class="form-error" role="alert"></span>
                             </div>
@@ -140,6 +143,35 @@
                             <button type="submit" class="btn btn-primary btn-full">Envoyer ma demande</button>
                         </form>
                     </div>
+                </div>
+            </div>
+
+            <!-- Modal Mot de passe oublié -->
+            <div id="forgotPasswordModal" class="modal-backdrop" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.7);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
+                <div class="modal-card" style="background:#ffffff;border-radius:14px;max-width:440px;width:100%;padding:28px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);position:relative;">
+                    <button type="button" id="btnCloseForgotModal" aria-label="Fermer" style="position:absolute;top:16px;right:16px;background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#64748b;line-height:1;">&times;</button>
+                    
+                    <div style="text-align:center;margin-bottom:20px;">
+                        <div style="width:48px;height:48px;background:#e0f2fe;color:#0284c7;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:12px;">🔑</div>
+                        <h3 style="margin:0;color:#0f172a;font-size:1.25rem;font-weight:700;">Mot de passe oublié ?</h3>
+                        <p style="margin:8px 0 0;color:#64748b;font-size:0.88rem;line-height:1.5;">
+                            Saisissez votre adresse email. Nous vous enverrons un lien sécurisé valable 15 minutes pour réinitialiser votre mot de passe.
+                        </p>
+                    </div>
+
+                    <form id="forgotPasswordForm" novalidate>
+                        <div class="form-group" style="margin-bottom:16px;">
+                            <label for="forgotEmail" class="form-label" style="font-size:0.85rem;font-weight:600;color:#334155;margin-bottom:6px;display:block;">Votre adresse email</label>
+                            <input type="email" id="forgotEmail" class="form-input" placeholder="votre@email.com" required style="width:100%;box-sizing:border-box;">
+                            <span id="forgotEmailError" class="form-error" role="alert" style="color:#ef4444;font-size:0.8rem;margin-top:4px;display:none;"></span>
+                        </div>
+
+                        <div id="forgotFeedback" style="display:none;border-radius:8px;padding:12px;font-size:0.88rem;margin-bottom:16px;line-height:1.4;"></div>
+
+                        <button type="submit" id="btnSubmitForgot" class="btn btn-primary btn-full" style="width:100%;padding:12px;font-weight:600;">
+                            Envoyer le lien de réinitialisation
+                        </button>
+                    </form>
                 </div>
             </div>
         </section>
@@ -578,6 +610,95 @@
               }
 
               await handleRegister(data);
+            });
+          }
+
+          /* ─── Gestion Modal Mot de passe oublié ─── */
+          const forgotModal = document.getElementById('forgotPasswordModal');
+          const btnOpenForgotModal = document.getElementById('btnOpenForgotModal');
+          const btnCloseForgotModal = document.getElementById('btnCloseForgotModal');
+          const forgotForm = document.getElementById('forgotPasswordForm');
+          const forgotEmailInput = document.getElementById('forgotEmail');
+          const forgotFeedback = document.getElementById('forgotFeedback');
+          const forgotError = document.getElementById('forgotEmailError');
+          const btnSubmitForgot = document.getElementById('btnSubmitForgot');
+
+          function openForgotModal() {
+            if (!forgotModal) return;
+            const currentLoginEmail = (document.getElementById('loginEmail')?.value || '').trim();
+            if (currentLoginEmail && forgotEmailInput) {
+              forgotEmailInput.value = currentLoginEmail;
+            }
+            if (forgotFeedback) {
+              forgotFeedback.style.display = 'none';
+              forgotFeedback.textContent = '';
+            }
+            if (forgotError) {
+              forgotError.style.display = 'none';
+              forgotError.textContent = '';
+            }
+            forgotModal.style.display = 'flex';
+            if (forgotEmailInput) forgotEmailInput.focus();
+          }
+
+          function closeForgotModal() {
+            if (forgotModal) forgotModal.style.display = 'none';
+          }
+
+          if (btnOpenForgotModal) {
+            btnOpenForgotModal.addEventListener('click', openForgotModal);
+          }
+          if (btnCloseForgotModal) {
+            btnCloseForgotModal.addEventListener('click', closeForgotModal);
+          }
+          if (forgotModal) {
+            forgotModal.addEventListener('click', (e) => {
+              if (e.target === forgotModal) closeForgotModal();
+            });
+          }
+
+          if (forgotForm) {
+            forgotForm.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const email = (forgotEmailInput?.value || '').trim();
+              if (!email || !email.includes('@')) {
+                if (forgotError) {
+                  forgotError.textContent = 'Veuillez saisir une adresse email valide.';
+                  forgotError.style.display = 'block';
+                }
+                return;
+              }
+
+              if (forgotError) forgotError.style.display = 'none';
+              if (btnSubmitForgot) {
+                btnSubmitForgot.disabled = true;
+                btnSubmitForgot.textContent = 'Envoi en cours...';
+              }
+
+              try {
+                const res = await window.Api.auth.forgotPassword(email);
+                if (forgotFeedback) {
+                  forgotFeedback.style.display = 'block';
+                  forgotFeedback.style.background = '#f0fdf4';
+                  forgotFeedback.style.border = '1px solid #86efac';
+                  forgotFeedback.style.color = '#166534';
+                  forgotFeedback.textContent = res.message || 'Si cette adresse correspond à un compte actif, un lien de réinitialisation vient de vous être envoyé.';
+                }
+                if (forgotEmailInput) forgotEmailInput.value = '';
+              } catch (err) {
+                if (forgotFeedback) {
+                  forgotFeedback.style.display = 'block';
+                  forgotFeedback.style.background = '#fef2f2';
+                  forgotFeedback.style.border = '1px solid #fecaca';
+                  forgotFeedback.style.color = '#991b1b';
+                  forgotFeedback.textContent = err.message || 'Une erreur est survenue lors de l\'envoi du lien.';
+                }
+              } finally {
+                if (btnSubmitForgot) {
+                  btnSubmitForgot.disabled = false;
+                  btnSubmitForgot.textContent = 'Envoyer le lien de réinitialisation';
+                }
+              }
             });
           }
         }

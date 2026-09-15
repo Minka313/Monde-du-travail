@@ -286,6 +286,130 @@ class AuthService {
       throw new UnauthorizedError('Refresh token invalide ou expiré');
     }
   }
+
+  // 1. Demande de réinitialisation de mot de passe (Forgot Password)
+  static async requestPasswordReset(email, ipAddress, userAgent) {
+    if (!email) {
+      throw new BadRequestError('Adresse email requise');
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+    });
+
+    // Protection anti-énumération : réponse générique sans lever d'erreur
+    if (!user || !user.isActive) {
+      logger.info('Demande de réinitialisation pour email inexistant ou inactif', { email: normalizedEmail });
+      return {
+        message: 'Si cette adresse correspond à un compte actif, un lien de réinitialisation vient de vous être envoyé.',
+      };
+    }
+
+    // Le secret de signature intègre le hash actuel du mot de passe :
+    // - Dès que le mot de passe change, le token devient instantanément caduc.
+    // - Zéro champ supplémentaire ou migration de table requise.
+    const resetSecret = (process.env.JWT_SECRET || 'jwt_secret_dev') + user.password;
+    const resetToken = jwt.sign(
+      { id: user.id, email: user.email, scope: 'password_reset' },
+      resetSecret,
+      { expiresIn: '15m' }
+    );
+
+    const baseUrl = process.env.FRONTEND_URL || 'https://mondedutravail.com';
+    const resetUrl = `${baseUrl.replace(/\/$/, '')}/frontend/reset-password.html?token=${encodeURIComponent(resetToken)}`;
+
+    // Envoi de l'email via Resend
+    try {
+      await EmailService.notifyPasswordReset({
+        to: user.email,
+        recipientName: user.firstName,
+        resetUrl,
+      });
+    } catch (err) {
+      logger.warn('Échec envoi email réinitialisation mot de passe', { error: err.message, userId: user.id });
+    }
+
+    // Audit log
+    await AuditService.log({
+      userId: user.id,
+      action: 'auth.password_reset_requested',
+      module: 'Auth',
+      resource: 'User',
+      resourceId: user.id,
+      ipAddress: ipAddress || null,
+      userAgent: userAgent || null,
+      result: 'SUCCESS',
+    }).catch(() => {});
+
+    return {
+      message: 'Si cette adresse correspond à un compte actif, un lien de réinitialisation vient de vous être envoyé.',
+    };
+  }
+
+  // 2. Réinitialisation effective du mot de passe avec le token (Reset Password)
+  static async resetPassword(token, newPassword, ipAddress, userAgent) {
+    if (!token) {
+      throw new BadRequestError('Jeton de réinitialisation requis');
+    }
+    if (!newPassword || newPassword.length < 8) {
+      throw new BadRequestError('Le mot de passe doit contenir au moins 8 caractères');
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.decode(token);
+    } catch (err) {
+      throw new BadRequestError('Le lien de réinitialisation est invalide ou corrompu');
+    }
+
+    if (!decoded || !decoded.id || decoded.scope !== 'password_reset') {
+      throw new BadRequestError('Le lien de réinitialisation est invalide ou corrompu');
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id },
+    });
+
+    if (!user || !user.isActive) {
+      throw new BadRequestError('Utilisateur introuvable ou compte désactivé');
+    }
+
+    const resetSecret = (process.env.JWT_SECRET || 'jwt_secret_dev') + user.password;
+    try {
+      jwt.verify(token, resetSecret);
+    } catch (err) {
+      if (err.name === 'TokenExpiredError') {
+        throw new BadRequestError('Ce lien de réinitialisation a expiré (validité 15 minutes). Veuillez refaire une demande.');
+      }
+      throw new BadRequestError('Ce lien de réinitialisation est invalide ou a déjà été utilisé.');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword },
+    });
+
+    logger.info('Mot de passe réinitialisé avec succès', { userId: user.id, email: user.email });
+
+    await AuditService.log({
+      userId: user.id,
+      action: 'auth.password_reset_completed',
+      module: 'Auth',
+      resource: 'User',
+      resourceId: user.id,
+      ipAddress: ipAddress || null,
+      userAgent: userAgent || null,
+      result: 'SUCCESS',
+    }).catch(() => {});
+
+    return {
+      success: true,
+      message: 'Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter.',
+    };
+  }
 }
 
 module.exports = AuthService;
