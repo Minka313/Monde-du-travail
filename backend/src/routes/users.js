@@ -21,6 +21,7 @@ const userUpdateSchema = z.object({
 });
 
 router.get('/', authorize('users.read'), userController.getAllUsers);
+router.get('/:id/dossier', authorize('users.read'), userController.getUserDossier);
 router.get('/:id', authorize('users.read'), userController.getUserById);
 router.put('/:id', authorize('users.update'), validate(userUpdateSchema), userController.updateUser);
 

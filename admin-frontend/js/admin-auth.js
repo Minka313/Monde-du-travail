@@ -367,6 +367,7 @@
     users: {
       getAll: (params = {}) => contentListQuery('/users', params),
       get: (id) => apiRequestWithRefresh(`/users/${id}`),
+      getDossier: (id) => apiRequestWithRefresh(`/users/${id}/dossier`),
       update: (id, data) => apiRequestWithRefresh(`/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
       activate: (id) => apiRequestWithRefresh(`/users/${id}/activate`, { method: 'POST' }),
       deactivate: (id) => apiRequestWithRefresh(`/users/${id}/deactivate`, { method: 'POST' }),

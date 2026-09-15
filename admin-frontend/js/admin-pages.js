@@ -413,10 +413,13 @@
                              <td style="max-width:260px;">${escapeHtml((m.motivation || '—').slice(0, 110))}${(m.motivation || '').length > 110 ? '…' : ''}</td>
                              <td>${new Date(m.createdAt).toLocaleDateString('fr-FR')}</td>
                              <td>
-                               ${canApproveMemberships ? `
-                                 <button class="btn btn-success btn-sm" data-approve-membership="${m.id}">Approuver</button>
-                                 <button class="btn btn-danger btn-sm" data-reject-membership="${m.id}">Refuser</button>
-                               ` : '<span class="text-muted">Lecture seule</span>'}
+                               <div style="display:flex;gap:0.35rem;align-items:center;">
+                                 <button class="btn btn-ghost btn-sm" data-view-dossier="${m.user?.id || m.userId}" title="Consulter le dossier candidat">📁 Dossier</button>
+                                 ${canApproveMemberships ? `
+                                   <button class="btn btn-success btn-sm" data-approve-membership="${m.id}">Approuver</button>
+                                   <button class="btn btn-danger btn-sm" data-reject-membership="${m.id}">Refuser</button>
+                                 ` : '<span class="text-muted">Lecture seule</span>'}
+                               </div>
                              </td>
                            </tr>
                          `).join('')}
@@ -1425,17 +1428,20 @@
                   </td>
                   <td>${u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('fr-FR') : '—'}</td>
                   <td>
-                    ${can('users.suspend') ? (u.isActive
-        ? `<button class="btn btn-warning btn-sm" data-user-action="deactivate" data-user-id="${u.id}">Désactiver</button>`
-        : `<button class="btn btn-success btn-sm" data-user-action="activate" data-user-id="${u.id}">Activer</button>`) : ''}
-                    ${can('users.verify') && !u.isVerified ? `<button class="btn btn-sm" data-user-action="verify" data-user-id="${u.id}">Vérifier</button>` : ''}
-                    ${can('admins.assign') ? `<button class="btn btn-sm" data-user-action="roles" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}">Rôles</button>` : ''}
-                    ${can('admins.assign') ? (
-                      (u.adminRoles || []).includes('MENTOR_EXPERT')
-                        ? `<button class="btn btn-outline-danger btn-sm" data-user-action="revoke-mentor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" title="Révoquer le statut de Mentor">Révoquer Mentor</button>`
-                        : `<button class="btn btn-sm" data-user-action="nominate-mentor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1px solid #f59e0b;font-weight:600;" title="Nommer au rang de Mentor & Expert">🎓 Nommer Mentor</button>`
-                    ) : ''}
-                    ${can('users.delete') && u.id !== user.id ? `<button class="btn btn-danger btn-sm" data-user-action="delete" data-user-id="${u.id}">Supprimer</button>` : ''}
+                    <div style="display:flex;gap:0.35rem;flex-wrap:wrap;align-items:center;">
+                      <button class="btn btn-primary btn-sm" data-user-action="dossier" data-user-id="${u.id}" title="Consulter le dossier complet">📁 Dossier</button>
+                      ${can('users.suspend') ? (u.isActive
+                        ? `<button class="btn btn-warning btn-sm" data-user-action="deactivate" data-user-id="${u.id}">Désactiver</button>`
+                        : `<button class="btn btn-success btn-sm" data-user-action="activate" data-user-id="${u.id}">Activer</button>`) : ''}
+                      ${can('users.verify') && !u.isVerified ? `<button class="btn btn-sm" data-user-action="verify" data-user-id="${u.id}">Vérifier</button>` : ''}
+                      ${can('admins.assign') ? `<button class="btn btn-sm" data-user-action="roles" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}">Rôles</button>` : ''}
+                      ${can('admins.assign') ? (
+                        (u.adminRoles || []).includes('MENTOR_EXPERT')
+                          ? `<button class="btn btn-outline-danger btn-sm" data-user-action="revoke-mentor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" title="Révoquer le statut de Mentor">Révoquer Mentor</button>`
+                          : `<button class="btn btn-sm" data-user-action="nominate-mentor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1px solid #f59e0b;font-weight:600;" title="Nommer au rang de Mentor & Expert">🎓 Nommer Mentor</button>`
+                      ) : ''}
+                      ${can('users.delete') && u.id !== user.id ? `<button class="btn btn-danger btn-sm" data-user-action="delete" data-user-id="${u.id}">Supprimer</button>` : ''}
+                    </div>
                   </td>
                 </tr>
               `).join('')}
@@ -1444,6 +1450,318 @@
         </div>
       </div>
     `;
+  }
+
+  // ===== Modale Dossier Membre / Utilisateur =====
+  async function openUserDossierModal(userId) {
+    const existing = document.getElementById('user-dossier-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'user-dossier-modal';
+    overlay.className = 'dossier-modal-overlay';
+    overlay.innerHTML = `
+      <div class="dossier-modal-card">
+        <div class="dossier-modal-header">
+          <h2 style="margin:0;font-size:1.2rem;display:flex;align-items:center;gap:0.5rem;">
+            <span>📁</span> Dossier Membre
+          </h2>
+          <button class="sidebar-close-btn" id="dossier-modal-close" style="position:static;font-size:1.5rem;">&times;</button>
+        </div>
+        <div class="dossier-modal-body" style="padding:3rem 1.5rem;text-align:center;">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">⏳</div>
+          <p style="color:var(--color-muted);font-weight:500;">Chargement du dossier complet...</p>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+    overlay.querySelector('#dossier-modal-close').addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    try {
+      const response = await window.AdminApi.users.getDossier(userId);
+      const u = response.data;
+      const currentUser = window.AdminApp.currentUser;
+      const can = permission => window.AdminApp.hasPermission(currentUser, permission);
+
+      const initials = ((u.firstName?.[0] || '') + (u.lastName?.[0] || '')).toUpperCase() || 'U';
+      const createdDate = new Date(u.createdAt).toLocaleDateString('fr-FR', {
+        day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
+      const lastLoginStr = u.lastLoginAt
+        ? new Date(u.lastLoginAt).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        : 'Aucune connexion enregistrée';
+
+      const memberships = u.memberships || [];
+      const latestMembership = memberships[0];
+      const pendingMembership = memberships.find(m => m.status === 'PENDING');
+
+      const adminRoles = (u.adminRoles || []).map(r => r.role?.name).filter(Boolean);
+      const isMentor = adminRoles.includes('MENTOR_EXPERT');
+
+      const modalContent = `
+        <div class="dossier-modal-header">
+          <div style="display:flex;align-items:center;gap:0.6rem;">
+            <span style="font-size:1.3rem;">📁</span>
+            <div>
+              <h2 style="margin:0;font-size:1.2rem;color:#0f172a;">Dossier de suivi : ${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</h2>
+              <span style="font-size:0.8rem;color:#64748b;">ID : ${escapeHtml(u.id)}</span>
+            </div>
+          </div>
+          <button class="sidebar-close-btn" id="dossier-modal-close" style="position:static;font-size:1.5rem;" aria-label="Fermer">&times;</button>
+        </div>
+
+        <div class="dossier-modal-body">
+          <!-- Hero Profil & Identité -->
+          <div class="dossier-profile-hero">
+            <div class="dossier-avatar">${initials}</div>
+            <div class="dossier-profile-info">
+              <div class="dossier-profile-name">
+                <span>${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</span>
+                <span class="badge badge-primary">${u.role}</span>
+                ${isMentor ? '<span class="badge badge-mentor">🎓 Mentor & Expert</span>' : ''}
+              </div>
+              <div class="dossier-profile-email">
+                <a href="mailto:${escapeHtml(u.email)}" style="color:var(--color-primary);text-decoration:none;display:inline-flex;align-items:center;gap:0.35rem;">
+                  <span>✉️</span> ${escapeHtml(u.email)}
+                </a>
+              </div>
+              <div class="dossier-pills-row">
+                <span class="badge ${u.isActive ? 'badge-success' : 'badge-danger'}">
+                  ${u.isActive ? '🟢 Compte Actif' : '🔴 Compte Suspendu / Inactif'}
+                </span>
+                <span class="badge ${u.isVerified ? 'badge-success' : 'badge-warning'}">
+                  ${u.isVerified ? '✓ Email Vérifié' : '⚠️ Non vérifié'}
+                </span>
+                ${u.twoFactorEnabled ? '<span class="badge badge-primary">🔐 2FA Activé</span>' : ''}
+                ${adminRoles.filter(r => r !== 'MENTOR_EXPERT').map(r => `<span class="badge badge-muted">🛡️ ${escapeHtml(r)}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Métadonnées Rapides -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:0.85rem;background:#f8fafc;padding:0.9rem 1.1rem;border-radius:10px;border:1px solid #e2e8f0;font-size:0.85rem;">
+            <div>
+              <span style="color:#64748b;display:block;font-size:0.78rem;">Date d'inscription</span>
+              <strong style="color:#0f172a;">${createdDate}</strong>
+            </div>
+            <div>
+              <span style="color:#64748b;display:block;font-size:0.78rem;">Dernière connexion</span>
+              <strong style="color:#0f172a;">${lastLoginStr}</strong>
+            </div>
+            <div>
+              <span style="color:#64748b;display:block;font-size:0.78rem;">Statut d'adhésion</span>
+              <strong style="color:#0f172a;">
+                ${pendingMembership ? '🟡 En attente de validation' : latestMembership ? (latestMembership.status === 'APPROVED' ? '🟢 Adhérent validé' : '🔴 Candidature refusée') : '⚪ Membre direct'}
+              </strong>
+            </div>
+          </div>
+
+          <!-- SECTION CLÉ : MOTIVATION D'INTÉGRATION AU CLUB -->
+          <div class="dossier-motivation-box">
+            <div class="dossier-motivation-header">
+              <h3 class="dossier-motivation-title">
+                <span>🎯</span> Motivation & Raisons d'intégration au club
+              </h3>
+              ${latestMembership ? `
+                <span class="badge ${latestMembership.status === 'APPROVED' ? 'badge-success' : latestMembership.status === 'PENDING' ? 'badge-warning' : 'badge-danger'}">
+                  ${latestMembership.status === 'APPROVED' ? 'Adhésion approuvée' : latestMembership.status === 'PENDING' ? 'En attente d\'approbation' : 'Adhésion refusée'}
+                </span>
+              ` : '<span class="badge badge-muted">Sans demande formelle</span>'}
+            </div>
+
+            ${latestMembership ? `
+              <div class="dossier-motivation-quote">
+                ${latestMembership.motivation && latestMembership.motivation.trim().length > 0
+                  ? escapeHtml(latestMembership.motivation)
+                  : '<span style="color:#94a3b8;font-style:italic;">(Le candidat n\'a pas rédigé de lettre de motivation facultative lors de sa demande.)</span>'
+                }
+              </div>
+              <div class="dossier-motivation-meta">
+                <span>Demande soumise le <strong>${new Date(latestMembership.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</strong></span>
+                ${latestMembership.reviewedAt ? `<span>Traitée le <strong>${new Date(latestMembership.reviewedAt).toLocaleDateString('fr-FR')}</strong></span>` : ''}
+              </div>
+
+              ${latestMembership.status === 'PENDING' && can('membership.approve') ? `
+                <div style="margin-top:1rem;display:flex;gap:0.6rem;padding-top:0.85rem;border-top:1px dashed #fcd34d;">
+                  <button class="btn btn-success btn-sm" id="dossier-act-approve-membership" data-membership-id="${latestMembership.id}">
+                    ✅ Approuver cette adhésion
+                  </button>
+                  <button class="btn btn-danger btn-sm" id="dossier-act-reject-membership" data-membership-id="${latestMembership.id}">
+                    ❌ Refuser cette adhésion
+                  </button>
+                </div>
+              ` : ''}
+            ` : `
+              <div style="padding:1rem;color:#64748b;font-size:0.9rem;background:#ffffff;border-radius:8px;border-left:4px solid #cbd5e1;">
+                Aucune demande d'adhésion formelle enregistrée pour ce profil (compte créé directement par un administrateur ou sans procédure d'adhésion initiale).
+              </div>
+            `}
+          </div>
+
+          <!-- Section Contributions & Activité -->
+          <div>
+            <h3 style="margin:0 0 0.75rem;font-size:1.05rem;color:#0f172a;display:flex;align-items:center;gap:0.5rem;">
+              <span>📊</span> Activité & Contributions
+            </h3>
+            <div class="dossier-metrics-grid">
+              <div class="dossier-metric-card">
+                <div class="dossier-metric-val">${u._count?.topics || 0}</div>
+                <div class="dossier-metric-lbl">Sujets Forum</div>
+              </div>
+              <div class="dossier-metric-card">
+                <div class="dossier-metric-val">${u._count?.replies || 0}</div>
+                <div class="dossier-metric-lbl">Réponses Forum</div>
+              </div>
+              <div class="dossier-metric-card">
+                <div class="dossier-metric-val">${u._count?.posts || 0}</div>
+                <div class="dossier-metric-lbl">Articles Blog</div>
+              </div>
+              <div class="dossier-metric-card">
+                <div class="dossier-metric-val">${u._count?.createdFormations || 0}</div>
+                <div class="dossier-metric-lbl">Formations</div>
+              </div>
+              <div class="dossier-metric-card">
+                <div class="dossier-metric-val">${u._count?.createdJobs || 0}</div>
+                <div class="dossier-metric-lbl">Fiches Métiers</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section Journal d'Audit Récent -->
+          ${(u.recentLogs || []).length > 0 ? `
+            <div>
+              <h3 style="margin:0 0 0.75rem;font-size:1.05rem;color:#0f172a;display:flex;align-items:center;gap:0.5rem;">
+                <span>📜</span> Historique d'Audit Récent
+              </h3>
+              <div style="display:flex;flex-direction:column;gap:0.45rem;max-height:200px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:10px;padding:0.6rem;background:#f8fafc;">
+                ${u.recentLogs.map(l => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;font-size:0.8rem;padding:0.35rem 0.5rem;background:#ffffff;border-radius:6px;border:1px solid #f1f5f9;">
+                    <div>
+                      <strong style="color:#1e293b;">${escapeHtml(l.action)}</strong>
+                      <span style="color:#64748b;margin-left:0.35rem;">(${escapeHtml(l.module)})</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                      <span class="badge badge-sm ${l.result === 'SUCCESS' || l.result === 'APPROVED' ? 'badge-success' : 'badge-muted'}">${escapeHtml(l.result || 'OK')}</span>
+                      <span style="color:#94a3b8;font-size:0.75rem;">${new Date(l.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+
+        <!-- Footer Actions Rapides -->
+        <div class="dossier-modal-footer">
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
+            ${can('users.suspend') ? `
+              <button class="btn btn-sm ${u.isActive ? 'btn-warning' : 'btn-success'}" id="dossier-act-toggle-status">
+                ${u.isActive ? 'Suspendre le compte' : 'Activer le compte'}
+              </button>
+            ` : ''}
+            ${can('users.verify') && !u.isVerified ? `
+              <button class="btn btn-sm btn-primary" id="dossier-act-verify">
+                ✓ Marquer comme vérifié
+              </button>
+            ` : ''}
+            ${can('admins.assign') ? `
+              <button class="btn btn-sm" id="dossier-act-roles">
+                🛡️ Gérer les rôles
+              </button>
+            ` : ''}
+          </div>
+          <button class="btn btn-ghost btn-sm" id="dossier-modal-close-footer">Fermer le dossier</button>
+        </div>
+      `;
+
+      overlay.querySelector('.dossier-modal-card').innerHTML = modalContent;
+
+      // Écouteurs de fermeture
+      overlay.querySelectorAll('#dossier-modal-close, #dossier-modal-close-footer').forEach(btn => {
+        btn.addEventListener('click', close);
+      });
+
+      // Actions rapides depuis le dossier :
+      // 1. Approuver adhésion
+      overlay.querySelector('#dossier-act-approve-membership')?.addEventListener('click', async (e) => {
+        const membershipId = e.currentTarget.getAttribute('data-membership-id');
+        try {
+          await window.AdminApi.admin.approveMembership(membershipId);
+          showToast('Adhésion approuvée — compte membre activé avec succès', 'success');
+          close();
+          const cur = window.location.hash.replace('#', '') || 'dashboard';
+          loadPage(cur);
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+
+      // 2. Refuser adhésion
+      overlay.querySelector('#dossier-act-reject-membership')?.addEventListener('click', async (e) => {
+        const membershipId = e.currentTarget.getAttribute('data-membership-id');
+        if (!confirm('Refuser cette candidature d\'adhésion ?')) return;
+        try {
+          await window.AdminApi.admin.rejectMembership(membershipId);
+          showToast('Adhésion refusée', 'warning');
+          close();
+          const cur = window.location.hash.replace('#', '') || 'dashboard';
+          loadPage(cur);
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+
+      // 3. Activer / Suspendre
+      overlay.querySelector('#dossier-act-toggle-status')?.addEventListener('click', async () => {
+        try {
+          if (u.isActive) {
+            await window.AdminApi.users.deactivate(u.id);
+            showToast('Compte désactivé', 'warning');
+          } else {
+            await window.AdminApi.users.activate(u.id);
+            showToast('Compte activé', 'success');
+          }
+          openUserDossierModal(u.id);
+          const cur = window.location.hash.replace('#', '') || 'users';
+          loadPage(cur);
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+
+      // 4. Vérifier
+      overlay.querySelector('#dossier-act-verify')?.addEventListener('click', async () => {
+        try {
+          await window.AdminApi.users.verify(u.id);
+          showToast('Compte vérifié', 'success');
+          openUserDossierModal(u.id);
+          const cur = window.location.hash.replace('#', '') || 'users';
+          loadPage(cur);
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+
+      // 5. Rôles
+      overlay.querySelector('#dossier-act-roles')?.addEventListener('click', () => {
+        close();
+        openUserRolesModal(u.id, `${u.firstName} ${u.lastName}`);
+      });
+
+    } catch (err) {
+      overlay.querySelector('.dossier-modal-body').innerHTML = `
+        <div class="empty-state" style="padding:2rem 1rem;">
+          <div style="font-size:2rem;color:var(--color-danger);margin-bottom:0.5rem;">⚠️</div>
+          <p><strong>Impossible de charger le dossier</strong></p>
+          <p style="color:var(--color-muted);font-size:0.85rem;">${escapeHtml(err.message)}</p>
+          <button class="btn btn-sm" id="dossier-modal-retry" style="margin-top:1rem;">Réessayer</button>
+        </div>
+      `;
+      overlay.querySelector('#dossier-modal-retry')?.addEventListener('click', () => openUserDossierModal(userId));
+    }
   }
 
   // Modale de gestion des rôles d'un utilisateur (attribuer / retirer)
@@ -1802,10 +2120,13 @@
                   <td>
                     ${canApproveMemberships ? `
                       <div style="display: flex; gap: 0.4rem; align-items: center;">
+                        <button class="btn btn-sm btn-ghost" data-view-dossier="${m.user?.id || m.userId}" title="Consulter le dossier candidat">📁 Dossier</button>
                         <button class="btn btn-success btn-sm" data-approve-membership-approval="${m.id}" title="Activer le compte membre">Approuver</button>
                         <button class="btn btn-danger btn-sm" data-reject-membership-approval="${m.id}" title="Refuser cette inscription">Refuser</button>
                       </div>
-                    ` : '<span class="text-muted">Lecture seule</span>'}
+                    ` : `
+                      <button class="btn btn-sm btn-ghost" data-view-dossier="${m.user?.id || m.userId}" title="Consulter le dossier candidat">📁 Dossier</button>
+                    `}
                   </td>
                 </tr>
               `).join('')}
@@ -2838,6 +3159,11 @@
           const userId = btn.getAttribute('data-user-id');
           const userName = btn.getAttribute('data-user-name') || 'cet utilisateur';
 
+          if (action === 'dossier') {
+            openUserDossierModal(userId);
+            return;
+          }
+
           if (action === 'roles') {
             openUserRolesModal(userId, userName);
             return;
@@ -3175,6 +3501,15 @@
         });
       });
     }
+
+    // Écouteur global pour l'ouverture du dossier utilisateur depuis n'importe quel module
+    document.querySelectorAll('[data-view-dossier]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const userId = btn.getAttribute('data-view-dossier');
+        if (userId) openUserDossierModal(userId);
+      });
+    });
   }
 
   function escapeHtml(text) {

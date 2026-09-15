@@ -37,6 +37,18 @@ class UserController {
     }
   }
 
+  static async getUserDossier(req, res, next) {
+    try {
+      const dossier = await userService.getUserDossier(req.params.id);
+      res.json({
+        success: true,
+        data: dossier,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async updateUser(req, res, next) {
     try {
       const user = await userService.updateUser(req.params.id, req.body, req.user.id);

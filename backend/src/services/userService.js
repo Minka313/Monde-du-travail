@@ -98,6 +98,89 @@ class UserService {
     return user;
   }
 
+  // Dossier complet d'un membre/utilisateur pour suivi approfondi (profil, motivations d'adhésion, rôles, activité, logs)
+  static async getUserDossier(id) {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        isActive: true,
+        isVerified: true,
+        twoFactorEnabled: true,
+        createdAt: true,
+        updatedAt: true,
+        lastLoginAt: true,
+        memberships: {
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            motivation: true,
+            status: true,
+            reviewedBy: true,
+            reviewedAt: true,
+            createdAt: true,
+          },
+        },
+        adminRoles: {
+          where: { isActive: true, status: 'APPROVED' },
+          select: {
+            id: true,
+            assignedAt: true,
+            expiresAt: true,
+            role: {
+              select: {
+                id: true,
+                name: true,
+                description: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            topics: true,
+            replies: true,
+            posts: true,
+            createdFormations: true,
+            createdJobs: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundError('Utilisateur non trouvé');
+    }
+
+    const recentLogs = await prisma.auditLog.findMany({
+      where: {
+        OR: [
+          { userId: id },
+          { resourceId: id },
+        ],
+      },
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        action: true,
+        module: true,
+        resource: true,
+        result: true,
+        createdAt: true,
+      },
+    });
+
+    return {
+      ...user,
+      recentLogs,
+    };
+  }
+
   // Mise à jour du profil : liste blanche stricte de champs.
   // (jamais role/isActive/isVerified par ici : endpoints dédiés + permissions)
   static async updateUser(id, data, requesterId) {
