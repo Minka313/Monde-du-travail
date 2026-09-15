@@ -1,5 +1,7 @@
 const adminService = require('../services/adminService');
 const AuditService = require('../services/auditService');
+const EmailService = require('../services/emailService');
+const logger = require('../utils/logger');
 const prisma = require('../config/database');
 
 class AdminController {
@@ -233,9 +235,19 @@ class AdminController {
         metadata: { userId: membership.userId, accountActivated: true },
       });
 
+      // Notification par email du candidat avec le mot de bienvenue de l'administrateur
+      const welcomeMessage = req.body?.welcomeMessage;
+      EmailService.notifyCandidateMembershipApproved({
+        to: membership.user.email,
+        candidateName: membership.user.firstName,
+        welcomeMessage,
+      }).catch(err => {
+        logger.warn('Erreur envoi email approbation adhésion', { error: err.message });
+      });
+
       res.json({
         success: true,
-        message: 'Demande d\'adhésion approuvée — compte activé',
+        message: 'Demande d\'adhésion approuvée — compte activé et email de bienvenue envoyé',
         data: updated,
       });
     } catch (error) {
@@ -247,6 +259,7 @@ class AdminController {
     try {
       const membership = await prisma.membershipRequest.findUnique({
         where: { id: req.params.id },
+        include: { user: true },
       });
 
       if (!membership) {
@@ -280,9 +293,19 @@ class AdminController {
         metadata: { userId: membership.userId },
       });
 
+      // Notification par email du candidat avec le motif de refus
+      const reason = req.body?.reason;
+      EmailService.notifyCandidateMembershipRejected({
+        to: membership.user.email,
+        candidateName: membership.user.firstName,
+        reason,
+      }).catch(err => {
+        logger.warn('Erreur envoi email refus adhésion', { error: err.message });
+      });
+
       res.json({
         success: true,
-        message: 'Demande d\'adhésion refusée',
+        message: 'Demande d\'adhésion refusée — notification envoyée au candidat',
         data: updated,
       });
     } catch (error) {

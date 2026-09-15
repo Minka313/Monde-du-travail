@@ -5,6 +5,7 @@ const { UnauthorizedError, ConflictError, BadRequestError } = require('../utils/
 const logger = require('../utils/logger');
 const AuditService = require('./auditService');
 const RbacService = require('./rbacService');
+const EmailService = require('./emailService');
 const totp = require('../utils/totp');
 
 class AuthService {
@@ -50,6 +51,22 @@ class AuthService {
     });
 
     logger.info('Nouvelle inscription (demande d\'adhésion créée)', { userId: user.id, email: user.email });
+
+    // Notifications par email (asynchrones pour fluidité de l'inscription)
+    Promise.all([
+      EmailService.notifyCandidateMembershipSubmitted({
+        to: user.email,
+        candidateName: user.firstName,
+      }),
+      EmailService.notifyAdminNewMembership({
+        candidateName: `${user.firstName} ${user.lastName}`,
+        candidateEmail: user.email,
+        motivation: motivation || '',
+        createdAt: user.createdAt,
+      }),
+    ]).catch(err => {
+      logger.warn('Erreur lors de l\'envoi des emails de notification d\'adhésion', { error: err.message });
+    });
 
     return user;
   }

@@ -416,8 +416,8 @@
                                <div style="display:flex;gap:0.35rem;align-items:center;">
                                  <button class="btn btn-ghost btn-sm" data-view-dossier="${m.user?.id || m.userId}" title="Consulter le dossier candidat">📁 Dossier</button>
                                  ${canApproveMemberships ? `
-                                   <button class="btn btn-success btn-sm" data-approve-membership="${m.id}">Approuver</button>
-                                   <button class="btn btn-danger btn-sm" data-reject-membership="${m.id}">Refuser</button>
+                                   <button class="btn btn-success btn-sm" data-approve-membership="${m.id}" data-candidate-name="${escapeHtml(((m.user?.firstName || '') + ' ' + (m.user?.lastName || '')).trim() || 'le candidat')}">Approuver</button>
+                                   <button class="btn btn-danger btn-sm" data-reject-membership="${m.id}" data-candidate-name="${escapeHtml(((m.user?.firstName || '') + ' ' + (m.user?.lastName || '')).trim() || 'le candidat')}">Refuser</button>
                                  ` : '<span class="text-muted">Lecture seule</span>'}
                                </div>
                              </td>
@@ -1497,6 +1497,7 @@
       const memberships = u.memberships || [];
       const latestMembership = memberships[0];
       const pendingMembership = memberships.find(m => m.status === 'PENDING');
+      const candidateName = `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'le candidat';
 
       const adminRoles = (u.adminRoles || []).map(r => r.role?.name).filter(Boolean);
       const isMentor = adminRoles.includes('MENTOR_EXPERT');
@@ -1586,10 +1587,10 @@
 
               ${latestMembership.status === 'PENDING' && can('membership.approve') ? `
                 <div style="margin-top:1rem;display:flex;gap:0.6rem;padding-top:0.85rem;border-top:1px dashed #fcd34d;">
-                  <button class="btn btn-success btn-sm" id="dossier-act-approve-membership" data-membership-id="${latestMembership.id}">
+                  <button class="btn btn-success btn-sm" id="dossier-act-approve-membership" data-membership-id="${latestMembership.id}" data-candidate-name="${escapeHtml(candidateName)}">
                     ✅ Approuver cette adhésion
                   </button>
-                  <button class="btn btn-danger btn-sm" id="dossier-act-reject-membership" data-membership-id="${latestMembership.id}">
+                  <button class="btn btn-danger btn-sm" id="dossier-act-reject-membership" data-membership-id="${latestMembership.id}" data-candidate-name="${escapeHtml(candidateName)}">
                     ❌ Refuser cette adhésion
                   </button>
                 </div>
@@ -1686,32 +1687,25 @@
 
       // Actions rapides depuis le dossier :
       // 1. Approuver adhésion
-      overlay.querySelector('#dossier-act-approve-membership')?.addEventListener('click', async (e) => {
+      overlay.querySelector('#dossier-act-approve-membership')?.addEventListener('click', (e) => {
         const membershipId = e.currentTarget.getAttribute('data-membership-id');
-        try {
-          await window.AdminApi.admin.approveMembership(membershipId);
-          showToast('Adhésion approuvée — compte membre activé avec succès', 'success');
+        const candName = e.currentTarget.getAttribute('data-candidate-name') || candidateName;
+        openApproveMembershipModal(membershipId, candName, () => {
           close();
           const cur = window.location.hash.replace('#', '') || 'dashboard';
           loadPage(cur);
-        } catch (err) {
-          showToast(err.message, 'error');
-        }
+        });
       });
 
       // 2. Refuser adhésion
-      overlay.querySelector('#dossier-act-reject-membership')?.addEventListener('click', async (e) => {
+      overlay.querySelector('#dossier-act-reject-membership')?.addEventListener('click', (e) => {
         const membershipId = e.currentTarget.getAttribute('data-membership-id');
-        if (!confirm('Refuser cette candidature d\'adhésion ?')) return;
-        try {
-          await window.AdminApi.admin.rejectMembership(membershipId);
-          showToast('Adhésion refusée', 'warning');
+        const candName = e.currentTarget.getAttribute('data-candidate-name') || candidateName;
+        openRejectMembershipModal(membershipId, candName, () => {
           close();
           const cur = window.location.hash.replace('#', '') || 'dashboard';
           loadPage(cur);
-        } catch (err) {
-          showToast(err.message, 'error');
-        }
+        });
       });
 
       // 3. Activer / Suspendre
@@ -2023,6 +2017,164 @@
     }
   }
 
+  // Modale d'approbation d'adhésion avec mot de bienvenue personnalisable
+  function openApproveMembershipModal(membershipId, candidateName = 'le candidat', onSuccess = null) {
+    const existing = document.getElementById('membership-approve-overlay');
+    if (existing) existing.remove();
+
+    const defaultWelcome = "C'est un réel plaisir de vous accueillir parmi nous ! Vos motivations et votre dynamisme correspondent parfaitement aux valeurs d'excellence, de partage d'expérience et d'entraide de notre club. Nous avons hâte de découvrir vos contributions et de vous accompagner dans votre parcours professionnel. Bienvenue dans la grande famille du Monde du Travail !";
+
+    const overlay = document.createElement('div');
+    overlay.id = 'membership-approve-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:1100;padding:1rem;';
+    overlay.innerHTML = `
+      <div class="card" style="max-width:580px;width:100%;padding:1.75rem;background:var(--bg-card, #fff);box-shadow:0 20px 40px rgba(0,0,0,0.25);border-radius:12px;border:1px solid #e2e8f0;animation:dossierFadeIn 0.2s ease;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;border-bottom:1px solid #e2e8f0;padding-bottom:1rem;">
+          <div>
+            <span style="display:inline-block;padding:0.25rem 0.6rem;background:#ecfdf5;color:#059669;font-size:0.75rem;font-weight:700;border-radius:999px;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.04em;">Validation &amp; Bienvenue</span>
+            <h2 style="margin:0;font-size:1.3rem;color:#0f172a;font-weight:700;">Approuver l'adhésion</h2>
+            <p style="margin:0.25rem 0 0;font-size:0.88rem;color:#64748b;">Candidat : <strong style="color:#0f172a;">${escapeHtml(candidateName)}</strong></p>
+          </div>
+          <button type="button" id="approve-modal-close-btn" style="border:none;background:transparent;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0.25rem;">&times;</button>
+        </div>
+
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:0.85rem 1rem;margin-bottom:1.25rem;display:flex;gap:0.75rem;align-items:flex-start;">
+          <span style="font-size:1.25rem;line-height:1.2;">🎉</span>
+          <div style="font-size:0.85rem;color:#166534;line-height:1.45;">
+            L'approbation active immédiatement le compte membre et lui expédie un <strong>email officiel de bienvenue</strong> contenant vos félicitations et le lien direct pour se connecter.
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label for="approve-welcome-message" style="display:block;margin-bottom:0.45rem;font-size:0.88rem;font-weight:600;color:#1e293b;">
+            Mot de bienvenue de l'administrateur <span style="font-weight:normal;color:#64748b;">(personnalisable)</span> :
+          </label>
+          <textarea id="approve-welcome-message" rows="5" style="width:100%;box-sizing:border-box;padding:0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:0.88rem;line-height:1.5;color:#1e293b;resize:vertical;transition:border-color 0.2s;" placeholder="Rédigez votre mot d'accueil...">${escapeHtml(defaultWelcome)}</textarea>
+          <small style="display:block;margin-top:0.35rem;color:#94a3b8;font-size:0.78rem;">Ce message apparaîtra en évidence dans le courriel de validation reçu par le nouveau membre.</small>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #f1f5f9;">
+          <button type="button" class="btn btn-ghost" id="approve-modal-cancel">Annuler</button>
+          <button type="button" class="btn btn-success" id="approve-modal-confirm" style="font-weight:600;padding:0.6rem 1.25rem;">
+            ✅ Valider et envoyer le mot de bienvenue
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    overlay.querySelector('#approve-modal-close-btn').addEventListener('click', close);
+    overlay.querySelector('#approve-modal-cancel').addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    const textarea = overlay.querySelector('#approve-welcome-message');
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+    overlay.querySelector('#approve-modal-confirm').addEventListener('click', async () => {
+      const confirmBtn = overlay.querySelector('#approve-modal-confirm');
+      const welcomeMessage = textarea.value.trim();
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Envoi en cours...';
+
+      try {
+        await window.AdminApi.admin.approveMembership(membershipId, welcomeMessage);
+        showToast('Adhésion approuvée — email de bienvenue expédié à ' + candidateName, 'success');
+        close();
+        if (typeof onSuccess === 'function') {
+          onSuccess();
+        } else {
+          const cur = window.location.hash.replace('#', '') || 'approvals';
+          loadPage(cur);
+        }
+      } catch (err) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = '✅ Valider et envoyer le mot de bienvenue';
+        showToast(err.message || 'Erreur lors de l\'approbation', 'error');
+      }
+    });
+  }
+
+  // Modale de refus d'adhésion avec motif d'accompagnement
+  function openRejectMembershipModal(membershipId, candidateName = 'le candidat', onSuccess = null) {
+    const existing = document.getElementById('membership-reject-overlay');
+    if (existing) existing.remove();
+
+    const defaultReason = "Les places pour notre actuelle promotion sont limitées afin de garantir un accompagnement de qualité. Nous vous encourageons à renouveler votre candidature lors de notre prochaine session d'ouverture ou à participer à nos conférences publiques.";
+
+    const overlay = document.createElement('div');
+    overlay.id = 'membership-reject-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:1100;padding:1rem;';
+    overlay.innerHTML = `
+      <div class="card" style="max-width:580px;width:100%;padding:1.75rem;background:var(--bg-card, #fff);box-shadow:0 20px 40px rgba(0,0,0,0.25);border-radius:12px;border:1px solid #e2e8f0;animation:dossierFadeIn 0.2s ease;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;border-bottom:1px solid #e2e8f0;padding-bottom:1rem;">
+          <div>
+            <span style="display:inline-block;padding:0.25rem 0.6rem;background:#fef2f2;color:#dc2626;font-size:0.75rem;font-weight:700;border-radius:999px;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.04em;">Décision de refus</span>
+            <h2 style="margin:0;font-size:1.3rem;color:#0f172a;font-weight:700;">Refuser la candidature</h2>
+            <p style="margin:0.25rem 0 0;font-size:0.88rem;color:#64748b;">Candidat : <strong style="color:#0f172a;">${escapeHtml(candidateName)}</strong></p>
+          </div>
+          <button type="button" id="reject-modal-close-btn" style="border:none;background:transparent;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0.25rem;">&times;</button>
+        </div>
+
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:0.85rem 1rem;margin-bottom:1.25rem;display:flex;gap:0.75rem;align-items:flex-start;">
+          <span style="font-size:1.25rem;line-height:1.2;">⚠️</span>
+          <div style="font-size:0.85rem;color:#92400e;line-height:1.45;">
+            Cette action marquera la demande comme refusée et transmettra un <strong>courriel courtois et bienveillant</strong> au candidat avec le motif ci-dessous.
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+          <label for="reject-reason-message" style="display:block;margin-bottom:0.45rem;font-size:0.88rem;font-weight:600;color:#1e293b;">
+            Motif ou conseils pour le candidat <span style="font-weight:normal;color:#64748b;">(personnalisable)</span> :
+          </label>
+          <textarea id="reject-reason-message" rows="4" style="width:100%;box-sizing:border-box;padding:0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:0.88rem;line-height:1.5;color:#1e293b;resize:vertical;transition:border-color 0.2s;" placeholder="Précisez le motif ou des encouragements...">${escapeHtml(defaultReason)}</textarea>
+          <small style="display:block;margin-top:0.35rem;color:#94a3b8;font-size:0.78rem;">Ce message sera inclus dans la notification transmise au candidat.</small>
+        </div>
+
+        <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #f1f5f9;">
+          <button type="button" class="btn btn-ghost" id="reject-modal-cancel">Annuler</button>
+          <button type="button" class="btn btn-danger" id="reject-modal-confirm" style="font-weight:600;padding:0.6rem 1.25rem;">
+            ❌ Confirmer le refus et notifier
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+    const close = () => overlay.remove();
+    overlay.querySelector('#reject-modal-close-btn').addEventListener('click', close);
+    overlay.querySelector('#reject-modal-cancel').addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    const textarea = overlay.querySelector('#reject-reason-message');
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+
+    overlay.querySelector('#reject-modal-confirm').addEventListener('click', async () => {
+      const confirmBtn = overlay.querySelector('#reject-modal-confirm');
+      const reason = textarea.value.trim();
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Traitement...';
+
+      try {
+        await window.AdminApi.admin.rejectMembership(membershipId, reason);
+        showToast('Candidature refusée — notification envoyée à ' + candidateName, 'warning');
+        close();
+        if (typeof onSuccess === 'function') {
+          onSuccess();
+        } else {
+          const cur = window.location.hash.replace('#', '') || 'approvals';
+          loadPage(cur);
+        }
+      } catch (err) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = '❌ Confirmer le refus et notifier';
+        showToast(err.message || 'Erreur lors du refus', 'error');
+      }
+    });
+  }
+
   // ===== Approbations =====
   async function loadApprovals() {
     const safely = (promise, fallback = { data: [] }) => promise.catch(() => fallback);
@@ -2121,8 +2273,8 @@
                     ${canApproveMemberships ? `
                       <div style="display: flex; gap: 0.4rem; align-items: center;">
                         <button class="btn btn-sm btn-ghost" data-view-dossier="${m.user?.id || m.userId}" title="Consulter le dossier candidat">📁 Dossier</button>
-                        <button class="btn btn-success btn-sm" data-approve-membership-approval="${m.id}" title="Activer le compte membre">Approuver</button>
-                        <button class="btn btn-danger btn-sm" data-reject-membership-approval="${m.id}" title="Refuser cette inscription">Refuser</button>
+                        <button class="btn btn-success btn-sm" data-approve-membership-approval="${m.id}" data-candidate-name="${escapeHtml(((m.user?.firstName || '') + ' ' + (m.user?.lastName || '')).trim() || 'le candidat')}" title="Activer le compte membre et envoyer le mot de bienvenue">Approuver</button>
+                        <button class="btn btn-danger btn-sm" data-reject-membership-approval="${m.id}" data-candidate-name="${escapeHtml(((m.user?.firstName || '') + ' ' + (m.user?.lastName || '')).trim() || 'le candidat')}" title="Refuser cette inscription">Refuser</button>
                       </div>
                     ` : `
                       <button class="btn btn-sm btn-ghost" data-view-dossier="${m.user?.id || m.userId}" title="Consulter le dossier candidat">📁 Dossier</button>
@@ -2780,30 +2932,19 @@
 
       // Approbation d'adhésion
       document.querySelectorAll('[data-approve-membership]').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-approve-membership');
-          try {
-            await window.AdminApi.admin.approveMembership(id);
-            showToast('Adhésion approuvée — compte membre activé', 'success');
-            loadPage('dashboard');
-          } catch (error) {
-            showToast(error.message, 'error');
-          }
+          const candidateName = btn.getAttribute('data-candidate-name') || 'le candidat';
+          openApproveMembershipModal(id, candidateName, () => loadPage('dashboard'));
         });
       });
 
       // Refus d'adhésion
       document.querySelectorAll('[data-reject-membership]').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-reject-membership');
-          if (!confirm('Refuser cette demande d\'adhésion ?')) return;
-          try {
-            await window.AdminApi.admin.rejectMembership(id);
-            showToast('Adhésion refusée', 'warning');
-            loadPage('dashboard');
-          } catch (error) {
-            showToast(error.message, 'error');
-          }
+          const candidateName = btn.getAttribute('data-candidate-name') || 'le candidat';
+          openRejectMembershipModal(id, candidateName, () => loadPage('dashboard'));
         });
       });
 
@@ -3239,30 +3380,19 @@
 
       // Approbation d'adhésion depuis l'onglet Approbations
       document.querySelectorAll('[data-approve-membership-approval]').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-approve-membership-approval');
-          try {
-            await window.AdminApi.admin.approveMembership(id);
-            showToast('Adhésion approuvée — compte membre activé', 'success');
-            loadPage('approvals');
-          } catch (error) {
-            showToast(error.message, 'error');
-          }
+          const candidateName = btn.getAttribute('data-candidate-name') || 'le candidat';
+          openApproveMembershipModal(id, candidateName, () => loadPage('approvals'));
         });
       });
 
       // Refus d'adhésion depuis l'onglet Approbations
       document.querySelectorAll('[data-reject-membership-approval]').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-reject-membership-approval');
-          if (!confirm('Refuser cette demande d\'adhésion ?')) return;
-          try {
-            await window.AdminApi.admin.rejectMembership(id);
-            showToast('Adhésion refusée', 'warning');
-            loadPage('approvals');
-          } catch (error) {
-            showToast(error.message, 'error');
-          }
+          const candidateName = btn.getAttribute('data-candidate-name') || 'le candidat';
+          openRejectMembershipModal(id, candidateName, () => loadPage('approvals'));
         });
       });
 
