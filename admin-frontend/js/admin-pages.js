@@ -188,6 +188,7 @@
     const totalMentors = superData.totalMentors ?? mentors.length;
 
     const memberships = pendingMembershipsRes?.data || [];
+    const totalApprovalsCount = pendingApprovalsCount + memberships.length;
     const alerts = alertsRes?.data || [];
     const activities = activitiesRes?.data || [];
 
@@ -365,15 +366,15 @@
             </div>
           </div>
 
-          <div class="dash-kpi-card" data-dash-navigate="approvals" title="Consulter les workflows de validation">
+          <div class="dash-kpi-card" data-dash-navigate="approvals" title="Consulter le centre d'approbations (adhésions et workflows)">
             <div class="dash-kpi-header">
               <span class="dash-kpi-label"><span class="dash-kpi-icon">✅</span> Approbations</span>
               <span class="dash-kpi-arrow">→</span>
             </div>
-            <div class="dash-kpi-value">${pendingApprovalsCount}</div>
+            <div class="dash-kpi-value">${totalApprovalsCount}</div>
             <div class="dash-kpi-footer">
-              <span>Validations en souffrance</span>
-              <span class="badge ${pendingApprovalsCount > 0 ? 'badge-warning' : 'badge-muted'}">Workflows</span>
+              <span>${memberships.length} adhésion(s) • ${pendingApprovalsCount} workflow(s)</span>
+              <span class="badge ${totalApprovalsCount > 0 ? 'badge-warning' : 'badge-muted'}">À traiter</span>
             </div>
           </div>
 
@@ -1706,35 +1707,161 @@
 
   // ===== Approbations =====
   async function loadApprovals() {
-    const response = await window.AdminApi.approvals.getPending();
-    const items = response.data || [];
+    const safely = (promise, fallback = { data: [] }) => promise.catch(() => fallback);
+    const [workflowsRes, membershipsRes] = await Promise.all([
+      safely(window.AdminApi.approvals.getPending()),
+      safely(window.AdminApi.admin.getPendingMemberships()),
+    ]);
+    const workflows = workflowsRes?.data || [];
+    const memberships = membershipsRes?.data || [];
     const user = window.AdminApp.currentUser;
-    const canManage = window.AdminApp.hasPermission(user, 'approvals.manage');
+    const canManageWorkflows = window.AdminApp.hasPermission(user, 'approvals.manage');
+    const canApproveMemberships = window.AdminApp.hasPermission(user, 'membership.approve');
 
+    const totalCount = workflows.length + memberships.length;
     const resourceLabels = { Formation: 'Formation', Job: 'Métier', Post: 'Article', ADMIN: 'Admin' };
 
     return `
-      <div class="card">
+      <!-- En-tête & Statut Global -->
+      <div style="margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h2 style="margin: 0; font-size: 1.35rem; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+            <span>✅</span> Centre d'Approbations & Validations
+          </h2>
+          <p style="margin: 0.25rem 0 0; font-size: 0.88rem; color: #64748b;">
+            Traitez les adhésions des nouveaux inscrits ainsi que les publications soumises au principe des 4 yeux.
+          </p>
+        </div>
+        <div>
+          <span class="badge ${totalCount > 0 ? 'badge-warning' : 'badge-success'}" style="font-size: 0.88rem; padding: 0.45rem 0.85rem; font-weight: 700;">
+            ${totalCount > 0 ? `${totalCount} demande(s) en attente` : 'Toutes les demandes sont traitées 🎉'}
+          </span>
+        </div>
+      </div>
+
+      <!-- Filtres d'onglets rapides -->
+      <div class="approval-filter-tabs">
+        <button class="approval-tab-btn active" data-approval-filter="all">
+          <span>📋</span> Toutes les demandes
+          <span class="badge ${totalCount > 0 ? 'badge-warning' : 'badge-muted'}">${totalCount}</span>
+        </button>
+        <button class="approval-tab-btn" data-approval-filter="memberships">
+          <span>👤</span> Adhésions & Inscriptions
+          <span class="badge ${memberships.length > 0 ? 'badge-warning' : 'badge-muted'}">${memberships.length}</span>
+        </button>
+        <button class="approval-tab-btn" data-approval-filter="workflows">
+          <span>⚖️</span> Workflows de contenu (4-Yeux)
+          <span class="badge ${workflows.length > 0 ? 'badge-warning' : 'badge-muted'}">${workflows.length}</span>
+        </button>
+      </div>
+
+      <!-- Section 1 : Demandes d'adhésion (Nouveaux membres) -->
+      <div class="card approval-section-card" id="approval-section-memberships">
         <div class="card-header">
-          <h2>Demandes d'approbation</h2>
-          <span class="badge badge-warning">${items.length} en attente</span>
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span style="font-size: 1.25rem;">👤</span>
+            <div>
+              <h2 style="margin: 0; font-size: 1.1rem;">Demandes d'adhésion & Inscriptions</h2>
+              <p style="margin: 0.15rem 0 0; font-size: 0.82rem; color: #64748b;">Candidats inscrits en attente de validation pour activer leur compte membre.</p>
+            </div>
+          </div>
+          <span class="badge ${memberships.length > 0 ? 'badge-warning' : 'badge-muted'}">${memberships.length} en attente</span>
         </div>
         <div class="table-wrapper">
           <table>
-            <thead><tr><th>Objet / Ressource</th><th>Type</th><th>Demandeur</th><th>Date</th><th>Actions</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Candidat</th>
+                <th>Email</th>
+                <th>Motivation</th>
+                <th>Date d'inscription</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
             <tbody>
-              ${items.length === 0 ? '<tr><td colspan="5"><div class="empty-state">Aucune demande en attente 🎉</div></td></tr>' : items.map(w => `
+              ${memberships.length === 0 ? `
+                <tr>
+                  <td colspan="5">
+                    <div class="empty-state" style="padding: 2.25rem 1rem;">
+                      <span style="font-size: 2.2rem;">🎉</span>
+                      <p style="margin-top: 0.5rem; font-weight: 600;">Aucune demande d'adhésion en attente</p>
+                      <p style="color: #64748b; font-size: 0.85rem; margin: 0.25rem 0 0;">Toutes les inscriptions ont été approuvées ou traitées.</p>
+                    </div>
+                  </td>
+                </tr>
+              ` : memberships.map(m => `
+                <tr>
+                  <td><strong>${escapeHtml(m.user?.firstName || '')} ${escapeHtml(m.user?.lastName || '')}</strong></td>
+                  <td><a href="mailto:${escapeHtml(m.user?.email || '')}" style="color: var(--color-primary); text-decoration: none;">${escapeHtml(m.user?.email || '')}</a></td>
+                  <td style="max-width: 320px; line-height: 1.45;">
+                    <div title="${escapeHtml(m.motivation || '')}">
+                      ${escapeHtml((m.motivation || '—').slice(0, 140))}${(m.motivation || '').length > 140 ? '…' : ''}
+                    </div>
+                  </td>
+                  <td>${new Date(m.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                  <td>
+                    ${canApproveMemberships ? `
+                      <div style="display: flex; gap: 0.4rem; align-items: center;">
+                        <button class="btn btn-success btn-sm" data-approve-membership-approval="${m.id}" title="Activer le compte membre">Approuver</button>
+                        <button class="btn btn-danger btn-sm" data-reject-membership-approval="${m.id}" title="Refuser cette inscription">Refuser</button>
+                      </div>
+                    ` : '<span class="text-muted">Lecture seule</span>'}
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 2 : Workflows de validation (Principe des 4 Yeux) -->
+      <div class="card approval-section-card" id="approval-section-workflows">
+        <div class="card-header">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span style="font-size: 1.25rem;">⚖️</span>
+            <div>
+              <h2 style="margin: 0; font-size: 1.1rem;">Workflows de validation de contenus & rôles</h2>
+              <p style="margin: 0.15rem 0 0; font-size: 0.82rem; color: #64748b;">Actions critiques et publications nécessitant la validation d'un second administrateur.</p>
+            </div>
+          </div>
+          <span class="badge ${workflows.length > 0 ? 'badge-warning' : 'badge-muted'}">${workflows.length} en attente</span>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Objet / Ressource</th>
+                <th>Type</th>
+                <th>Demandeur</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${workflows.length === 0 ? `
+                <tr>
+                  <td colspan="5">
+                    <div class="empty-state" style="padding: 2.25rem 1rem;">
+                      <span style="font-size: 2.2rem;">✅</span>
+                      <p style="margin-top: 0.5rem; font-weight: 600;">Aucun workflow de validation en attente</p>
+                      <p style="color: #64748b; font-size: 0.85rem; margin: 0.25rem 0 0;">Toutes les propositions de contenu sont à jour.</p>
+                    </div>
+                  </td>
+                </tr>
+              ` : workflows.map(w => `
                 <tr>
                   <td><strong>${escapeHtml(w.comment || 'Demande de publication')}</strong></td>
                   <td><span class="badge badge-primary">${resourceLabels[w.resourceType] || w.resourceType}</span></td>
                   <td>${escapeHtml(w.createdBy ? `${w.createdBy.firstName} ${w.createdBy.lastName}` : '—')}</td>
                   <td>${new Date(w.createdAt).toLocaleString('fr-FR')}</td>
                   <td>
-                    <button class="btn btn-sm" data-preview-workflow="${w.id}">Examiner</button>
-                    ${canManage ? `
-                      <button class="btn btn-success btn-sm" data-approve-workflow="${w.id}">Approuver</button>
-                      <button class="btn btn-danger btn-sm" data-reject-workflow="${w.id}">Rejeter</button>
-                    ` : '<span class="text-muted">Lecture seule</span>'}
+                    <div style="display: flex; gap: 0.4rem; align-items: center;">
+                      <button class="btn btn-sm" data-preview-workflow="${w.id}">Examiner</button>
+                      ${canManageWorkflows ? `
+                        <button class="btn btn-success btn-sm" data-approve-workflow="${w.id}">Approuver</button>
+                        <button class="btn btn-danger btn-sm" data-reject-workflow="${w.id}">Rejeter</button>
+                      ` : '<span class="text-muted">Lecture seule</span>'}
+                    </div>
                   </td>
                 </tr>
               `).join('')}
@@ -2761,6 +2888,58 @@
     }
 
     if (module === 'approvals') {
+      // Filtres d'onglets (Toutes / Adhésions / Workflows)
+      document.querySelectorAll('[data-approval-filter]').forEach(tabBtn => {
+        tabBtn.addEventListener('click', () => {
+          const filter = tabBtn.getAttribute('data-approval-filter');
+          document.querySelectorAll('[data-approval-filter]').forEach(b => b.classList.remove('active'));
+          tabBtn.classList.add('active');
+
+          const secMemberships = document.getElementById('approval-section-memberships');
+          const secWorkflows = document.getElementById('approval-section-workflows');
+
+          if (filter === 'all') {
+            if (secMemberships) secMemberships.style.display = '';
+            if (secWorkflows) secWorkflows.style.display = '';
+          } else if (filter === 'memberships') {
+            if (secMemberships) secMemberships.style.display = '';
+            if (secWorkflows) secWorkflows.style.display = 'none';
+          } else if (filter === 'workflows') {
+            if (secMemberships) secMemberships.style.display = 'none';
+            if (secWorkflows) secWorkflows.style.display = '';
+          }
+        });
+      });
+
+      // Approbation d'adhésion depuis l'onglet Approbations
+      document.querySelectorAll('[data-approve-membership-approval]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-approve-membership-approval');
+          try {
+            await window.AdminApi.admin.approveMembership(id);
+            showToast('Adhésion approuvée — compte membre activé', 'success');
+            loadPage('approvals');
+          } catch (error) {
+            showToast(error.message, 'error');
+          }
+        });
+      });
+
+      // Refus d'adhésion depuis l'onglet Approbations
+      document.querySelectorAll('[data-reject-membership-approval]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-reject-membership-approval');
+          if (!confirm('Refuser cette demande d\'adhésion ?')) return;
+          try {
+            await window.AdminApi.admin.rejectMembership(id);
+            showToast('Adhésion refusée', 'warning');
+            loadPage('approvals');
+          } catch (error) {
+            showToast(error.message, 'error');
+          }
+        });
+      });
+
       document.querySelectorAll('[data-preview-workflow]').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-preview-workflow');

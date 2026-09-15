@@ -36,9 +36,14 @@
     },
 
     getAuthorizedModules: function(user) {
-      return Object.keys(MODULE_PERMISSIONS).filter(
-        module => this.hasPermission(user, MODULE_PERMISSIONS[module])
-      );
+      return Object.keys(MODULE_PERMISSIONS).filter(module => {
+        if (module === 'approvals') {
+          return this.hasPermission(user, 'approvals.read')
+            || this.hasPermission(user, 'membership.read')
+            || this.hasPermission(user, 'membership.approve');
+        }
+        return this.hasPermission(user, MODULE_PERMISSIONS[module]);
+      });
     },
 
     login: async function(email, password) {
