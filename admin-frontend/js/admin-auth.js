@@ -249,8 +249,14 @@
         const qs = query.toString();
         return apiRequestWithRefresh(`/admin/blog/posts${qs ? `?${qs}` : ''}`);
       },
-      approveMembership: (id) => apiRequestWithRefresh(`/admin/memberships/${id}/approve`, { method: 'POST' }),
-      rejectMembership: (id) => apiRequestWithRefresh(`/admin/memberships/${id}/reject`, { method: 'POST' }),
+      approveMembership: (id, welcomeMessage) => apiRequestWithRefresh(`/admin/memberships/${id}/approve`, {
+        method: 'POST',
+        body: JSON.stringify({ welcomeMessage }),
+      }),
+      rejectMembership: (id, reason) => apiRequestWithRefresh(`/admin/memberships/${id}/reject`, {
+        method: 'POST',
+        body: JSON.stringify({ reason }),
+      }),
       getAllAdmins: (params = {}) => {
         const query = new URLSearchParams();
         Object.entries(params).forEach(([key, value]) => {
