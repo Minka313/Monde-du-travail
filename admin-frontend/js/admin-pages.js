@@ -99,13 +99,110 @@
     });
   }
 
-  async function loadPage(module) {
+  // ===== OPTIMISATIONS HAUTE PERFORMANCE & UX RÉACTIVE =====
+  let activeModule = null;
+
+  function showTopLoader() {
+    let loader = document.getElementById('admin-top-progress');
+    if (!loader) {
+      loader = document.createElement('div');
+      loader.id = 'admin-top-progress';
+      document.body.appendChild(loader);
+    }
+    loader.classList.add('active');
+  }
+
+  function hideTopLoader() {
+    const loader = document.getElementById('admin-top-progress');
+    if (loader) loader.classList.remove('active');
+  }
+
+  function renderSkeleton() {
+    return `
+      <div style="animation: dossierFadeIn 0.2s ease; padding: 0.5rem 0;">
+        <div class="skeleton-grid">
+          <div class="skeleton-shimmer skeleton-card"></div>
+          <div class="skeleton-shimmer skeleton-card"></div>
+          <div class="skeleton-shimmer skeleton-card"></div>
+          <div class="skeleton-shimmer skeleton-card"></div>
+        </div>
+        <div class="skeleton-shimmer skeleton-table-card"></div>
+      </div>
+    `;
+  }
+
+  function applyOptimisticMembershipDecision(membershipId, statusText, badgeClass) {
+    // 1. Mise à jour visuelle instantanée des lignes du tableau (Dashboard & Approbations)
+    const approveButtons = document.querySelectorAll(`[data-approve-membership="${membershipId}"], [data-approve-membership-approval="${membershipId}"]`);
+    approveButtons.forEach(btn => {
+      const row = btn.closest('tr');
+      if (row) {
+        row.style.transition = 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)';
+        row.style.background = badgeClass === 'badge-success' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)';
+        const actionCell = row.querySelector('td:last-child');
+        if (actionCell) {
+          actionCell.innerHTML = `<span class="badge ${badgeClass}" style="animation:dossierFadeIn 0.2s ease;font-weight:600;">${statusText}</span>`;
+        }
+        // Disparition en douceur de la ligne traitée après 1.2s
+        setTimeout(() => {
+          row.style.opacity = '0';
+          row.style.transform = 'translateX(20px)';
+          setTimeout(() => {
+            const tableBody = row.parentElement;
+            row.remove();
+            if (tableBody && tableBody.children.length === 0) {
+              const table = tableBody.closest('table');
+              if (table) {
+                const emptyBox = document.createElement('div');
+                emptyBox.className = 'empty-state';
+                emptyBox.style.padding = '2.5rem 1rem';
+                emptyBox.innerHTML = '<div style="font-size:2rem;margin-bottom:0.5rem;">🎉</div><p><strong>Toutes les adhésions sont traitées !</strong></p>';
+                table.replaceWith(emptyBox);
+              }
+            }
+          }, 300);
+        }, 1200);
+      }
+    });
+
+    // 2. Décrémentation instantanée des compteurs dans les badges
+    document.querySelectorAll('.approval-tab-btn[data-approval-filter="memberships"] .badge, #approval-section-memberships .badge, .dash-kpi-card[data-dash-navigate="approvals"] .dash-kpi-value').forEach(el => {
+      const current = parseInt(el.textContent, 10);
+      if (!isNaN(current) && current > 0) {
+        el.textContent = Math.max(0, current - 1);
+      }
+    });
+
+    // 3. Mise à jour immédiate à l'intérieur du dossier candidat si ouvert
+    const dossierApproveBtn = document.getElementById('dossier-act-approve-membership');
+    if (dossierApproveBtn && dossierApproveBtn.getAttribute('data-membership-id') === membershipId) {
+      const parent = dossierApproveBtn.parentElement;
+      if (parent) {
+        parent.innerHTML = `<span class="badge ${badgeClass}" style="padding:0.5rem 1rem;font-size:0.9rem;animation:dossierFadeIn 0.2s ease;">${statusText}</span>`;
+      }
+    }
+  }
+
+  async function loadPage(module, isSoftRefresh = false) {
     const content = document.getElementById('admin-content');
     const title = document.getElementById('admin-page-title');
     if (!content) return;
 
-    content.innerHTML = '<div class="empty-state">Chargement...</div>';
     if (title) title.textContent = ADMIN_MODULES[module]?.label || 'Administration';
+
+    // Afficher la barre de chargement discrète sans écran blanc
+    showTopLoader();
+
+    // Si changement de module froid, afficher un skeleton moderne
+    if (!isSoftRefresh && activeModule !== module) {
+      if (!content.children.length || content.querySelector('.empty-state')) {
+        content.innerHTML = renderSkeleton();
+      } else {
+        content.style.opacity = '0.65';
+        content.style.pointerEvents = 'none';
+        content.style.transition = 'opacity 0.15s ease';
+      }
+    }
 
     try {
       let html = '';
@@ -143,22 +240,26 @@
         default:
           html = '<div class="empty-state">Module en cours de développement</div>';
       }
+      content.style.opacity = '1';
+      content.style.pointerEvents = '';
       content.innerHTML = html;
       bindPageEvents(module);
+      activeModule = module;
     } catch (error) {
+      content.style.opacity = '1';
+      content.style.pointerEvents = '';
       content.innerHTML = `<div class="empty-state">${escapeHtml(error.message)}</div>`;
+    } finally {
+      hideTopLoader();
     }
   }
 
   async function loadDashboard() {
-    // Récupération résiliente en parallèle de toutes les métriques en direct
+    // Récupération consolidée et optimisée (4 requêtes ciblées au lieu de 7)
     const safely = (promise, fallback = null) => promise.catch(() => fallback);
-    const [superStatsRes, legacyStatsRes, pendingMembershipsRes, pendingAdminsRes, alertsRes, activitiesRes, mentorsRes] = await Promise.all([
+    const [superStatsRes, pendingMembershipsRes, activitiesRes, mentorsRes] = await Promise.all([
       safely(window.AdminApi.superDashboard?.getStats()),
-      safely(window.AdminApi.admin.getStats()),
       safely(window.AdminApi.admin.getPendingMemberships()),
-      safely(window.AdminApi.admin.getPendingAdmins()),
-      safely(window.AdminApi.superDashboard?.getAlerts()),
       safely(window.AdminApi.superDashboard?.getActivities(8)),
       safely(window.AdminApi.rbac?.getMentors()),
     ]);
@@ -168,9 +269,8 @@
     const isUltraAdmin = user?.role === 'ULTRA_ADMIN';
 
     const superData = superStatsRes?.data || {};
-    const legacyData = legacyStatsRes?.data || {};
 
-    const activeMembers = superData.activeUsers ?? legacyData.activeMembers ?? 0;
+    const activeMembers = superData.activeUsers ?? 0;
     const totalUsers = superData.totalUsers ?? activeMembers;
     const publishedFormations = superData.publishedFormations ?? 0;
     const draftFormations = superData.draftFormations ?? 0;
@@ -178,9 +278,9 @@
     const draftJobs = superData.draftJobs ?? 0;
     const publishedPosts = superData.publishedPosts ?? 0;
     const draftPosts = superData.draftPosts ?? 0;
-    const totalTopics = superData.totalTopics ?? legacyData.totalTopics ?? 0;
+    const totalTopics = superData.totalTopics ?? 0;
     const totalAdmins = superData.totalAdmins ?? 1;
-    const pendingAdminsCount = superData.pendingAdmins ?? pendingAdminsRes?.data?.length ?? 0;
+    const pendingAdminsCount = superData.pendingAdmins ?? 0;
     const pendingApprovalsCount = superData.pendingApprovals ?? 0;
     const isMaintenance = superData.isMaintenance === true;
 
@@ -189,7 +289,8 @@
 
     const memberships = pendingMembershipsRes?.data || [];
     const totalApprovalsCount = pendingApprovalsCount + memberships.length;
-    const alerts = alertsRes?.data || [];
+    // Les alertes sont désormais incluses directement dans getStats()
+    const alerts = superData.alerts || [];
     const activities = activitiesRes?.data || [];
 
     const activityIcons = {
@@ -2072,27 +2173,27 @@
     textarea.focus();
     textarea.setSelectionRange(textarea.value.length, textarea.value.length);
 
-    overlay.querySelector('#approve-modal-confirm').addEventListener('click', async () => {
-      const confirmBtn = overlay.querySelector('#approve-modal-confirm');
+    overlay.querySelector('#approve-modal-confirm').addEventListener('click', () => {
       const welcomeMessage = textarea.value.trim();
-      confirmBtn.disabled = true;
-      confirmBtn.textContent = 'Envoi en cours...';
+      close();
 
-      try {
-        await window.AdminApi.admin.approveMembership(membershipId, welcomeMessage);
-        showToast('Adhésion approuvée — email de bienvenue expédié à ' + candidateName, 'success');
-        close();
-        if (typeof onSuccess === 'function') {
-          onSuccess();
-        } else {
-          const cur = window.location.hash.replace('#', '') || 'approvals';
-          loadPage(cur);
-        }
-      } catch (err) {
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = '✅ Valider et envoyer le mot de bienvenue';
-        showToast(err.message || 'Erreur lors de l\'approbation', 'error');
-      }
+      // Rendu optimiste instantané (0 ms de latence ressentie)
+      applyOptimisticMembershipDecision(membershipId, '✅ Approuvé — Email expédié', 'badge-success');
+      showToast('Adhésion approuvée — email de bienvenue expédié à ' + candidateName, 'success');
+
+      // Appel réseau en arrière-plan avec soft refresh
+      window.AdminApi.admin.approveMembership(membershipId, welcomeMessage)
+        .then(() => {
+          if (typeof onSuccess === 'function') {
+            onSuccess();
+          } else {
+            const cur = window.location.hash.replace('#', '') || 'dashboard';
+            loadPage(cur, true);
+          }
+        })
+        .catch(err => {
+          showToast(err.message || 'Erreur lors de l\'approbation', 'error');
+        });
     });
   }
 
@@ -2151,27 +2252,27 @@
     textarea.focus();
     textarea.setSelectionRange(textarea.value.length, textarea.value.length);
 
-    overlay.querySelector('#reject-modal-confirm').addEventListener('click', async () => {
-      const confirmBtn = overlay.querySelector('#reject-modal-confirm');
+    overlay.querySelector('#reject-modal-confirm').addEventListener('click', () => {
       const reason = textarea.value.trim();
-      confirmBtn.disabled = true;
-      confirmBtn.textContent = 'Traitement...';
+      close();
 
-      try {
-        await window.AdminApi.admin.rejectMembership(membershipId, reason);
-        showToast('Candidature refusée — notification envoyée à ' + candidateName, 'warning');
-        close();
-        if (typeof onSuccess === 'function') {
-          onSuccess();
-        } else {
-          const cur = window.location.hash.replace('#', '') || 'approvals';
-          loadPage(cur);
-        }
-      } catch (err) {
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = '❌ Confirmer le refus et notifier';
-        showToast(err.message || 'Erreur lors du refus', 'error');
-      }
+      // Rendu optimiste instantané (0 ms de latence ressentie)
+      applyOptimisticMembershipDecision(membershipId, '❌ Refusé — Candidat notifié', 'badge-danger');
+      showToast('Candidature refusée — notification envoyée à ' + candidateName, 'warning');
+
+      // Appel réseau en arrière-plan avec soft refresh
+      window.AdminApi.admin.rejectMembership(membershipId, reason)
+        .then(() => {
+          if (typeof onSuccess === 'function') {
+            onSuccess();
+          } else {
+            const cur = window.location.hash.replace('#', '') || 'dashboard';
+            loadPage(cur, true);
+          }
+        })
+        .catch(err => {
+          showToast(err.message || 'Erreur lors du refus', 'error');
+        });
     });
   }
 

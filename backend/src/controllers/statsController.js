@@ -1,13 +1,29 @@
 const prisma = require('../config/database');
 
+// Cache mémoire court côté serveur pour l'API publique (TTL 60s)
+let cachedPublicStats = null;
+let cachedPublicStatsTime = 0;
+const PUBLIC_STATS_CACHE_TTL_MS = 60000;
+
 /**
  * Contrôleur des statistiques publiques de la plateforme.
  * Calcule et expose exclusivement des métriques réelles et vérifiées
  * issues de la base de données PostgreSQL.
  */
 class StatsController {
+  static invalidateCache() {
+    cachedPublicStats = null;
+    cachedPublicStatsTime = 0;
+  }
+
   static async getPublicStats(req, res, next) {
     try {
+      const now = Date.now();
+      if (cachedPublicStats && (now - cachedPublicStatsTime < PUBLIC_STATS_CACHE_TTL_MS)) {
+        res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60');
+        return res.json({ success: true, data: cachedPublicStats });
+      }
+
       const [
         publishedFormations,
         totalEvents,
@@ -59,6 +75,10 @@ class StatsController {
         verificationRate: 100,
         updatedAt: new Date().toISOString(),
       };
+
+      // Mise en mémoire cache serveur
+      cachedPublicStats = data;
+      cachedPublicStatsTime = now;
 
       // Cache HTTP public court (60 secondes) pour optimiser les performances
       res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=60');

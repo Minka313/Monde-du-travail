@@ -12,9 +12,21 @@
       return Promise.resolve();
     }
     try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Fragment load failed: ' + response.status);
-      const html = await response.text();
+      const cacheKey = 'layout_fragment:' + url;
+      let html = null;
+      try {
+        html = sessionStorage.getItem(cacheKey);
+      } catch (_) {}
+
+      if (!html) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Fragment load failed: ' + response.status);
+        html = await response.text();
+        try {
+          sessionStorage.setItem(cacheKey, html);
+        } catch (_) {}
+      }
+
       el.outerHTML = html;
       if (selector.includes('nav')) {
         const path = window.location.pathname.split('/').pop() || 'index.html';
