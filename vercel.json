@@ -16,9 +16,21 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "presentation/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
+    {
+      "src": "/presentation$",
+      "dest": "/presentation/index.html"
+    },
+    {
+      "src": "/presentation/(.*)",
+      "dest": "/presentation/$1"
+    },
     {
       "src": "/api/(.*)",
       "dest": "/api/index.js"
