@@ -242,8 +242,48 @@ model User {
   adminRoles         UserAdminRole[]     @relation("UserAdminRoles")
   createdFormations  Formation[]         @relation("FormationCreator")
   createdJobs        Job[]               @relation("JobCreator")
+  clubAssignments    ClubAssignment[]    @relation("UserClubAssignments")
+  assignedClubRoles  ClubAssignment[]    @relation("ClubAssignmentCreator")
 
   @@map("users")
+}
+
+model ClubPosition {
+  id          String           @id @default(cuid())
+  title       String           @unique
+  description String?
+  category    String           @default("BUREAU_EXECUTIF")
+  order       Int              @default(0)
+  isSystem    Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  assignments ClubAssignment[]
+
+  @@index([order])
+  @@index([category])
+  @@map("club_positions")
+}
+
+model ClubAssignment {
+  id           String       @id @default(cuid())
+  positionId   String
+  userId       String
+  mandateYear  String?
+  startDate    DateTime     @default(now())
+  endDate      DateTime?
+  isActive     Boolean      @default(true)
+  notes        String?
+  assignedById String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  position     ClubPosition @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  user         User         @relation("UserClubAssignments", fields: [userId], references: [id], onDelete: Cascade)
+  assignedBy   User?        @relation("ClubAssignmentCreator", fields: [assignedById], references: [id])
+
+  @@index([userId])
+  @@index([positionId])
+  @@index([isActive])
+  @@map("club_assignments")
 }
 
 model AuditLog {

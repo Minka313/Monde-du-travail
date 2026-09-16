@@ -209,6 +209,96 @@ async function main() {
   }
   console.log(`✅ ${blogCreated}/${blogPosts.length} articles de blog créés${blogCreated < blogPosts.length ? ' (le reste existait déjà)' : ''}`);
 
+  // ===== Postes généraux de l'association (Organisation & Bureau) =====
+  const DEFAULT_POSITIONS = [
+    {
+      title: 'Président(e)',
+      category: 'BUREAU_EXECUTIF',
+      order: 1,
+      isSystem: true,
+      description: 'Représentation légale du club, impulsion des orientations stratégiques, présidence des assemblées et coordination générale des activités.',
+    },
+    {
+      title: 'Vice-Président(e)',
+      category: 'BUREAU_EXECUTIF',
+      order: 2,
+      isSystem: true,
+      description: 'Assistance à la présidence, suppléance en cas d\'empêchement et suivi transversal des commissions et projets.',
+    },
+    {
+      title: 'Secrétaire Général(e)',
+      category: 'BUREAU_EXECUTIF',
+      order: 3,
+      isSystem: true,
+      description: 'Gestion administrative, rédaction des procès-verbaux, tenue des registres, archivage officiel et convocation des réunions.',
+    },
+    {
+      title: 'Secrétaire Général(e) Adjoint(e)',
+      category: 'BUREAU_EXECUTIF',
+      order: 4,
+      isSystem: true,
+      description: 'Appui au secrétariat général, gestion de la correspondance courante et suivi documentaire.',
+    },
+    {
+      title: 'Trésorier(ère) Général(e)',
+      category: 'BUREAU_EXECUTIF',
+      order: 5,
+      isSystem: true,
+      description: 'Tenue de la comptabilité, élaboration des budgets prévisionnels, gestion de la trésorerie et encaissement des cotisations.',
+    },
+    {
+      title: 'Trésorier(ère) Adjoint(e)',
+      category: 'BUREAU_EXECUTIF',
+      order: 6,
+      isSystem: true,
+      description: 'Soutien aux opérations financières, suivi des pièces justificatives et contrôle des dépenses courantes.',
+    },
+    {
+      title: 'Responsable Communication & Médias',
+      category: 'POLE_COMMUNICATION',
+      order: 7,
+      isSystem: true,
+      description: 'Pilotage de la communication digitale, réseaux sociaux, relations presse, affichage et identité visuelle du club.',
+    },
+    {
+      title: 'Responsable Organisation & Logistique',
+      category: 'POLE_LOGISTIQUE',
+      order: 8,
+      isSystem: true,
+      description: 'Planification logistique des événements, réservation et aménagement des salles, approvisionnement et matériel.',
+    },
+    {
+      title: 'Responsable Pédagogique & Formations',
+      category: 'POLE_PEDAGOGIQUE',
+      order: 9,
+      isSystem: true,
+      description: 'Conception des programmes d\'ateliers, coordination des formateurs et mentors, suivi pédagogique des apprenants.',
+    },
+    {
+      title: 'Responsable Partenariats & Relations Extérieures',
+      category: 'POLE_RELATIONS',
+      order: 10,
+      isSystem: true,
+      description: 'Prospection de sponsors, relations avec les universités, entreprises partenaires et institutions professionnelles.',
+    },
+    {
+      title: 'Responsable Projets & Innovation',
+      category: 'POLE_PROJETS',
+      order: 11,
+      isSystem: true,
+      description: 'Incubation et accompagnement des projets d\'étudiants, organisation de hackathons et veille sur les métiers d\'avenir.',
+    },
+    {
+      title: 'Responsable Accueil & Vie Associative',
+      category: 'POLE_COMMUNAUTE',
+      order: 12,
+      isSystem: true,
+      description: 'Accueil et intégration des nouveaux membres adhérents, dynamisation de la communauté et animation de la vie du club.',
+    },
+  ];
+
+  await ensureMany(prisma.clubPosition, 'title', DEFAULT_POSITIONS, 'postes associatifs généraux');
+
   // ===== RBAC : catalogue canonique (permissions + rôles système) =====
   const { seedRbac } = require('../src/scripts/seed-rbac');
   await seedRbac(prisma);

@@ -1350,3 +1350,41 @@ label {
   height: 320px;
   border-radius: 12px;
 }
+
+/* ==========================================================================
+   ORGANISATION & FONCTIONNEMENT (BUREAU DU CLUB)
+   ========================================================================== */
+
+.org-container {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.org-position-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.org-position-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.08);
+}
+
+.org-subnav .btn-ghost {
+  color: var(--color-muted);
+  border: 1px solid transparent;
+}
+
+.org-subnav .btn-ghost:hover {
+  background: #f1f5f9;
+  color: var(--color-text);
+}
+
+.org-subnav .btn-primary {
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+}
+
+@media (max-width: 768px) {
+  .org-container .card {
+    padding: 1.15rem !important;
+  }
+}

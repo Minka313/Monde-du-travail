@@ -61,6 +61,9 @@ const PERMISSIONS = [
   { code: 'logs.read', module: 'logs', action: 'read', description: 'Consulter le journal d\'audit' },
   // Médias
   { code: 'media.manage', module: 'media', action: 'manage', description: 'Gérer les médias' },
+  // Organisation & Bureau du club
+  { code: 'organization.read', module: 'organization', action: 'read', description: 'Consulter l\'organisation et le bureau du club' },
+  { code: 'organization.manage', module: 'organization', action: 'manage', description: 'Gérer les postes et le bureau du club (Ultra Admin)' },
 ];
 
 const SYSTEM_ROLES = [
