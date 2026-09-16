@@ -3,6 +3,7 @@
 
   const ADMIN_MODULES = {
     dashboard: { label: 'Tableau de bord', icon: '📊' },
+    organization: { label: 'Organisation & Fonctionnement', icon: '🏛️' },
     formations: { label: 'Formations', icon: '📚' },
     metiers: { label: 'Métiers', icon: '💼' },
     blog: { label: 'Blog', icon: '📝' },
@@ -209,6 +210,9 @@
       switch (module) {
         case 'dashboard':
           html = await loadDashboard();
+          break;
+        case 'organization':
+          html = await loadOrganization();
           break;
         case 'formations':
           html = await loadFormations();
@@ -2806,6 +2810,831 @@
     });
   }
 
+  // ===== Organisation & Fonctionnement (Bureau du Club & Postes) =====
+  let orgActiveTab = 'bureau'; // 'bureau' | 'positions' | 'assignments'
+  let cachedOrgPositions = [];
+  let cachedOrgUsers = [];
+  let orgSelectedCategory = 'ALL';
+
+  const ORG_CATEGORIES = {
+    BUREAU_EXECUTIF: { label: 'Bureau Exécutif', icon: '🏛️', color: '#1d4ed8', bg: '#eff6ff', border: '#bfdbfe' },
+    POLE_COMMUNICATION: { label: 'Pôle Communication & Médias', icon: '📢', color: '#0284c7', bg: '#f0f9ff', border: '#bae6fd' },
+    POLE_LOGISTIQUE: { label: 'Pôle Organisation & Logistique', icon: '📦', color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
+    POLE_PEDAGOGIQUE: { label: 'Pôle Pédagogique & Formations', icon: '🎓', color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
+    POLE_RELATIONS: { label: 'Pôle Partenariats & Relations', icon: '🤝', color: '#7c3aed', bg: '#faf5ff', border: '#e9d5ff' },
+    POLE_PROJETS: { label: 'Pôle Projets & Innovation', icon: '💡', color: '#4f46e5', bg: '#eef2ff', border: '#c7d2fe' },
+    POLE_COMMUNAUTE: { label: 'Pôle Accueil & Vie Associative', icon: '🌱', color: '#059669', bg: '#ecfdf5', border: '#a7f3d0' },
+    AUTRE: { label: 'Autre Commission', icon: '📌', color: '#475569', bg: '#f8fafc', border: '#e2e8f0' },
+  };
+
+  async function loadOrganization() {
+    const isUltraAdmin = window.AdminApp.currentUser?.role === 'ULTRA_ADMIN';
+
+    // Récupération simultanée des données de l'organisation
+    const [bureauRes, positionsRes, assignmentsRes, usersRes] = await Promise.all([
+      window.AdminApi.organization.getBureau().catch(() => ({ data: [] })),
+      window.AdminApi.organization.getPositions().catch(() => ({ data: [] })),
+      window.AdminApi.organization.getAssignments().catch(() => ({ data: [] })),
+      window.AdminApi.users.getAll({ limit: 300 }).catch(() => ({ data: [] })),
+    ]);
+
+    const bureau = bureauRes.data || [];
+    const positions = positionsRes.data || [];
+    const assignments = assignmentsRes.data || [];
+    const users = usersRes.data || [];
+
+    cachedOrgPositions = positions;
+    cachedOrgUsers = users;
+
+    const totalPositions = positions.length;
+    const occupiedCount = positions.filter(p => p.activeMembersCount > 0).length;
+    const vacantCount = totalPositions - occupiedCount;
+    const activeAssignments = assignments.filter(a => a.isActive);
+
+    const filteredBureau = orgSelectedCategory === 'ALL'
+      ? bureau
+      : bureau.filter(p => p.category === orgSelectedCategory);
+
+    const execBoard = filteredBureau.filter(p => p.category === 'BUREAU_EXECUTIF');
+    const polesBoard = filteredBureau.filter(p => p.category !== 'BUREAU_EXECUTIF');
+
+    return `
+      <div class="org-container">
+        <!-- En-tête de section avec statistiques -->
+        <div class="card" style="margin-bottom:1.5rem;background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);color:#ffffff;border:none;box-shadow:0 10px 25px -5px rgba(15,23,42,0.3);overflow:hidden;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.25rem;padding:1.75rem 2rem;">
+            <div>
+              <div style="display:inline-flex;align-items:center;gap:0.5rem;background:rgba(255,255,255,0.12);padding:0.35rem 0.8rem;border-radius:20px;font-size:0.8rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:#93c5fd;margin-bottom:0.6rem;">
+                <span>🏛️</span> Gouvernance &amp; Direction
+              </div>
+              <h2 style="margin:0 0 0.4rem;font-size:1.65rem;font-weight:700;letter-spacing:-0.02em;color:#ffffff;">
+                Organisation &amp; Fonctionnement
+              </h2>
+              <p style="margin:0;font-size:0.92rem;color:#cbd5e1;max-width:680px;line-height:1.5;">
+                Supervision du bureau exécutif, attributions des postes et structuration des commissions du club.
+              </p>
+            </div>
+
+            <div style="display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center;">
+              ${isUltraAdmin ? `
+                <button class="btn btn-primary" id="btn-org-assign-top" style="box-shadow:0 4px 14px rgba(37,99,235,0.45);font-weight:600;padding:0.6rem 1.15rem;">
+                  <span>👤</span> Attribuer un poste
+                </button>
+                <button class="btn" id="btn-org-create-pos-top" style="background:rgba(255,255,255,0.1);color:#ffffff;border:1px solid rgba(255,255,255,0.25);font-weight:500;padding:0.6rem 1.15rem;">
+                  <span>➕</span> Nouveau poste
+                </button>
+              ` : `
+                <span class="badge" style="background:rgba(255,255,255,0.15);color:#ffffff;padding:0.5rem 0.85rem;font-size:0.85rem;">
+                  🔒 Mode consultation (Ultra Admin requis pour modifier)
+                </span>
+              `}
+            </div>
+          </div>
+
+          <!-- KPI Bar -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:1px;background:rgba(255,255,255,0.1);border-top:1px solid rgba(255,255,255,0.1);">
+            <div style="padding:1rem 1.75rem;background:rgba(15,23,42,0.45);">
+              <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;display:block;">Postes configurés</span>
+              <strong style="font-size:1.55rem;font-weight:700;color:#ffffff;">${totalPositions}</strong>
+            </div>
+            <div style="padding:1rem 1.75rem;background:rgba(15,23,42,0.45);">
+              <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;display:block;">Postes pourvus</span>
+              <strong style="font-size:1.55rem;font-weight:700;color:#4ade80;">${occupiedCount}</strong>
+              <span style="font-size:0.8rem;color:#86efac;margin-left:0.35rem;">(${totalPositions ? Math.round((occupiedCount / totalPositions) * 100) : 0}%)</span>
+            </div>
+            <div style="padding:1rem 1.75rem;background:rgba(15,23,42,0.45);">
+              <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;display:block;">Postes vacants</span>
+              <strong style="font-size:1.55rem;font-weight:700;color:${vacantCount > 0 ? '#fbbf24' : '#cbd5e1'};">${vacantCount}</strong>
+            </div>
+            <div style="padding:1rem 1.75rem;background:rgba(15,23,42,0.45);">
+              <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:#94a3b8;display:block;">Membres en mandat</span>
+              <strong style="font-size:1.55rem;font-weight:700;color:#60a5fa;">${activeAssignments.length}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sous-navigation onglets -->
+        <div class="org-subnav" style="display:flex;gap:0.5rem;margin-bottom:1.5rem;border-bottom:2px solid #e2e8f0;padding-bottom:0.5rem;flex-wrap:wrap;">
+          <button class="btn btn-sm ${orgActiveTab === 'bureau' ? 'btn-primary' : 'btn-ghost'}" id="org-tab-bureau" style="font-weight:600;">
+            <span>🏛️</span> Organigramme du Bureau
+          </button>
+          <button class="btn btn-sm ${orgActiveTab === 'positions' ? 'btn-primary' : 'btn-ghost'}" id="org-tab-positions" style="font-weight:600;">
+            <span>📋</span> Gestion des Postes (${totalPositions})
+          </button>
+          <button class="btn btn-sm ${orgActiveTab === 'assignments' ? 'btn-primary' : 'btn-ghost'}" id="org-tab-assignments" style="font-weight:600;">
+            <span>👥</span> Affectations &amp; Mandats (${assignments.length})
+          </button>
+        </div>
+
+        ${orgActiveTab === 'bureau' ? renderOrgBureauTab(execBoard, polesBoard, isUltraAdmin) : ''}
+        ${orgActiveTab === 'positions' ? renderOrgPositionsTab(positions, isUltraAdmin) : ''}
+        ${orgActiveTab === 'assignments' ? renderOrgAssignmentsTab(assignments, isUltraAdmin) : ''}
+      </div>
+    `;
+  }
+
+  function renderOrgBureauTab(execBoard, polesBoard, isUltraAdmin) {
+    const categoriesFilter = `
+      <div style="display:flex;gap:0.5rem;overflow-x:auto;padding-bottom:0.75rem;margin-bottom:1.5rem;scrollbar-width:thin;">
+        <button class="btn btn-sm ${orgSelectedCategory === 'ALL' ? 'btn-primary' : 'btn-ghost'}" data-org-cat="ALL" style="white-space:nowrap;font-size:0.85rem;">
+          Tous les pôles
+        </button>
+        ${Object.entries(ORG_CATEGORIES).map(([key, meta]) => `
+          <button class="btn btn-sm ${orgSelectedCategory === key ? 'btn-primary' : 'btn-ghost'}" data-org-cat="${key}" style="white-space:nowrap;font-size:0.85rem;">
+            <span>${meta.icon}</span> ${meta.label}
+          </button>
+        `).join('')}
+      </div>
+    `;
+
+    return `
+      ${categoriesFilter}
+
+      <!-- Section 1 : Bureau Exécutif -->
+      ${execBoard.length > 0 ? `
+        <div style="margin-bottom:2.5rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+            <div style="display:flex;align-items:center;gap:0.6rem;">
+              <span style="font-size:1.4rem;">🏛️</span>
+              <h3 style="margin:0;font-size:1.25rem;color:#0f172a;font-weight:700;">Bureau Exécutif</h3>
+              <span class="badge badge-primary" style="font-size:0.75rem;">Haute Direction</span>
+            </div>
+            <span style="font-size:0.85rem;color:var(--color-muted);">${execBoard.length} postes</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:1.25rem;">
+            ${execBoard.map(pos => renderPositionCard(pos, isUltraAdmin, true)).join('')}
+          </div>
+        </div>
+      ` : ''}
+
+      <!-- Section 2 : Pôles Opérationnels & Commissions -->
+      ${polesBoard.length > 0 ? `
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+            <div style="display:flex;align-items:center;gap:0.6rem;">
+              <span style="font-size:1.4rem;">💼</span>
+              <h3 style="margin:0;font-size:1.25rem;color:#0f172a;font-weight:700;">Pôles Opérationnels &amp; Commissions</h3>
+              <span class="badge badge-muted" style="font-size:0.75rem;">Missions Thématiques</span>
+            </div>
+            <span style="font-size:0.85rem;color:var(--color-muted);">${polesBoard.length} postes</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(310px, 1fr));gap:1.25rem;">
+            ${polesBoard.map(pos => renderPositionCard(pos, isUltraAdmin, false)).join('')}
+          </div>
+        </div>
+      ` : ''}
+
+      ${execBoard.length === 0 && polesBoard.length === 0 ? `
+        <div class="card empty-state" style="padding:3rem 1rem;text-align:center;">
+          <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem;">🔍</span>
+          <h3 style="margin:0 0 0.5rem;color:#0f172a;">Aucun poste trouvé dans cette catégorie</h3>
+          <p style="color:var(--color-muted);margin:0 0 1rem;">Sélectionnez une autre commission ou créez un nouveau poste.</p>
+          ${isUltraAdmin ? '<button class="btn btn-primary btn-sm" id="btn-org-create-empty">Créer un poste</button>' : ''}
+        </div>
+      ` : ''}
+    `;
+  }
+
+  function renderPositionCard(pos, isUltraAdmin, isExec = false) {
+    const meta = ORG_CATEGORIES[pos.category] || ORG_CATEGORIES.AUTRE;
+    const isOccupied = pos.isOccupied;
+    const holder = isOccupied ? pos.currentHolders[0] : null;
+
+    const initials = holder
+      ? `${(holder.firstName || '')[0] || ''}${(holder.lastName || '')[0] || ''}`.toUpperCase()
+      : '?';
+
+    return `
+      <div class="card org-position-card" style="background:#ffffff;border:1px solid ${isOccupied ? '#e2e8f0' : '#f1f5f9'};border-radius:12px;padding:1.4rem;display:flex;flex-direction:column;justify-content:space-between;position:relative;box-shadow:0 2px 6px rgba(0,0,0,0.03);transition:all 0.2s ease;border-top:4px solid ${meta.color};">
+        
+        <!-- En-tête de la carte -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem;margin-bottom:0.75rem;">
+            <div>
+              <div style="display:inline-flex;align-items:center;gap:0.35rem;padding:0.2rem 0.55rem;border-radius:6px;font-size:0.72rem;font-weight:600;background:${meta.bg};color:${meta.color};border:1px solid ${meta.border};margin-bottom:0.4rem;">
+                <span>${meta.icon}</span> ${meta.label}
+              </div>
+              <h4 style="margin:0;font-size:1.12rem;color:#0f172a;font-weight:700;line-height:1.3;">
+                ${escapeHtml(pos.title)}
+              </h4>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:0.3rem;">
+              <span class="badge badge-muted" style="font-size:0.7rem;padding:0.2rem 0.4rem;">Rang #${pos.order}</span>
+              ${isUltraAdmin ? `
+                <button class="btn btn-ghost btn-sm" data-org-edit-pos="${pos.id}" title="Modifier le poste" style="padding:0.25rem 0.45rem;font-size:0.85rem;">✏️</button>
+                <button class="btn btn-ghost btn-sm text-danger" data-org-del-pos="${pos.id}" data-pos-title="${escapeHtml(pos.title)}" title="Supprimer le poste" style="padding:0.25rem 0.45rem;font-size:0.85rem;color:var(--color-danger);">🗑️</button>
+              ` : ''}
+            </div>
+          </div>
+
+          <p style="font-size:0.84rem;color:#475569;margin:0 0 1.25rem;line-height:1.45;min-height:2.6rem;">
+            ${escapeHtml(pos.description || 'Aucune description spécifique des missions pour ce poste.')}
+          </p>
+        </div>
+
+        <!-- Titulaire ou État Vacant -->
+        <div style="border-top:1px solid #f1f5f9;padding-top:1rem;margin-top:auto;">
+          ${isOccupied && holder ? `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.85rem;">
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg, ${meta.color} 0%, #0f172a 100%);color:#ffffff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95rem;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+                  ${initials}
+                </div>
+                <div>
+                  <div style="font-weight:700;color:#0f172a;font-size:0.95rem;">
+                    ${escapeHtml(holder.fullName)}
+                  </div>
+                  <div style="font-size:0.78rem;color:#64748b;">
+                    ${escapeHtml(holder.email)}
+                  </div>
+                </div>
+              </div>
+              <span class="badge badge-success" style="font-size:0.72rem;white-space:nowrap;">
+                ${escapeHtml(holder.mandateYear || 'Mandat en cours')}
+              </span>
+            </div>
+
+            ${isUltraAdmin ? `
+              <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.75rem;">
+                <button class="btn btn-sm btn-outline btn-full" data-org-assign="${pos.id}" style="font-size:0.82rem;font-weight:600;">
+                  🔄 Changer le titulaire
+                </button>
+                <button class="btn btn-sm btn-danger" data-org-free="${holder.assignmentId}" data-pos-title="${escapeHtml(pos.title)}" style="font-size:0.82rem;white-space:nowrap;">
+                  Libérer
+                </button>
+              </div>
+            ` : ''}
+          ` : `
+            <div style="background:#fffbeb;border:1px dashed #fde68a;border-radius:8px;padding:0.85rem 1rem;margin-bottom:0.85rem;text-align:center;">
+              <span style="font-size:0.82rem;font-weight:600;color:#b45309;display:block;">
+                ⚠️ Poste actuellement vacant
+              </span>
+              <span style="font-size:0.75rem;color:#78350f;">Aucun titulaire n'a encore été nommé.</span>
+            </div>
+
+            ${isUltraAdmin ? `
+              <button class="btn btn-primary btn-sm btn-full" data-org-assign="${pos.id}" style="font-weight:600;font-size:0.84rem;">
+                <span>➕</span> Nommer un membre
+              </button>
+            ` : `
+              <span style="font-size:0.78rem;color:var(--color-muted);display:block;text-align:center;">En attente de nomination</span>
+            `}
+          `}
+        </div>
+
+      </div>
+    `;
+  }
+
+  function renderOrgPositionsTab(positions, isUltraAdmin) {
+    return `
+      <div class="card">
+        <div class="card-header" style="border-bottom:1px solid #f1f5f9;padding-bottom:1rem;margin-bottom:1rem;">
+          <div>
+            <h3 style="margin:0;font-size:1.15rem;color:#0f172a;display:flex;align-items:center;gap:0.5rem;">
+              <span>📋</span> Catalogue des Postes du Club
+            </h3>
+            <p style="margin:0.25rem 0 0;font-size:0.85rem;color:var(--color-muted);">
+              Personnalisez les intitulés, les missions associatives et l'ordre d'apparition dans l'organigramme.
+            </p>
+          </div>
+          ${isUltraAdmin ? `
+            <button class="btn btn-primary btn-sm" id="btn-org-create-pos-table">
+              <span>➕</span> Nouveau poste
+            </button>
+          ` : ''}
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:60px;">Ordre</th>
+                <th>Intitulé du Poste</th>
+                <th>Pôle / Catégorie</th>
+                <th>Missions &amp; Responsabilités</th>
+                <th>Titulaires Actifs</th>
+                <th>Statut</th>
+                ${isUltraAdmin ? '<th style="text-align:right;">Actions</th>' : ''}
+              </tr>
+            </thead>
+            <tbody>
+              ${positions.length === 0 ? '<tr><td colspan="7"><div class="empty-state">Aucun poste configuré</div></td></tr>' : positions.map(p => {
+                const meta = ORG_CATEGORIES[p.category] || ORG_CATEGORIES.AUTRE;
+                const isOccupied = p.activeMembersCount > 0;
+                return `
+                  <tr>
+                    <td><strong style="color:#64748b;">#${p.order}</strong></td>
+                    <td>
+                      <div style="font-weight:700;color:#0f172a;font-size:0.95rem;">${escapeHtml(p.title)}</div>
+                      ${p.isSystem ? '<span class="badge badge-muted" style="font-size:0.7rem;">Poste Général</span>' : '<span class="badge badge-primary" style="font-size:0.7rem;">Personnalisé</span>'}
+                    </td>
+                    <td>
+                      <span class="badge" style="background:${meta.bg};color:${meta.color};border:1px solid ${meta.border};">
+                        <span>${meta.icon}</span> ${meta.label}
+                      </span>
+                    </td>
+                    <td style="max-width:320px;font-size:0.85rem;color:#475569;line-height:1.4;">
+                      ${escapeHtml(p.description || '—')}
+                    </td>
+                    <td>
+                      <strong style="color:${isOccupied ? '#16a34a' : '#94a3b8'};">${p.activeMembersCount}</strong> titulaire(s)
+                    </td>
+                    <td>
+                      <span class="badge ${isOccupied ? 'badge-success' : 'badge-warning'}">
+                        ${isOccupied ? 'Pourvu' : 'Vacant'}
+                      </span>
+                    </td>
+                    ${isUltraAdmin ? `
+                      <td style="text-align:right;">
+                        <div style="display:inline-flex;gap:0.35rem;align-items:center;">
+                          <button class="btn btn-sm btn-outline" data-org-assign="${p.id}" title="Attribuer ce poste">👤 Attribuer</button>
+                          <button class="btn btn-sm btn-ghost" data-org-edit-pos="${p.id}" title="Modifier">✏️</button>
+                          <button class="btn btn-sm btn-ghost text-danger" data-org-del-pos="${p.id}" data-pos-title="${escapeHtml(p.title)}" title="Supprimer">🗑️</button>
+                        </div>
+                      </td>
+                    ` : ''}
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderOrgAssignmentsTab(assignments, isUltraAdmin) {
+    return `
+      <div class="card">
+        <div class="card-header" style="border-bottom:1px solid #f1f5f9;padding-bottom:1rem;margin-bottom:1rem;">
+          <div>
+            <h3 style="margin:0;font-size:1.15rem;color:#0f172a;display:flex;align-items:center;gap:0.5rem;">
+              <span>👥</span> Registre des Nominations &amp; Mandats
+            </h3>
+            <p style="margin:0.25rem 0 0;font-size:0.85rem;color:var(--color-muted);">
+              Historique de toutes les attributions de postes, mandats en cours et nominations passées.
+            </p>
+          </div>
+          ${isUltraAdmin ? `
+            <button class="btn btn-primary btn-sm" id="btn-org-assign-table">
+              <span>👤</span> Nouvelle attribution
+            </button>
+          ` : ''}
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Membre Nommé</th>
+                <th>Poste Attribué</th>
+                <th>Pôle / Commission</th>
+                <th>Mandat</th>
+                <th>Date d'effet</th>
+                <th>Statut</th>
+                <th>Désigné par</th>
+                ${isUltraAdmin ? '<th style="text-align:right;">Actions</th>' : ''}
+              </tr>
+            </thead>
+            <tbody>
+              ${assignments.length === 0 ? '<tr><td colspan="8"><div class="empty-state">Aucune affectation enregistrée</div></td></tr>' : assignments.map(a => {
+                const meta = ORG_CATEGORIES[a.position?.category] || ORG_CATEGORIES.AUTRE;
+                return `
+                  <tr>
+                    <td>
+                      <strong>${escapeHtml(a.user?.firstName || '')} ${escapeHtml(a.user?.lastName || '')}</strong>
+                      <div style="font-size:0.78rem;color:#64748b;">${escapeHtml(a.user?.email || '')}</div>
+                    </td>
+                    <td>
+                      <strong style="color:#0f172a;">${escapeHtml(a.position?.title || '—')}</strong>
+                    </td>
+                    <td>
+                      <span class="badge" style="background:${meta.bg};color:${meta.color};border:1px solid ${meta.border};font-size:0.75rem;">
+                        <span>${meta.icon}</span> ${meta.label}
+                      </span>
+                    </td>
+                    <td>
+                      <span class="badge badge-muted">${escapeHtml(a.mandateYear || 'En cours')}</span>
+                    </td>
+                    <td>
+                      ${new Date(a.startDate).toLocaleDateString('fr-FR')}
+                    </td>
+                    <td>
+                      <span class="badge ${a.isActive ? 'badge-success' : 'badge-danger'}">
+                        ${a.isActive ? 'En fonction' : 'Archivé'}
+                      </span>
+                    </td>
+                    <td style="font-size:0.84rem;color:#64748b;">
+                      ${a.assignedBy ? `${escapeHtml(a.assignedBy.firstName || '')} ${escapeHtml(a.assignedBy.lastName || '')}` : 'Direction'}
+                    </td>
+                    ${isUltraAdmin ? `
+                      <td style="text-align:right;">
+                        <div style="display:inline-flex;gap:0.35rem;align-items:center;">
+                          <button class="btn btn-sm btn-outline" data-org-edit-assign="${a.id}" data-mandate="${escapeHtml(a.mandateYear || '')}" data-notes="${escapeHtml(a.notes || '')}">Modifier</button>
+                          <button class="btn btn-sm btn-danger" data-org-free="${a.id}" data-pos-title="${escapeHtml(a.position?.title || 'ce poste')}">Retirer</button>
+                        </div>
+                      </td>
+                    ` : ''}
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  // --- Modales Interactives de l'Organisation ---
+
+  function openPositionModal(positionId = null) {
+    const isEdit = !!positionId;
+    const position = isEdit ? cachedOrgPositions.find(p => p.id === positionId) : null;
+
+    const existing = document.getElementById('org-position-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'org-position-modal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.65);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px);';
+    overlay.innerHTML = `
+      <div class="card" style="max-width:540px;width:92%;padding:1.75rem;max-height:92vh;overflow:auto;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);border-radius:12px;">
+        <div class="card-header" style="margin-bottom:1.25rem;border-bottom:1px solid #f1f5f9;padding-bottom:0.75rem;">
+          <div>
+            <h3 style="margin:0;font-size:1.2rem;color:#0f172a;font-weight:700;">
+              ${isEdit ? 'Modifier le poste associatif' : 'Nouveau poste associatif'}
+            </h3>
+            <span style="font-size:0.84rem;color:#64748b;">
+              ${isEdit ? `Ajustez les missions de "${escapeHtml(position?.title || '')}"` : 'Créez un nouveau rôle au sein de l\'organigramme du club.'}
+            </span>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="org-pos-modal-close" style="font-size:1.2rem;">&times;</button>
+        </div>
+
+        <form id="org-position-form" style="display:flex;flex-direction:column;gap:1rem;">
+          <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+            Intitulé du poste *
+            <input type="text" name="title" required minlength="2" placeholder="Ex. Responsable Relations Entreprises" value="${escapeHtml(position?.title || '')}" style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
+          </label>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+              Pôle / Catégorie *
+              <select name="category" required style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
+                ${Object.entries(ORG_CATEGORIES).map(([key, meta]) => `
+                  <option value="${key}" ${position?.category === key ? 'selected' : ''}>${meta.icon} ${meta.label}</option>
+                `).join('')}
+              </select>
+            </label>
+
+            <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+              Ordre d'affichage *
+              <input type="number" name="order" required min="1" max="999" value="${position ? position.order : 10}" style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
+            </label>
+          </div>
+
+          <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+            Missions &amp; Responsabilités
+            <textarea name="description" rows="4" placeholder="Décrivez les objectifs, attributions et responsabilités associées à ce poste..." style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.92rem;line-height:1.45;">${escapeHtml(position?.description || '')}</textarea>
+          </label>
+
+          <div style="display:flex;justify-content:flex-end;gap:0.6rem;margin-top:0.75rem;border-top:1px solid #f1f5f9;padding-top:1rem;">
+            <button type="button" class="btn" id="org-pos-modal-cancel">Annuler</button>
+            <button type="submit" class="btn btn-primary" id="org-pos-modal-submit" style="font-weight:600;">
+              ${isEdit ? 'Enregistrer les modifications' : 'Créer le poste'}
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+    overlay.querySelector('#org-pos-modal-close').addEventListener('click', close);
+    overlay.querySelector('#org-pos-modal-cancel').addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    overlay.querySelector('#org-position-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = overlay.querySelector('#org-pos-modal-submit');
+      const formData = new FormData(e.target);
+      const payload = {
+        title: formData.get('title')?.trim(),
+        category: formData.get('category'),
+        order: parseInt(formData.get('order'), 10) || 0,
+        description: formData.get('description')?.trim() || null,
+      };
+
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enregistrement...';
+        if (isEdit) {
+          await window.AdminApi.organization.updatePosition(positionId, payload);
+          showToast(`Poste "${payload.title}" mis à jour avec succès !`, 'success');
+        } else {
+          await window.AdminApi.organization.createPosition(payload);
+          showToast(`Poste "${payload.title}" créé avec succès !`, 'success');
+        }
+        overlay.remove();
+        loadPage('organization');
+      } catch (error) {
+        showToast(error.message || 'Erreur lors de l\'enregistrement du poste', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = isEdit ? 'Enregistrer les modifications' : 'Créer le poste';
+      }
+    });
+  }
+
+  function openAssignPositionModal(preselectedPositionId = null, preselectedUserId = null) {
+    const existing = document.getElementById('org-assign-modal');
+    if (existing) existing.remove();
+
+    const currentYear = new Date().getFullYear();
+    const defaultMandate = `${currentYear}-${currentYear + 1}`;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'org-assign-modal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.65);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px);';
+    overlay.innerHTML = `
+      <div class="card" style="max-width:560px;width:92%;padding:1.75rem;max-height:92vh;overflow:auto;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);border-radius:12px;">
+        <div class="card-header" style="margin-bottom:1.25rem;border-bottom:1px solid #f1f5f9;padding-bottom:0.75rem;">
+          <div>
+            <h3 style="margin:0;font-size:1.2rem;color:#0f172a;font-weight:700;">
+              Nomination &amp; Attribution de Poste
+            </h3>
+            <span style="font-size:0.84rem;color:#64748b;">
+              Désignez le membre responsable de cette mission pour le mandat officiel.
+            </span>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm" id="org-assign-modal-close" style="font-size:1.2rem;">&times;</button>
+        </div>
+
+        <form id="org-assign-form" style="display:flex;flex-direction:column;gap:1rem;">
+          <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+            Poste à pourvoir *
+            <select name="positionId" required style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
+              <option value="">-- Sélectionnez un poste --</option>
+              ${cachedOrgPositions.map(p => `
+                <option value="${p.id}" ${p.id === preselectedPositionId ? 'selected' : ''}>
+                  #${p.order} • ${escapeHtml(p.title)} (${(ORG_CATEGORIES[p.category] || ORG_CATEGORIES.AUTRE).label})
+                </option>
+              `).join('')}
+            </select>
+          </label>
+
+          <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+            Membre à nommer *
+            <select name="userId" required style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
+              <option value="">-- Sélectionnez un membre adhérent --</option>
+              ${cachedOrgUsers.map(u => `
+                <option value="${u.id}" ${u.id === preselectedUserId ? 'selected' : ''}>
+                  ${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)} (${escapeHtml(u.email)}) • ${escapeHtml(u.role)}
+                </option>
+              `).join('')}
+            </select>
+          </label>
+
+          <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+            Année ou Période du mandat
+            <input type="text" name="mandateYear" placeholder="Ex. 2026-2027" value="${defaultMandate}" style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
+          </label>
+
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.85rem;display:flex;align-items:flex-start;gap:0.6rem;">
+            <input type="checkbox" name="replaceCurrent" id="replaceCurrent" checked style="margin-top:0.25rem;">
+            <label for="replaceCurrent" style="font-size:0.85rem;color:#334155;cursor:pointer;line-height:1.4;">
+              <strong>Remplacer automatiquement le titulaire actuel</strong> si ce poste est déjà occupé (son mandat sera archivé).
+            </label>
+          </div>
+
+          <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+            Notes ou Lettre de mission
+            <textarea name="notes" rows="3" placeholder="Objectifs prioritaires fixés pour ce mandat, décret de nomination..." style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.92rem;line-height:1.45;"></textarea>
+          </label>
+
+          <div style="display:flex;justify-content:flex-end;gap:0.6rem;margin-top:0.75rem;border-top:1px solid #f1f5f9;padding-top:1rem;">
+            <button type="button" class="btn" id="org-assign-modal-cancel">Annuler</button>
+            <button type="submit" class="btn btn-primary" id="org-assign-modal-submit" style="font-weight:600;">
+              Confirmer la nomination
+            </button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+    overlay.querySelector('#org-assign-modal-close').addEventListener('click', close);
+    overlay.querySelector('#org-assign-modal-cancel').addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    overlay.querySelector('#org-assign-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = overlay.querySelector('#org-assign-modal-submit');
+      const formData = new FormData(e.target);
+      const payload = {
+        positionId: formData.get('positionId'),
+        userId: formData.get('userId'),
+        mandateYear: formData.get('mandateYear')?.trim() || defaultMandate,
+        replaceCurrent: formData.get('replaceCurrent') === 'on',
+        notes: formData.get('notes')?.trim() || null,
+      };
+
+      try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Nomination en cours...';
+        await window.AdminApi.organization.assignPosition(payload);
+        showToast('Membre nommé au poste avec succès !', 'success');
+        overlay.remove();
+        loadPage('organization');
+      } catch (error) {
+        showToast(error.message || 'Erreur lors de l\'attribution du poste', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirmer la nomination';
+      }
+    });
+  }
+
+  function openEditAssignmentModal(assignmentId, currentMandate, currentNotes) {
+    const existing = document.getElementById('org-edit-assign-modal');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'org-edit-assign-modal';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.65);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px);';
+    overlay.innerHTML = `
+      <div class="card" style="max-width:480px;width:92%;padding:1.75rem;border-radius:12px;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
+        <div class="card-header" style="margin-bottom:1rem;border-bottom:1px solid #f1f5f9;padding-bottom:0.75rem;">
+          <h3 style="margin:0;font-size:1.15rem;color:#0f172a;font-weight:700;">Modifier le mandat</h3>
+          <button type="button" class="btn btn-ghost btn-sm" id="org-edit-assign-close" style="font-size:1.2rem;">&times;</button>
+        </div>
+
+        <form id="org-edit-assign-form" style="display:flex;flex-direction:column;gap:1rem;">
+          <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+            Année ou Période du mandat
+            <input type="text" name="mandateYear" value="${escapeHtml(currentMandate || '')}" required style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
+          </label>
+
+          <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+            Notes
+            <textarea name="notes" rows="3" style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.92rem;">${escapeHtml(currentNotes || '')}</textarea>
+          </label>
+
+          <div style="display:flex;justify-content:flex-end;gap:0.6rem;margin-top:0.5rem;">
+            <button type="button" class="btn" id="org-edit-assign-cancel">Annuler</button>
+            <button type="submit" class="btn btn-primary" id="org-edit-assign-submit" style="font-weight:600;">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+    overlay.querySelector('#org-edit-assign-close').addEventListener('click', close);
+    overlay.querySelector('#org-edit-assign-cancel').addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    overlay.querySelector('#org-edit-assign-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = overlay.querySelector('#org-edit-assign-submit');
+      const formData = new FormData(e.target);
+      const payload = {
+        mandateYear: formData.get('mandateYear')?.trim(),
+        notes: formData.get('notes')?.trim() || null,
+      };
+
+      try {
+        submitBtn.disabled = true;
+        await window.AdminApi.organization.updateAssignment(assignmentId, payload);
+        showToast('Mandat mis à jour avec succès !', 'success');
+        overlay.remove();
+        loadPage('organization');
+      } catch (error) {
+        showToast(error.message || 'Erreur lors de la mise à jour', 'error');
+        submitBtn.disabled = false;
+      }
+    });
+  }
+
+  function bindOrganizationEvents() {
+    // Navigation onglets secondaires
+    document.getElementById('org-tab-bureau')?.addEventListener('click', () => {
+      orgActiveTab = 'bureau';
+      loadPage('organization');
+    });
+
+    document.getElementById('org-tab-positions')?.addEventListener('click', () => {
+      orgActiveTab = 'positions';
+      loadPage('organization');
+    });
+
+    document.getElementById('org-tab-assignments')?.addEventListener('click', () => {
+      orgActiveTab = 'assignments';
+      loadPage('organization');
+    });
+
+    // Filtres catégories
+    document.querySelectorAll('[data-org-cat]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        orgSelectedCategory = btn.getAttribute('data-org-cat') || 'ALL';
+        loadPage('organization');
+      });
+    });
+
+    // Boutons d'attribution de poste
+    document.getElementById('btn-org-assign-top')?.addEventListener('click', () => openAssignPositionModal());
+    document.getElementById('btn-org-assign-table')?.addEventListener('click', () => openAssignPositionModal());
+
+    document.querySelectorAll('[data-org-assign]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const positionId = btn.getAttribute('data-org-assign');
+        openAssignPositionModal(positionId);
+      });
+    });
+
+    document.querySelectorAll('[data-org-assign-pos]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const positionId = btn.getAttribute('data-org-assign-pos');
+        openAssignPositionModal(positionId);
+      });
+    });
+
+    document.querySelectorAll('[data-org-change-post]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const positionId = btn.getAttribute('data-org-change-post');
+        const userId = btn.getAttribute('data-user-id');
+        openAssignPositionModal(positionId, userId);
+      });
+    });
+
+    // Boutons de création de poste
+    document.getElementById('btn-org-create-pos-top')?.addEventListener('click', () => openPositionModal());
+    document.getElementById('btn-org-create-pos-table')?.addEventListener('click', () => openPositionModal());
+    document.getElementById('btn-org-create-empty')?.addEventListener('click', () => openPositionModal());
+
+    // Boutons d'édition de poste
+    document.querySelectorAll('[data-org-edit-pos]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const positionId = btn.getAttribute('data-org-edit-pos');
+        openPositionModal(positionId);
+      });
+    });
+
+    // Boutons de suppression de poste
+    document.querySelectorAll('[data-org-del-pos]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const positionId = btn.getAttribute('data-org-del-pos');
+        const title = btn.getAttribute('data-pos-title') || 'ce poste';
+        if (!confirm(`Êtes-vous sûr de vouloir supprimer définitivement le poste "${title}" ?\nLes affectations liées seront également supprimées.`)) {
+          return;
+        }
+
+        try {
+          await window.AdminApi.organization.deletePosition(positionId);
+          showToast(`Poste "${title}" supprimé avec succès`, 'warning');
+          loadPage('organization');
+        } catch (error) {
+          showToast(error.message || 'Erreur lors de la suppression', 'error');
+        }
+      });
+    });
+
+    // Boutons de libération / révocation d'affectation
+    document.querySelectorAll('[data-org-free]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const assignmentId = btn.getAttribute('data-org-free');
+        const title = btn.getAttribute('data-pos-title') || 'ce poste';
+        if (!confirm(`Voulez-vous libérer le titulaire actuel de "${title}" ?\nLe poste redeviendra vacant.`)) {
+          return;
+        }
+
+        try {
+          await window.AdminApi.organization.removeAssignment(assignmentId);
+          showToast(`Le poste "${title}" est désormais vacant`, 'info');
+          loadPage('organization');
+        } catch (error) {
+          showToast(error.message || 'Erreur lors du retrait de l\'affectation', 'error');
+        }
+      });
+    });
+
+    // Boutons d'édition de mandat
+    document.querySelectorAll('[data-org-edit-assign]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const assignmentId = btn.getAttribute('data-org-edit-assign');
+        const mandate = btn.getAttribute('data-mandate') || '';
+        const notes = btn.getAttribute('data-notes') || '';
+        openEditAssignmentModal(assignmentId, mandate, notes);
+      });
+    });
+  }
+
   // ===== Journal d'audit =====
   const logFilters = { module: '', action: '', email: '', from: '', to: '', page: 1 };
 
@@ -3646,6 +4475,8 @@
           btnDisable2FA.disabled = false;
         }
       });
+    if (module === 'organization') {
+      bindOrganizationEvents();
     }
 
     if (module === 'admins') {

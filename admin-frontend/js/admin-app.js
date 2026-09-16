@@ -6,6 +6,7 @@
   // La source de vérité est le backend : ces permissions viennent de /auth/me.
   const MODULE_PERMISSIONS = {
     dashboard: 'admin.global',
+    organization: 'organization.read',
     formations: 'formation.read',
     metiers: 'metier.read',
     blog: 'blog.read',
@@ -37,6 +38,9 @@
 
     getAuthorizedModules: function(user) {
       return Object.keys(MODULE_PERMISSIONS).filter(module => {
+        if (module === 'organization') {
+          return this.isAdminUser(user);
+        }
         if (module === 'approvals') {
           return this.hasPermission(user, 'approvals.read')
             || this.hasPermission(user, 'membership.read')

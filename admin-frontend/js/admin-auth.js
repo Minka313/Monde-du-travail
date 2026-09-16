@@ -401,6 +401,52 @@
       resolve: (id) => apiRequestWithRefresh(`/forum/${id}/resolve`, { method: 'PUT' }),
       remove: (id) => apiRequestWithRefresh(`/forum/${id}`, { method: 'DELETE' }),
     },
+    organization: {
+      getBureau: (params = {}) => {
+        const query = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            query.set(key, value);
+          }
+        });
+        const qs = query.toString();
+        return apiRequestWithRefresh(`/organization/bureau${qs ? `?${qs}` : ''}`);
+      },
+      getPositions: () => apiRequestWithRefresh('/organization/positions'),
+      getPosition: (id) => apiRequestWithRefresh(`/organization/positions/${id}`),
+      createPosition: (data) => apiRequestWithRefresh('/organization/positions', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+      updatePosition: (id, data) => apiRequestWithRefresh(`/organization/positions/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+      deletePosition: (id) => apiRequestWithRefresh(`/organization/positions/${id}`, {
+        method: 'DELETE',
+      }),
+      getAssignments: (params = {}) => {
+        const query = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            query.set(key, value);
+          }
+        });
+        const qs = query.toString();
+        return apiRequestWithRefresh(`/organization/assignments${qs ? `?${qs}` : ''}`);
+      },
+      assignPosition: (data) => apiRequestWithRefresh('/organization/assignments', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+      updateAssignment: (id, data) => apiRequestWithRefresh(`/organization/assignments/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+      removeAssignment: (id) => apiRequestWithRefresh(`/organization/assignments/${id}`, {
+        method: 'DELETE',
+      }),
+    },
     getToken,
     setToken,
     removeTokens,
