@@ -52,19 +52,29 @@
   }
 
   function getToken() {
-    return localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken') || localStorage.getItem('adminAccessToken');
+    if (token && !localStorage.getItem('accessToken')) {
+      try { localStorage.setItem('accessToken', token); } catch (_) {}
+    }
+    return token;
   }
 
   function setToken(token) {
     if (token) {
-      localStorage.setItem('accessToken', token);
+      try {
+        localStorage.setItem('accessToken', token);
+        localStorage.setItem('adminAccessToken', token);
+      } catch (_) {}
     } else {
-      localStorage.removeItem('accessToken');
+      removeToken();
     }
   }
 
   function removeToken() {
-    localStorage.removeItem('accessToken');
+    try {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('adminAccessToken');
+    } catch (_) {}
   }
 
   function escapeHtml(value) {
