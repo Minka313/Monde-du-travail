@@ -512,23 +512,39 @@
       const user = res?.data;
       if (!user || user.role !== 'ULTRA_ADMIN') return;
 
+      // Synchroniser le token pour l'espace d'administration
+      if (token) {
+        try { localStorage.setItem('adminAccessToken', token); } catch (_) {}
+      }
+
+      const adminUrl = window.location.protocol === 'file:' ? '../admin-frontend/index.html' : '/admin-frontend/index.html';
+
+      function onAdminClick() {
+        const curToken = window.Api?.getToken();
+        if (curToken) {
+          try { localStorage.setItem('adminAccessToken', curToken); } catch (_) {}
+        }
+      }
+
       // — Nav link : remplacer "Connexion" par "Administration" —
       const navLinks = document.getElementById('navLinks');
       if (navLinks) {
         const loginLink = Array.from(navLinks.querySelectorAll('a')).find(a => a.getAttribute('href') === 'login.html');
         if (loginLink) {
-          loginLink.href = '../admin-frontend/index.html';
+          loginLink.href = adminUrl;
           loginLink.innerHTML = '🛡️ Administration';
           loginLink.style.color = 'var(--color-primary)';
           loginLink.style.fontWeight = '600';
+          loginLink.onclick = onAdminClick;
         }
       }
 
       // — Header CTA : remplacer "Espace Membre" par "Administration" —
       const headerBtn = document.querySelector('.header-actions .btn-cta');
       if (headerBtn) {
-        headerBtn.href = '../admin-frontend/index.html';
+        headerBtn.href = adminUrl;
         headerBtn.innerHTML = '🛡️ Administration';
+        headerBtn.onclick = onAdminClick;
       }
     } catch (e) {
       // Token invalide → nettoyage silencieux, le nav reste par défaut

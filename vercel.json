@@ -29,11 +29,18 @@
     },
     {
       "src": "^/admin/login(\\.html)?$",
-      "dest": "/admin-frontend/login.html"
+      "status": 307,
+      "headers": { "Location": "/admin-frontend/login.html" }
     },
     {
       "src": "^/admin/?$",
-      "dest": "/admin-frontend/index.html"
+      "status": 307,
+      "headers": { "Location": "/admin-frontend/index.html" }
+    },
+    {
+      "src": "^/admin/(css|js)/(.*)",
+      "headers": { "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400" },
+      "dest": "/admin-frontend/$1/$2"
     },
     {
       "src": "/admin-frontend/(css|js)/(.*)",

@@ -11,14 +11,21 @@
   console.log('[AdminApi] API_BASE:', API_BASE, 'IS_FILE_PROTOCOL:', IS_FILE_PROTOCOL);
 
   function getToken() {
-    return localStorage.getItem('adminAccessToken');
+    const token = localStorage.getItem('adminAccessToken') || localStorage.getItem('accessToken');
+    if (token && !localStorage.getItem('adminAccessToken')) {
+      try { localStorage.setItem('adminAccessToken', token); } catch (_) {}
+    }
+    return token;
   }
 
   function setToken(token) {
     if (token) {
-      localStorage.setItem('adminAccessToken', token);
+      try {
+        localStorage.setItem('adminAccessToken', token);
+        localStorage.setItem('accessToken', token);
+      } catch (_) {}
     } else {
-      localStorage.removeItem('adminAccessToken');
+      removeTokens();
     }
   }
 
@@ -31,8 +38,11 @@
   }
 
   function removeTokens() {
-    localStorage.removeItem('adminAccessToken');
-    localStorage.removeItem('adminRefreshToken');
+    try {
+      localStorage.removeItem('adminAccessToken');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('adminRefreshToken');
+    } catch (_) {}
   }
 
   function showReauthModal() {
@@ -450,6 +460,7 @@
     getToken,
     setToken,
     removeTokens,
+    removeToken: removeTokens,
     isLoggedIn: () => !!getToken(),
   };
 })();
