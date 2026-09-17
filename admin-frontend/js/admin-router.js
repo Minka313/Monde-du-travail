@@ -30,17 +30,30 @@
       }
 
       let targetModule = module;
-      if (!authorized.includes(targetModule)) {
+      if (!targetModule || !authorized.includes(targetModule)) {
         targetModule = authorized.includes('dashboard') ? 'dashboard' : authorized[0];
       }
 
-      if (!availableModules[targetModule] || !authorized.includes(targetModule)) {
+      if (!targetModule || !authorized.includes(targetModule)) {
         const denied = document.getElementById('admin-denied');
         const root = document.getElementById('admin-root');
         if (root) root.classList.add('hidden');
         if (denied) denied.classList.remove('hidden');
         return;
       }
+
+      // Si le module n'est pas encore enregistré dans availableModules, fallback sur dashboard
+      if (!availableModules[targetModule]) {
+        console.warn(`[AdminRouter] Module ${targetModule} non présent dans ADMIN_MODULES.`);
+        if (availableModules['dashboard'] && authorized.includes('dashboard')) {
+          targetModule = 'dashboard';
+        }
+      }
+
+      const denied = document.getElementById('admin-denied');
+      const root = document.getElementById('admin-root');
+      if (denied) denied.classList.add('hidden');
+      if (root) root.classList.remove('hidden');
 
       this.currentModule = targetModule;
 
