@@ -75,9 +75,21 @@ class AuthService {
 
   // Connexion
   static async login(email, password, ipAddress, userAgent) {
-    const user = await prisma.user.findUnique({
-      where: { email },
+    const normalizedEmail = (email || '').trim().toLowerCase();
+    let user = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
     });
+
+    if (!user) {
+      user = await prisma.user.findFirst({
+        where: {
+          email: {
+            equals: normalizedEmail,
+            mode: 'insensitive',
+          },
+        },
+      });
+    }
 
     if (!user) {
       throw new UnauthorizedError('Email ou mot de passe incorrect');
