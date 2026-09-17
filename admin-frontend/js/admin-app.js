@@ -66,13 +66,15 @@
         // ignore
       }
       window.AdminApi.removeTokens();
-      window.location.href = 'login.html';
+      const loginUrl = (window.location.protocol === 'file:' || window.location.pathname.includes('/admin-frontend/')) ? 'login.html' : '/admin-frontend/login.html';
+      window.location.href = loginUrl;
     },
 
     guard: async function() {
       const loading = document.getElementById('admin-loading');
       const root = document.getElementById('admin-root');
       const denied = document.getElementById('admin-denied');
+      const loginUrl = (window.location.protocol === 'file:' || window.location.pathname.includes('/admin-frontend/')) ? 'login.html' : '/admin-frontend/login.html';
 
       if (loading) loading.classList.remove('hidden');
       if (root) root.classList.add('hidden');
@@ -80,7 +82,7 @@
 
       if (!window.AdminApi || !window.AdminApi.isLoggedIn()) {
         if (loading) loading.classList.add('hidden');
-        window.location.href = 'login.html';
+        window.location.href = loginUrl;
         return false;
       }
 
@@ -91,11 +93,12 @@
         if (!user) {
           window.AdminApi.removeToken();
           if (loading) loading.classList.add('hidden');
-          window.location.href = 'login.html';
+          window.location.href = loginUrl;
           return false;
         }
 
         if (!this.isAdminUser(user)) {
+          window.AdminApi.removeTokens();
           if (loading) loading.classList.add('hidden');
           if (denied) denied.classList.remove('hidden');
           return false;
@@ -123,7 +126,7 @@
       } catch (error) {
         window.AdminApi.removeToken();
         if (loading) loading.classList.add('hidden');
-        window.location.href = 'login.html';
+        window.location.href = loginUrl;
         return false;
       }
     },

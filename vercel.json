@@ -16,21 +16,9 @@
     {
       "src": "index.html",
       "use": "@vercel/static"
-    },
-    {
-      "src": "presentation/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
-    {
-      "src": "/presentation$",
-      "dest": "/presentation/index.html"
-    },
-    {
-      "src": "/presentation/(.*)",
-      "dest": "/presentation/$1"
-    },
     {
       "src": "/api/(.*)",
       "dest": "/api/index.js"
@@ -40,7 +28,11 @@
       "dest": "/api/index.js"
     },
     {
-      "src": "/admin",
+      "src": "^/admin/login(\\.html)?$",
+      "dest": "/admin-frontend/login.html"
+    },
+    {
+      "src": "^/admin/?$",
       "dest": "/admin-frontend/index.html"
     },
     {
