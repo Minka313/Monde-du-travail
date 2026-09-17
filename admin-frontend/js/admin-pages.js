@@ -4475,6 +4475,8 @@
           btnDisable2FA.disabled = false;
         }
       });
+    }
+
     if (module === 'organization') {
       bindOrganizationEvents();
     }
