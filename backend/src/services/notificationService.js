@@ -2,20 +2,20 @@ const webpush = require('web-push');
 const prisma = require('../config/database');
 const logger = require('../utils/logger');
 
+const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || 'BLFYn65D37bOCdPLZgORGiZaCECu6PhdcMcZ0w52b6O_qgnyKsFRKzw83ziACv5qCBRwTX5q2JgJ093TZ_CaXcM';
+const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || 'ssbp9d_eNMYv8l_4c7oXoJ2RhWCNBDSvRDI8PqckFos';
+const VAPID_SUBJECT = process.env.VAPID_SUBJECT || 'mailto:khadimoulbarham@gmail.com';
+
 // Initialisation VAPID
-if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
-  try {
-    webpush.setVapidDetails(
-      process.env.VAPID_SUBJECT || 'mailto:khadimoulbarham@gmail.com',
-      process.env.VAPID_PUBLIC_KEY,
-      process.env.VAPID_PRIVATE_KEY
-    );
-    logger.info('Web Push VAPID initialisé avec succès');
-  } catch (err) {
-    logger.error(`Échec de l'initialisation VAPID: ${err.message}`);
-  }
-} else {
-  logger.warn('Clés VAPID absentes : les notifications push ne seront pas émises');
+try {
+  webpush.setVapidDetails(
+    VAPID_SUBJECT,
+    VAPID_PUBLIC_KEY,
+    VAPID_PRIVATE_KEY
+  );
+  logger.info('Web Push VAPID initialisé avec succès');
+} catch (err) {
+  logger.error(`Échec de l'initialisation VAPID: ${err.message}`);
 }
 
 class NotificationService {
@@ -23,7 +23,7 @@ class NotificationService {
    * Clé publique VAPID pour le frontend
    */
   getVapidPublicKey() {
-    return process.env.VAPID_PUBLIC_KEY || null;
+    return VAPID_PUBLIC_KEY;
   }
 
   /**
