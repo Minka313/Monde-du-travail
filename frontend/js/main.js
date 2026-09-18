@@ -205,7 +205,7 @@
     });
   }
 
-  // ===== Filters =====
+  // ===== Smooth Animated Filters =====
   function initFilters() {
     document.querySelectorAll('[data-filter]').forEach(select => {
       select.addEventListener('change', () => {
@@ -213,13 +213,23 @@
         const value = select.value;
         const container = document.querySelector(target);
         if (!container) return;
-        container.querySelectorAll('[data-filter-item]').forEach(item => {
+        const items = container.querySelectorAll('[data-filter-item]');
+        let visibleCount = 0;
+        items.forEach(item => {
           const category = item.getAttribute('data-filter-item');
-          if (!value || category === value) {
+          const shouldShow = !value || category === value;
+          if (shouldShow) {
+            item.classList.remove('filter-hidden', 'filter-fading-out');
             item.style.display = '';
-            item.classList.add('animate-in');
+            item.style.setProperty('--stagger-idx', visibleCount++);
+            item.classList.add('is-revealed');
           } else {
-            item.style.display = 'none';
+            item.classList.add('filter-fading-out');
+            setTimeout(() => {
+              if (item.classList.contains('filter-fading-out')) {
+                item.classList.add('filter-hidden');
+              }
+            }, 250);
           }
         });
       });
@@ -380,6 +390,205 @@
       img.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80';
     }
   }, true);
+
+  // ===== Immersive Page Transitions & View Transitions API =====
+  function initPageTransitions() {
+    // 1. Marquer la page comme chargée
+    document.body.classList.remove('page-is-exiting', 'page-is-entering');
+    document.body.classList.add('page-loaded');
+
+    // 2. Assurer la présence de la barre de progression en tête d'écran
+    let progressBar = document.getElementById('pageTransitionProgress');
+    if (!progressBar) {
+      progressBar = document.createElement('div');
+      progressBar.id = 'pageTransitionProgress';
+      document.body.prepend(progressBar);
+    }
+
+    function startProgress() {
+      if (!progressBar) return;
+      progressBar.classList.add('active');
+      progressBar.style.width = '35%';
+      setTimeout(() => {
+        if (progressBar && progressBar.classList.contains('active')) {
+          progressBar.style.width = '75%';
+        }
+      }, 80);
+      setTimeout(() => {
+        if (progressBar && progressBar.classList.contains('active')) {
+          progressBar.style.width = '92%';
+        }
+      }, 200);
+    }
+
+    function resetProgress() {
+      if (!progressBar) return;
+      progressBar.style.width = '100%';
+      setTimeout(() => {
+        progressBar.classList.remove('active');
+        progressBar.style.width = '0%';
+      }, 150);
+    }
+
+    // 3. Intercepter les clics sur les liens internes
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href]');
+      if (!link) return;
+
+      // Garde-fous : pas d'interception pour les touches modificatrices
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      // Liens externes ou attribut target="_blank"
+      if (link.target === '_blank') return;
+      // Liens désactivés ou no-transition
+      if (link.getAttribute('data-no-transition') !== null) return;
+
+      const rawHref = link.getAttribute('href');
+      if (!rawHref || rawHref.startsWith('javascript:') || rawHref.startsWith('mailto:') || rawHref.startsWith('tel:')) return;
+
+      // Ancre sur la page courante (#main-content, etc.)
+      if (rawHref.startsWith('#')) return;
+
+      // Résolution de l'URL cible
+      let targetUrl;
+      try {
+        targetUrl = new URL(link.href, window.location.href);
+      } catch (_) {
+        return;
+      }
+
+      // Vérifier si même origine
+      if (targetUrl.origin !== window.location.origin) return;
+
+      // Même page avec ancre uniquement
+      if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search && targetUrl.hash) return;
+
+      // Même URL exacte
+      if (targetUrl.href === window.location.href) return;
+
+      e.preventDefault();
+      startProgress();
+
+      // Utilisation du View Transitions API moderne si disponible
+      if (document.startViewTransition && typeof document.startViewTransition === 'function') {
+        document.startViewTransition(() => {
+          window.location.href = targetUrl.href;
+        });
+      } else {
+        // Fallback CSS/JS fluide
+        document.body.classList.add('page-is-exiting');
+        setTimeout(() => {
+          window.location.href = targetUrl.href;
+        }, 180);
+      }
+    });
+
+    // 4. Gestion du bouton Retour / Suivant (Back-Forward Cache - bfcache)
+    window.addEventListener('pageshow', () => {
+      document.body.classList.remove('page-is-exiting', 'page-is-entering');
+      document.body.classList.add('page-loaded');
+      resetProgress();
+    });
+  }
+
+  // ===== Scroll Reveal & Dynamic Cascade Engine =====
+  let revealObserver = null;
+  function initScrollReveal() {
+    // Si l'utilisateur préfère réduire les animations
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.querySelectorAll('.reveal, [data-reveal]').forEach(el => {
+        el.classList.add('is-revealed');
+      });
+      return;
+    }
+
+    // 1. Initialiser l'IntersectionObserver réutilisable
+    if (!revealObserver) {
+      revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const el = entry.target;
+            el.classList.add('is-revealed');
+            el.classList.add('revealed');
+            observer.unobserve(el);
+          }
+        });
+      }, {
+        root: null,
+        rootMargin: '0px 0px -40px 0px',
+        threshold: 0.1
+      });
+    }
+
+    // 2. Balayer automatiquement les grilles pour attribuer un ordre en cascade
+    const gridContainers = document.querySelectorAll('.cards-grid, .impact-grid, .features-grid, .jobs-grid, .formations-grid');
+    gridContainers.forEach(container => {
+      const items = Array.from(container.children).filter(el => el.nodeType === 1);
+      items.forEach((child, idx) => {
+        if (!child.style.getPropertyValue('--stagger-idx')) {
+          child.style.setProperty('--stagger-idx', idx % 6);
+        }
+        child.classList.add('stagger-item');
+        if (!child.classList.contains('reveal')) {
+          child.classList.add('reveal');
+        }
+      });
+    });
+
+    // 3. Éléments cibles à observer
+    const targets = document.querySelectorAll(`
+      .reveal:not(.is-revealed),
+      [data-reveal]:not(.is-revealed),
+      .section-header:not(.is-revealed),
+      .centered-editorial:not(.is-revealed),
+      .hero-content:not(.is-revealed),
+      .card:not(.is-revealed),
+      .job-card:not(.is-revealed),
+      .formation-card:not(.is-revealed),
+      .article-card:not(.is-revealed),
+      .impact-item:not(.is-revealed)
+    `);
+
+    targets.forEach(el => {
+      if (!el.classList.contains('reveal')) {
+        el.classList.add('reveal');
+      }
+      revealObserver.observe(el);
+    });
+  }
+
+  // ===== Card Spotlight & Cursor Tracking (Desktop) =====
+  function initCardSpotlight() {
+    if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      return;
+    }
+
+    let ticking = false;
+    document.addEventListener('mousemove', (e) => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const card = e.target.closest('.card, .formation-card, .article-card, .job-card, .impact-item');
+        if (card) {
+          const rect = card.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          card.style.setProperty('--mouse-x', `${x}px`);
+          card.style.setProperty('--mouse-y', `${y}px`);
+        }
+        ticking = false;
+      });
+    }, { passive: true });
+  }
+
+  // ===== Staggered Mobile Menu Animation =====
+  function initMobileMenuEnhancements() {
+    const links = document.querySelectorAll('.mobile-nav-menu a');
+    links.forEach((link, idx) => {
+      if (!link.style.getPropertyValue('--item-idx')) {
+        link.style.setProperty('--item-idx', idx + 1);
+      }
+    });
+  }
 
   // ===== Top Scroll Reading Progress Bar =====
   function initScrollProgressBar() {
@@ -560,8 +769,12 @@
   }
 
   function init() {
+    initPageTransitions();
     initScrollProgressBar();
     initHeaderScrollEffect();
+    initScrollReveal();
+    initCardSpotlight();
+    initMobileMenuEnhancements();
     initCounters();
     initMobileMenu();
     initActiveNav();
@@ -575,6 +788,8 @@
     safeInit();
     initMobileMenu();
     initActiveNav();
+    initMobileMenuEnhancements();
+    initScrollReveal();
   });
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', safeInit);
