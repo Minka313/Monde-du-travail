@@ -206,6 +206,18 @@ class FormationService {
       data: { status: 'CANCELLED', reviewedAt: new Date() },
     });
 
+    // Déclencher la notification push et in-app automatique
+    try {
+      const notificationService = require('./notificationService');
+      notificationService.broadcastNotification({
+        type: 'FORMATION',
+        title: '🎓 Nouvelle formation disponible !',
+        message: `${formation.title} : découvrez le programme et participez dès maintenant.`,
+        url: `/frontend/formations.html#${formation.id}`,
+        imageUrl: formation.image || null,
+      }).catch(() => {});
+    } catch (_) {}
+
     return formation;
   }
 

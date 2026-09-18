@@ -443,6 +443,19 @@ class BlogService {
     });
 
     logger.info('Article publié', { postId: id });
+
+    // Déclencher la notification push et in-app automatique
+    try {
+      const notificationService = require('./notificationService');
+      notificationService.broadcastNotification({
+        type: 'BLOG',
+        title: '📝 Nouvel article de blog !',
+        message: `${updated.title} : découvrez notre dernière publication.`,
+        url: `/frontend/blog-post.html?slug=${updated.slug}`,
+        imageUrl: updated.coverImage || null,
+      }).catch(() => {});
+    } catch (_) {}
+
     return updated;
   }
 

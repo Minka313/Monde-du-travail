@@ -175,6 +175,21 @@ class ForumService {
       }),
     ]);
 
+    // Notification automatique à l'auteur du sujet si ce n'est pas lui qui répond
+    if (topic.authorId && topic.authorId !== userId) {
+      try {
+        const notificationService = require('./notificationService');
+        const authorName = `${reply.author?.firstName || ''} ${reply.author?.lastName || ''}`.trim() || 'Un membre';
+        notificationService.createNotification({
+          userId: topic.authorId,
+          type: 'FORUM',
+          title: '💬 Nouvelle réponse sur votre sujet !',
+          message: `${authorName} a répondu à votre sujet « ${topic.title} ».`,
+          url: `/frontend/forum-topic.html?id=${topic.id}`,
+        }).catch(() => {});
+      } catch (_) {}
+    }
+
     return reply;
   }
 

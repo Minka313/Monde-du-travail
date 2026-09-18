@@ -15,6 +15,7 @@
     admins: 'admins.read',
     approvals: 'approvals.read',
     logs: 'logs.read',
+    notifications: 'admin.global',
     settings: 'settings.manage',
   };
 

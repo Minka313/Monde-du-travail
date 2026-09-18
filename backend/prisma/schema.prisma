@@ -244,6 +244,8 @@ model User {
   createdJobs        Job[]               @relation("JobCreator")
   clubAssignments    ClubAssignment[]    @relation("UserClubAssignments")
   assignedClubRoles  ClubAssignment[]    @relation("ClubAssignmentCreator")
+  notifications      Notification[]      @relation("UserNotifications")
+  pushSubscriptions  PushSubscription[]  @relation("UserPushSubscriptions")
 
   @@map("users")
 }
@@ -450,3 +452,48 @@ enum ApprovalStepStatus {
   REJECTED
   SKIPPED
 }
+
+enum NotificationType {
+  FORMATION
+  JOB
+  BLOG
+  FORUM
+  ANNOUNCEMENT
+  MEMBERSHIP
+  SYSTEM
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String?
+  type      NotificationType @default(SYSTEM)
+  title     String
+  message   String
+  url       String?
+  imageUrl  String?
+  isRead    Boolean          @default(false)
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+  user      User?            @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String?
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User?    @relation("UserPushSubscriptions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("push_subscriptions")
+}
+

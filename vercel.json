@@ -67,6 +67,15 @@
       "dest": "/frontend/fragments/$1"
     },
     {
+      "src": "/sw.js",
+      "headers": {
+        "Content-Type": "application/javascript",
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Service-Worker-Allowed": "/"
+      },
+      "dest": "/frontend/sw.js"
+    },
+    {
       "src": "/logo.png",
       "headers": { "Cache-Control": "public, max-age=604800, stale-while-revalidate=2592000" },
       "dest": "/frontend/logo.png"

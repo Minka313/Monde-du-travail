@@ -255,6 +255,18 @@ class AdminController {
         logger.warn('Erreur envoi email approbation adhésion', { error: err.message });
       }
 
+      // Notification Push & In-App instantanée au membre
+      try {
+        const notificationService = require('../services/notificationService');
+        notificationService.createNotification({
+          userId: membership.userId,
+          type: 'MEMBERSHIP',
+          title: '🎉 Félicitations ! Votre adhésion a été approuvée',
+          message: 'Bienvenue au sein du club Le Monde du Travail ! Votre compte est maintenant pleinement actif.',
+          url: '/frontend/index.html',
+        }).catch(() => {});
+      } catch (_) {}
+
       res.json({
         success: true,
         message: 'Demande d\'adhésion approuvée — compte activé et email de bienvenue envoyé',
