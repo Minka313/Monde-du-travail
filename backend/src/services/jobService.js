@@ -207,6 +207,18 @@ class JobService {
       data: { status: 'CANCELLED', reviewedAt: new Date() },
     });
 
+    // Déclencher la notification push et in-app automatique
+    try {
+      const notificationService = require('./notificationService');
+      notificationService.broadcastNotification({
+        type: 'JOB',
+        title: '💼 Nouvelle fiche métier & opportunité !',
+        message: `${job.title} : explorez les compétences, débouchés et formations associées.`,
+        url: `/frontend/job.html#${job.id}`,
+        imageUrl: job.image || null,
+      }).catch(() => {});
+    } catch (_) {}
+
     return job;
   }
 

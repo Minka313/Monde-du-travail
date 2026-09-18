@@ -4,6 +4,7 @@
   const ADMIN_MODULES = {
     dashboard: { label: 'Tableau de bord', icon: '📊' },
     organization: { label: 'Organisation & Fonctionnement', icon: '🏛️' },
+    notifications: { label: 'Notifications Push', icon: '🔔' },
     formations: { label: 'Formations', icon: '📚' },
     metiers: { label: 'Métiers', icon: '💼' },
     blog: { label: 'Blog', icon: '📝' },
@@ -213,6 +214,9 @@
           break;
         case 'organization':
           html = await loadOrganization();
+          break;
+        case 'notifications':
+          html = await loadNotifications();
           break;
         case 'formations':
           html = await loadFormations();
@@ -3635,6 +3639,166 @@
     });
   }
 
+  // ===== Notifications Push & Diffusions Flash =====
+  async function loadNotifications() {
+    const [statsRes, notifsRes] = await Promise.all([
+      window.AdminApi.notifications?.getStats().catch(() => ({ data: { subscribersCount: 0, totalNotifications: 0, unreadCount: 0 } })),
+      window.AdminApi.notifications?.getAll({ limit: 20 }).catch(() => ({ data: [] })),
+    ]);
+
+    const stats = statsRes?.data || { subscribersCount: 0, totalNotifications: 0, unreadCount: 0 };
+    const notifications = notifsRes?.data || [];
+
+    return `
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:1rem;margin-bottom:1.5rem;">
+        <div class="card" style="padding:1.25rem;border-left:4px solid #2563eb;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.85rem;color:var(--color-muted);font-weight:600;">Appareils abonnés au Push</span>
+            <span style="font-size:1.5rem;">📲</span>
+          </div>
+          <div style="font-size:1.75rem;font-weight:800;color:var(--color-primary);margin-top:0.35rem;">
+            ${stats.subscribersCount}
+          </div>
+          <small style="color:var(--color-muted);">Terminaux mobiles et PC enregistrés</small>
+        </div>
+
+        <div class="card" style="padding:1.25rem;border-left:4px solid #16a34a;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.85rem;color:var(--color-muted);font-weight:600;">Total Notifications</span>
+            <span style="font-size:1.5rem;">🔔</span>
+          </div>
+          <div style="font-size:1.75rem;font-weight:800;color:#16a34a;margin-top:0.35rem;">
+            ${stats.totalNotifications}
+          </div>
+          <small style="color:var(--color-muted);">Émises depuis le lancement</small>
+        </div>
+
+        <div class="card" style="padding:1.25rem;border-left:4px solid #d97706;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:0.85rem;color:var(--color-muted);font-weight:600;">En attente de lecture</span>
+            <span style="font-size:1.5rem;">📬</span>
+          </div>
+          <div style="font-size:1.75rem;font-weight:800;color:#d97706;margin-top:0.35rem;">
+            ${stats.unreadCount}
+          </div>
+          <small style="color:var(--color-muted);">Notifications non consultées</small>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));gap:1.5rem;margin-bottom:2rem;">
+        <!-- Formulaire de diffusion -->
+        <div class="card" style="padding:1.5rem;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;">
+            <span style="font-size:1.35rem;">📣</span>
+            <h3 style="margin:0;font-size:1.15rem;font-weight:700;">Diffuser une alerte Push Flash</h3>
+          </div>
+          <p style="color:var(--color-muted);font-size:0.88rem;margin-top:-0.5rem;margin-bottom:1.25rem;">
+            Envoyez un message push instantané à tous les membres et visiteurs ayant autorisé les notifications.
+          </p>
+
+          <div style="display:flex;flex-direction:column;gap:1rem;">
+            <div>
+              <label style="display:block;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Type d'alerte</label>
+              <select id="broadcast-type" style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#ffffff;">
+                <option value="ANNOUNCEMENT">🏛️ Annonce officielle du Bureau</option>
+                <option value="FORMATION">🎓 Nouvelle formation / Masterclass</option>
+                <option value="JOB">💼 Opportunité métier & orientation</option>
+                <option value="BLOG">📝 Nouvel article de blog</option>
+                <option value="SYSTEM">⚡ Message système important</option>
+              </select>
+            </div>
+
+            <div>
+              <label style="display:block;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Titre de la notification *</label>
+              <input type="text" id="broadcast-title" placeholder="Ex: Séance d'orientation spéciale samedi à 15h !" maxlength="80"
+                style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:6px;border:1px solid #cbd5e1;" />
+            </div>
+
+            <div>
+              <label style="display:block;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Message de la notification *</label>
+              <textarea id="broadcast-message" rows="3" placeholder="Ex: Rejoignez-nous pour découvrir les meilleures filières d'avenir avec nos mentors..." maxlength="200"
+                style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;"></textarea>
+            </div>
+
+            <div>
+              <label style="display:block;font-size:0.82rem;font-weight:600;margin-bottom:4px;">Lien de redirection (au clic)</label>
+              <input type="text" id="broadcast-url" placeholder="/frontend/formations.html"
+                style="width:100%;box-sizing:border-box;padding:8px 10px;border-radius:6px;border:1px solid #cbd5e1;" />
+            </div>
+
+            <button type="button" class="btn btn-primary" id="btn-send-broadcast" style="padding:10px 16px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;">
+              <span>🚀</span> Diffuser la notification push maintenant
+            </button>
+          </div>
+        </div>
+
+        <!-- Aperçu Smartphone en direct -->
+        <div class="card" style="padding:1.5rem;background:#f8fafc;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:1rem;">
+            <span style="font-size:1.25rem;">📱</span>
+            <h3 style="margin:0;font-size:1.05rem;font-weight:700;">Aperçu sur Smartphone</h3>
+          </div>
+          <p style="color:var(--color-muted);font-size:0.82rem;margin-top:-0.5rem;margin-bottom:1.5rem;">
+            Rendu simulé de la notification sur l'écran d'accueil d'un utilisateur.
+          </p>
+
+          <div style="max-width:320px;margin:0 auto;background:#1e293b;border-radius:24px;padding:12px 10px;box-shadow:0 15px 30px rgba(0,0,0,0.2);">
+            <div style="background:#ffffff;border-radius:16px;padding:12px;display:flex;gap:10px;align-items:flex-start;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+              <img src="../frontend/logo.png" style="width:36px;height:36px;border-radius:8px;object-fit:contain;flex-shrink:0;" />
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;">
+                  <span style="font-size:0.75rem;font-weight:700;color:#0f172a;">Le Monde du Travail</span>
+                  <span style="font-size:0.68rem;color:#94a3b8;">À l'instant</span>
+                </div>
+                <div id="phone-preview-title" style="font-size:0.82rem;font-weight:600;color:#0f172a;line-height:1.3;margin-bottom:2px;">
+                  Titre de la notification
+                </div>
+                <div id="phone-preview-body" style="font-size:0.75rem;color:#475569;line-height:1.35;">
+                  Le contenu de votre message apparaîtra ici...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historique des notifications -->
+      <div class="card" style="padding:1.5rem;">
+        <div class="card-header" style="margin-bottom:1rem;">
+          <h3 style="margin:0;font-size:1.15rem;font-weight:700;">Historique des dernières notifications émises</h3>
+          <span class="badge badge-primary">${notifications.length} affichée(s)</span>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="table" style="width:100%;border-collapse:collapse;">
+            <thead>
+              <tr style="text-align:left;border-bottom:1px solid #e2e8f0;font-size:0.82rem;color:var(--color-muted);">
+                <th style="padding:8px 12px;">Type</th>
+                <th style="padding:8px 12px;">Titre</th>
+                <th style="padding:8px 12px;">Message</th>
+                <th style="padding:8px 12px;">Cible</th>
+                <th style="padding:8px 12px;">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${notifications.length === 0 ? `
+                <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--color-muted);">Aucune notification émise pour le moment.</td></tr>
+              ` : notifications.map(n => `
+                <tr style="border-bottom:1px solid #f1f5f9;font-size:0.85rem;">
+                  <td style="padding:10px 12px;"><span class="badge badge-info">${escapeHtml(n.type)}</span></td>
+                  <td style="padding:10px 12px;font-weight:600;color:#0f172a;">${escapeHtml(n.title)}</td>
+                  <td style="padding:10px 12px;color:#475569;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(n.message)}</td>
+                  <td style="padding:10px 12px;color:var(--color-muted);">${n.userId ? '👤 Individuel' : '📢 Tous (Broadcast)'}</td>
+                  <td style="padding:10px 12px;color:var(--color-muted);font-size:0.78rem;">${new Date(n.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
   // ===== Journal d'audit =====
   const logFilters = { module: '', action: '', email: '', from: '', to: '', page: 1 };
 
@@ -4479,6 +4643,52 @@
 
     if (module === 'organization') {
       bindOrganizationEvents();
+    }
+
+    if (module === 'notifications') {
+      const btnSend = document.getElementById('btn-send-broadcast');
+      const inputTitle = document.getElementById('broadcast-title');
+      const inputMsg = document.getElementById('broadcast-message');
+      const selectType = document.getElementById('broadcast-type');
+      const inputUrl = document.getElementById('broadcast-url');
+
+      const previewTitle = document.getElementById('phone-preview-title');
+      const previewBody = document.getElementById('phone-preview-body');
+
+      inputTitle?.addEventListener('input', () => {
+        if (previewTitle) previewTitle.textContent = inputTitle.value || 'Titre de la notification';
+      });
+      inputMsg?.addEventListener('input', () => {
+        if (previewBody) previewBody.textContent = inputMsg.value || 'Le contenu de votre message apparaîtra ici...';
+      });
+
+      btnSend?.addEventListener('click', async () => {
+        const title = (inputTitle?.value || '').trim();
+        const message = (inputMsg?.value || '').trim();
+        const type = selectType?.value || 'ANNOUNCEMENT';
+        const url = (inputUrl?.value || '').trim() || '/frontend/index.html';
+
+        if (!title || !message) {
+          showToast('Veuillez renseigner le titre et le message', 'warning');
+          return;
+        }
+
+        if (!confirm('Confirmez-vous l\'envoi immédiat de cette notification push à tous les abonnés ?')) {
+          return;
+        }
+
+        try {
+          btnSend.disabled = true;
+          btnSend.textContent = 'Diffusion en cours...';
+          await window.AdminApi.notifications.broadcast({ title, message, type, url });
+          showToast('Notification push diffusée avec succès !', 'success');
+          loadPage('notifications');
+        } catch (err) {
+          showToast(err.message || 'Échec de la diffusion', 'error');
+          btnSend.disabled = false;
+          btnSend.textContent = 'Diffuser la notification push maintenant 🚀';
+        }
+      });
     }
 
     if (module === 'admins') {

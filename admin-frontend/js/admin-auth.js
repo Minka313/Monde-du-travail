@@ -457,6 +457,23 @@
         method: 'DELETE',
       }),
     },
+    notifications: {
+      getStats: () => apiRequestWithRefresh('/notifications/stats'),
+      getAll: (params = {}) => {
+        const query = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            query.set(key, value);
+          }
+        });
+        const qs = query.toString();
+        return apiRequestWithRefresh(`/notifications${qs ? `?${qs}` : ''}`);
+      },
+      broadcast: (data) => apiRequestWithRefresh('/notifications/broadcast', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    },
     getToken,
     setToken,
     removeTokens,
