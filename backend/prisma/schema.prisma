@@ -225,6 +225,7 @@ model User {
   isVerified         Boolean             @default(false)
   twoFactorEnabled   Boolean             @default(false)
   twoFactorSecret    String?
+  avatarUrl          String?             @map("avatar_url")
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   lastLoginAt        DateTime?

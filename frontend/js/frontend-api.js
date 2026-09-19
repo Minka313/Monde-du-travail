@@ -238,6 +238,10 @@ return headers;
       }),
       logout: () => apiRequestWithRefresh('/auth/logout', { method: 'POST' }),
       me: () => apiRequestWithRefresh('/auth/me'),
+      updateAvatar: (avatarUrl) => apiRequestWithRefresh('/auth/me/avatar', {
+        method: 'PUT',
+        body: JSON.stringify({ avatarUrl }),
+      }),
     },
 
     // Blog / Actualités

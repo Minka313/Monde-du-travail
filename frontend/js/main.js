@@ -301,6 +301,12 @@
     });
   }
 
+  window.toast = {
+    success: (message, title) => showAlert('success', message, title),
+    error: (message, title) => showAlert('error', message, title),
+    info: (message, title) => showAlert('info', message, title),
+  };
+
   function createToastContainer() {
     const container = document.createElement('div');
     container.className = 'toast-container';
@@ -570,9 +576,6 @@
     const targets = document.querySelectorAll(`
       .reveal:not(.is-revealed),
       [data-reveal]:not(.is-revealed),
-      .section-header:not(.is-revealed),
-      .centered-editorial:not(.is-revealed),
-      .hero-content:not(.is-revealed),
       .card:not(.is-revealed),
       .job-card:not(.is-revealed),
       .formation-card:not(.is-revealed),
@@ -778,6 +781,11 @@
         try { localStorage.removeItem('currentUser'); } catch (_) {}
       }
     }
+
+    // Écouter les mises à jour en direct de l'avatar et du profil
+    window.addEventListener('user-avatar-updated', (e) => {
+      if (e.detail) renderNavUser(e.detail);
+    });
   }
 
   function renderNavUser(user) {
@@ -796,17 +804,32 @@
     else if (user.role === 'ADMIN') roleBadge = 'Administrateur';
     else if (user.membershipStatus === 'PENDING') roleBadge = 'Adhésion en cours';
 
+    const avatarHtml = user.avatarUrl
+      ? `<img src="${escapeHtml(user.avatarUrl)}" alt="${escapeHtml(firstName)}" class="user-avatar-img">`
+      : escapeHtml(initial);
+
     // 1. Desktop Header Slot (#headerAuthSlot ou .header-actions .btn-cta)
     const authSlot = document.getElementById('headerAuthSlot') || document.querySelector('.header-actions');
     if (authSlot) {
       const existingContainer = document.getElementById('userMenuContainer');
-      if (!existingContainer) {
+      if (existingContainer) {
+        // Mise à jour réactive des éléments existants
+        const badgeEl = existingContainer.querySelector('.user-avatar-badge');
+        if (badgeEl) {
+          badgeEl.innerHTML = avatarHtml;
+          badgeEl.classList.toggle('has-avatar-img', !!user.avatarUrl);
+        }
+        const nameEl = existingContainer.querySelector('.user-menu-name');
+        if (nameEl) nameEl.textContent = firstName;
+        const fullNameEl = existingContainer.querySelector('.user-dropdown-name');
+        if (fullNameEl) fullNameEl.textContent = fullName;
+      } else {
         const slotWrapper = document.createElement('div');
         slotWrapper.id = 'userMenuContainer';
         slotWrapper.className = 'user-menu-container';
         slotWrapper.innerHTML = `
           <button type="button" class="user-menu-btn" id="userMenuBtn" aria-expanded="false" aria-label="Menu de ${escapeHtml(firstName)}">
-            <span class="user-avatar-badge">${escapeHtml(initial)}</span>
+            <span class="user-avatar-badge ${user.avatarUrl ? 'has-avatar-img' : ''}">${avatarHtml}</span>
             <span class="user-menu-name">${escapeHtml(firstName)}</span>
             <span class="user-menu-arrow">▾</span>
           </button>

@@ -169,6 +169,7 @@ class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        avatarUrl: user.avatarUrl || null,
         permissions,
         adminRoles,
       },

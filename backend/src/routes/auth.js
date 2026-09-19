@@ -79,5 +79,6 @@ router.post('/reset-password', validate(resetPasswordSchema), authController.res
 router.post('/refresh', validate(refreshSchema), authController.refresh);
 router.post('/logout', authenticate, authController.logout);
 router.get('/me', authenticate, authController.me);
+router.put('/me/avatar', authenticate, authController.updateAvatar);
 
 module.exports = router;
