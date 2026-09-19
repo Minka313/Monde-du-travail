@@ -2202,50 +2202,22 @@ input:-webkit-autofill:active {
   z-index: 2;
 }
 
+/* ===== SYSTÈME DE RÉVÉLATION (ZÉRO ÉCRAN BLANC GARANTI) =====
+   Le contenu est 100% visible par défaut pour garantir zéro écran blanc en cas de scroll rapide,
+   latence réseau ou désactivation JS. Les animations sont appliquées en amélioration progressive. */
 .reveal,
 [data-reveal],
-.reveal-up {
-  opacity: 0;
-  transform: translateY(16px);
-  will-change: transform, opacity;
-  transition: opacity 0.55s var(--ease-out-cinematic),
-              transform 0.55s var(--ease-out-cinematic);
-}
-
-.reveal-fade {
-  opacity: 0;
-  transform: none;
-  transition: opacity 0.55s var(--ease-out-cinematic);
-}
-
-.reveal-left {
-  opacity: 0;
-  transform: translateX(-18px);
-  transition: opacity 0.55s var(--ease-out-cinematic),
-              transform 0.55s var(--ease-out-cinematic);
-}
-
-.reveal-right {
-  opacity: 0;
-  transform: translateX(18px);
-  transition: opacity 0.55s var(--ease-out-cinematic),
-              transform 0.55s var(--ease-out-cinematic);
-}
-
-.reveal-scale {
-  opacity: 0;
-  transform: scale(0.96) translateY(10px);
-  transition: opacity 0.55s var(--ease-out-cinematic),
-              transform 0.55s var(--ease-out-cinematic);
-}
-
+.reveal-up,
+.reveal-fade,
+.reveal-left,
+.reveal-right,
+.reveal-scale,
 .reveal-mask {
-  opacity: 0;
-  clip-path: inset(0 0 15% 0 round 8px);
-  transform: translateY(12px);
-  transition: opacity 0.6s var(--ease-out-cinematic),
-              clip-path 0.65s var(--ease-out-cinematic),
-              transform 0.6s var(--ease-out-cinematic);
+  opacity: 1;
+  transform: none;
+  will-change: transform, opacity;
+  transition: opacity 0.5s var(--ease-out-cinematic),
+              transform 0.5s var(--ease-out-cinematic);
 }
 
 .reveal.is-revealed,
@@ -9526,270 +9498,186 @@ fade-in-up,
   will-change: transform, opacity;
 }
 
-/* Scrollytelling Sticky Journey Section */
+/* Scrollytelling Journey Section (Zéro Blocage & Zéro Écran Blanc) */
 .scrolly-journey-section {
   position: relative;
   background: linear-gradient(180deg, #091a2b 0%, #0f2b46 50%, #081726 100%);
   color: #ffffff;
-  padding: 6rem 0;
+  padding: 5.5rem 0;
   overflow: hidden;
   z-index: 5;
 }
 
 .scrolly-journey-aurora {
   position: absolute;
-  top: 10%;
+  top: 15%;
   left: 50%;
   transform: translateX(-50%);
   width: 900px;
-  height: 600px;
-  background: radial-gradient(ellipse at center, rgba(245, 166, 35, 0.12) 0%, rgba(16, 185, 129, 0.08) 45%, transparent 70%);
+  height: 500px;
+  background: radial-gradient(ellipse at center, rgba(245, 166, 35, 0.14) 0%, rgba(16, 185, 129, 0.08) 45%, transparent 70%);
   filter: blur(80px);
   pointer-events: none;
   z-index: 1;
 }
 
-.scrolly-journey-layout {
+.scrolly-journey-header {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 3.5rem auto;
   position: relative;
   z-index: 2;
-  display: grid;
-  grid-template-columns: 1fr 1.35fr;
-  gap: 4rem;
-  align-items: center;
-  min-height: 75vh;
 }
 
-.scrolly-journey-intro {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.scrolly-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 1rem;
-  border-radius: 9999px;
-  background: rgba(245, 166, 35, 0.15);
-  border: 1px solid rgba(245, 166, 35, 0.35);
-  color: #ffc078;
-  font-size: 0.85rem;
+.scrolly-journey-header .section-label {
+  color: var(--color-secondary);
+  display: inline-block;
+  font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 1.5rem;
-  width: fit-content;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
 }
 
-.scrolly-journey-intro h2 {
+.scrolly-journey-header h2 {
   font-family: var(--font-display);
-  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-size: clamp(2rem, 3.2vw, 2.75rem);
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.25;
   color: #ffffff;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
-.scrolly-journey-intro p {
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 1.1rem;
+.scrolly-journey-header p {
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1.08rem;
   line-height: 1.7;
-  margin-bottom: 2.5rem;
-  max-width: 480px;
 }
 
-/* Indicateur de Progression Vertical (Desktop) */
-.scrolly-progress-nav {
-  display: flex;
-  align-items: flex-start;
-  gap: 1.5rem;
-}
-
-.scrolly-progress-track {
-  width: 3px;
-  height: 140px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 9999px;
+/* Grille des 3 Étapes du Parcours */
+.scrolly-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
   position: relative;
-  overflow: hidden;
-  flex-shrink: 0;
-  margin-top: 6px;
-}
-
-.scrolly-progress-fill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 33%;
-  background: linear-gradient(180deg, #f5a623 0%, #10b981 100%);
-  border-radius: 9999px;
-  transition: height 0.15s ease-out;
-  box-shadow: 0 0 12px rgba(245, 166, 35, 0.6);
-}
-
-.scrolly-nav-dots {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.scrolly-nav-dot {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.45);
-  transition: color 0.3s ease;
-}
-
-.scrolly-nav-dot.is-active {
-  color: #ffffff;
-}
-
-.scrolly-nav-dot .dot-num {
-  font-family: monospace;
-  font-size: 0.85rem;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffc078;
-  transition: all 0.3s ease;
-}
-
-.scrolly-nav-dot.is-active .dot-num {
-  background: var(--color-secondary);
-  color: #0f2b46;
-  font-weight: 700;
-}
-
-/* Zone d'affichage des Cartes Étapes */
-.scrolly-cards-viewport {
-  position: relative;
-  min-height: 480px;
-  display: flex;
-  align-items: center;
+  z-index: 2;
 }
 
 .scrolly-step-card {
   background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 1.5rem;
-  padding: 2.75rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 1.25rem;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  opacity: 1 !important;
+  transform: none;
+  transition: transform 0.3s var(--ease-out-cinematic),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
 }
 
-@media (min-width: 992px) {
-  .scrolly-step-card {
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    height: fit-content;
-    opacity: 0;
-    transform: translateY(35px);
-    pointer-events: none;
-  }
+.scrolly-step-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 166, 35, 0.4);
+  box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 166, 35, 0.15);
+}
+
+.scrolly-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
 }
 
 .scrolly-card-tag {
   display: inline-block;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   color: var(--color-secondary);
-  margin-bottom: 1rem;
+}
+
+.scrolly-card-icon {
+  font-size: 1.6rem;
 }
 
 .scrolly-card-title {
   font-family: var(--font-display);
-  font-size: 1.65rem;
+  font-size: 1.35rem;
   font-weight: 700;
   color: #ffffff;
-  line-height: 1.3;
-  margin-bottom: 1.25rem;
+  line-height: 1.35;
+  margin-bottom: 1rem;
 }
 
 .scrolly-card-desc {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.82);
-  margin-bottom: 2rem;
+  font-size: 0.98rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1.75rem;
+  flex-grow: 1;
 }
 
 .scrolly-card-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 2.25rem;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
 }
 
 .scrolly-pill {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.88rem;
+  gap: 0.4rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 0.45rem 0.9rem;
+  padding: 0.35rem 0.75rem;
   border-radius: 9999px;
 }
 
 .scrolly-card-action {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  gap: 0.6rem;
   font-weight: 700;
-  font-size: 1rem;
-  color: #ffffff;
+  font-size: 0.95rem;
+  color: #0f2b46;
   background: linear-gradient(135deg, var(--color-secondary) 0%, #e08b10 100%);
-  padding: 0.85rem 1.65rem;
-  border-radius: 0.75rem;
-  box-shadow: 0 8px 20px rgba(245, 166, 35, 0.35);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  padding: 0.8rem 1.4rem;
+  border-radius: 0.65rem;
+  box-shadow: 0 6px 16px rgba(245, 166, 35, 0.3);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, color 0.2s ease;
+  text-decoration: none;
+  margin-top: auto;
 }
 
 .scrolly-card-action:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(245, 166, 35, 0.45);
-  color: #0f2b46;
+  box-shadow: 0 10px 24px rgba(245, 166, 35, 0.45);
+  color: #000000;
 }
 
-/* Responsive Scrollytelling Mobile */
+/* Responsive Scrollytelling Tablette & Mobile */
 @media (max-width: 991px) {
   .scrolly-journey-section {
     padding: 4rem 0;
   }
-  .scrolly-journey-layout {
+  .scrolly-cards-grid {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
-    min-height: auto;
-  }
-  .scrolly-progress-nav {
-    display: none;
-  }
-  .scrolly-cards-viewport {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
-    min-height: auto;
+    gap: 1.5rem;
   }
   .scrolly-step-card {
-    position: relative;
-    opacity: 1 !important;
-    transform: none !important;
-    padding: 2rem 1.5rem;
-    border-radius: 1.25rem;
-  }
-  .scrolly-card-title {
-    font-size: 1.35rem;
+    padding: 1.75rem 1.4rem;
   }
 }
 
@@ -9799,7 +9687,6 @@ fade-in-up,
     scroll-behavior: auto !important;
   }
   .scrolly-step-card {
-    position: relative !important;
     opacity: 1 !important;
     transform: none !important;
   }
