@@ -535,6 +535,71 @@ p {
   flex-shrink: 0;
 }
 
+/* ===== FORM LABEL ROW & AUTH SWITCHERS ===== */
+.form-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.form-label-row .form-label {
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.btn-link-forgot {
+  background: none;
+  border: none;
+  color: #0284c7;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: color var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-link-forgot:hover,
+.btn-link-forgot:focus-visible {
+  color: var(--color-primary-dark);
+}
+
+.auth-tabs-mobile {
+  display: none;
+}
+
+.auth-switch-prompt-light {
+  border-top-color: rgba(255, 255, 255, 0.18) !important;
+  color: rgba(255, 255, 255, 0.88) !important;
+  margin-top: var(--space-6);
+}
+
+.btn-link-login-switch {
+  background: transparent;
+  border: none;
+  color: #fde68a;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 2px 4px;
+  font-family: inherit;
+  transition: color var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-link-login-switch:hover {
+  color: #ffffff;
+}
+
 .nav-search {
   display: flex;
   align-items: center;
@@ -2667,9 +2732,86 @@ input:-webkit-autofill:active {
     font-size: clamp(1.5rem, 6vw, 2rem);
   }
 
+  /* Auth hero compact sur mobile */
+  .hero.hero-auth {
+    min-height: auto;
+    padding: var(--space-8) var(--space-4) var(--space-4);
+  }
+  .hero.hero-auth .hero-inner {
+    min-height: auto;
+    padding: var(--space-2) 0;
+  }
+  .hero.hero-auth h1 {
+    font-size: clamp(1.6rem, 6vw, 2rem);
+    margin-bottom: var(--space-2);
+  }
+  .hero.hero-auth p {
+    font-size: 0.95rem;
+    margin-bottom: 0;
+  }
+
+  /* Onglets d'authentification mobile (Connexion / Demande d'adhésion) */
+  .auth-tabs-mobile {
+    display: flex;
+    align-items: center;
+    background: #f1f5f9;
+    padding: 5px;
+    border-radius: var(--radius-full);
+    margin: 0 auto var(--space-6);
+    max-width: 440px;
+    width: 100%;
+    border: 1px solid var(--color-gray-200);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  .auth-tab-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border: none;
+    background: transparent;
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-gray-600);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+    font-family: inherit;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .auth-tab-btn.active {
+    background: var(--color-white);
+    color: var(--color-primary-dark);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  }
+
+  .auth-tab-btn .tab-icon {
+    font-size: 1rem;
+  }
+
+  /* Bascule d'affichage mobile : un seul mode visible à la fois sur smartphone */
+  .login-container.mode-login .info-box {
+    display: none !important;
+  }
+  .login-container.mode-login .login-box {
+    display: block !important;
+  }
+
+  .login-container.mode-register .login-box {
+    display: none !important;
+  }
+  .login-container.mode-register .info-box {
+    display: block !important;
+  }
+
   .login-container {
     flex-direction: column;
-    margin: var(--space-6) auto;
+    margin: var(--space-4) auto var(--space-8);
     border-radius: var(--radius-xl);
     overflow: hidden;
   }
@@ -2677,6 +2819,26 @@ input:-webkit-autofill:active {
   .login-box,
   .info-box {
     padding: var(--space-6) var(--space-5);
+  }
+
+  /* Sécurisation de la taille des polices sur inputs mobiles (anti-zoom automatique iOS/Android) */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  /* Modale responsive */
+  .modal-card {
+    max-height: 90dvh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
 
   .btn-register {
