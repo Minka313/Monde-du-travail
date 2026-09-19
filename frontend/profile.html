@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Espace Membre — Le Monde du Travail. Gérez vos inscriptions aux formations, consultez vos métiers favoris et vos échanges.">
+    <title>Mon Espace Membre — Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div id="pageTransitionProgress"></div>
+    <div id="scrollProgressBar"></div>
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <div class="header-auth-slot" id="headerAuthSlot">
+                <a href="login.html" class="btn-cta" id="headerAuthBtn">Se connecter</a>
+            </div>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.png" alt="Logo Le Monde du Travail" class="mobile-nav-logo">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="mobile-nav-footer" id="mobileNavFooter">
+                <a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main id="main-content">
+    <!-- Profil Hero Banner -->
+    <section class="profile-hero">
+        <div class="container">
+            <div class="profile-header-flex">
+                <div class="profile-avatar-big" id="profileBigAvatar">👤</div>
+                <div class="profile-identity">
+                    <h1 id="profileFullName">Chargement...</h1>
+                    <p id="profileEmail">Vérification de la session en cours...</p>
+                    <div id="profileStatusBadge"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Corps du Tableau de Bord -->
+    <section class="section" style="padding-top: var(--space-6); background: #f8fafc;">
+        <div class="container">
+            <div class="profile-layout-grid">
+                
+                <!-- Colonne Principale -->
+                <div class="profile-main-col">
+                    
+                    <!-- Formations réservées -->
+                    <div class="profile-box">
+                        <h2><span>🎓</span> Mes Inscriptions aux Formations</h2>
+                        <div id="profileFormationsList">
+                            <div class="profile-empty-hint">
+                                <p>Vous n'avez pas encore réservé de formation ou d'atelier.</p>
+                                <a href="formations.html" class="btn btn-primary btn-sm">Explorer le catalogue &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Métiers favoris -->
+                    <div class="profile-box">
+                        <h2><span>⭐</span> Mes Métiers & Domaines Favoris</h2>
+                        <div id="profileFavoriteJobsList">
+                            <div class="profile-empty-hint">
+                                <p>Aucun métier enregistré dans vos favoris pour le moment.</p>
+                                <a href="job.html" class="btn btn-outline btn-sm">🧭 Découvrir les métiers &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Forum & Échanges -->
+                    <div class="profile-box">
+                        <h2><span>💬</span> Communauté & Forum</h2>
+                        <p style="color: var(--color-gray-600); font-size: 0.95rem; margin-bottom: 1rem;">
+                            Participez aux discussions, posez vos questions d'orientation et partagez vos retours d'expérience.
+                        </p>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                            <a href="forum-create.html" class="btn btn-primary btn-sm">+ Poser une question</a>
+                            <a href="forum.html" class="btn btn-outline btn-sm">Voir les discussions actives</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonne Latérale / Sidebar Membre -->
+                <aside class="profile-side-col">
+                    <div class="profile-box">
+                        <h2><span>📋</span> Informations Compte</h2>
+                        <div style="font-size: 0.9rem; line-height: 1.8; color: var(--color-gray-700);">
+                            <div><strong>Statut :</strong> <span id="sideStatusText">Adhérent</span></div>
+                            <div><strong>Rôle :</strong> <span id="sideRoleText">Membre</span></div>
+                            <div><strong>Email :</strong> <span id="sideEmailText">-</span></div>
+                        </div>
+                        <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--color-gray-200);">
+                        <button type="button" class="btn btn-outline btn-sm" id="btnSideLogout" style="width: 100%; justify-content: center; color: #dc2626; border-color: #fecaca;">
+                            🚪 Se déconnecter
+                        </button>
+                    </div>
+
+                    <div class="profile-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #bfdbfe;">
+                        <h3 style="font-size: 1.05rem; color: #1e40af; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px;">
+                            <span>🤝</span> Club Le Monde du Travail
+                        </h3>
+                        <p style="font-size: 0.88rem; color: #1e3a8a; line-height: 1.5; margin-bottom: 0.75rem;">
+                            Votre adhésion vous donne un accès prioritaire aux ateliers, aux revues de CV personnalisées et au réseau des diplômés.
+                        </p>
+                        <a href="about.html" style="font-size: 0.85rem; font-weight: 700; color: #2563eb; text-decoration: none;">
+                            Découvrir les avantages du club &rarr;
+                        </a>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer data-layout="footer" class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <h4>Le Monde du Travail</h4>
+            <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Navigation</h4>
+            <a href="index.html">Accueil</a>
+            <a href="about.html">À Propos</a>
+            <a href="formations.html">Formations</a>
+            <a href="forum.html">Forum</a>
+        </div>
+        <div class="footer-col">
+            <h4>Ressources</h4>
+            <a href="job.html">Métiers & Orientation</a>
+            <a href="blog.html">Blog</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+    </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/frontend-api.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    // 1. Auth Guard
+    if (!window.Api?.getToken()) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    let user = null;
+    try {
+      const raw = localStorage.getItem('currentUser');
+      if (raw) user = JSON.parse(raw);
+    } catch (_) {}
+
+    try {
+      const meRes = await window.Api.auth.me();
+      if (meRes?.data) {
+        user = meRes.data;
+        try { localStorage.setItem('currentUser', JSON.stringify(user)); } catch (_) {}
+      }
+    } catch (_) {
+      if (!user) {
+        window.location.href = 'login.html';
+        return;
+      }
+    }
+
+    // 2. Populate Header
+    const firstName = user.firstName || 'Membre';
+    const lastName = user.lastName || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    const email = user.email || '';
+    const initial = (firstName[0] || 'M').toUpperCase();
+
+    document.getElementById('profileFullName').textContent = fullName;
+    document.getElementById('profileEmail').textContent = email;
+    document.getElementById('profileBigAvatar').textContent = initial;
+    document.getElementById('sideEmailText').textContent = email;
+    document.getElementById('sideRoleText').textContent = user.role === 'ULTRA_ADMIN' ? 'Administrateur' : 'Membre Adhérent';
+
+    const statusBadge = document.getElementById('profileStatusBadge');
+    if (statusBadge) {
+      if (user.role === 'ULTRA_ADMIN') {
+        statusBadge.innerHTML = '<span class="profile-status-pill status-active">🛡️ Administrateur</span>';
+      } else {
+        statusBadge.innerHTML = '<span class="profile-status-pill status-active">✨ Membre Actif</span>';
+      }
+    }
+
+    // 3. Populate Formations
+    const formationsContainer = document.getElementById('profileFormationsList');
+    try {
+      const formations = JSON.parse(localStorage.getItem('member_registered_formations') || '[]');
+      if (formations.length > 0) {
+        formationsContainer.innerHTML = formations.map((item, idx) => `
+          <div class="profile-item-card">
+            <div class="profile-item-info">
+              <h4>${escapeHtml(item.title)}</h4>
+              <p>Inscrit le ${new Date(item.registeredAt || Date.now()).toLocaleDateString('fr-FR')} • ${escapeHtml(item.category || 'Formation')}</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <span class="profile-status-pill status-active" style="font-size:0.75rem;padding:2px 8px;">Confirmé</span>
+              <button type="button" class="btn btn-outline btn-sm btn-remove-reg" data-idx="${idx}" style="font-size:0.75rem;padding:4px 8px;color:#dc2626;">Annuler</button>
+            </div>
+          </div>
+        `).join('');
+
+        formationsContainer.querySelectorAll('.btn-remove-reg').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const idx = parseInt(btn.getAttribute('data-idx'), 10);
+            formations.splice(idx, 1);
+            localStorage.setItem('member_registered_formations', JSON.stringify(formations));
+            window.location.reload();
+          });
+        });
+      }
+    } catch (_) {}
+
+    // 4. Populate Favorite Jobs
+    const jobsContainer = document.getElementById('profileFavoriteJobsList');
+    try {
+      const favs = JSON.parse(localStorage.getItem('member_favorite_jobs') || '[]');
+      if (favs.length > 0) {
+        jobsContainer.innerHTML = favs.map((job, idx) => `
+          <div class="profile-item-card">
+            <div class="profile-item-info">
+              <h4>${escapeHtml(job.icon || '💼')} ${escapeHtml(job.title)}</h4>
+              <p>${escapeHtml(job.category || 'Orientation')}</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <a href="job.html?search=${encodeURIComponent(job.title)}" class="btn btn-outline btn-sm" style="font-size:0.78rem;">Consulter</a>
+              <button type="button" class="btn btn-outline btn-sm btn-remove-fav" data-idx="${idx}" style="font-size:0.78rem;color:#dc2626;">Retirer</button>
+            </div>
+          </div>
+        `).join('');
+
+        jobsContainer.querySelectorAll('.btn-remove-fav').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const idx = parseInt(btn.getAttribute('data-idx'), 10);
+            favs.splice(idx, 1);
+            localStorage.setItem('member_favorite_jobs', JSON.stringify(favs));
+            window.location.reload();
+          });
+        });
+      }
+    } catch (_) {}
+
+    // 5. Sidebar Logout
+    const btnSideLogout = document.getElementById('btnSideLogout');
+    if (btnSideLogout) {
+      btnSideLogout.addEventListener('click', async () => {
+        try { await window.Api?.auth?.logout(); } catch (_) {}
+        window.Api?.removeToken();
+        try { localStorage.removeItem('currentUser'); } catch (_) {}
+        window.location.href = 'index.html';
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+  });
+</script>
+</body>
+</html>

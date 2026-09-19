@@ -7356,6 +7356,52 @@ input:-webkit-autofill:active {
   gap: 8px;
 }
 
+.profile-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  margin-bottom: 0.75rem;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.profile-item-card:hover {
+  background: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.profile-item-info h4 {
+  font-size: 0.98rem;
+  margin: 0 0 4px;
+  color: var(--color-gray-900);
+}
+
+.profile-item-info p {
+  font-size: 0.82rem;
+  margin: 0;
+  color: var(--color-gray-500);
+}
+
+.profile-empty-hint {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--color-gray-500);
+  border: 1px dashed var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  background: #f8fafc;
+}
+
+.profile-empty-hint p {
+  margin-bottom: 1rem;
+  font-size: 0.92rem;
+}
+
 /* Preregister Modal */
 .preregister-modal {
   background: #ffffff;
