@@ -27,6 +27,9 @@ const analyticsRoutes = require('./routes/analytics');
 const prisma = require('./config/database');
 const app = express();
 
+// Faire confiance au reverse proxy (Vercel / AWS) pour extraire la véritable IP client
+app.set('trust proxy', 1);
+
 // ===== MIDDLEWARES GLOBAUX =====
 
 // Sécurité des headers HTTP
@@ -77,15 +80,6 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Limitation stricte pour l'authentification
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 50,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { success: false, message: 'Trop de tentatives de connexion, veuillez réessayer dans 15 minutes.' },
-});
-
 // Parsing du corps de la requête
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
@@ -103,7 +97,7 @@ app.get('/health', (req, res) => {
 });
 
 // API Routes
-app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/jobs', jobRoutes);

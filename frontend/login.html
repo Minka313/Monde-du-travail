@@ -83,14 +83,10 @@
                 <div class="login-container mode-login" id="loginContainer">
                     <div class="login-box" id="loginBox" role="tabpanel" aria-labelledby="tabBtnLogin">
                         <h2>Connexion</h2>
-                        <form id="loginForm" novalidate autocomplete="off">
-                            <!-- Pièges anti-autofill pour bloquer l'injection automatique des gestionnaires de mots de passe -->
-                            <input type="text" name="prevent_autofill_user" id="prevent_autofill_user" value="" tabindex="-1" autocomplete="off" style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;margin:0;padding:0;">
-                            <input type="password" name="prevent_autofill_pass" id="prevent_autofill_pass" value="" tabindex="-1" autocomplete="new-password" style="position:absolute;opacity:0;pointer-events:none;height:0;width:0;margin:0;padding:0;">
-
+                        <form id="loginForm" novalidate>
                             <div class="form-group">
                                 <label for="loginEmail" class="form-label">Email</label>
-                                <input type="email" id="loginEmail" name="usr_login_identity" class="form-input" placeholder="votre@email.com" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly');" onmousedown="this.removeAttribute('readonly');" ontouchstart="this.removeAttribute('readonly');">
+                                <input type="email" id="loginEmail" name="email" class="form-input" placeholder="votre@email.com" required autocomplete="username" spellcheck="false">
                                 <span class="form-error" role="alert"></span>
                             </div>
                             <div class="form-group">
@@ -98,7 +94,7 @@
                                     <label for="loginPassword" class="form-label">Mot de passe</label>
                                     <button type="button" id="btnOpenForgotModal" class="btn-link-forgot">Mot de passe oublié ?</button>
                                 </div>
-                                <input type="password" id="loginPassword" name="usr_login_challenge" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" onmousedown="this.removeAttribute('readonly');" ontouchstart="this.removeAttribute('readonly');">
+                                <input type="password" id="loginPassword" name="password" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="current-password">
                                 <span class="form-error" role="alert"></span>
                             </div>
                             <button type="submit" id="loginSubmitBtn" class="btn btn-primary btn-full">Accéder à l'espace club</button>
@@ -408,8 +404,10 @@
           submitBtn.textContent = 'Connexion en cours…';
           clearLoginError();
 
+          const cleanEmail = (email || '').trim().toLowerCase();
+
           try {
-            const response = await window.Api.auth.login(email, password);
+            const response = await window.Api.auth.login(cleanEmail, password);
             window.Api.setToken(response.data.accessToken);
 
             const user = response.data?.user;
@@ -431,11 +429,19 @@
               window.location.href = 'index.html';
             }
           } catch (error) {
-            const msg = error.message || 'Email ou mot de passe incorrect.';
-            if (msg.includes('pas encore activé')) {
+            const status = error.status;
+            const msg = error.message || '';
+
+            if (status === 403 || msg.includes('pas encore activé') || msg.includes('attente')) {
               showLoginError("⏳ Votre compte n'est pas encore activé. Votre demande d'adhésion est en cours d'examen par notre équipe d'administration. Vous recevrez un email dès son approbation.");
-            } else {
+            } else if (status === 429 || msg.includes('Trop de tentatives') || msg.includes('patienter')) {
+              showLoginError("🛡️ Trop de tentatives de connexion infructueuses. Par mesure de sécurité, veuillez patienter quelques minutes avant de réessayer.");
+            } else if (status === 401 || msg.includes('incorrect') || msg.includes('invalide')) {
               showLoginError("Email ou mot de passe incorrect. Vérifiez vos identifiants ou cliquez sur « Mot de passe oublié ? ».");
+            } else if (status >= 500) {
+              showLoginError("⚠️ Une erreur technique temporaire est survenue côté serveur. Nos équipes sont informées, veuillez réessayer dans un instant.");
+            } else {
+              showLoginError(msg || "Impossible de joindre le serveur. Vérifiez votre connexion Internet et réessayez.");
             }
           } finally {
             submitBtn.disabled = false;
@@ -569,30 +575,6 @@
 
           if (!form) return;
 
-          // Protection stricte contre l'autofill sauvage : forcer les champs à vide
-          let userHasTyped = false;
-          function onUserInput() {
-            userHasTyped = true;
-            if (emailInput) emailInput.removeAttribute('readonly');
-            if (passwordInput) passwordInput.removeAttribute('readonly');
-          }
-          emailInput.addEventListener('input', onUserInput);
-          passwordInput.addEventListener('input', onUserInput);
-          emailInput.addEventListener('focus', () => emailInput.removeAttribute('readonly'));
-          passwordInput.addEventListener('focus', () => passwordInput.removeAttribute('readonly'));
-
-          function clearCredentials() {
-            if (!userHasTyped) {
-              if (emailInput) emailInput.value = '';
-              if (passwordInput) passwordInput.value = '';
-            }
-          }
-          clearCredentials();
-          window.addEventListener('pageshow', clearCredentials);
-          setTimeout(clearCredentials, 60);
-          setTimeout(clearCredentials, 180);
-          setTimeout(clearCredentials, 350);
-          setTimeout(clearCredentials, 700);
           if (window.Api && window.Api.getToken()) {
             try {
               const userResponse = await window.Api.auth.me();
