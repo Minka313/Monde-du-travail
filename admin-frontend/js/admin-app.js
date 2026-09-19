@@ -5,7 +5,8 @@
   // (null = accessible à tout compte admin authentifié).
   // La source de vérité est le backend : ces permissions viennent de /auth/me.
   const MODULE_PERMISSIONS = {
-    dashboard: 'admin.global',
+    dashboard: null,
+    analytics: null,
     organization: 'organization.read',
     formations: 'formation.read',
     metiers: 'metier.read',
@@ -15,8 +16,7 @@
     admins: 'admins.read',
     approvals: 'approvals.read',
     logs: 'logs.read',
-    notifications: 'admin.global',
-    analytics: 'admin.global',
+    notifications: null,
     settings: 'settings.manage',
   };
 
@@ -40,7 +40,7 @@
 
     getAuthorizedModules: function(user) {
       return Object.keys(MODULE_PERMISSIONS).filter(module => {
-        if (module === 'organization') {
+        if (['dashboard', 'analytics', 'notifications', 'organization'].includes(module)) {
           return this.isAdminUser(user);
         }
         if (module === 'approvals') {
