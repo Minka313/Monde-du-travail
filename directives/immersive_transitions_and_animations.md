@@ -1,77 +1,76 @@
-# Directive : Transitions Naturelles & Expérience Fluide (UX Organique)
+# Directive : Transitions Naturelles, Scrollytelling & Expérience Fluide (UX Organique)
 
 ## 1. Objectifs & Philosophie
-Offrir au site « Le Monde du Travail » une expérience immersive, fluide, moderne et mémorable :
+Offrir au site « Le Monde du Travail » une expérience immersive, fluide, moderne et mémorable (niveau Awwwards) :
 ```
 « Ne pas regarder une page. Explorer un univers. »
-« Tout est calme, mais tout est vivant. »
+« Le défilement n'est plus mécanique, c'est le moteur d'une histoire qui se dévoile avec une douceur absolue. »
 ```
 Chaque section est pensée comme une scène narrative avec des révélations coordonnées au scroll, des micro-interactions soignées, une profondeur multicouche subtile, et une continuité visuelle entre les scènes.
 
 ---
 
-## 2. Motion Design Tokens & Primitives
+## 2. Stack Technique & Moteurs
 
-### A. Échelles d'Amorti (Easings Organiques)
-- `--ease-out-cinematic`: `cubic-bezier(0.16, 1, 0.3, 1)` (amorce vive, ralentissement soyeux et précis)
-- `--ease-in-out-smooth`: `cubic-bezier(0.65, 0, 0.35, 1)` (transitions de fond et de scènes)
-- `--ease-spring`: `cubic-bezier(0.34, 1.56, 0.64, 1)` (micro-rebond satiné sur badges et boutons)
+### A. Smooth Scrolling Inertiel : `Lenis` (v1.1.x)
+- **Rôle** : Remplacer le défilement brusque natif par un glissement inertiel satiné.
+- **Paramétrage** :
+  - Durée d'inertie : `1.2s` (modifiable dans `scrollytelling-engine.js` via `CONFIG.lenis.duration`).
+  - Fonction d'amorti (Easing) : `(t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))` (équivalent `expo.out`).
+  - Synchronisation complète avec le GSAP Ticker via `gsap.ticker.lagSmoothing(0)`.
+  - Pause automatique lors de l'ouverture de modales ou tiroirs mobiles (`lenis.stop()` / `lenis.start()`).
 
-### B. Échelle Temporelle (Durées)
-- `--motion-instant`: `150ms` (press, tactile, retour direct)
-- `--motion-quick`: `250ms` (hover, tabs, dropdowns)
-- `--motion-base`: `400ms` (entrées de cartes, modales, dialogues)
-- `--motion-scene`: `650ms` (révélations narratives et transitions de fond)
-
----
-
-## 3. Piliers d'Architecture
-
-### A. Transitions Inter-Pages (Page Transitions)
-* **Stabilité absolue du Header** :
-  - La barre de navigation `.site-header` possède la propriété `view-transition-name: site-header;`.
-  - Elle reste statique, immobile et parfaitement ancrée lors des changements de page. Seul le contenu (`#main-content`) effectue une transition douce.
-* **Cross-Document View Transitions (Chromium 126+)** :
-  - Déclarée via `@view-transition { navigation: auto; }`.
-  - Le navigateur orchestre la transition nativement sans blocage artificiel.
-  - Courbe d'amorti organique : `cubic-bezier(0.16, 1, 0.3, 1)` avec une durée de **340ms à 380ms** et un micro-glissement vertical de 4px seulement.
-* **Préchargement Intelligent (Hover & Touch Preload)** :
-  - Au survol (`mouseenter`) ou au toucher (`touchstart`) d'un lien interne, le document cible est préchargé en cache navigateur.
-* **Fallback Universel sans saut de Header (Safari / Firefox)** :
-  - La classe `content-is-exiting` s'applique exclusivement sur `#main-content`.
-  - Fondu doux de 260ms et écoute de `pageshow` (`bfcache`).
-* **Indicateur de Progression Épuré** :
-  - Barre discrète de 2.5px aux teintes ambrées du club (`#f5a623`) avec lissage continu.
-
-### B. Scroll Reveal Organique & Scénarisation
-* **Zéro Clignotement au Chargement (FOUC)** :
-  - Les éléments situés au-dessus de la ligne de flottaison au chargement sont immédiatement activés (`is-revealed`).
-* **Micro-déplacement & Échelonnage (Stagger)** :
-  - Translation mesurée : 12-16px sur desktop, 8px sur mobile.
-  - Cascade hiérarchique : Titre (0ms) -> Description (+100ms) -> CTA (+180ms) -> Visuels (+250ms).
-  - Déclenchement unique (`observer.unobserve(el)`) pour ne pas fatiguer l'utilisateur lors du va-et-vient de scroll.
-
-### C. Tactilité & Micro-Interactions Apaisées
-* **Cartes & Conteneurs** :
-  - Élévation mesurée au survol : `-3px` à `-4px` avec ombre portée diffuse.
-  - Zoom image très doux : `scale(1.025)` sur `0.4s`.
-  - Halo de reflet de curseur (`--mouse-x`, `--mouse-y`) doux et désactivé sur mobile/touch.
-* **Boutons & Éléments d'Action** :
-  - Micro-pression tactile : `active: scale(0.98)`.
-  - Balayage lumineux satiné discret.
-
-### D. Modale Métier & Formations (Exploration Cinématique)
-* Séquence d'ouverture :
-  1. Clic déclencheur.
-  2. Backdrop progressif (`backdrop-filter: blur(8px)`, 200ms).
-  3. Élévation de la fenêtre modale (`translateY(0) scale(1)`, 280ms).
-  4. Révélation étagée de l'en-tête (badge, titre, méta, onglets).
-* Navigation par onglets fluide : transition douce en `opacity + transform` sans saut de scroll.
+### B. Moteur d'Animation & Triggers : `GSAP` + `ScrollTrigger`
+- **Synchronisation** :
+  ```javascript
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => { lenis.raf(time * 1000); });
+  ```
+- **Apparitions douces (Smooth Reveal)** :
+  - Animation `Fade-Up` : `opacity: 0 -> 1` et `y: 30px -> 0px`.
+  - Durée standard : `0.95s` (plage recommandée : `0.8s` à `1.2s`).
+  - Easing cinématique : `power3.out` / `expo.out`.
+  - Zéro FOUC : les éléments au-dessus de la ligne de flottaison sont activés immédiatement au chargement.
 
 ---
 
-## 4. Garde-Fous de Performance & Mobile-First
-* **60/120 FPS Garanti** : Mouvements calculés exclusivement sur `transform` et `opacity`.
-* **Mobile-First** : Pas de parallaxe complexe sur écran tactile, distances réduites de 50%, timings resserrés.
-* **Respect strict de `prefers-reduced-motion`** : Zéro translation ou mouvement continu ; affichage direct ou simple fondu instantané.
+## 3. Composant Réutilisable & Balisage
+
+### A. Web Component Déclaratif `<fade-in-up>`
+Enveloppe n'importe quel texte, titre ou bloc pour lui appliquer automatiquement l'apparition douce :
+```html
+<fade-in-up duration="0.9" delay="0.1" y="30">
+    <h2>Votre titre narratif</h2>
+</fade-in-up>
+```
+*Paramètres ajustables via attributs HTML :*
+- `duration` (en secondes, ex: `1.0`)
+- `delay` (en secondes, ex: `0.15`)
+- `y` (déplacement initial en pixels, ex: `25` ou `35`)
+
+### B. Attributs & Classes Alternatifs
+- Classe CSS : `.fade-in-up`
+- Attribut data : `data-scrolly="fade-up"`
+- Effet zoom image : `data-scrolly-scale="true"` (passe de `scale(1.05)` à `scale(1.0)` à l'entrée dans le viewport).
+
+---
+
+## 4. Scène Sticky Scrollytelling (« Du Métier à la Formation »)
+- **ID Section** : `#scrolly-journey-section`
+- **Mécanique** :
+  - Desktop (≥ 992px) : blocage temporaire du scroll vertical (`ScrollTrigger.pin: true`, distance `+=1800px`) avec scrub continu.
+  - Révélation cadencée des 3 étapes narratives :
+    1. *Phase 01 — Métiers & Décryptage*
+    2. *Phase 02 — Formations & Entraînement*
+    3. *Phase 03 — Insertion & Mentorat*
+  - Barre de progression verticale (`.scrolly-progress-fill`) et puces actives reflétant l'avancement.
+  - Mobile (< 992px) : désactivation transparente du pin pour préserver les performances tactiles, affichage en cartes empilées élégantes.
+
+---
+
+## 5. Garde-Fous de Performance & Accessibilité
+- **GPU Exclusif** : Calculs portés exclusivement sur `transform` et `opacity`. Aucune animation sur `top`, `left`, `margin`, `width`.
+- **Adaptation Mobile** : Parallaxe désactivée sur petits écrans, smooth scroll optimisé, animations allégées.
+- **Respect de `prefers-reduced-motion: reduce`** : Si activé sur le système de l'utilisateur, Lenis et les ScrollTriggers sont désactivés instantanément, les éléments s'affichent à 100% d'opacité sans déplacement.
+
 

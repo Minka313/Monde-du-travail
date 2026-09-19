@@ -9486,3 +9486,330 @@ input:-webkit-autofill:active {
     font-size: 3.5rem;
   }
 }
+
+/* =========================================================================
+   SCROLLYTELLING & LENIS SMOOTH SCROLL INTEGRATION (Awwwards Grade)
+   ========================================================================= */
+
+/* Lenis Recommended CSS Reset */
+html.has-lenis-smooth,
+html.has-lenis-smooth body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Custom Element <fade-in-up> */
+fade-in-up,
+.fade-in-up-wrapper {
+  display: block;
+  will-change: transform, opacity;
+}
+
+/* Smooth Reveal Defaults */
+.fade-in-up,
+[data-scrolly="fade-up"] {
+  will-change: transform, opacity;
+}
+
+/* Scrollytelling Sticky Journey Section */
+.scrolly-journey-section {
+  position: relative;
+  background: linear-gradient(180deg, #091a2b 0%, #0f2b46 50%, #081726 100%);
+  color: #ffffff;
+  padding: 6rem 0;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.scrolly-journey-aurora {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 600px;
+  background: radial-gradient(ellipse at center, rgba(245, 166, 35, 0.12) 0%, rgba(16, 185, 129, 0.08) 45%, transparent 70%);
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.scrolly-journey-layout {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 4rem;
+  align-items: center;
+  min-height: 75vh;
+}
+
+.scrolly-journey-intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.scrolly-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  border-radius: 9999px;
+  background: rgba(245, 166, 35, 0.15);
+  border: 1px solid rgba(245, 166, 35, 0.35);
+  color: #ffc078;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
+  width: fit-content;
+}
+
+.scrolly-journey-intro h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+}
+
+.scrolly-journey-intro p {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  max-width: 480px;
+}
+
+/* Indicateur de Progression Vertical (Desktop) */
+.scrolly-progress-nav {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.scrolly-progress-track {
+  width: 3px;
+  height: 140px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.scrolly-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 33%;
+  background: linear-gradient(180deg, #f5a623 0%, #10b981 100%);
+  border-radius: 9999px;
+  transition: height 0.15s ease-out;
+  box-shadow: 0 0 12px rgba(245, 166, 35, 0.6);
+}
+
+.scrolly-nav-dots {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.scrolly-nav-dot {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  transition: color 0.3s ease;
+}
+
+.scrolly-nav-dot.is-active {
+  color: #ffffff;
+}
+
+.scrolly-nav-dot .dot-num {
+  font-family: monospace;
+  font-size: 0.85rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffc078;
+  transition: all 0.3s ease;
+}
+
+.scrolly-nav-dot.is-active .dot-num {
+  background: var(--color-secondary);
+  color: #0f2b46;
+  font-weight: 700;
+}
+
+/* Zone d'affichage des Cartes Étapes */
+.scrolly-cards-viewport {
+  position: relative;
+  min-height: 480px;
+  display: flex;
+  align-items: center;
+}
+
+.scrolly-step-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 1.5rem;
+  padding: 2.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+@media (min-width: 992px) {
+  .scrolly-step-card {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    height: fit-content;
+    opacity: 0;
+    transform: translateY(35px);
+    pointer-events: none;
+  }
+}
+
+.scrolly-card-tag {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-secondary);
+  margin-bottom: 1rem;
+}
+
+.scrolly-card-title {
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+  margin-bottom: 1.25rem;
+}
+
+.scrolly-card-desc {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.82);
+  margin-bottom: 2rem;
+}
+
+.scrolly-card-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2.25rem;
+}
+
+.scrolly-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.45rem 0.9rem;
+  border-radius: 9999px;
+}
+
+.scrolly-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-secondary) 0%, #e08b10 100%);
+  padding: 0.85rem 1.65rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 8px 20px rgba(245, 166, 35, 0.35);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+}
+
+.scrolly-card-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(245, 166, 35, 0.45);
+  color: #0f2b46;
+}
+
+/* Responsive Scrollytelling Mobile */
+@media (max-width: 991px) {
+  .scrolly-journey-section {
+    padding: 4rem 0;
+  }
+  .scrolly-journey-layout {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    min-height: auto;
+  }
+  .scrolly-progress-nav {
+    display: none;
+  }
+  .scrolly-cards-viewport {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    min-height: auto;
+  }
+  .scrolly-step-card {
+    position: relative;
+    opacity: 1 !important;
+    transform: none !important;
+    padding: 2rem 1.5rem;
+    border-radius: 1.25rem;
+  }
+  .scrolly-card-title {
+    font-size: 1.35rem;
+  }
+}
+
+/* Désactivation stricte des animations pour prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  html, body {
+    scroll-behavior: auto !important;
+  }
+  .scrolly-step-card {
+    position: relative !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .fade-in-up,
+  [data-scrolly="fade-up"],
+  fade-in-up,
+  .hero-visual img {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
