@@ -57,7 +57,7 @@
 </nav>
 
     <main id="main-content">
-        <section class="hero hero-visual">
+        <section class="hero hero-visual hero-auth">
             <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1000&auto=format&fit=crop&q=75" alt="Connexion espace membre" fetchpriority="high">
             <div class="hero-inner">
                 <div class="hero-content">
@@ -70,8 +70,18 @@
 
         <section class="section">
             <div class="container">
-                <div class="login-container">
-                    <div class="login-box">
+                <!-- Sélecteur d'onglets segmenté pour mobile (Connexion / Demande d'adhésion) -->
+                <div class="auth-tabs-mobile" id="authTabsMobile" role="tablist" aria-label="Choisir le mode d'accès">
+                    <button type="button" class="auth-tab-btn active" id="tabBtnLogin" role="tab" aria-selected="true" aria-controls="loginBox">
+                        <span class="tab-icon">🔑</span> Connexion
+                    </button>
+                    <button type="button" class="auth-tab-btn" id="tabBtnRegister" role="tab" aria-selected="false" aria-controls="infoBox">
+                        <span class="tab-icon">✍️</span> Demande d'adhésion
+                    </button>
+                </div>
+
+                <div class="login-container mode-login" id="loginContainer">
+                    <div class="login-box" id="loginBox" role="tabpanel" aria-labelledby="tabBtnLogin">
                         <h2>Connexion</h2>
                         <form id="loginForm" novalidate autocomplete="off">
                             <!-- Pièges anti-autofill pour bloquer l'injection automatique des gestionnaires de mots de passe -->
@@ -84,9 +94,9 @@
                                 <span class="form-error" role="alert"></span>
                             </div>
                             <div class="form-group">
-                                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.35rem;">
-                                    <label for="loginPassword" class="form-label" style="margin-bottom:0;">Mot de passe</label>
-                                    <button type="button" id="btnOpenForgotModal" class="btn-link-forgot" style="background:none;border:none;color:#0284c7;font-size:0.82rem;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;">Mot de passe oublié ?</button>
+                                <div class="form-label-row">
+                                    <label for="loginPassword" class="form-label">Mot de passe</label>
+                                    <button type="button" id="btnOpenForgotModal" class="btn-link-forgot">Mot de passe oublié ?</button>
                                 </div>
                                 <input type="password" id="loginPassword" name="usr_login_challenge" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" onmousedown="this.removeAttribute('readonly');" ontouchstart="this.removeAttribute('readonly');">
                                 <span class="form-error" role="alert"></span>
@@ -101,7 +111,7 @@
 
                     </div>
 
-                    <div class="info-box">
+                    <div class="info-box" id="infoBox" role="tabpanel" aria-labelledby="tabBtnRegister">
                         <h2>Pas encore membre ?</h2>
                         <p>Rejoignez une communauté dynamique de jeunes qui se préparent au monde professionnel.</p>
                         <ul class="mission-list">
@@ -142,13 +152,18 @@
                             <span class="form-error" id="registerError" role="alert"></span>
                             <button type="submit" class="btn btn-primary btn-full">Envoyer ma demande</button>
                         </form>
+
+                        <div class="auth-switch-prompt auth-switch-prompt-light" id="promptSwitchToLogin">
+                            <span>Déjà membre du club ?</span>
+                            <button type="button" id="btnSwitchToLogin" class="btn-link-login-switch">Se connecter &rarr;</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Modal Mot de passe oublié -->
             <div id="forgotPasswordModal" class="modal-backdrop" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(15,23,42,0.7);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:1rem;">
-                <div class="modal-card" style="background:#ffffff;border-radius:14px;max-width:440px;width:100%;padding:28px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);position:relative;">
+                <div class="modal-card" style="background:#ffffff;border-radius:14px;max-width:440px;width:100%;max-height:90dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:28px;box-shadow:0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);position:relative;">
                     <button type="button" id="btnCloseForgotModal" aria-label="Fermer" style="position:absolute;top:16px;right:16px;background:#f1f5f9;border:none;border-radius:50%;width:32px;height:32px;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#64748b;line-height:1;">&times;</button>
                     
                     <div style="text-align:center;margin-bottom:20px;">
@@ -285,8 +300,47 @@
           wrapper.appendChild(btn);
         }
 
+        /* ─── Gestion des onglets mobiles (Connexion / Demande d'adhésion) ─── */
+        function setAuthTab(mode, autoScroll = false) {
+          const loginContainer = document.getElementById('loginContainer');
+          const tabBtnLogin = document.getElementById('tabBtnLogin');
+          const tabBtnRegister = document.getElementById('tabBtnRegister');
+          if (!loginContainer) return;
+
+          if (mode === 'register') {
+            loginContainer.classList.remove('mode-login');
+            loginContainer.classList.add('mode-register');
+            if (tabBtnLogin) {
+              tabBtnLogin.classList.remove('active');
+              tabBtnLogin.setAttribute('aria-selected', 'false');
+            }
+            if (tabBtnRegister) {
+              tabBtnRegister.classList.add('active');
+              tabBtnRegister.setAttribute('aria-selected', 'true');
+            }
+            if (autoScroll && window.innerWidth <= 768) {
+              loginContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          } else {
+            loginContainer.classList.remove('mode-register');
+            loginContainer.classList.add('mode-login');
+            if (tabBtnRegister) {
+              tabBtnRegister.classList.remove('active');
+              tabBtnRegister.setAttribute('aria-selected', 'false');
+            }
+            if (tabBtnLogin) {
+              tabBtnLogin.classList.add('active');
+              tabBtnLogin.setAttribute('aria-selected', 'true');
+            }
+            if (autoScroll && window.innerWidth <= 768) {
+              loginContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+        }
+
         /* ─── Transfert automatique & bascule vers le formulaire d'adhésion ─── */
         function transferCredentialsToRegister(openForm = true, customMessage = null) {
+          setAuthTab('register', true);
           const emailInput = document.getElementById('loginEmail');
           const passwordInput = document.getElementById('loginPassword');
           const regEmail = document.getElementById('regEmail');
@@ -607,6 +661,36 @@
             }
           });
 
+          // Gestion des onglets d'authentification mobile
+          const tabBtnLogin = document.getElementById('tabBtnLogin');
+          const tabBtnRegister = document.getElementById('tabBtnRegister');
+          const btnSwitchToLogin = document.getElementById('btnSwitchToLogin');
+
+          if (tabBtnLogin) {
+            tabBtnLogin.addEventListener('click', function() {
+              setAuthTab('login');
+            });
+          }
+
+          if (tabBtnRegister) {
+            tabBtnRegister.addEventListener('click', function() {
+              setAuthTab('register');
+              const registerForm = document.getElementById('registerForm');
+              if (registerForm && (registerForm.style.display === 'none' || !registerForm.style.display)) {
+                transferCredentialsToRegister(true);
+              }
+            });
+          }
+
+          if (btnSwitchToLogin) {
+            btnSwitchToLogin.addEventListener('click', function(e) {
+              e.preventDefault();
+              setAuthTab('login', true);
+              const emailInput = document.getElementById('loginEmail');
+              if (emailInput) setTimeout(() => emailInput.focus(), 150);
+            });
+          }
+
           // Raccourci vers le formulaire d'adhésion depuis le bloc connexion
           const btnSwitchToRegister = document.getElementById('btnSwitchToRegister');
           if (btnSwitchToRegister) {
@@ -638,7 +722,10 @@
 
           // Détection d'ancre #adhesion ou #register au chargement
           if (window.location.hash === '#adhesion' || window.location.hash === '#register' || window.location.search.includes('action=register')) {
+            setAuthTab('register');
             transferCredentialsToRegister(true);
+          } else {
+            setAuthTab('login');
           }
 
           // Formulaire d'inscription
