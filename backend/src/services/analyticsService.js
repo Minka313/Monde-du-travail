@@ -10,15 +10,9 @@ const VISITOR_STATS_CACHE_TTL_MS = 20000;
 const userLastActiveMap = new Map();
 const USER_ACTIVITY_UPDATE_INTERVAL_MS = 10 * 60 * 1000;
 
-// Nettoyage périodique de la map mémoire pour éviter les fuites
-setInterval(() => {
-  const cutoff = Date.now() - USER_ACTIVITY_UPDATE_INTERVAL_MS * 2;
-  for (const [uid, timestamp] of userLastActiveMap.entries()) {
-    if (timestamp < cutoff) {
-      userLastActiveMap.delete(uid);
-    }
-  }
-}, 30 * 60 * 1000);
+// Cache mémoire pour l'association progressive sessionId -> profil utilisateur
+const sessionProfileCache = new Map();
+
 
 /**
  * Service déterministe d'analyse d'audience et de mesure de présence des membres.
@@ -457,6 +451,277 @@ class AnalyticsService {
       throw error;
     }
   }
+
+  /**
+   * Enregistre un événement d'impact d'orientation de façon asynchrone et déterministe.
+   * @param {Object} data Données de l'événement
+   * @returns {Promise<Object>} Résultat de l'insertion
+   */
+  static async trackImpactEvent(data) {
+    try {
+      const {
+        sessionId,
+        session_id,
+        userId,
+        user_id,
+        userProfile,
+        user_profile,
+        eventType,
+        event_type,
+        entityType,
+        entity_type,
+        entityId,
+        entity_id,
+        metadata,
+      } = data || {};
+
+      const sid = String(sessionId || session_id || 'anonymous_sid').substring(0, 128);
+      const evType = String(eventType || event_type || 'custom_event').substring(0, 100);
+      const entType = entityType || entity_type ? String(entityType || entity_type).substring(0, 50) : null;
+      const entId = entityId || entity_id ? String(entityId || entity_id).substring(0, 255) : null;
+      const uid = userId || user_id || null;
+
+      // Résolution du profil utilisateur (fourni ou issu du cache de session)
+      let resolvedProfile = userProfile || user_profile || sessionProfileCache.get(sid) || null;
+      if (resolvedProfile) {
+        resolvedProfile = String(resolvedProfile).substring(0, 50);
+        sessionProfileCache.set(sid, resolvedProfile);
+      }
+
+      const event = await prisma.analyticsEvent.create({
+        data: {
+          sessionId: sid,
+          userId: uid,
+          userProfile: resolvedProfile,
+          eventType: evType,
+          entityType: entType,
+          entityId: entId,
+          metadata: metadata && typeof metadata === 'object' ? metadata : {},
+        },
+      });
+
+      return event;
+    } catch (error) {
+      logger.warn('Erreur non-bloquante lors du suivi de l\'événement d\'impact (AnalyticsService.trackImpactEvent):', error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Enregistre un lot d'événements d'orientation en batch.
+   * @param {Array} events Liste des événements
+   * @param {String|null} defaultUserId ID de l'utilisateur si authentifié
+   */
+  static async trackImpactEvents(events, defaultUserId = null) {
+    if (!Array.isArray(events) || events.length === 0) return { count: 0 };
+    
+    try {
+      const records = events.map(evt => {
+        const sid = String(evt.sessionId || evt.session_id || 'anonymous_sid').substring(0, 128);
+        let prof = evt.userProfile || evt.user_profile || sessionProfileCache.get(sid) || null;
+        if (prof) {
+          prof = String(prof).substring(0, 50);
+          sessionProfileCache.set(sid, prof);
+        }
+
+        return {
+          sessionId: sid,
+          userId: evt.userId || evt.user_id || defaultUserId || null,
+          userProfile: prof,
+          eventType: String(evt.eventType || evt.event_type || 'custom_event').substring(0, 100),
+          entityType: evt.entityType || evt.entity_type ? String(evt.entityType || evt.entity_type).substring(0, 50) : null,
+          entityId: evt.entityId || evt.entity_id ? String(evt.entityId || evt.entity_id).substring(0, 255) : null,
+          metadata: evt.metadata && typeof evt.metadata === 'object' ? evt.metadata : {},
+        };
+      });
+
+      const result = await prisma.analyticsEvent.createMany({
+        data: records,
+        skipDuplicates: true,
+      });
+
+      return { count: result.count };
+    } catch (error) {
+      logger.warn('Erreur non-bloquante lors de l\'ingestion par lots (AnalyticsService.trackImpactEvents):', error.message);
+      return { count: 0 };
+    }
+  }
+
+  /**
+   * Associe un profil utilisateur progressif à une session et met à jour rétroactivement
+   * les événements récents de cette session pour garantir la continuité analytique.
+   * @param {String} sessionId Identifiant anonyme de session
+   * @param {String} profile Profil choisi (ex: 'Lycéen', 'Étudiant', 'Pro', 'Reconversion')
+   */
+  static async saveUserProfile(sessionId, profile) {
+    if (!sessionId || !profile) return { success: false };
+
+    try {
+      const sid = String(sessionId).substring(0, 128);
+      const cleanProfile = String(profile).trim().substring(0, 50);
+
+      // 1. Sauvegarde dans le cache mémoire de session
+      sessionProfileCache.set(sid, cleanProfile);
+
+      // 2. Rétro-application asynchrone aux événements non profilés de cette session
+      prisma.analyticsEvent.updateMany({
+        where: {
+          sessionId: sid,
+          userProfile: null,
+        },
+        data: {
+          userProfile: cleanProfile,
+        },
+      }).catch(err => {
+        logger.warn('Avertissement lors de la rétro-mise à jour du profil de session:', err.message);
+      });
+
+      // 3. Enregistrement d'un événement explicite de profilage
+      this.trackImpactEvent({
+        sessionId: sid,
+        eventType: 'progressive_profile_set',
+        entityType: 'survey',
+        entityId: cleanProfile,
+        metadata: { profile: cleanProfile, source: 'progressive_banner' },
+      });
+
+      return { success: true, profile: cleanProfile };
+    } catch (error) {
+      logger.warn('Erreur lors de l\'enregistrement du profil utilisateur (AnalyticsService.saveUserProfile):', error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  /**
+   * Agrège et calcule les indicateurs clés du véritable impact d'orientation.
+   * - Taux de conversion du parcours : Vue Métier -> Clic Formation -> Vue Formation
+   * - Répartition des profils utilisateurs réels
+   * - Score de satisfaction des micro-sondages et critères plébiscités
+   * - Métiers déclencheurs de vocations (top conversions vers les formations)
+   */
+  static async getImpactStats() {
+    try {
+      const [
+        totalEventsCount,
+        eventsGrouped,
+        profilesGrouped,
+        surveyVotes,
+        topConvertedJobsGrouped,
+      ] = await Promise.all([
+        prisma.analyticsEvent.count(),
+        prisma.analyticsEvent.groupBy({
+          by: ['eventType'],
+          _count: { id: true },
+        }),
+        prisma.analyticsEvent.groupBy({
+          by: ['userProfile'],
+          _count: { id: true },
+          where: { userProfile: { not: null } },
+        }),
+        prisma.analyticsEvent.findMany({
+          where: { eventType: 'survey_vote' },
+          select: { metadata: true, entityId: true, entityType: true, createdAt: true },
+          orderBy: { createdAt: 'desc' },
+          take: 500,
+        }),
+        prisma.analyticsEvent.groupBy({
+          by: ['entityId'],
+          where: { eventType: 'job_to_training_click' },
+          _count: { id: true },
+          orderBy: { _count: { id: 'desc' } },
+          take: 10,
+        }),
+      ]);
+
+      // Calcul des totaux par type d'événement
+      const eventCounts = {};
+      eventsGrouped.forEach(item => {
+        eventCounts[item.eventType] = item._count.id;
+      });
+
+      const jobViews = eventCounts['job_view'] || 0;
+      const jobToTrainingClicks = eventCounts['job_to_training_click'] || 0;
+      const trainingViews = eventCounts['training_view'] || 0;
+      const bookmarks = eventCounts['bookmark_click'] || 0;
+      const crossRecClicks = eventCounts['cross_recommendation_click'] || 0;
+
+      // Calcul du Funnel de Conversion d'Orientation
+      const conversionRate = jobViews > 0 
+        ? Math.round((jobToTrainingClicks / jobViews) * 1000) / 10 
+        : 0;
+
+      // Analyse des micro-sondages
+      let upVotes = 0;
+      let neutralVotes = 0;
+      let downVotes = 0;
+      const feedbackTagsCount = {};
+
+      surveyVotes.forEach(vote => {
+        const meta = vote.metadata || {};
+        const rating = meta.rating || meta.vote;
+        if (rating === 'up' || rating === 'positive' || rating === 1) {
+          upVotes++;
+        } else if (rating === 'down' || rating === 'negative' || rating === -1) {
+          downVotes++;
+        } else {
+          neutralVotes++;
+        }
+
+        if (Array.isArray(meta.tags)) {
+          meta.tags.forEach(tag => {
+            feedbackTagsCount[tag] = (feedbackTagsCount[tag] || 0) + 1;
+          });
+        }
+      });
+
+      const totalSurveyVotes = upVotes + neutralVotes + downVotes;
+      const satisfactionRate = totalSurveyVotes > 0 
+        ? Math.round((upVotes / totalSurveyVotes) * 100) 
+        : 100;
+
+      // Profils déclarés
+      const profilesDistribution = {};
+      profilesGrouped.forEach(item => {
+        if (item.userProfile) {
+          profilesDistribution[item.userProfile] = item._count.id;
+        }
+      });
+
+      return {
+        totalEvents: totalEventsCount,
+        funnel: {
+          jobViews,
+          jobToTrainingClicks,
+          trainingViews,
+          conversionRatePercent: conversionRate,
+          crossRecommendationClicks: crossRecClicks,
+          bookmarksCount: bookmarks,
+        },
+        satisfaction: {
+          totalVotes: totalSurveyVotes,
+          satisfactionRatePercent: satisfactionRate,
+          breakdown: {
+            up: upVotes,
+            neutral: neutralVotes,
+            down: downVotes,
+          },
+          topTags: Object.entries(feedbackTagsCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 8)
+            .map(([tag, count]) => ({ tag, count })),
+        },
+        profilesDistribution,
+        topConvertedJobs: topConvertedJobsGrouped.map(j => ({
+          jobId: j.entityId,
+          clicksToTrainings: j._count.id,
+        })),
+      };
+    } catch (error) {
+      logger.error('Erreur lors du calcul des statistiques d\'impact (AnalyticsService.getImpactStats):', error);
+      throw error;
+    }
+  }
 }
 
 module.exports = AnalyticsService;
+

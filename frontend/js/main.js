@@ -988,6 +988,126 @@
     } catch (_) {}
   }
 
+  /**
+   * PROFILAGE PROGRESSIF (ZÉRO FRICTION)
+   * Affiche une bannière discrète après 2 pages vues ou 45s de navigation
+   * pour qualifier le visiteur (Lycéen, Étudiant, Jeune Pro, Reconversion)
+   * et lier son profil à son session_id pour les analytics d'orientation.
+   */
+  function initProgressiveProfiling() {
+    try {
+      // 1. Si le profil est déjà connu, ne rien afficher
+      const existingProfile = (window.AnalyticsTracker && typeof window.AnalyticsTracker.getUserProfile === 'function')
+        ? window.AnalyticsTracker.getUserProfile()
+        : localStorage.getItem('lmt_user_profile');
+      if (existingProfile) return;
+
+      // 2. Si l'utilisateur a fermé la bannière récemment (rappel dans 7 jours)
+      const dismissedUntil = localStorage.getItem('lmt_profile_dismissed_until');
+      if (dismissedUntil && Date.now() < Number(dismissedUntil)) return;
+
+      // 3. Calcul du seuil de déclenchement (2 pages vues dans la session ou 45 secondes)
+      let sessionViews = 1;
+      try {
+        sessionViews = (parseInt(sessionStorage.getItem('lmt_session_views'), 10) || 0) + 1;
+        sessionStorage.setItem('lmt_session_views', sessionViews);
+      } catch (_) {}
+
+      let bannerShown = false;
+
+      function renderBanner() {
+        if (bannerShown) return;
+        if (document.getElementById('progressiveProfileBanner')) return;
+
+        bannerShown = true;
+
+        const banner = document.createElement('div');
+        banner.className = 'progressive-profile-banner';
+        banner.id = 'progressiveProfileBanner';
+        banner.setAttribute('role', 'dialog');
+        banner.setAttribute('aria-label', 'Profilage d\'orientation personnalisé');
+
+        banner.innerHTML = `
+          <div class="prog-profile-header">
+            <span class="prog-profile-badge">🎯 Orientation sur-mesure</span>
+            <button type="button" class="prog-profile-close" id="closeProfileBanner" aria-label="Fermer pour l'instant">&times;</button>
+          </div>
+          <h3 class="prog-profile-title">Pour te suggérer de meilleurs parcours...</h3>
+          <p class="prog-profile-desc">Dis-nous qui tu es pour adapter automatiquement les opportunités et les conseils à ta situation :</p>
+          <div class="prog-profile-chips" id="progProfileChips">
+            <button type="button" class="prog-profile-chip" data-profile="Lycéen">
+              <span class="chip-emoji">🎒</span>
+              <span>Lycéen</span>
+            </button>
+            <button type="button" class="prog-profile-chip" data-profile="Étudiant">
+              <span class="chip-emoji">🎓</span>
+              <span>Étudiant</span>
+            </button>
+            <button type="button" class="prog-profile-chip" data-profile="Jeune Pro">
+              <span class="chip-emoji">💼</span>
+              <span>Jeune Pro</span>
+            </button>
+            <button type="button" class="prog-profile-chip" data-profile="Reconversion">
+              <span class="chip-emoji">🔄</span>
+              <span>Reconversion</span>
+            </button>
+          </div>
+          <div class="prog-profile-success" id="progProfileSuccess" style="display:none;">
+            <span>✨</span>
+            <span>Profil mémorisé ! Les parcours d'orientation s'adaptent désormais à toi.</span>
+          </div>
+        `;
+
+        document.body.appendChild(banner);
+
+        // Animation d'entrée douce
+        setTimeout(() => banner.classList.add('visible'), 50);
+
+        // Écouteur de sélection de profil
+        banner.querySelectorAll('.prog-profile-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            const selectedProfile = chip.getAttribute('data-profile');
+            if (window.AnalyticsTracker) {
+              window.AnalyticsTracker.setUserProfile(selectedProfile);
+            } else {
+              try { localStorage.setItem('lmt_user_profile', selectedProfile); } catch (_) {}
+            }
+
+            const chipsContainer = banner.querySelector('#progProfileChips');
+            const successBox = banner.querySelector('#progProfileSuccess');
+            if (chipsContainer) chipsContainer.style.display = 'none';
+            if (successBox) successBox.style.display = 'flex';
+
+            // Fermeture automatique après confirmation
+            setTimeout(() => {
+              banner.classList.remove('visible');
+              setTimeout(() => banner.remove(), 350);
+            }, 1800);
+          });
+        });
+
+        // Écouteur de fermeture discrète
+        const closeBtn = banner.querySelector('#closeProfileBanner');
+        if (closeBtn) {
+          closeBtn.addEventListener('click', () => {
+            try {
+              localStorage.setItem('lmt_profile_dismissed_until', Date.now() + 7 * 24 * 3600 * 1000);
+            } catch (_) {}
+            banner.classList.remove('visible');
+            setTimeout(() => banner.remove(), 350);
+          });
+        }
+      }
+
+      // Déclenchement conditionnel : immédiat si >= 2 pages explorées, sinon après 45 secondes
+      if (sessionViews >= 2) {
+        setTimeout(renderBanner, 1500);
+      } else {
+        setTimeout(renderBanner, 45000);
+      }
+    } catch (_) {}
+  }
+
   function init() {
     initPageTransitions();
     initScrollProgressBar();
@@ -1004,6 +1124,7 @@
     initNavAuth();
     initHomeDynamicSections();
     initVisitorTracking();
+    initProgressiveProfiling();
   }
 
   document.addEventListener('layout:loaded', () => {

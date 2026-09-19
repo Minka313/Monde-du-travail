@@ -642,6 +642,17 @@
     const img = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&q=80');
     const embedVideoUrl = (job.resources && job.resources.find(r => r.type === 'video')) ? getYoutubeEmbedUrl(job.resources.find(r => r.type === 'video').url) : null;
     const relatedJobs = await window.OrientationData.getRelatedJobs(job);
+    const crossJobs = (typeof window.OrientationData.getCrossRecommendations === 'function') 
+      ? await window.OrientationData.getCrossRecommendations(job) 
+      : [];
+
+    // Calculs d'impact et indicateurs de lecture rapides
+    const textToAnalyze = `${job.longDescription || ''} ${job.shortDescription || ''} ${(job.typicalDay || []).join(' ')}`;
+    const words = textToAnalyze.trim().split(/\s+/).filter(Boolean).length;
+    const readingTimeMin = Math.max(2, Math.min(6, Math.ceil(words / 140)));
+    const tensionText = job.marketTension || (job.salary ? 'Fort recrutement' : 'Métier en plein essor');
+    const jobKey = job.slug || job.id;
+    const hasVotedSurvey = window.AnalyticsTracker?.hasVotedSurvey ? window.AnalyticsTracker.hasVotedSurvey('job', jobKey) : false;
 
     const overlay = document.createElement('div');
     overlay.id = 'job-dossier-overlay';
@@ -650,6 +661,11 @@
     // Rendu du HTML complet de la modal
     overlay.innerHTML = `
       <div class="dossier-modal" role="dialog" aria-modal="true" aria-labelledby="dossierJobTitle">
+        <!-- Barre de progression de lecture dynamique -->
+        <div class="dossier-progress-track" aria-hidden="true">
+          <div class="dossier-progress-bar" id="dossierReadingProgress"></div>
+        </div>
+
         <!-- En-tête immersif -->
         <div class="dossier-hero" style="background-image: url('${escapeHtml(img)}');">
           <div class="dossier-hero-overlay"></div>
@@ -678,6 +694,22 @@
               <span class="dossier-meta-tag">🎓 <strong>${escapeHtml(job.level || 'Bac +3 à +5')}</strong></span>
               ${job.salary ? `<span class="dossier-meta-tag">💰 <strong>${escapeHtml(job.salary)}</strong></span>` : ''}
               <span class="dossier-meta-tag">🌍 Sénégal • Afrique • International</span>
+            </div>
+
+            <!-- Indicateurs de lecture rapides (Quick Stats) -->
+            <div class="dossier-quick-stats-row">
+              <span class="dossier-quick-stat-badge">
+                <span>⏱️</span>
+                <span>Lecture : ~${readingTimeMin} min</span>
+              </span>
+              <span class="dossier-quick-stat-badge tension-high">
+                <span class="stat-dot"></span>
+                <span>🔥 ${escapeHtml(tensionText)}</span>
+              </span>
+              <span class="dossier-quick-stat-badge">
+                <span>🎓</span>
+                <span>Cursus : ${escapeHtml(job.level || 'Bac +2 à +5')}</span>
+              </span>
             </div>
           </div>
         </div>
@@ -958,6 +990,82 @@
             </div>
           </div>
 
+          <!-- 3. RECOMMANDATIONS CROISÉES (« Parcours Découverte ») -->
+          ${crossJobs.length > 0 ? `
+            <div class="dossier-cross-recommendations">
+              <div class="cross-rec-header">
+                <span class="cross-rec-badge">🧭 Parcours Découverte</span>
+                <h4 class="cross-rec-title">Ceux qui s'intéressent à ce métier explorent aussi...</h4>
+              </div>
+              <div class="cross-rec-grid">
+                ${crossJobs.map(cJob => `
+                  <div class="cross-rec-card" data-cross-slug="${escapeHtml(cJob.slug || cJob.id)}">
+                    <span class="cross-rec-card-icon">${escapeHtml(cJob.icon || '💼')}</span>
+                    <div class="cross-rec-card-info">
+                      <div class="cross-rec-card-title">${escapeHtml(cJob.title)}</div>
+                      <div class="cross-rec-card-domain">${escapeHtml(cJob.familyName || cJob.subdomain || 'Autre univers')}</div>
+                    </div>
+                    <span class="cross-rec-card-arrow">&rarr;</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- 4. MICRO-SONDAGE DE SATISFACTION (Mesure d'impact & Feedback) -->
+          <div class="orientation-survey-widget" id="jobSurveyWidget">
+            ${hasVotedSurvey ? `
+              <div class="survey-thanks-msg">
+                <span>✨</span>
+                <span>Merci pour ton retour ! Ton avis oriente la communauté.</span>
+              </div>
+            ` : `
+              <h4 class="survey-question-title">Cette fiche t'a-t-elle aidé à y voir plus clair ?</h4>
+              <p class="survey-subtitle">Ton retour anonyme permet d'améliorer l'orientation professionnelle des jeunes.</p>
+              
+              <div class="survey-buttons-row" id="surveyButtonsRow">
+                <button type="button" class="btn-survey-vote" data-vote="up">
+                  <span>👍</span>
+                  <span>Oui, beaucoup</span>
+                </button>
+                <button type="button" class="btn-survey-vote" data-vote="neutral">
+                  <span>😐</span>
+                  <span>Un peu</span>
+                </button>
+                <button type="button" class="btn-survey-vote" data-vote="down">
+                  <span>👎</span>
+                  <span>Pas vraiment</span>
+                </button>
+              </div>
+
+              <!-- Tags contextuels révélés au clic -->
+              <div class="survey-tags-container" id="surveyTagsContainer" style="display:none;">
+                <div class="survey-tags-title" id="surveyTagsTitle"></div>
+                <div class="survey-tags-grid" id="surveyTagsGrid"></div>
+                <button type="button" class="btn btn-sm btn-primary" id="btnSubmitSurveyTags" style="font-size:0.8rem;padding:4px 14px;border-radius:9999px;margin-top:6px;">
+                  Envoyer mon retour
+                </button>
+              </div>
+
+              <div class="survey-thanks-msg" id="surveyThanksMsg" style="display:none;">
+                <span>✨</span>
+                <span>Merci pour ton retour ! Il est précieux pour enrichir la plateforme.</span>
+              </div>
+            `}
+          </div>
+
+        </div>
+
+        <!-- 5. BARRE D'ACTION FLOTTANTE STICKY (Conversion & Sauvegarde) -->
+        <div class="dossier-floating-actions" id="dossierFloatingActions" aria-label="Actions rapides sur la fiche">
+          <button type="button" class="btn-floating-action btn-floating-formation" id="btnFloatingFormations">
+            <span>🎓</span>
+            <span>Voir les formations</span>
+          </button>
+          <button type="button" class="btn-floating-action btn-floating-bookmark" id="btnFloatingBookmark">
+            <span class="bookmark-icon">☆</span>
+            <span class="bookmark-text">Sauvegarder</span>
+          </button>
         </div>
 
         <!-- Pied de modal -->
@@ -986,7 +1094,80 @@
     // Animation d'ouverture fluide
     setTimeout(() => overlay.classList.add('active'), 15);
 
-    // Navigation par onglets
+    // 1. Initialisation du tracking analytique d'impact
+    if (window.AnalyticsTracker) {
+      window.AnalyticsTracker.trackJobView(jobKey, {
+        title: job.title,
+        family: job.familyName,
+        level: job.level,
+        readingTimeMin,
+      });
+    }
+
+    // 2. Gestion du scroll, barre de progression et barre d'action flottante
+    const dossierBody = overlay.querySelector('.dossier-body');
+    const readingProgressBar = overlay.querySelector('#dossierReadingProgress');
+    const floatingBar = overlay.querySelector('#dossierFloatingActions');
+
+    if (dossierBody && readingProgressBar) {
+      dossierBody.addEventListener('scroll', () => {
+        const scrollTop = dossierBody.scrollTop;
+        const scrollHeight = dossierBody.scrollHeight - dossierBody.clientHeight;
+        const percent = scrollHeight > 0 ? Math.min(100, Math.round((scrollTop / scrollHeight) * 100)) : 0;
+        readingProgressBar.style.width = `${percent}%`;
+
+        if (floatingBar) {
+          if (scrollTop > 80) {
+            floatingBar.classList.add('visible');
+          } else {
+            floatingBar.classList.remove('visible');
+          }
+        }
+      }, { passive: true });
+    }
+
+    // 3. Barre flottante : Action "Voir les formations"
+    const btnFloatingFormations = overlay.querySelector('#btnFloatingFormations');
+    if (btnFloatingFormations) {
+      btnFloatingFormations.addEventListener('click', () => {
+        window.AnalyticsTracker?.trackJobToTraining(jobKey, {
+          title: job.title,
+          source: 'floating_action_bar'
+        });
+        const tabStudies = overlay.querySelector('.dossier-tab[data-tab="tab-studies"]');
+        if (tabStudies) {
+          tabStudies.click();
+          const targetContent = overlay.querySelector('#tab-studies');
+          if (targetContent) targetContent.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    }
+
+    // 4. Lien formations du footer (tracking)
+    const btnFooterFormation = overlay.querySelector('.btn-dossier-formation');
+    if (btnFooterFormation) {
+      btnFooterFormation.addEventListener('click', () => {
+        window.AnalyticsTracker?.trackJobToTraining(jobKey, {
+          title: job.title,
+          source: 'dossier_footer'
+        });
+      });
+    }
+
+    // 5. Clic sur les Recommandations croisées ("Parcours Découverte")
+    overlay.querySelectorAll('.cross-rec-card').forEach(card => {
+      card.addEventListener('click', async () => {
+        const crossSlug = card.getAttribute('data-cross-slug');
+        window.AnalyticsTracker?.trackCrossRecommendation(jobKey, crossSlug);
+        const nextJob = await window.OrientationData.getJobBySlug(crossSlug);
+        if (nextJob) {
+          overlay.remove();
+          openJobModal(nextJob);
+        }
+      });
+    });
+
+    // 6. Navigation par onglets + tracking de consultation
     overlay.querySelectorAll('.dossier-tab').forEach(tabBtn => {
       tabBtn.addEventListener('click', () => {
         overlay.querySelectorAll('.dossier-tab').forEach(b => b.classList.remove('active'));
@@ -996,13 +1177,16 @@
         const targetId = tabBtn.getAttribute('data-tab');
         const targetContent = overlay.querySelector(`#${targetId}`);
         if (targetContent) targetContent.classList.add('active');
+
+        window.AnalyticsTracker?.track('tab_switch', 'job', jobKey, { tab: targetId });
       });
     });
 
-    // Clic sur les cartes de métiers connexes pour basculer directement
+    // 7. Clic sur les cartes de métiers connexes pour basculer directement
     overlay.querySelectorAll('.related-job-card').forEach(relCard => {
       relCard.addEventListener('click', async () => {
         const relSlug = relCard.getAttribute('data-rel-slug');
+        window.AnalyticsTracker?.trackCrossRecommendation(jobKey, relSlug, { type: 'related' });
         const relJob = await window.OrientationData.getJobBySlug(relSlug);
         if (relJob) {
           overlay.remove();
@@ -1010,6 +1194,72 @@
         }
       });
     });
+
+    // 8. Gestion interactive du Micro-Sondage de satisfaction
+    const surveyWidget = overlay.querySelector('#jobSurveyWidget');
+    if (surveyWidget && !hasVotedSurvey) {
+      const voteButtons = surveyWidget.querySelectorAll('.btn-survey-vote');
+      const tagsContainer = surveyWidget.querySelector('#surveyTagsContainer');
+      const tagsTitle = surveyWidget.querySelector('#surveyTagsTitle');
+      const tagsGrid = surveyWidget.querySelector('#surveyTagsGrid');
+      const submitBtn = surveyWidget.querySelector('#btnSubmitSurveyTags');
+      const thanksMsg = surveyWidget.querySelector('#surveyThanksMsg');
+      const buttonsRow = surveyWidget.querySelector('#surveyButtonsRow');
+
+      let currentVote = null;
+      let selectedTags = new Set();
+
+      const POSITIVE_TAGS = ['💰 Le salaire clair', '🧠 Les compétences clés', '🎓 Les parcours d\'études', '🎥 La vidéo d\'immersion', '💼 Les débouchés'];
+      const CONSTRUCTIVE_TAGS = ['💰 Plus de détails salaires', '🏛️ Écoles au Sénégal', '🎬 Plus de vidéos', '📝 Conditions d\'admission', '🗣️ Témoignages réels'];
+
+      voteButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentVote = btn.getAttribute('data-vote');
+          voteButtons.forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+
+          // Envoi immédiat du vote pour ne pas perdre la donnée
+          window.AnalyticsTracker?.trackSurveyVote('job', jobKey, currentVote);
+
+          // Affichage des tags contextuels
+          selectedTags.clear();
+          if (tagsGrid && tagsContainer && tagsTitle) {
+            tagsContainer.style.display = 'block';
+            if (currentVote === 'up') {
+              tagsTitle.textContent = 'Qu\'est-ce qui t\'a le plus aidé ? (Optionnel)';
+              tagsGrid.innerHTML = POSITIVE_TAGS.map(t => `<button type="button" class="survey-tag-chip" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join('');
+            } else {
+              tagsTitle.textContent = 'Que pourrions-nous ajouter pour t\'aider ? (Optionnel)';
+              tagsGrid.innerHTML = CONSTRUCTIVE_TAGS.map(t => `<button type="button" class="survey-tag-chip" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join('');
+            }
+
+            tagsGrid.querySelectorAll('.survey-tag-chip').forEach(chip => {
+              chip.addEventListener('click', () => {
+                const tag = chip.getAttribute('data-tag');
+                if (selectedTags.has(tag)) {
+                  selectedTags.delete(tag);
+                  chip.classList.remove('active');
+                } else {
+                  selectedTags.add(tag);
+                  chip.classList.add('active');
+                }
+              });
+            });
+          }
+        });
+      });
+
+      if (submitBtn) {
+        submitBtn.addEventListener('click', () => {
+          if (currentVote) {
+            window.AnalyticsTracker?.trackSurveyVote('job', jobKey, currentVote, Array.from(selectedTags));
+          }
+          if (buttonsRow) buttonsRow.style.display = 'none';
+          if (tagsContainer) tagsContainer.style.display = 'none';
+          if (thanksMsg) thanksMsg.style.display = 'flex';
+        });
+      }
+    }
 
     // Fermeture de la modal
     const closeModal = () => {
@@ -1030,42 +1280,64 @@
       });
     }
 
-    // Favorite handler
+    // Favorite handler synchronisé avec la barre flottante
     const btnFav = overlay.querySelector('#btnToggleJobFav');
-    if (btnFav) {
-      const getFavs = () => {
-        try { return JSON.parse(localStorage.getItem('member_favorite_jobs') || '[]'); } catch (_) { return []; }
-      };
-      const isFav = getFavs().some(item => (item.id === job.id || item.slug === job.slug || item.title === job.title));
-      if (isFav) {
-        btnFav.classList.add('is-fav');
-        btnFav.innerHTML = '<span>⭐</span> <span>Dans mes favoris</span>';
-      }
+    const btnFloatingBookmark = overlay.querySelector('#btnFloatingBookmark');
 
-      btnFav.addEventListener('click', () => {
-        let favs = getFavs();
-        const existingIdx = favs.findIndex(item => (item.id === job.id || item.slug === job.slug || item.title === job.title));
-        if (existingIdx >= 0) {
-          favs.splice(existingIdx, 1);
-          btnFav.classList.remove('is-fav');
-          btnFav.innerHTML = '<span>☆</span> <span>Favori</span>';
-          if (window.toast) window.toast.info('Fiche retirée de vos favoris.');
-        } else {
-          favs.push({
-            id: job.id,
-            slug: job.slug,
-            title: job.title,
-            icon: job.icon || '💼',
-            category: job.familyName || job.subdomain || 'Métier',
-            savedAt: new Date().toISOString()
-          });
+    const getFavs = () => {
+      try { return JSON.parse(localStorage.getItem('member_favorite_jobs') || '[]'); } catch (_) { return []; }
+    };
+
+    const syncBookmarkState = (isFav) => {
+      if (btnFav) {
+        if (isFav) {
           btnFav.classList.add('is-fav');
           btnFav.innerHTML = '<span>⭐</span> <span>Dans mes favoris</span>';
-          if (window.toast) window.toast.success(`⭐ "${job.title}" ajouté à vos métiers favoris !`);
+        } else {
+          btnFav.classList.remove('is-fav');
+          btnFav.innerHTML = '<span>☆</span> <span>Favori</span>';
         }
-        localStorage.setItem('member_favorite_jobs', JSON.stringify(favs));
-      });
-    }
+      }
+      if (btnFloatingBookmark) {
+        if (isFav) {
+          btnFloatingBookmark.classList.add('active');
+          btnFloatingBookmark.innerHTML = '<span class="bookmark-icon">⭐</span> <span class="bookmark-text">Sauvegardé</span>';
+        } else {
+          btnFloatingBookmark.classList.remove('active');
+          btnFloatingBookmark.innerHTML = '<span class="bookmark-icon">☆</span> <span class="bookmark-text">Sauvegarder</span>';
+        }
+      }
+    };
+
+    const isInitiallyFav = getFavs().some(item => (item.id === job.id || item.slug === job.slug || item.title === job.title));
+    syncBookmarkState(isInitiallyFav);
+
+    const toggleFavoriteHandler = () => {
+      let favs = getFavs();
+      const existingIdx = favs.findIndex(item => (item.id === job.id || item.slug === job.slug || item.title === job.title));
+      if (existingIdx >= 0) {
+        favs.splice(existingIdx, 1);
+        syncBookmarkState(false);
+        window.AnalyticsTracker?.trackBookmark(jobKey, false);
+        if (window.toast) window.toast.info('Fiche retirée de vos favoris.');
+      } else {
+        favs.push({
+          id: job.id,
+          slug: job.slug,
+          title: job.title,
+          icon: job.icon || '💼',
+          category: job.familyName || job.subdomain || 'Métier',
+          savedAt: new Date().toISOString()
+        });
+        syncBookmarkState(true);
+        window.AnalyticsTracker?.trackBookmark(jobKey, true);
+        if (window.toast) window.toast.success(`⭐ "${job.title}" ajouté à vos métiers favoris !`);
+      }
+      localStorage.setItem('member_favorite_jobs', JSON.stringify(favs));
+    };
+
+    if (btnFav) btnFav.addEventListener('click', toggleFavoriteHandler);
+    if (btnFloatingBookmark) btnFloatingBookmark.addEventListener('click', toggleFavoriteHandler);
 
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeModal();
