@@ -1578,9 +1578,22 @@
             <label>Icône (emoji)
               <input type="text" name="icon" value="${escapeHtml(item?.icon || '')}" placeholder="💼">
             </label>
-            <label>Image d'illustration (URL)
-              <input type="url" name="image" value="${escapeHtml(item?.image || '')}" placeholder="https://images.unsplash.com/photo-...">
-            </label>
+            <div>
+              <label style="display:flex;justify-content:space-between;align-items:center;">
+                <span>Image d'illustration</span>
+                <span id="content-image-badge" style="font-size:0.75rem;font-weight:normal;color:#64748b;">
+                  ${item?.image ? (item.image.includes('media.lemondedutravail') || item.image.includes('r2.dev') || item.image.includes('r2.cloudflarestorage') ? '🛡️ Cloudflare R2' : '📦 Supabase / Externe') : '☁️ R2 CDN'}
+                </span>
+              </label>
+              <div style="display:flex;gap:0.5rem;align-items:center;">
+                <input type="url" id="content-field-image" name="image" value="${escapeHtml(item?.image || '')}" placeholder="https://..." style="flex:1;">
+                <label class="btn" style="margin:0;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;font-size:0.8rem;white-space:nowrap;padding:0.45rem 0.75rem;background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;" title="Téléverser vers Cloudflare R2">
+                  <span>☁️ Uploader</span>
+                  <input type="file" id="content-r2-file" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml,application/pdf" style="display:none;">
+                </label>
+              </div>
+              <small id="content-r2-status" style="display:block;color:#64748b;margin-top:0.25rem;font-size:0.75rem;"></small>
+            </div>
           </div>
 
           <label>Description courte (accroche pour la carte) *
@@ -1597,6 +1610,36 @@
       </div>
     `;
     document.body.appendChild(overlay);
+
+    // Upload interactif vers Cloudflare R2 avec bouclier CDN
+    const r2FileInput = overlay.querySelector('#content-r2-file');
+    const imageInput = overlay.querySelector('#content-field-image');
+    const r2Status = overlay.querySelector('#content-r2-status');
+    const imageBadge = overlay.querySelector('#content-image-badge');
+
+    if (r2FileInput) {
+      r2FileInput.addEventListener('change', async () => {
+        const file = r2FileInput.files[0];
+        if (!file) return;
+
+        r2Status.innerHTML = '<span style="color:#2563eb;">⚡ Envoi vers Cloudflare R2 (CDN Edge)...</span>';
+
+        try {
+          const res = await window.AdminApi.upload.file(file, isJob ? 'metiers' : 'formations');
+          if (res.success && res.data?.url) {
+            imageInput.value = res.data.url;
+            r2Status.innerHTML = '<span style="color:#10b981;">✓ Hébergé sur Cloudflare R2 (Cache Edge 1 an)</span>';
+            if (imageBadge) imageBadge.innerHTML = '🛡️ Cloudflare R2';
+            showToast('Fichier hébergé sur Cloudflare R2 avec succès', 'success');
+          } else {
+            throw new Error(res.message || 'Échec du téléversement');
+          }
+        } catch (err) {
+          r2Status.innerHTML = `<span style="color:#ef4444;">❌ Erreur: ${err.message}</span>`;
+          showToast(`Erreur upload R2 : ${err.message}`, 'error');
+        }
+      });
+    }
 
     // Dynamic show/hide for new domain / category inputs
     const domSelect = overlay.querySelector('#field-domain-select');
@@ -1777,9 +1820,22 @@
               </select>
             </label>
           </div>
-          <label>Image de couverture (URL)
-            <input type="url" name="coverImage" value="${escapeHtml(post?.coverImage || '')}" placeholder="https://images.unsplash.com/photo-...">
-          </label>
+          <div>
+            <label style="display:flex;justify-content:space-between;align-items:center;">
+              <span>Image de couverture</span>
+              <span id="blog-cover-badge" style="font-size:0.75rem;font-weight:normal;color:#64748b;">
+                ${post?.coverImage ? (post.coverImage.includes('media.lemondedutravail') || post.coverImage.includes('r2.dev') || post.coverImage.includes('r2.cloudflarestorage') ? '🛡️ Cloudflare R2' : '📦 Supabase / Externe') : '☁️ R2 CDN'}
+              </span>
+            </label>
+            <div style="display:flex;gap:0.5rem;align-items:center;">
+              <input type="url" id="blog-field-cover" name="coverImage" value="${escapeHtml(post?.coverImage || '')}" placeholder="https://..." style="flex:1;">
+              <label class="btn" style="margin:0;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;font-size:0.8rem;white-space:nowrap;padding:0.45rem 0.75rem;background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;" title="Téléverser vers Cloudflare R2">
+                <span>☁️ Uploader</span>
+                <input type="file" id="blog-r2-file" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" style="display:none;">
+              </label>
+            </div>
+            <small id="blog-r2-status" style="display:block;color:#64748b;margin-top:0.25rem;font-size:0.75rem;"></small>
+          </div>
           <label>Extrait / Résumé (affiché dans la liste)
             <textarea name="excerpt" rows="2" maxlength="500" placeholder="Brève introduction ou accroche pour les lecteurs...">${escapeHtml(post?.excerpt || '')}</textarea>
           </label>
@@ -1798,6 +1854,36 @@
       </div>
     `;
     document.body.appendChild(overlay);
+
+    // Upload interactif de couverture vers Cloudflare R2
+    const blogR2File = overlay.querySelector('#blog-r2-file');
+    const blogCoverInput = overlay.querySelector('#blog-field-cover');
+    const blogR2Status = overlay.querySelector('#blog-r2-status');
+    const blogCoverBadge = overlay.querySelector('#blog-cover-badge');
+
+    if (blogR2File) {
+      blogR2File.addEventListener('change', async () => {
+        const file = blogR2File.files[0];
+        if (!file) return;
+
+        blogR2Status.innerHTML = '<span style="color:#2563eb;">⚡ Envoi vers Cloudflare R2 (CDN Edge)...</span>';
+
+        try {
+          const res = await window.AdminApi.upload.file(file, 'blog');
+          if (res.success && res.data?.url) {
+            blogCoverInput.value = res.data.url;
+            blogR2Status.innerHTML = '<span style="color:#10b981;">✓ Hébergé sur Cloudflare R2 (Cache Edge 1 an)</span>';
+            if (blogCoverBadge) blogCoverBadge.innerHTML = '🛡️ Cloudflare R2';
+            showToast('Image de couverture hébergée sur Cloudflare R2', 'success');
+          } else {
+            throw new Error(res.message || 'Échec du téléversement');
+          }
+        } catch (err) {
+          blogR2Status.innerHTML = `<span style="color:#ef4444;">❌ Erreur: ${err.message}</span>`;
+          showToast(`Erreur upload R2: ${err.message}`, 'error');
+        }
+      });
+    }
 
     const closeModal = () => overlay.remove();
     overlay.querySelector('#blog-modal-cancel').addEventListener('click', closeModal);

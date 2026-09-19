@@ -24,6 +24,7 @@ const statsRoutes = require('./routes/stats');
 const organizationRoutes = require('./routes/organization');
 const notificationRoutes = require('./routes/notifications');
 const analyticsRoutes = require('./routes/analytics');
+const uploadRoutes = require('./routes/upload');
 const prisma = require('./config/database');
 const app = express();
 
@@ -116,6 +117,7 @@ app.use('/api/stats', statsRoutes);
 app.use('/api/organization', organizationRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // ===== GESTION DES ERREURS =====
 
