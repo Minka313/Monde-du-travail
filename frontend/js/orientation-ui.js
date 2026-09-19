@@ -285,7 +285,7 @@
       const img = safeUrl(family.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80');
 
       return `
-        <article class="family-card stagger-item reveal-scale" data-family-id="${escapeHtml(family.id)}" style="--family-accent: ${escapeHtml(family.color || '#3b82f6')}; --stagger-idx: ${idx % 8};">
+        <article class="family-card stagger-item" data-family-id="${escapeHtml(family.id)}" style="--family-accent: ${escapeHtml(family.color || '#3b82f6')}; --stagger-idx: ${idx % 8};">
           <div class="family-card-media">
             <img src="${escapeHtml(img)}" alt="${escapeHtml(family.name)}" loading="lazy">
             <div class="family-card-media-overlay"></div>
@@ -333,6 +333,9 @@
         window.scrollTo({ top: dom.familyDrilldownContainer ? dom.familyDrilldownContainer.offsetTop - 80 : 200, behavior: 'smooth' });
       });
     });
+
+    if (window.initCardSpotlight) window.initCardSpotlight();
+    if (window.initScrollReveal) window.initScrollReveal();
   }
 
   // =========================================================================
@@ -437,7 +440,7 @@
       const totalSkillsCount = (job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.length : 0);
 
       return `
-        <article class="card job-card-modern stagger-item reveal-scale" data-job-slug="${escapeHtml(job.slug || job.id)}" style="--stagger-idx: ${idx % 8};">
+        <article class="card job-card-modern stagger-item" data-job-slug="${escapeHtml(job.slug || job.id)}" style="--stagger-idx: ${idx % 8};">
           <div class="job-card-media-wrap">
             <img src="${escapeHtml(img)}" alt="${escapeHtml(job.title)}" loading="lazy">
             <div class="job-card-overlay"></div>
@@ -458,23 +461,23 @@
 
             ${techSkills.length > 0 ? `
               <div class="job-card-skills-row">
-                ${techSkills.map(s => `<span class="job-mini-skill-chip">${escapeHtml(s)}</span>`).join('')}
-                ${totalSkillsCount > 3 ? `<span class="job-mini-skill-more">+${totalSkillsCount - 3}</span>` : ''}
+                ${techSkills.map(s => `<span class="job-skill-badge">${escapeHtml(s)}</span>`).join('')}
+                ${totalSkillsCount > 3 ? `<span class="job-skill-badge more">+${totalSkillsCount - 3}</span>` : ''}
               </div>
             ` : ''}
           </div>
 
           <div class="job-card-footer">
-            <button type="button" class="btn-open-dossier" aria-label="Consulter la fiche métier de ${escapeHtml(job.title)}">
-              <span>Découvrir le métier</span>
-              <span class="arrow">&rarr;</span>
+            <button type="button" class="btn-job-action">
+              <span>Consulter le dossier métier</span>
+              <span class="arrow-icon">&rarr;</span>
             </button>
           </div>
         </article>
       `;
     }).join('');
 
-    // Gestion du clic sur toute la carte
+    // Clics sur les cartes de métiers
     dom.jobsGridContainer.querySelectorAll('.job-card-modern').forEach(card => {
       card.addEventListener('click', async () => {
         const slug = card.getAttribute('data-job-slug');
@@ -482,6 +485,9 @@
         if (job) openJobModal(job);
       });
     });
+
+    if (window.initCardSpotlight) window.initCardSpotlight();
+    if (window.initScrollReveal) window.initScrollReveal();
   }
 
   // =========================================================================
