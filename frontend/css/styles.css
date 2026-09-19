@@ -3149,12 +3149,111 @@ input:-webkit-autofill:active {
     overflow: hidden;
   }
 
-  .nav-search {
-    display: none;
+  /* ===== ADAPTATION HEADER MOBILE (Anti-débordement, Avatar compact, Hamburger 100% visible) ===== */
+  .site-header {
+    height: var(--header-height);
+    overflow: hidden;
+  }
+
+  .header-inner {
+    padding: 0 12px;
+    gap: 8px;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .logo-link {
+    min-width: 0;
+    flex-shrink: 1;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .logo-img {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  .site-title {
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-left: auto;
   }
 
   .header-actions .btn-cta {
     display: none;
+  }
+
+  .notification-bell-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* Sur mobile : l'icône utilisateur devient un avatar circulaire discret */
+  .user-menu-btn {
+    padding: 2px;
+    gap: 0;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    flex-shrink: 0;
+  }
+
+  .user-menu-btn:hover {
+    background: rgba(15, 23, 42, 0.06);
+  }
+
+  .user-menu-btn .user-avatar-badge {
+    width: 34px;
+    height: 34px;
+    font-size: 0.82rem;
+  }
+
+  /* Cacher le texte du prénom et la flèche sur mobile pour garantir la visibilité du hamburger */
+  .user-menu-btn .user-menu-name,
+  .user-menu-btn .user-menu-arrow {
+    display: none !important;
+  }
+
+  .user-dropdown-menu {
+    right: 0;
+    width: min(260px, calc(100vw - 24px));
+  }
+
+  .hamburger {
+    display: flex;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    padding: 6px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .hamburger span {
+    width: 20px;
+  }
+
+  .hero-visual .hero-inner {
+    transform: none !important;
+  }
+
+  .hero-visual img {
+    transform: none !important;
   }
 
   .hero {
@@ -3449,6 +3548,39 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 480px) {
+  .site-title {
+    font-size: 0.9rem;
+  }
+
+  .header-inner {
+    padding: 0 8px;
+    gap: 6px;
+  }
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .notification-bell-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 0.95rem;
+  }
+
+  .user-menu-btn .user-avatar-badge {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+
+  .hamburger {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 5px;
+  }
+
   .hero {
     padding: var(--space-12) var(--space-3);
   }
