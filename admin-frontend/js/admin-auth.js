@@ -409,6 +409,7 @@
     settings: {
       getAll: () => apiRequestWithRefresh('/settings'),
       update: (key, value) => apiRequestWithRefresh(`/settings/${key}`, { method: 'PUT', body: JSON.stringify({ value }) }),
+      getPublic: () => apiRequest('/settings/public'),
     },
     forum: {
       getAll: (params = {}) => {

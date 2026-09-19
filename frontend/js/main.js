@@ -1010,6 +1010,62 @@
       } catch (_) {}
     }
 
+    // Hydratation dynamique de la vitrine ("À la Une ce mois-ci" et "Les Grandes Étapes du Club")
+    try {
+      const res = await fetch((window.Api?.API_BASE || '/api') + '/settings/public');
+      if (res.ok) {
+        const json = await res.json();
+        const settings = json.data || {};
+
+        // 1. "À la Une ce mois-ci" (Accueil)
+        const featCard = document.querySelector('#scene-featured .home-featured-card');
+        if (featCard && settings['home.featured_monthly']) {
+          const feat = settings['home.featured_monthly'];
+          const tagEl = featCard.querySelector('.featured-tag');
+          const titleEl = featCard.querySelector('.home-featured-content h3');
+          const descEl = featCard.querySelector('.home-featured-content p');
+          const perksEl = featCard.querySelector('.featured-perks-list');
+          const primaryBtn = featCard.querySelector('.home-featured-content a.btn-primary');
+          
+          const sideBadge = featCard.querySelector('.sidebox-badge');
+          const sideCounter = featCard.querySelector('.sidebox-counter');
+          const sideDesc = featCard.querySelector('.sidebox-desc');
+          const sideBtn = featCard.querySelector('.home-featured-sidebox a.btn-outline');
+
+          if (tagEl && feat.tag) tagEl.textContent = feat.tag;
+          if (titleEl && feat.title) titleEl.textContent = feat.title;
+          if (descEl && feat.description) descEl.textContent = feat.description;
+          if (perksEl && Array.isArray(feat.perks) && feat.perks.length > 0) {
+            perksEl.innerHTML = feat.perks.map(p => `<span class="featured-perk">${escapeHtml(p)}</span>`).join('');
+          }
+          if (primaryBtn) {
+            if (feat.primaryButtonText) primaryBtn.innerHTML = `${escapeHtml(feat.primaryButtonText)} <span class="btn-arrow">&rarr;</span>`;
+            if (feat.primaryButtonLink) primaryBtn.href = feat.primaryButtonLink;
+          }
+
+          if (sideBadge && feat.sideboxBadge) sideBadge.textContent = feat.sideboxBadge;
+          if (sideCounter && feat.sideboxCounter) sideCounter.textContent = feat.sideboxCounter;
+          if (sideDesc && feat.sideboxDesc) sideDesc.textContent = feat.sideboxDesc;
+          if (sideBtn) {
+            if (feat.sideboxButtonText) sideBtn.textContent = feat.sideboxButtonText;
+            if (feat.sideboxButtonLink) sideBtn.href = feat.sideboxButtonLink;
+          }
+        }
+
+        // 2. "Les Grandes Étapes du Club" (À Propos)
+        const timelineEl = document.querySelector('.about-timeline');
+        if (timelineEl && Array.isArray(settings['about.timeline_steps']) && settings['about.timeline_steps'].length > 0) {
+          timelineEl.innerHTML = settings['about.timeline_steps'].map(step => `
+            <div class="timeline-step stagger-item reveal-up">
+              <span class="timeline-year">${escapeHtml(step.year || '')}</span>
+              <h3>${escapeHtml(step.title || '')}</h3>
+              <p>${escapeHtml(step.description || '')}</p>
+            </div>
+          `).join('');
+        }
+      }
+    } catch (_) {}
+
     const newsletterForm = document.getElementById('homeNewsletterForm');
     if (newsletterForm) {
       newsletterForm.addEventListener('submit', (e) => {
