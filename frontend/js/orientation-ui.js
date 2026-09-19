@@ -60,6 +60,8 @@
       btnViewAllJobs: document.getElementById('btnViewAllJobs'),
       breadcrumbNav: document.getElementById('breadcrumbNav'),
       breadcrumbList: document.getElementById('breadcrumbList'),
+      viewSectionHeader: document.getElementById('viewSectionHeader'),
+      viewSectionLabel: document.getElementById('viewSectionLabel'),
       viewSectionTitle: document.getElementById('viewSectionTitle'),
       viewSectionSubtitle: document.getElementById('viewSectionSubtitle'),
       
@@ -77,6 +79,13 @@
       btnBackToFamilies: document.getElementById('btnBackToFamilies'),
       btnResetSearch: document.getElementById('btnResetSearch')
     };
+  }
+
+  function updateQuickNavButtons(activeBtn) {
+    [dom.btnExploreFamilies, dom.btnDiscoverInterests, dom.btnViewAllJobs].forEach(b => {
+      if (b) b.classList.remove('active');
+    });
+    if (activeBtn) activeBtn.classList.add('active');
   }
 
   // =========================================================================
@@ -103,11 +112,13 @@
         url.searchParams.delete('search');
         window.history.replaceState({}, '', url.toString());
 
-        renderBreadcrumbs([
-          { label: 'Accueil', url: 'index.html' },
-          { label: 'Métiers & Orientation', active: true }
-        ]);
+        updateQuickNavButtons(dom.btnExploreFamilies);
 
+        // Masquer le fil d'Ariane redondant sur la racine
+        if (dom.breadcrumbNav) dom.breadcrumbNav.style.display = 'none';
+        if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'block';
+
+        if (dom.viewSectionLabel) dom.viewSectionLabel.textContent = 'Exploration Progressive';
         if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Les 21 Grandes Familles Professionnelles';
         if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Explore les domaines d’avenir, découvre leurs sous-disciplines et identifie les métiers clés.';
 
@@ -132,8 +143,14 @@
         }
         window.history.replaceState({}, '', url.toString());
 
+        updateQuickNavButtons(dom.btnExploreFamilies);
+
         const family = window.OrientationData.getFamily(AppState.selectedFamilyId);
         if (family) {
+          // Afficher le fil d'Ariane et masquer le titre générique redondant
+          if (dom.breadcrumbNav) dom.breadcrumbNav.style.display = 'block';
+          if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'none';
+
           renderBreadcrumbs([
             { label: 'Accueil', url: 'index.html' },
             { label: 'Métiers & Orientation', action: () => setView('FAMILIES') },
@@ -158,12 +175,18 @@
         url.searchParams.delete('subdomain');
         window.history.replaceState({}, '', url.toString());
 
+        updateQuickNavButtons(dom.btnViewAllJobs);
+
+        if (dom.breadcrumbNav) dom.breadcrumbNav.style.display = 'block';
+        if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'block';
+
         renderBreadcrumbs([
           { label: 'Accueil', url: 'index.html' },
           { label: 'Métiers & Orientation', action: () => setView('FAMILIES') },
           { label: 'Tous les dossiers métiers', active: true }
         ]);
 
+        if (dom.viewSectionLabel) dom.viewSectionLabel.textContent = 'Catalogue Global';
         if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Tous les dossiers métiers';
         if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Parcours l’ensemble des fiches métiers documentées par Le Monde du Travail.';
 
@@ -174,6 +197,15 @@
         break;
 
       case 'INTERESTS':
+        updateQuickNavButtons(dom.btnDiscoverInterests);
+
+        if (dom.breadcrumbNav) dom.breadcrumbNav.style.display = 'block';
+        if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'block';
+
+        if (dom.viewSectionLabel) dom.viewSectionLabel.textContent = 'Porte C • Orientation par affinités';
+        if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Boussole des Affinités & Centres d’Intérêt';
+        if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Sélectionne ce qui t’attire pour découvrir les univers professionnels correspondants.';
+
         renderBreadcrumbs([
           { label: 'Accueil', url: 'index.html' },
           { label: 'Métiers & Orientation', action: () => setView('FAMILIES') },
@@ -182,7 +214,6 @@
 
         if (dom.interestExplorerBox) {
           dom.interestExplorerBox.style.display = 'block';
-          dom.interestExplorerBox.scrollIntoView({ behavior: 'smooth' });
         }
         if (dom.jobsGridContainer) {
           dom.jobsGridContainer.style.display = 'grid';
@@ -191,6 +222,15 @@
         break;
 
       case 'SEARCH':
+        updateQuickNavButtons(null);
+
+        if (dom.breadcrumbNav) dom.breadcrumbNav.style.display = 'block';
+        if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'block';
+
+        if (dom.viewSectionLabel) dom.viewSectionLabel.textContent = 'Recherche Directe';
+        if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = `Résultats de recherche`;
+        if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = `Terme recherché : "${escapeHtml(AppState.searchQuery)}"`;
+
         renderBreadcrumbs([
           { label: 'Accueil', url: 'index.html' },
           { label: 'Métiers & Orientation', action: () => setView('FAMILIES') },
