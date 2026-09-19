@@ -3,6 +3,7 @@
 
   const ADMIN_MODULES = {
     dashboard: { label: 'Tableau de bord', icon: '📊' },
+    analytics: { label: 'Audience & Présence', icon: '📈' },
     organization: { label: 'Organisation & Fonctionnement', icon: '🏛️' },
     notifications: { label: 'Notifications Push', icon: '🔔' },
     formations: { label: 'Formations', icon: '📚' },
@@ -212,6 +213,9 @@
         case 'dashboard':
           html = await loadDashboard();
           break;
+        case 'analytics':
+          html = await loadAnalytics();
+          break;
         case 'organization':
           html = await loadOrganization();
           break;
@@ -300,6 +304,18 @@
     // Les alertes sont désormais incluses directement dans getStats()
     const alerts = superData.alerts || [];
     const activities = activitiesRes?.data || [];
+
+    const visitorStats = superData.visitorStats || {};
+    const mostActiveUsers = superData.mostActiveUsers || [];
+    const summaryVisits = visitorStats.summary || {};
+    const uniqueVisitorsToday = summaryVisits.today?.uniqueVisitors ?? 0;
+    const visitsToday = summaryVisits.today?.visits ?? 0;
+    const uniqueVisitorsWeek = summaryVisits.week?.uniqueVisitors ?? 0;
+    const visitsWeek = summaryVisits.week?.visits ?? 0;
+    const totalAllTimeVisits = summaryVisits.allTime?.totalVisits ?? visitsWeek;
+    const topPages = visitorStats.topPages || [];
+    const dailyTrend = visitorStats.dailyTrend || [];
+    const devices = visitorStats.devices || { desktop: 0, mobile: 0 };
 
     const activityIcons = {
       AUTH: '🔐',
@@ -391,15 +407,27 @@
 
         <!-- Grille des KPIs Stratégiques (100% Cliquables vers les modules) -->
         <div class="dash-kpi-grid">
-          <div class="dash-kpi-card" data-dash-navigate="users" title="Gérer les utilisateurs">
+          <div class="dash-kpi-card" data-dash-navigate="analytics" title="Consulter les statistiques d'audience et de visiteurs">
             <div class="dash-kpi-header">
-              <span class="dash-kpi-label"><span class="dash-kpi-icon">👥</span> Membres & Actifs</span>
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">👁️</span> Visiteurs du Site</span>
               <span class="dash-kpi-arrow">→</span>
             </div>
-            <div class="dash-kpi-value">${activeMembers}</div>
+            <div class="dash-kpi-value">${uniqueVisitorsToday} <span style="font-size:0.92rem;font-weight:500;color:var(--color-muted);">uniques auj.</span></div>
             <div class="dash-kpi-footer">
-              <span>Sur ${totalUsers} inscrits au total</span>
-              <span class="badge badge-success">Actifs</span>
+              <span>${uniqueVisitorsWeek} uniques / 7j • ${totalAllTimeVisits} vues</span>
+              <span class="badge badge-accent">Audience</span>
+            </div>
+          </div>
+
+          <div class="dash-kpi-card" data-dash-action="scroll-presence" title="Voir les membres les plus présents">
+            <div class="dash-kpi-header">
+              <span class="dash-kpi-label"><span class="dash-kpi-icon">👥</span> Membres & Présence</span>
+              <span class="dash-kpi-arrow">↓</span>
+            </div>
+            <div class="dash-kpi-value">${activeMembers} <span style="font-size:0.92rem;font-weight:500;color:var(--color-muted);">actifs</span></div>
+            <div class="dash-kpi-footer">
+              <span>Top présent : ${escapeHtml(mostActiveUsers[0]?.fullName || '—')}</span>
+              <span class="badge badge-success">Présence</span>
             </div>
           </div>
 
@@ -498,6 +526,174 @@
               <span class="badge badge-accent">Partenaires</span>
             </div>
           </div>
+        </div>
+
+        <!-- Section Spéciale : Audience & Fréquentation du Site -->
+        <div class="card" id="dash-analytics-section" style="margin-bottom: 1.5rem;">
+          <div class="card-header" style="flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              <h2>📈 Fréquentation du Site & Visiteurs</h2>
+              <span class="badge badge-accent">${uniqueVisitorsToday} visiteurs uniques aujourd'hui</span>
+            </div>
+            <button class="btn btn-sm btn-ghost" data-dash-navigate="analytics">
+              Voir l'analyse détaillée →
+            </button>
+          </div>
+
+          <!-- 4 Cartes Synthétiques d'Audience -->
+          <div class="analytics-metrics-grid">
+            <div class="analytics-stat-box">
+              <span class="analytics-stat-label">Aujourd'hui</span>
+              <div class="analytics-stat-val">${uniqueVisitorsToday} <span class="analytics-stat-unit">visiteurs uniques</span></div>
+              <div class="analytics-stat-sub">${visitsToday} pages vues au total</div>
+            </div>
+            <div class="analytics-stat-box">
+              <span class="analytics-stat-label">7 Derniers Jours</span>
+              <div class="analytics-stat-val">${uniqueVisitorsWeek} <span class="analytics-stat-unit">visiteurs uniques</span></div>
+              <div class="analytics-stat-sub">${visitsWeek} pages vues cumulées</div>
+            </div>
+            <div class="analytics-stat-box">
+              <span class="analytics-stat-label">30 Derniers Jours</span>
+              <div class="analytics-stat-val">${summaryVisits.month?.uniqueVisitors ?? 0} <span class="analytics-stat-unit">visiteurs uniques</span></div>
+              <div class="analytics-stat-sub">${summaryVisits.month?.visits ?? 0} pages vues</div>
+            </div>
+            <div class="analytics-stat-box">
+              <span class="analytics-stat-label">Total Historique</span>
+              <div class="analytics-stat-val">${summaryVisits.allTime?.totalVisits ?? totalAllTimeVisits} <span class="analytics-stat-unit">visites</span></div>
+              <div class="analytics-stat-sub">${summaryVisits.allTime?.totalLoginSessions ?? 0} sessions de connexion</div>
+            </div>
+          </div>
+
+          <!-- Double Colonne : Évolution 7 Jours & Pages les plus Vues -->
+          <div class="analytics-split-row">
+            <div class="analytics-chart-col">
+              <div class="analytics-subtitle">📅 Évolution des visites sur 7 jours</div>
+              <div class="analytics-daily-bars">
+                ${dailyTrend.map(d => {
+                  const maxV = Math.max(...dailyTrend.map(b => b.visits), 1);
+                  const heightPercent = Math.max(8, Math.round((d.visits / maxV) * 100));
+                  return `
+                    <div class="analytics-bar-item" title="${d.label}: ${d.visits} visites (${d.uniqueVisitors} uniques)">
+                      <div class="analytics-bar-val">${d.visits}</div>
+                      <div class="analytics-bar-track">
+                        <div class="analytics-bar-fill" style="height: ${heightPercent}%;"></div>
+                      </div>
+                      <div class="analytics-bar-label">${d.label.split(' ')[0]}</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <div class="analytics-pages-col">
+              <div class="analytics-subtitle">📑 Pages les plus consultées</div>
+              ${topPages.length === 0 ? '<div class="empty-state">Données en cours de collecte...</div>' : `
+                <div class="analytics-pages-list">
+                  ${topPages.slice(0, 5).map(p => `
+                    <div class="analytics-page-row">
+                      <div class="analytics-page-info">
+                        <span class="analytics-page-title">${escapeHtml(p.label)}</span>
+                        <span class="analytics-page-path">${escapeHtml(p.path)}</span>
+                      </div>
+                      <div class="analytics-page-count">
+                        <strong>${p.views}</strong> vues
+                        <span class="badge badge-sm badge-muted">${p.percentage}%</span>
+                      </div>
+                    </div>
+                    <div class="analytics-page-progress-bg">
+                      <div class="analytics-page-progress-bar" style="width: ${Math.max(5, p.percentage)}%;"></div>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
+              <div class="analytics-devices-badge-row">
+                <span>💻 Ordinateur : <strong>${devices.desktop || 0}</strong></span>
+                <span>📱 Mobile : <strong>${devices.mobile || 0}</strong></span>
+                <span>📟 Tablette : <strong>${devices.tablet || 0}</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Spéciale : Personnes les Plus Présentes & Actives -->
+        <div class="card" id="dash-presence-section" style="margin-bottom: 1.5rem;">
+          <div class="card-header" style="flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              <h2>🏆 Personnes les Plus Présentes & Actives</h2>
+              <span class="badge badge-success">Temps Réel</span>
+            </div>
+            <button class="btn btn-sm btn-ghost" data-dash-navigate="analytics">
+              Voir le classement complet →
+            </button>
+          </div>
+          <p style="color: var(--color-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+            Classement direct mesurant l'assiduité, la récence de présence et l'activité des adhérents et administrateurs du club.
+          </p>
+
+          ${mostActiveUsers.length === 0 ? `
+            <div class="empty-state">Aucun membre enregistré pour le moment.</div>
+          ` : `
+            <div class="table-wrapper">
+              <table class="presence-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">Rang</th>
+                    <th>Membre</th>
+                    <th>Rôle</th>
+                    <th>Statut en Direct</th>
+                    <th>Dernière Présence</th>
+                    <th>Contributions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${mostActiveUsers.slice(0, 6).map(u => {
+                    const lastLoginText = u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('fr-FR', {
+                      day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+                    }) : 'Jamais connecté';
+                    return `
+                      <tr>
+                        <td>
+                          <span class="presence-medal">${u.medal}</span>
+                        </td>
+                        <td>
+                          <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <div class="presence-avatar">${escapeHtml(u.initials)}</div>
+                            <div>
+                              <div style="font-weight: 700; color: var(--color-text); font-size: 0.95rem;">
+                                ${escapeHtml(u.fullName)}
+                              </div>
+                              <div style="font-size: 0.8rem; color: var(--color-muted);">${escapeHtml(u.email)}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span class="badge ${u.role === 'ULTRA_ADMIN' ? 'badge-primary' : u.role === 'ADMIN' ? 'badge-info' : 'badge-muted'}">
+                            ${escapeHtml(u.displayRole)}
+                          </span>
+                        </td>
+                        <td>
+                          <span class="presence-status-pill status-${u.presenceStatus.toLowerCase()}">
+                            <span class="presence-dot"></span>
+                            ${escapeHtml(u.presenceLabel)}
+                          </span>
+                        </td>
+                        <td style="font-size: 0.88rem;">
+                          ${lastLoginText}
+                        </td>
+                        <td>
+                          <div style="display: flex; gap: 0.5rem; font-size: 0.85rem;">
+                            <span title="Actions / Connexions">⚡ ${u.actionsCount}</span>
+                            <span title="Sujets créés">💬 ${u.forumTopics}</span>
+                            <span title="Réponses postées">✍️ ${u.forumReplies}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          `}
         </div>
 
         <!-- Section Split : Adhésions Récentes & Flux d'Activité Récente -->
@@ -658,6 +854,385 @@
               }).join('')}
             </div>
           `}
+        </div>
+      </div>
+    `;
+  }
+
+  // ===== MODULE AUDIENCE & PRÉSENCE DES MEMBRES =====
+  let analyticsUsersCache = [];
+
+  function renderPresenceRows(users) {
+    if (!users || users.length === 0) {
+      return `<tr><td colspan="7"><div class="empty-state" style="padding:1.5rem;">Aucun membre ne correspond aux critères de recherche.</div></td></tr>`;
+    }
+    return users.map(u => {
+      const lastLoginText = u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('fr-FR', {
+        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      }) : 'Jamais connecté';
+
+      const roleBadgeClass = u.role === 'ULTRA_ADMIN' ? 'badge-primary' : u.role === 'ADMIN' ? 'badge-info' : 'badge-muted';
+      const statusClass = `status-${(u.presenceStatus || 'older').toLowerCase()}`;
+
+      return `
+        <tr class="presence-row" data-user-id="${escapeHtml(u.id)}">
+          <td style="text-align: center;">
+            <span class="presence-medal">${escapeHtml(u.medal || '—')}</span>
+          </td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <div class="presence-avatar">${escapeHtml(u.initials || '??')}</div>
+              <div>
+                <div style="font-weight: 700; color: var(--color-text); font-size: 0.95rem;">
+                  ${escapeHtml(u.fullName)}
+                </div>
+                <div style="font-size: 0.8rem; color: var(--color-muted);">${escapeHtml(u.email)}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge ${roleBadgeClass}">
+              ${escapeHtml(u.displayRole || u.role)}
+            </span>
+          </td>
+          <td>
+            <span class="presence-status-pill ${statusClass}">
+              <span class="presence-dot"></span>
+              ${escapeHtml(u.presenceLabel || 'Inconnu')}
+            </span>
+          </td>
+          <td style="font-size: 0.88rem; color: var(--color-text);">
+            ${lastLoginText}
+          </td>
+          <td>
+            <div class="presence-score-badge">
+              <span class="presence-score-val">${u.score || 0}</span>
+              <span class="presence-score-sub">pts</span>
+            </div>
+          </td>
+          <td>
+            <div style="display: flex; gap: 0.6rem; font-size: 0.85rem; color: var(--color-muted);">
+              <span title="Actions enregistrées (connexions, modifications)">⚡ <strong>${u.actionsCount || 0}</strong></span>
+              <span title="Sujets de forum créés">💬 <strong>${u.forumTopics || 0}</strong></span>
+              <span title="Réponses postées sur le forum">✍️ <strong>${u.forumReplies || 0}</strong></span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  async function loadAnalytics() {
+    let visitorStats = {
+      today: { visitors: 0, views: 0 },
+      last7Days: { visitors: 0, views: 0 },
+      last30Days: { visitors: 0, views: 0 },
+      allTime: { visitors: 0, views: 0 },
+      dailyTrend: [],
+      topPages: [],
+      deviceStats: { desktop: 0, mobile: 0, tablet: 0, other: 0 }
+    };
+    let presenceUsers = [];
+
+    try {
+      const [visRes, presRes] = await Promise.allSettled([
+        window.AdminApi.analytics.getVisitors(),
+        window.AdminApi.analytics.getPresence(100)
+      ]);
+
+      if (visRes.status === 'fulfilled' && visRes.value?.data?.stats) {
+        visitorStats = visRes.value.data.stats;
+      }
+      if (presRes.status === 'fulfilled' && Array.isArray(presRes.value?.data?.users)) {
+        presenceUsers = presRes.value.data.users;
+      }
+    } catch (err) {
+      console.warn('[Analytics] Erreur chargement stats:', err);
+    }
+
+    analyticsUsersCache = presenceUsers;
+
+    // Calculs pour les graphiques CSS
+    const dailyTrend = visitorStats.dailyTrend || [];
+    const maxDayViews = Math.max(1, ...dailyTrend.map(d => d.views || 0));
+
+    const totalDevices = Object.values(visitorStats.deviceStats || {}).reduce((a, b) => a + b, 0) || 1;
+    const desktopPct = Math.round(((visitorStats.deviceStats?.desktop || 0) / totalDevices) * 100);
+    const mobilePct = Math.round(((visitorStats.deviceStats?.mobile || 0) / totalDevices) * 100);
+    const tabletPct = Math.round(((visitorStats.deviceStats?.tablet || 0) / totalDevices) * 100);
+
+    const maxPageViews = Math.max(1, ...(visitorStats.topPages || []).map(p => p.views || 0));
+
+    // Comptage par statut de présence
+    const onlineCount = presenceUsers.filter(u => u.presenceStatus === 'ONLINE').length;
+    const todayCount = presenceUsers.filter(u => u.presenceStatus === 'ONLINE' || u.presenceStatus === 'TODAY').length;
+
+    return `
+      <div class="analytics-page-root" style="display: flex; flex-direction: column; gap: 1.5rem;">
+        <!-- En-tête de la page Analytics -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%); border-left: 4px solid var(--color-primary);">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
+                <h1 style="font-size: 1.5rem; font-weight: 800; margin: 0; color: var(--color-text);">
+                  📈 Audience & Fréquentation de la Plateforme
+                </h1>
+                <span class="badge badge-success" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+                  <span class="presence-dot" style="background:#10b981;"></span> Direct
+                </span>
+              </div>
+              <p style="color: var(--color-muted); margin: 0; font-size: 0.92rem;">
+                Mesure de l'audience publique, analyse du trafic par appareil et classement d'assiduité des membres les plus engagés.
+              </p>
+            </div>
+            <div style="display: flex; gap: 0.6rem; align-items: center;">
+              <button class="btn btn-secondary btn-sm" id="analytics-refresh-btn" title="Recharger les statistiques en direct">
+                🔄 Actualiser
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grille des Cartes KPI d'Audience -->
+        <div class="analytics-metrics-grid">
+          <div class="analytics-stat-box">
+            <div class="analytics-stat-header">
+              <span class="analytics-stat-title">Aujourd'hui</span>
+              <span class="analytics-stat-icon">🌅</span>
+            </div>
+            <div class="analytics-stat-val">
+              ${(visitorStats.today?.visitors || 0).toLocaleString('fr-FR')}
+              <span class="analytics-stat-unit">visiteurs</span>
+            </div>
+            <div class="analytics-stat-sub">
+              <strong>${(visitorStats.today?.views || 0).toLocaleString('fr-FR')}</strong> pages consultées
+            </div>
+          </div>
+
+          <div class="analytics-stat-box">
+            <div class="analytics-stat-header">
+              <span class="analytics-stat-title">7 Derniers Jours</span>
+              <span class="analytics-stat-icon">📊</span>
+            </div>
+            <div class="analytics-stat-val">
+              ${(visitorStats.last7Days?.visitors || 0).toLocaleString('fr-FR')}
+              <span class="analytics-stat-unit">visiteurs</span>
+            </div>
+            <div class="analytics-stat-sub">
+              <strong>${(visitorStats.last7Days?.views || 0).toLocaleString('fr-FR')}</strong> pages consultées
+            </div>
+          </div>
+
+          <div class="analytics-stat-box">
+            <div class="analytics-stat-header">
+              <span class="analytics-stat-title">30 Derniers Jours</span>
+              <span class="analytics-stat-icon">🗓️</span>
+            </div>
+            <div class="analytics-stat-val">
+              ${(visitorStats.last30Days?.visitors || 0).toLocaleString('fr-FR')}
+              <span class="analytics-stat-unit">visiteurs</span>
+            </div>
+            <div class="analytics-stat-sub">
+              <strong>${(visitorStats.last30Days?.views || 0).toLocaleString('fr-FR')}</strong> pages consultées
+            </div>
+          </div>
+
+          <div class="analytics-stat-box">
+            <div class="analytics-stat-header">
+              <span class="analytics-stat-title">Total Historique</span>
+              <span class="analytics-stat-icon">🌐</span>
+            </div>
+            <div class="analytics-stat-val">
+              ${(visitorStats.allTime?.visitors || 0).toLocaleString('fr-FR')}
+              <span class="analytics-stat-unit">uniques</span>
+            </div>
+            <div class="analytics-stat-sub">
+              <strong>${(visitorStats.allTime?.views || 0).toLocaleString('fr-FR')}</strong> lectures cumulées
+            </div>
+          </div>
+
+          <div class="analytics-stat-box" style="border-color: rgba(16, 185, 129, 0.4);">
+            <div class="analytics-stat-header">
+              <span class="analytics-stat-title">Présence en Direct</span>
+              <span class="analytics-stat-icon">🟢</span>
+            </div>
+            <div class="analytics-stat-val" style="color: #10b981;">
+              ${onlineCount}
+              <span class="analytics-stat-unit">en ligne (&lt;30m)</span>
+            </div>
+            <div class="analytics-stat-sub">
+              <strong>${todayCount}</strong> membres actifs aujourd'hui
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Graphiques & Répartition (Split) -->
+        <div class="analytics-split-row">
+          <!-- Graphique de tendance 7 jours -->
+          <div class="card analytics-chart-col">
+            <div class="card-header">
+              <div>
+                <h2>📅 Fréquentation Quotidienne (7 derniers jours)</h2>
+                <p style="color: var(--color-muted); font-size: 0.85rem; margin: 0.2rem 0 0 0;">
+                  Comparaison du volume de visiteurs uniques et des pages vues par jour
+                </p>
+              </div>
+            </div>
+
+            ${dailyTrend.length === 0 ? `
+              <div class="empty-state">Données insuffisantes pour tracer la courbe des 7 jours.</div>
+            ` : `
+              <div class="analytics-daily-bars-container">
+                <div class="analytics-daily-bars">
+                  ${dailyTrend.map(d => {
+                    const heightPct = Math.max(12, Math.round(((d.views || 0) / maxDayViews) * 100));
+                    const dateObj = new Date(d.date);
+                    const dayName = dateObj.toLocaleDateString('fr-FR', { weekday: 'short' });
+                    const dayNum = dateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+                    return `
+                      <div class="analytics-bar-item" title="${d.date}: ${d.visitors || 0} visiteurs, ${d.views || 0} pages vues">
+                        <div class="analytics-bar-track">
+                          <div class="analytics-bar-fill" style="height: ${heightPct}%;">
+                            <span class="analytics-bar-tooltip">${d.views || 0} vues<br>${d.visitors || 0} vis.</span>
+                          </div>
+                        </div>
+                        <div class="analytics-bar-label">
+                          <strong>${dayName}</strong>
+                          <span style="font-size:0.75rem;color:var(--color-muted);">${dayNum}</span>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+                <div style="display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; font-size: 0.85rem; color: var(--color-muted);">
+                  <span style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span style="width: 12px; height: 12px; border-radius: 3px; background: var(--color-primary); display: inline-block;"></span>
+                    Pages Vues (hauteur)
+                  </span>
+                  <span style="display: flex; align-items: center; gap: 0.4rem;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                    Visiteurs Uniques (survol)
+                  </span>
+                </div>
+              </div>
+            `}
+          </div>
+
+          <!-- Répartition Pages & Appareils -->
+          <div class="card analytics-pages-col">
+            <div class="card-header">
+              <h2>🧭 Pages Populaires & Supports</h2>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+              <h3 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-muted); margin-bottom: 0.75rem;">
+                Appareils Utilisés
+              </h3>
+              <div class="analytics-devices-badge-row">
+                <div class="analytics-device-pill">
+                  <span class="device-icon">💻</span>
+                  <div class="device-meta">
+                    <span class="device-name">Ordinateurs</span>
+                    <strong class="device-pct">${desktopPct}%</strong>
+                  </div>
+                </div>
+                <div class="analytics-device-pill">
+                  <span class="device-icon">📱</span>
+                  <div class="device-meta">
+                    <span class="device-name">Smartphones</span>
+                    <strong class="device-pct">${mobilePct}%</strong>
+                  </div>
+                </div>
+                <div class="analytics-device-pill">
+                  <span class="device-icon">📟</span>
+                  <div class="device-meta">
+                    <span class="device-name">Tablettes</span>
+                    <strong class="device-pct">${tabletPct}%</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--color-muted); margin-bottom: 0.75rem;">
+                Top Pages Consultées
+              </h3>
+              ${(visitorStats.topPages || []).length === 0 ? `
+                <div class="empty-state" style="padding: 1rem;">Aucune navigation enregistrée récemment.</div>
+              ` : `
+                <div class="analytics-pages-list">
+                  ${(visitorStats.topPages || []).slice(0, 6).map(p => {
+                    const widthPct = Math.max(8, Math.round(((p.views || 0) / maxPageViews) * 100));
+                    return `
+                      <div class="analytics-page-row">
+                        <div class="analytics-page-meta">
+                          <span class="analytics-page-path" title="${escapeHtml(p.path)}">${escapeHtml(p.path)}</span>
+                          <span class="analytics-page-count">${p.views || 0} vues</span>
+                        </div>
+                        <div class="analytics-page-progress-bg">
+                          <div class="analytics-page-progress-bar" style="width: ${widthPct}%;"></div>
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              `}
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Classement des Membres les Plus Présents -->
+        <div class="card" id="analytics-presence-section">
+          <div class="card-header" style="flex-wrap: wrap; gap: 1rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <h2>🏆 Classement d'Assiduité & Présence des Membres</h2>
+                <span class="badge badge-primary" id="presence-count-badge">${presenceUsers.length} membres</span>
+              </div>
+              <p style="color: var(--color-muted); font-size: 0.88rem; margin: 0.25rem 0 0 0;">
+                Calcul dynamique d'engagement basé sur la récence des connexions, l'assiduité sur la plateforme et les contributions au forum.
+              </p>
+            </div>
+          </div>
+
+          <!-- Barre de recherche et filtres de présence -->
+          <div style="display: flex; gap: 1rem; align-items: center; margin: 1rem 0; flex-wrap: wrap; background: var(--color-bg); padding: 0.85rem 1rem; border-radius: var(--radius); border: 1px solid var(--color-border);">
+            <div style="flex: 1; min-width: 240px;">
+              <input type="text" id="analytics-search-input" placeholder="🔍 Rechercher un membre (nom, email)..." style="width: 100%;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <label for="analytics-status-filter" style="font-size: 0.88rem; font-weight: 600; color: var(--color-muted); margin: 0;">
+                Statut :
+              </label>
+              <select id="analytics-status-filter" style="min-width: 180px;">
+                <option value="">Tous les statuts</option>
+                <option value="ONLINE">🟢 En ligne récemment</option>
+                <option value="TODAY">🟡 Actif aujourd'hui</option>
+                <option value="THIS_WEEK">⚪ Cette semaine</option>
+                <option value="OLDER">💤 Inactif (&gt;7j)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tableau complet de présence -->
+          <div class="table-wrapper">
+            <table class="presence-table">
+              <thead>
+                <tr>
+                  <th style="width: 60px; text-align: center;">Rang</th>
+                  <th>Membre</th>
+                  <th>Rôle</th>
+                  <th>Statut de Présence</th>
+                  <th>Dernière Connexion</th>
+                  <th>Score d'Activité</th>
+                  <th>Contributions</th>
+                </tr>
+              </thead>
+              <tbody id="presence-table-tbody">
+                ${renderPresenceRows(presenceUsers)}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     `;
@@ -3967,6 +4542,20 @@
         });
       });
 
+      // Défilement automatique et focus sur la section de présence en direct
+      document.querySelectorAll('[data-dash-action="scroll-presence"]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          const target = document.getElementById('dash-presence-section');
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.style.transition = 'box-shadow 0.3s ease';
+            target.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.4)';
+            setTimeout(() => { target.style.boxShadow = ''; }, 1500);
+          }
+        });
+      });
+
       // Actions Rapides Opérationnelles
       document.getElementById('dash-btn-new-formation')?.addEventListener('click', () => {
         openContentModal('formations');
@@ -4078,6 +4667,41 @@
           }
         });
       });
+    }
+
+    if (module === 'analytics') {
+      const refreshBtn = document.getElementById('analytics-refresh-btn');
+      if (refreshBtn) {
+        refreshBtn.addEventListener('click', () => {
+          showToast('Actualisation des statistiques d\'audience...', 'info');
+          loadPage('analytics', false, true);
+        });
+      }
+
+      const searchInput = document.getElementById('analytics-search-input');
+      const statusFilter = document.getElementById('analytics-status-filter');
+      const tbody = document.getElementById('presence-table-tbody');
+      const countBadge = document.getElementById('presence-count-badge');
+
+      const applyPresenceFilter = () => {
+        if (!tbody) return;
+        const q = (searchInput?.value || '').trim().toLowerCase();
+        const st = statusFilter?.value || '';
+
+        const filtered = analyticsUsersCache.filter(u => {
+          const matchQ = !q || (u.fullName && u.fullName.toLowerCase().includes(q)) || (u.email && u.email.toLowerCase().includes(q));
+          const matchSt = !st || u.presenceStatus === st;
+          return matchQ && matchSt;
+        });
+
+        tbody.innerHTML = renderPresenceRows(filtered);
+        if (countBadge) {
+          countBadge.textContent = `${filtered.length} membre${filtered.length > 1 ? 's' : ''}`;
+        }
+      };
+
+      searchInput?.addEventListener('input', applyPresenceFilter);
+      statusFilter?.addEventListener('change', applyPresenceFilter);
     }
 
     if (module === 'formations' || module === 'jobs' || module === 'metiers') {

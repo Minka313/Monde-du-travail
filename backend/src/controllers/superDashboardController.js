@@ -1,4 +1,5 @@
 const RbacService = require('../services/rbacService');
+const AnalyticsService = require('../services/analyticsService');
 const prisma = require('../config/database');
 
 // Cache mémoire court pour les métriques d'ensemble du dashboard (TTL 25s)
@@ -116,6 +117,8 @@ class SuperDashboardController {
         pendingAdmins,
         pendingApprovals,
         maintenanceSetting,
+        visitorStats,
+        mostActiveUsers,
       ] = await Promise.all([
         prisma.user.count(),
         prisma.user.count({ where: { isActive: true } }),
@@ -142,6 +145,8 @@ class SuperDashboardController {
         prisma.userAdminRole.count({ where: { status: 'PENDING' } }),
         prisma.approvalWorkflow.count({ where: { status: 'PENDING' } }),
         prisma.setting.findUnique({ where: { key: 'platform.maintenanceMode' } }),
+        AnalyticsService.getVisitorStats().catch(() => null),
+        AnalyticsService.getMostActiveUsers(6).catch(() => []),
       ]);
 
       const isMaintenance = maintenanceSetting?.value === 'true';
@@ -166,6 +171,8 @@ class SuperDashboardController {
         pendingAdmins,
         pendingApprovals,
         isMaintenance,
+        visitorStats,
+        mostActiveUsers,
       };
 
       // Génération intégrée des alertes pour éviter un second appel réseau séparé

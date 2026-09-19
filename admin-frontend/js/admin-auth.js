@@ -246,6 +246,10 @@
       getActivities: (limit = 10) => apiRequestWithRefresh(`/super-dashboard/activities?limit=${limit}`),
       getAlerts: () => apiRequestWithRefresh('/super-dashboard/alerts'),
     },
+    analytics: {
+      getVisitors: () => apiRequestWithRefresh('/analytics/visitors'),
+      getPresence: (limit = 25) => apiRequestWithRefresh(`/analytics/presence?limit=${limit}`),
+    },
     admin: {
       getStats: () => apiRequestWithRefresh('/admin/stats'),
       getPendingMemberships: () => apiRequestWithRefresh('/admin/memberships/pending'),

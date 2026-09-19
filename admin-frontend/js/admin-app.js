@@ -16,6 +16,7 @@
     approvals: 'approvals.read',
     logs: 'logs.read',
     notifications: 'admin.global',
+    analytics: 'admin.global',
     settings: 'settings.manage',
   };
 
