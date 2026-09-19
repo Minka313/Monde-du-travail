@@ -15,6 +15,7 @@
 <body>
 <a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
 
+<div id="readingProgressBar" class="reading-progress-bar"></div>
 <header data-layout="header" class="site-header">
     <div class="header-inner">
         <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
@@ -22,7 +23,9 @@
             <span class="site-title">Le Monde du Travail</span>
         </a>
         <div class="header-actions">
-            <a href="login.html" class="btn-cta">Se connecter</a>
+            <div class="header-auth-slot" id="headerAuthSlot">
+                <a href="login.html" class="btn-cta" id="headerAuthBtn">Se connecter</a>
+            </div>
             <button class="hamburger" aria-label="Menu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
@@ -49,8 +52,8 @@
                 <a href="forum.html">Forum</a>
                 <a href="blog.html" aria-current="page">Blog</a>
             </div>
-            <div class="mobile-nav-footer">
-                <a href="login.html" class="btn-mobile-cta">Se connecter / Espace Membre</a>
+            <div class="mobile-nav-footer" id="mobileNavFooter">
+                <a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
             </div>
         </div>
     </div>
@@ -159,6 +162,17 @@
           return `<div class="blog-gallery">${images}</div>`;
         }
 
+        function formatBodyText(content) {
+          if (!content) return '';
+          if (/<[a-z][\s\S]*>/i.test(content)) {
+            return content;
+          }
+          return content
+            .split(/\n\s*\n/)
+            .map(p => `<p>${escapeHtml(p.trim()).replace(/\n/g, '<br>')}</p>`)
+            .join('');
+        }
+
         async function loadPost() {
           try {
             const params = new URLSearchParams(window.location.search);
@@ -187,6 +201,8 @@
             const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
             const categoryLabel = categoryLabels[post.category] || post.category;
             const categoryIcon = categoryIcons[post.category] || '📄';
+            const wordCount = (post.content || '').trim().split(/\s+/).length;
+            const readingMinutes = Math.max(1, Math.ceil(wordCount / 200));
 
             document.title = `${post.title} - Le Monde du Travail`;
 
@@ -198,6 +214,7 @@
                   <div class="blog-meta">
                     <span>✍️ ${escapeHtml(post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu')}</span>
                     <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
+                    <span class="blog-reading-time">⏱️ ${readingMinutes} min de lecture</span>
                   </div>
                 </header>
                 <div class="blog-post-image">
@@ -205,11 +222,60 @@
                 </div>
                 <div class="blog-post-content">
                   ${post.excerpt ? `<p class="blog-post-excerpt">${escapeHtml(post.excerpt)}</p>` : ''}
-                  <div class="blog-post-body">${escapeHtml(post.content)}</div>
+                  <div class="blog-post-body">${formatBodyText(post.content)}</div>
                 </div>
                 ${renderGallery(post.gallery)}
+
+                <!-- Social Share Bar -->
+                <div class="blog-share-section">
+                  <span class="blog-share-title">📤 Partager cet article</span>
+                  <div class="blog-share-buttons">
+                    <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(post.title + ' - ' + window.location.href)}" target="_blank" rel="noopener noreferrer" class="share-btn share-btn-wa">
+                      <span>💬</span> WhatsApp
+                    </a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener noreferrer" class="share-btn share-btn-in">
+                      <span>💼</span> LinkedIn
+                    </a>
+                    <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener noreferrer" class="share-btn share-btn-x">
+                      <span>🐦</span> X / Twitter
+                    </a>
+                    <button type="button" class="share-btn share-btn-copy" id="btnCopyShareLink">
+                      <span>🔗</span> Copier le lien
+                    </button>
+                  </div>
+                </div>
+                <div id="shareToast" class="share-toast">Lien copié dans le presse-papier !</div>
               </article>
             `;
+
+            // Scroll reading progress indicator
+            const progressBar = document.getElementById('readingProgressBar');
+            if (progressBar) {
+              window.addEventListener('scroll', () => {
+                const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                if (docHeight > 0) {
+                  const scrolled = (window.scrollY / docHeight) * 100;
+                  progressBar.style.width = Math.min(100, Math.max(0, scrolled)) + '%';
+                }
+              }, { passive: true });
+            }
+
+            // Copy link button
+            const btnCopy = document.getElementById('btnCopyShareLink');
+            const toast = document.getElementById('shareToast');
+            if (btnCopy && toast) {
+              btnCopy.addEventListener('click', async () => {
+                try {
+                  await navigator.clipboard.writeText(window.location.href);
+                  toast.classList.add('show');
+                  setTimeout(() => { toast.classList.remove('show'); }, 3000);
+                } catch (_) {
+                  toast.textContent = 'Erreur lors de la copie';
+                  toast.classList.add('show');
+                  setTimeout(() => { toast.classList.remove('show'); }, 3000);
+                }
+              });
+            }
 
             const relatedResponse = await window.Api.blog.getRelated(post.id, 3);
             const related = relatedResponse.data || [];
