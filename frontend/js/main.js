@@ -393,11 +393,14 @@
 
   // ===== Immersive Page Transitions & View Transitions API =====
   function initPageTransitions() {
-    // 1. Marquer la page comme chargée
-    document.body.classList.remove('page-is-exiting', 'page-is-entering');
-    document.body.classList.add('page-loaded');
+    // 1. Marquer le contenu principal comme chargé avec fluidité
+    const mainContent = document.getElementById('main-content') || document.querySelector('main');
+    if (mainContent) {
+      mainContent.classList.remove('content-is-exiting', 'content-is-entering');
+      mainContent.classList.add('content-loaded');
+    }
 
-    // 2. Assurer la présence de la barre de progression en tête d'écran
+    // 2. Assurer la présence de la barre de progression ambrée et discrète
     let progressBar = document.getElementById('pageTransitionProgress');
     if (!progressBar) {
       progressBar = document.createElement('div');
@@ -405,50 +408,81 @@
       document.body.prepend(progressBar);
     }
 
+    let progressTimer = null;
     function startProgress() {
       if (!progressBar) return;
+      if (progressTimer) clearInterval(progressTimer);
       progressBar.classList.add('active');
-      progressBar.style.width = '35%';
-      setTimeout(() => {
-        if (progressBar && progressBar.classList.contains('active')) {
-          progressBar.style.width = '75%';
+      progressBar.style.width = '30%';
+      let current = 30;
+      progressTimer = setInterval(() => {
+        if (current < 85) {
+          current += Math.random() * 6 + 2;
+          progressBar.style.width = `${Math.min(current, 86)}%`;
         }
-      }, 80);
-      setTimeout(() => {
-        if (progressBar && progressBar.classList.contains('active')) {
-          progressBar.style.width = '92%';
-        }
-      }, 200);
+      }, 100);
     }
 
     function resetProgress() {
       if (!progressBar) return;
+      if (progressTimer) {
+        clearInterval(progressTimer);
+        progressTimer = null;
+      }
       progressBar.style.width = '100%';
       setTimeout(() => {
         progressBar.classList.remove('active');
-        progressBar.style.width = '0%';
-      }, 150);
+        setTimeout(() => {
+          progressBar.style.width = '0%';
+        }, 220);
+      }, 160);
     }
 
-    // 3. Intercepter les clics sur les liens internes
+    // 3. Préchargement intelligent au survol / touch (Hover & Touch Preload)
+    const prefetchedUrls = new Set();
+    function prefetchUrl(url) {
+      if (!url || prefetchedUrls.has(url)) return;
+      try {
+        const targetUrl = new URL(url, window.location.href);
+        if (targetUrl.origin !== window.location.origin) return;
+        if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search) return;
+        prefetchedUrls.add(targetUrl.href);
+        const link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.href = targetUrl.href;
+        link.as = 'document';
+        document.head.appendChild(link);
+      } catch (_) {}
+    }
+
+    document.addEventListener('mouseover', (e) => {
+      const a = e.target.closest('a[href]');
+      if (a && a.origin === window.location.origin) {
+        prefetchUrl(a.href);
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchstart', (e) => {
+      const a = e.target.closest('a[href]');
+      if (a && a.origin === window.location.origin) {
+        prefetchUrl(a.href);
+      }
+    }, { passive: true });
+
+    // 4. Intercepter les clics sur les liens internes avec discernement
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a[href]');
       if (!link) return;
 
-      // Garde-fous : pas d'interception pour les touches modificatrices
+      // Garde-fous : touches modificatrices, target blank, pas de transition
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-      // Liens externes ou attribut target="_blank"
       if (link.target === '_blank') return;
-      // Liens désactivés ou no-transition
       if (link.getAttribute('data-no-transition') !== null) return;
 
       const rawHref = link.getAttribute('href');
       if (!rawHref || rawHref.startsWith('javascript:') || rawHref.startsWith('mailto:') || rawHref.startsWith('tel:')) return;
-
-      // Ancre sur la page courante (#main-content, etc.)
       if (rawHref.startsWith('#')) return;
 
-      // Résolution de l'URL cible
       let targetUrl;
       try {
         targetUrl = new URL(link.href, window.location.href);
@@ -456,47 +490,49 @@
         return;
       }
 
-      // Vérifier si même origine
       if (targetUrl.origin !== window.location.origin) return;
-
-      // Même page avec ancre uniquement
       if (targetUrl.pathname === window.location.pathname && targetUrl.search === window.location.search && targetUrl.hash) return;
-
-      // Même URL exacte
       if (targetUrl.href === window.location.href) return;
 
-      e.preventDefault();
       startProgress();
 
-      // Utilisation du View Transitions API moderne si disponible
-      if (document.startViewTransition && typeof document.startViewTransition === 'function') {
-        document.startViewTransition(() => {
-          window.location.href = targetUrl.href;
-        });
-      } else {
-        // Fallback CSS/JS fluide
-        document.body.classList.add('page-is-exiting');
-        setTimeout(() => {
-          window.location.href = targetUrl.href;
-        }, 180);
+      // Vérification du support natif Cross-Document View Transitions (Chromium 126+)
+      // Si supporté, laisser la navigation standard du navigateur opérer pour animer nativement à 60 FPS
+      const supportsNativeCrossDoc = ('navigation' in window) && (typeof CSS !== 'undefined' && CSS.supports && CSS.supports('view-transition-name', 'root'));
+      if (supportsNativeCrossDoc) {
+        return;
       }
+
+      // Fallback gracieux pour les autres navigateurs (Safari, Firefox)
+      // Animation douce exclusivement sur #main-content pour maintenir le header fixe
+      e.preventDefault();
+      const content = document.getElementById('main-content') || document.querySelector('main');
+      if (content) {
+        content.classList.add('content-is-exiting');
+      }
+      setTimeout(() => {
+        window.location.href = targetUrl.href;
+      }, 220);
     });
 
-    // 4. Gestion du bouton Retour / Suivant (Back-Forward Cache - bfcache)
+    // 5. Gestion optimale de l'historique et du bouton Retour (Back-Forward Cache)
     window.addEventListener('pageshow', () => {
-      document.body.classList.remove('page-is-exiting', 'page-is-entering');
-      document.body.classList.add('page-loaded');
+      const content = document.getElementById('main-content') || document.querySelector('main');
+      if (content) {
+        content.classList.remove('content-is-exiting', 'content-is-entering');
+        content.classList.add('content-loaded');
+      }
       resetProgress();
     });
   }
 
-  // ===== Scroll Reveal & Dynamic Cascade Engine =====
+  // ===== Scroll Reveal & Dynamic Cascade Engine (Zéro FOUC) =====
   let revealObserver = null;
   function initScrollReveal() {
     // Si l'utilisateur préfère réduire les animations
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       document.querySelectorAll('.reveal, [data-reveal]').forEach(el => {
-        el.classList.add('is-revealed');
+        el.classList.add('is-revealed', 'revealed');
       });
       return;
     }
@@ -507,19 +543,18 @@
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const el = entry.target;
-            el.classList.add('is-revealed');
-            el.classList.add('revealed');
+            el.classList.add('is-revealed', 'revealed');
             observer.unobserve(el);
           }
         });
       }, {
         root: null,
-        rootMargin: '0px 0px -40px 0px',
-        threshold: 0.1
+        rootMargin: '0px 0px -30px 0px',
+        threshold: 0.08
       });
     }
 
-    // 2. Balayer automatiquement les grilles pour attribuer un ordre en cascade
+    // 2. Balayer automatiquement les grilles pour attribuer un ordre en cascade fluide
     const gridContainers = document.querySelectorAll('.cards-grid, .impact-grid, .features-grid, .jobs-grid, .formations-grid');
     gridContainers.forEach(container => {
       const items = Array.from(container.children).filter(el => el.nodeType === 1);
@@ -528,13 +563,10 @@
           child.style.setProperty('--stagger-idx', idx % 6);
         }
         child.classList.add('stagger-item');
-        if (!child.classList.contains('reveal')) {
-          child.classList.add('reveal');
-        }
       });
     });
 
-    // 3. Éléments cibles à observer
+    // 3. Éléments cibles : afficher immédiatement ceux au-dessus de la ligne de flottaison
     const targets = document.querySelectorAll(`
       .reveal:not(.is-revealed),
       [data-reveal]:not(.is-revealed),
@@ -548,7 +580,14 @@
       .impact-item:not(.is-revealed)
     `);
 
+    const vh = window.innerHeight || document.documentElement.clientHeight;
     targets.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      // Si l'élément est déjà visible dans l'écran ou au-dessus, ne pas le masquer (évite le FOUC)
+      if (rect.top < vh * 0.92 && rect.bottom > 0) {
+        el.classList.add('is-revealed', 'revealed');
+        return;
+      }
       if (!el.classList.contains('reveal')) {
         el.classList.add('reveal');
       }
