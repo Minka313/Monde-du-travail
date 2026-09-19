@@ -57,10 +57,11 @@
 </nav>
 
     <main id="main-content">
-        <section class="hero hero-visual hero-auth">
+        <section class="hero hero-visual hero-auth hero-scene scene" data-scene="auth-hero">
             <img src="https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1000&auto=format&fit=crop&q=75" alt="Connexion espace membre" fetchpriority="high">
+            <div class="hero-aurora" aria-hidden="true"></div>
             <div class="hero-inner">
-                <div class="hero-content">
+                <div class="hero-content reveal-up">
                     <span class="hero-label">Espace Membre</span>
                     <h1>Bienvenue</h1>
                     <p>Rejoignez une communauté dynamique de jeunes qui se préparent au monde professionnel.</p>
@@ -68,10 +69,12 @@
             </div>
         </section>
 
-        <section class="section">
+        <div class="scene-divider" aria-hidden="true"></div>
+
+        <section class="section scene" data-scene="auth-form">
             <div class="container">
                 <!-- Sélecteur d'onglets segmenté pour mobile (Connexion / Demande d'adhésion) -->
-                <div class="auth-tabs-mobile" id="authTabsMobile" role="tablist" aria-label="Choisir le mode d'accès">
+                <div class="auth-tabs-mobile reveal-up" id="authTabsMobile" role="tablist" aria-label="Choisir le mode d'accès">
                     <button type="button" class="auth-tab-btn active" id="tabBtnLogin" role="tab" aria-selected="true" aria-controls="loginBox">
                         <span class="tab-icon">🔑</span> Connexion
                     </button>
@@ -80,7 +83,7 @@
                     </button>
                 </div>
 
-                <div class="login-container mode-login" id="loginContainer">
+                <div class="login-container mode-login reveal-scale" id="loginContainer">
                     <div class="login-box" id="loginBox" role="tabpanel" aria-labelledby="tabBtnLogin">
                         <h2>Connexion</h2>
                         <form id="loginForm" novalidate>

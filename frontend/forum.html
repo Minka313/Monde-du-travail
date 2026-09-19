@@ -66,8 +66,9 @@
 </nav>
 
     <main id="main-content">
-        <section class="forum-hero">
-            <div class="container">
+        <section class="forum-hero hero-scene scene" data-scene="forum-hero">
+            <div class="hero-aurora" aria-hidden="true"></div>
+            <div class="container reveal-up">
                 <span class="section-label">Communauté</span>
                 <h1>Forum du Club</h1>
                 <p>Posez vos questions, partagez vos expériences et échangez avec la communauté autour de l’orientation, des métiers et des formations.</p>
@@ -75,9 +76,11 @@
             </div>
         </section>
 
-        <section class="section">
+        <div class="scene-divider" aria-hidden="true"></div>
+
+        <section class="section scene" data-scene="forum-content">
             <div class="container">
-                <div class="forum-toolbar">
+                <div class="forum-toolbar reveal-up">
                     <div class="forum-search">
                         <span class="forum-search-icon">🔍</span>
                         <input type="search" id="forumSearch" placeholder="Rechercher un sujet, un mot-clé ou une catégorie..." aria-label="Rechercher dans le forum">

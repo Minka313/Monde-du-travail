@@ -280,12 +280,12 @@
     if (!dom.familiesGridContainer) return;
     const families = window.OrientationData.getFamilies();
 
-    dom.familiesGridContainer.innerHTML = families.map(family => {
+    dom.familiesGridContainer.innerHTML = families.map((family, idx) => {
       const sampleJobs = (family.representativeJobs || []).slice(0, 3);
       const img = safeUrl(family.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80');
 
       return `
-        <article class="family-card" data-family-id="${escapeHtml(family.id)}" style="--family-accent: ${escapeHtml(family.color || '#3b82f6')};">
+        <article class="family-card stagger-item reveal-scale" data-family-id="${escapeHtml(family.id)}" style="--family-accent: ${escapeHtml(family.color || '#3b82f6')}; --stagger-idx: ${idx % 8};">
           <div class="family-card-media">
             <img src="${escapeHtml(img)}" alt="${escapeHtml(family.name)}" loading="lazy">
             <div class="family-card-media-overlay"></div>
@@ -431,13 +431,13 @@
   function renderJobCardsList(jobs) {
     if (!dom.jobsGridContainer) return;
 
-    dom.jobsGridContainer.innerHTML = jobs.map(job => {
+    dom.jobsGridContainer.innerHTML = jobs.map((job, idx) => {
       const img = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80');
       const techSkills = job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.slice(0, 3) : [];
       const totalSkillsCount = (job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.length : 0);
 
       return `
-        <article class="card job-card-modern" data-job-slug="${escapeHtml(job.slug || job.id)}">
+        <article class="card job-card-modern stagger-item reveal-scale" data-job-slug="${escapeHtml(job.slug || job.id)}" style="--stagger-idx: ${idx % 8};">
           <div class="job-card-media-wrap">
             <img src="${escapeHtml(img)}" alt="${escapeHtml(job.title)}" loading="lazy">
             <div class="job-card-overlay"></div>
@@ -1090,9 +1090,12 @@
     `;
 
     document.body.appendChild(overlay);
+    document.body.classList.add('modal-open');
 
-    // Animation d'ouverture fluide
-    setTimeout(() => overlay.classList.add('active'), 15);
+    // Animation d'ouverture fluide étagée
+    requestAnimationFrame(() => {
+      overlay.classList.add('active');
+    });
 
     // 1. Initialisation du tracking analytique d'impact
     if (window.AnalyticsTracker) {
@@ -1264,7 +1267,8 @@
     // Fermeture de la modal
     const closeModal = () => {
       overlay.classList.remove('active');
-      setTimeout(() => overlay.remove(), 250);
+      document.body.classList.remove('modal-open');
+      setTimeout(() => overlay.remove(), 320);
     };
 
     const closeX = overlay.querySelector('#dossierCloseX');

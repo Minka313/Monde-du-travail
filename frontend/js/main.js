@@ -537,7 +537,12 @@
   function initScrollReveal() {
     // Si l'utilisateur préfère réduire les animations
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      document.querySelectorAll('.reveal, [data-reveal]').forEach(el => {
+      document.querySelectorAll(`
+        .reveal, [data-reveal], .reveal-up, .reveal-scale, .reveal-fade,
+        .reveal-left, .reveal-right, .reveal-mask, .card, .job-card,
+        .family-card, .formation-card, .article-card, .impact-item,
+        .feature-card, .home-topic-card, .testimonial-card, .objective-dna-card
+      `).forEach(el => {
         el.classList.add('is-revealed', 'revealed');
       });
       return;
@@ -555,18 +560,23 @@
         });
       }, {
         root: null,
-        rootMargin: '0px 0px -30px 0px',
+        rootMargin: '0px 0px -40px 0px',
         threshold: 0.08
       });
     }
 
     // 2. Balayer automatiquement les grilles pour attribuer un ordre en cascade fluide
-    const gridContainers = document.querySelectorAll('.cards-grid, .impact-grid, .features-grid, .jobs-grid, .formations-grid');
+    const gridContainers = document.querySelectorAll(`
+      .cards-grid, .impact-grid, .features-grid, .jobs-grid,
+      .formations-grid, .families-cards-grid, .testimonials-grid,
+      .home-topics-grid, .objectives-dna-grid, .stagger-group,
+      .formation-features-grid, .editorial-duo-grid
+    `);
     gridContainers.forEach(container => {
       const items = Array.from(container.children).filter(el => el.nodeType === 1);
       items.forEach((child, idx) => {
         if (!child.style.getPropertyValue('--stagger-idx')) {
-          child.style.setProperty('--stagger-idx', idx % 6);
+          child.style.setProperty('--stagger-idx', idx % 8);
         }
         child.classList.add('stagger-item');
       });
@@ -576,11 +586,22 @@
     const targets = document.querySelectorAll(`
       .reveal:not(.is-revealed),
       [data-reveal]:not(.is-revealed),
+      .reveal-up:not(.is-revealed),
+      .reveal-scale:not(.is-revealed),
+      .reveal-fade:not(.is-revealed),
+      .reveal-left:not(.is-revealed),
+      .reveal-right:not(.is-revealed),
+      .reveal-mask:not(.is-revealed),
       .card:not(.is-revealed),
       .job-card:not(.is-revealed),
+      .family-card:not(.is-revealed),
       .formation-card:not(.is-revealed),
       .article-card:not(.is-revealed),
-      .impact-item:not(.is-revealed)
+      .impact-item:not(.is-revealed),
+      .feature-card:not(.is-revealed),
+      .home-topic-card:not(.is-revealed),
+      .testimonial-card:not(.is-revealed),
+      .objective-dna-card:not(.is-revealed)
     `);
 
     const vh = window.innerHeight || document.documentElement.clientHeight;
@@ -591,11 +612,55 @@
         el.classList.add('is-revealed', 'revealed');
         return;
       }
-      if (!el.classList.contains('reveal')) {
+      if (!el.classList.contains('reveal') && !el.classList.contains('reveal-up') && !el.classList.contains('reveal-scale') && !el.classList.contains('reveal-fade') && !el.classList.contains('reveal-mask')) {
         el.classList.add('reveal');
       }
       revealObserver.observe(el);
     });
+  }
+
+  // ===== Subtle Hero Depth & Cursor Parallax (Desktop Only) =====
+  function initHeroDepthParallax() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
+
+    let ticking = false;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      mouseX = ((e.clientX - centerX) / centerX) * 14;
+      mouseY = ((e.clientY - centerY) / centerY) * 10;
+
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          hero.style.setProperty('--mouse-shift-x', `${mouseX.toFixed(2)}px`);
+          hero.style.setProperty('--mouse-shift-y', `${mouseY.toFixed(2)}px`);
+          ticking = false;
+        });
+      }
+    }, { passive: true });
+
+    let scrollTicking = false;
+    window.addEventListener('scroll', () => {
+      if (!scrollTicking) {
+        scrollTicking = true;
+        requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          if (scrollY < window.innerHeight * 1.2) {
+            const parallaxY = scrollY * 0.28;
+            hero.style.setProperty('--parallax-y', `${parallaxY.toFixed(1)}px`);
+          }
+          scrollTicking = false;
+        });
+      }
+    }, { passive: true });
   }
 
   // ===== Card Spotlight & Cursor Tracking (Desktop) =====
@@ -609,7 +674,11 @@
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        const card = e.target.closest('.card, .formation-card, .article-card, .job-card, .impact-item');
+        const card = e.target.closest(`
+          .card, .formation-card, .article-card, .job-card,
+          .impact-item, .feature-card, .home-topic-card,
+          .testimonial-card, .family-card, .objective-dna-card
+        `);
         if (card) {
           const rect = card.getBoundingClientRect();
           const x = e.clientX - rect.left;
@@ -1136,6 +1205,7 @@
     initScrollProgressBar();
     initHeaderScrollEffect();
     initScrollReveal();
+    initHeroDepthParallax();
     initCardSpotlight();
     initMobileMenuEnhancements();
     initCounters();
@@ -1158,6 +1228,7 @@
     initHomeDynamicSections();
     initMobileMenuEnhancements();
     initScrollReveal();
+    initHeroDepthParallax();
   });
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', safeInit);
