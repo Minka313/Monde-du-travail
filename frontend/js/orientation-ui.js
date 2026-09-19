@@ -397,8 +397,9 @@
           <p style="color:#64748b;max-width:550px;margin:0 auto 1.25rem auto;font-size:0.92rem;line-height:1.6;">
             Nos mentors et professionnels partenaires enrichissent continuellement les fiches métiers. Tu peux explorer l'ensemble des métiers de la famille ou consulter les ressources d'orientation.
           </p>
-          <button type="button" class="btn btn-outline btn-sm" id="btnShowAllFamilyJobs">
-            Voir tous les métiers de cette famille
+          <button type="button" class="btn btn-outline-dark btn-sm" id="btnShowAllFamilyJobs" style="background:#ffffff;color:#0284c7;border:1.5px solid #0284c7;font-weight:650;padding:0.6rem 1.25rem;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;">
+            <span>Voir tous les métiers de cette famille</span>
+            <span>&rarr;</span>
           </button>
         </div>
       `;
