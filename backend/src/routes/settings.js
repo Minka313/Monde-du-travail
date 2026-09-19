@@ -8,14 +8,19 @@ const settingsService = require('../services/settingsService');
 const validate = require('../middleware/validate');
 const { z } = require('zod');
 
+// Augmentation de la limite à 25000 caractères pour permettre le stockage de JSON riches (vitrine, timeline)
 const settingUpdateSchema = z.object({
   body: z.object({
-    value: z.string().max(2000),
+    value: z.string().max(25000),
   }),
 });
 
+// ===== ROUTES PUBLIQUES (NON AUTHENTIFIÉES POUR LE FRONTEND) =====
+router.get('/public', settingsController.getPublicSettings);
+router.get('/public/:key', settingsController.getPublicSettingByKey);
+
+// ===== ROUTES ADMINISTRATEUR PROTÉGÉES =====
 // Ré-authentification obligatoire pour les paramètres sensibles
-// (mode maintenance, sécurité) — action critique du cahier des charges.
 const requireSensitiveReauth = async (req, res, next) => {
   try {
     const setting = await settingsService.getSetting(req.params.key);

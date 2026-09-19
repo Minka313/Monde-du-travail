@@ -17,6 +17,7 @@
     approvals: 'approvals.read',
     logs: 'logs.read',
     notifications: null,
+    vitrine: null,
     settings: 'settings.manage',
   };
 
@@ -40,7 +41,7 @@
 
     getAuthorizedModules: function(user) {
       return Object.keys(MODULE_PERMISSIONS).filter(module => {
-        if (['dashboard', 'analytics', 'notifications', 'organization'].includes(module)) {
+        if (['dashboard', 'analytics', 'notifications', 'organization', 'vitrine'].includes(module)) {
           return this.isAdminUser(user);
         }
         if (module === 'approvals') {

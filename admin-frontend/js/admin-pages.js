@@ -3,6 +3,7 @@
 
   const ADMIN_MODULES = {
     dashboard: { label: 'Tableau de bord', icon: '📊' },
+    vitrine: { label: 'Vitrine & Éditorial', icon: '🎨' },
     analytics: { label: 'Audience & Présence', icon: '📈' },
     organization: { label: 'Organisation & Fonctionnement', icon: '🏛️' },
     notifications: { label: 'Notifications Push', icon: '🔔' },
@@ -80,11 +81,223 @@
     });
   }
 
+  // ===== GESTION DU THÈME SOMBRE (DARK MODE) =====
+  function initAdminTheme() {
+    const savedTheme = localStorage.getItem('lmt_admin_theme') || 'light';
+    document.body.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+
+    const toggleBtn = document.getElementById('admin-theme-toggle');
+    if (toggleBtn && !toggleBtn.dataset.bound) {
+      toggleBtn.dataset.bound = 'true';
+      toggleBtn.addEventListener('click', () => {
+        const current = document.body.getAttribute('data-theme') || 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', next);
+        localStorage.setItem('lmt_admin_theme', next);
+        updateThemeIcon(next);
+        showToast(next === 'dark' ? 'Mode sombre activé' : 'Mode clair activé', 'info');
+      });
+    }
+  }
+
+  function updateThemeIcon(theme) {
+    const icon = document.getElementById('theme-toggle-icon');
+    if (icon) {
+      icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+  }
+
+  // ===== COMMAND PALETTE (CTRL + K / CMD + K) =====
+  let cmdPaletteBound = false;
+  function initCommandPalette() {
+    if (cmdPaletteBound) return;
+    cmdPaletteBound = true;
+
+    const openPalette = () => {
+      let overlay = document.getElementById('admin-cmd-palette');
+      if (overlay) {
+        overlay.remove();
+        return;
+      }
+
+      overlay = document.createElement('div');
+      overlay.id = 'admin-cmd-palette';
+      overlay.className = 'cmd-palette-backdrop';
+      overlay.innerHTML = `
+        <div class="cmd-palette-modal">
+          <input type="text" class="cmd-search-input" id="cmd-search" placeholder="Rechercher un module, une action rapide... (Échap pour quitter)" autofocus>
+          <div class="cmd-results" id="cmd-results"></div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+
+      const input = overlay.querySelector('#cmd-search');
+      const results = overlay.querySelector('#cmd-results');
+
+      const actions = [
+        { label: 'Tableau de bord', icon: '📊', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('dashboard') },
+        { label: 'Vitrine & Éditorial (À la Une / Jalons)', icon: '🎨', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('vitrine') },
+        { label: 'Métiers & Fiches', icon: '💼', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('metiers') },
+        { label: 'Créer une nouvelle fiche Métier', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('metiers'); setTimeout(() => openContentFormModal('jobs'), 300); } },
+        { label: 'Formations & Programmes', icon: '📚', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('formations') },
+        { label: 'Créer une nouvelle Formation', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('formations'); setTimeout(() => openContentFormModal('formations'), 300); } },
+        { label: 'Blog & Articles', icon: '📝', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('blog') },
+        { label: 'Rédiger un article de blog', icon: '✍️', shortcut: 'Action', action: () => { window.AdminRouter.navigate('blog'); setTimeout(() => openBlogPostModal(), 300); } },
+        { label: 'Approbations & Validations', icon: '✅', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('approvals') },
+        { label: 'Audience & Présence des membres', icon: '📈', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('analytics') },
+        { label: 'Gestion des Utilisateurs', icon: '👥', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('users') },
+        { label: 'Organisation & Bureau', icon: '🏛️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('organization') },
+        { label: 'Notifications Push', icon: '🔔', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('notifications') },
+        { label: 'Journal d\'activité (Logs)', icon: '📋', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('logs') },
+        { label: 'Paramètres système & 2FA', icon: '⚙️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('settings') },
+        { label: 'Basculer Mode Sombre / Clair', icon: '🌓', shortcut: 'Thème', action: () => document.getElementById('admin-theme-toggle')?.click() },
+        { label: 'Voir le site public', icon: '🌐', shortcut: 'Lien', action: () => window.open('../frontend/index.html', '_blank') },
+        { label: 'Déconnexion', icon: '🚪', shortcut: 'Compte', action: () => window.AdminApp?.logout() },
+      ];
+
+      const renderResults = (query = '') => {
+        const q = query.toLowerCase().trim();
+        const filtered = actions.filter(a => !q || a.label.toLowerCase().includes(q));
+        if (filtered.length === 0) {
+          results.innerHTML = '<div style="padding:1rem;color:var(--color-muted);text-align:center;">Aucun résultat trouvé</div>';
+          return;
+        }
+        results.innerHTML = filtered.map((item, idx) => `
+          <div class="cmd-item ${idx === 0 ? 'selected' : ''}" data-idx="${idx}">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <span style="font-size:1.15rem;">${item.icon}</span>
+              <span style="font-weight:500;">${escapeHtml(item.label)}</span>
+            </div>
+            <span class="cmd-item-shortcut">${item.shortcut}</span>
+          </div>
+        `).join('');
+
+        results.querySelectorAll('.cmd-item').forEach(el => {
+          el.addEventListener('click', () => {
+            const idx = parseInt(el.getAttribute('data-idx'), 10);
+            overlay.remove();
+            filtered[idx]?.action();
+          });
+        });
+      };
+
+      renderResults();
+      input.focus();
+
+      input.addEventListener('input', () => renderResults(input.value));
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          overlay.remove();
+        } else if (e.key === 'Enter') {
+          const first = results.querySelector('.cmd-item');
+          if (first) first.click();
+        }
+      });
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        openPalette();
+      }
+    });
+
+    document.getElementById('admin-cmd-palette-btn')?.addEventListener('click', openPalette);
+  }
+
+  // ===== BADGES SIDEBAR =====
+  let sidebarBadges = { approvals: 0, users: 0 };
+  let badgesFetched = false;
+
+  async function fetchSidebarBadges() {
+    try {
+      const [approvalsRes, membershipsRes] = await Promise.allSettled([
+        window.AdminApi.approvals ? window.AdminApi.approvals.getPending() : Promise.resolve({ data: [] }),
+        window.AdminApi.admin ? window.AdminApi.admin.getPendingMemberships() : Promise.resolve({ data: [] }),
+      ]);
+      const pendingApps = (approvalsRes.status === 'fulfilled' && Array.isArray(approvalsRes.value?.data)) ? approvalsRes.value.data.length : 0;
+      const pendingMems = (membershipsRes.status === 'fulfilled' && Array.isArray(membershipsRes.value?.data)) ? membershipsRes.value.data.length : 0;
+
+      sidebarBadges.approvals = pendingApps + pendingMems;
+      sidebarBadges.users = pendingMems;
+      badgesFetched = true;
+      updateSidebarBadgesDOM();
+    } catch (_) {}
+  }
+
+  function updateSidebarBadgesDOM() {
+    const nav = document.getElementById('admin-nav');
+    if (!nav) return;
+    const approvalBtn = nav.querySelector('[data-module="approvals"]');
+    if (approvalBtn) {
+      let badge = approvalBtn.querySelector('.nav-badge');
+      if (sidebarBadges.approvals > 0) {
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'nav-badge';
+          approvalBtn.appendChild(badge);
+        }
+        badge.textContent = sidebarBadges.approvals;
+      } else if (badge) {
+        badge.remove();
+      }
+    }
+
+    const usersBtn = nav.querySelector('[data-module="users"]');
+    if (usersBtn) {
+      let badge = usersBtn.querySelector('.nav-badge');
+      if (sidebarBadges.users > 0) {
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'nav-badge badge-blue';
+          usersBtn.appendChild(badge);
+        }
+        badge.textContent = sidebarBadges.users;
+      } else if (badge) {
+        badge.remove();
+      }
+    }
+  }
+
+  // ===== EXPORT CSV GÉNÉRIQUE =====
+  function exportTableToCsv(filename, headers, rows) {
+    const escapeCsv = (str) => {
+      const val = str == null ? '' : String(str).replace(/"/g, '""');
+      return `"${val}"`;
+    };
+
+    let csvContent = '\uFEFF'; // BOM pour UTF-8 Excel
+    csvContent += headers.map(escapeCsv).join(';') + '\r\n';
+
+    rows.forEach(row => {
+      csvContent += row.map(escapeCsv).join(';') + '\r\n';
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${filename}_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast(`Export CSV téléchargé : ${filename}`, 'success');
+  }
+
   function buildSidebar(currentModule, authorizedModules) {
     const nav = document.getElementById('admin-nav');
     if (!nav) return;
 
     initMobileAdminSidebar();
+    initAdminTheme();
+    initCommandPalette();
 
     nav.innerHTML = '';
 
@@ -93,13 +306,19 @@
 
       const btn = document.createElement('button');
       btn.className = 'nav-item' + (key === currentModule ? ' active' : '');
-      btn.innerHTML = `<span>${mod.icon}</span> ${mod.label}`;
+      btn.setAttribute('data-module', key);
+      btn.innerHTML = `<span>${mod.icon}</span> <span>${mod.label}</span>`;
       btn.addEventListener('click', () => {
         closeMobileSidebar();
         window.AdminRouter.navigate(key);
       });
       nav.appendChild(btn);
     });
+
+    updateSidebarBadgesDOM();
+    if (!badgesFetched) {
+      fetchSidebarBadges();
+    }
   }
 
   // ===== OPTIMISATIONS HAUTE PERFORMANCE & UX RÉACTIVE =====
@@ -248,6 +467,9 @@
           break;
         case 'settings':
           html = await loadSettings();
+          break;
+        case 'vitrine':
+          html = await loadVitrine();
           break;
         default:
           html = '<div class="empty-state">Module en cours de développement</div>';
@@ -1314,7 +1536,10 @@
       <div class="card">
         <div class="card-header">
           <h2>${config.title}</h2>
-          <div style="display:flex;gap:0.5rem;">
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="btn-export-${moduleKey}-csv" style="display:inline-flex;align-items:center;gap:0.4rem;">
+              <span>📥</span> <span>Exporter CSV</span>
+            </button>
             ${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? '<button class="btn btn-danger" id="btn-bulk-delete" style="display:none;">Supprimer la sélection (<span id="bulk-count">0</span>)</button>' : ''}
             <button class="btn btn-primary" id="btn-create-content" data-content-module="${moduleKey}">${moduleKey === 'jobs' ? '+ Ajouter un métier' : '+ Ajouter une formation'}</button>
           </div>
@@ -1549,6 +1774,9 @@
       </div>
     `;
 
+    const draftKey = `admin_draft_${moduleKey}`;
+    const hasDraft = !item && !!localStorage.getItem(draftKey);
+
     const overlay = document.createElement('div');
     overlay.id = 'content-modal-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.65);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem;backdrop-filter:blur(4px);';
@@ -1561,6 +1789,15 @@
           </div>
           <button type="button" id="content-modal-close-btn" style="border:none;background:transparent;font-size:1.5rem;cursor:pointer;line-height:1;color:#64748b;">&times;</button>
         </div>
+
+        <div id="draft-restore-banner" class="draft-banner-restore" style="display: ${hasDraft ? 'flex' : 'none'};">
+          <span>⚠️ Un brouillon non enregistré a été retrouvé pour cette création.</span>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <button type="button" class="btn btn-sm btn-primary" id="btn-restore-draft">Restaurer</button>
+            <button type="button" class="btn btn-sm btn-ghost" id="btn-dismiss-draft">Effacer</button>
+          </div>
+        </div>
+
         <form id="content-modal-form" style="display:flex;flex-direction:column;gap:0.85rem;">
           
           <!-- Dossier thématique -->
@@ -1610,6 +1847,52 @@
       </div>
     `;
     document.body.appendChild(overlay);
+
+    // Autosave & draft restore
+    if (!item) {
+      const formEl = overlay.querySelector('#content-modal-form');
+      const draftBanner = overlay.querySelector('#draft-restore-banner');
+      const btnRestore = overlay.querySelector('#btn-restore-draft');
+      const btnDismiss = overlay.querySelector('#btn-dismiss-draft');
+
+      let autosaveTimer = null;
+      formEl.addEventListener('input', () => {
+        clearTimeout(autosaveTimer);
+        autosaveTimer = setTimeout(() => {
+          const formData = new FormData(formEl);
+          const draftObj = {};
+          formData.forEach((val, k) => { draftObj[k] = val; });
+          if (Object.keys(draftObj).length > 0) {
+            localStorage.setItem(draftKey, JSON.stringify(draftObj));
+          }
+        }, 500);
+      });
+
+      btnRestore?.addEventListener('click', () => {
+        try {
+          const raw = localStorage.getItem(draftKey);
+          if (raw) {
+            const draft = JSON.parse(raw);
+            Object.entries(draft).forEach(([k, v]) => {
+              const field = formEl.elements[k];
+              if (field && v != null) {
+                field.value = v;
+              }
+            });
+            showToast('Brouillon restauré avec succès', 'info');
+            if (draftBanner) draftBanner.style.display = 'none';
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      });
+
+      btnDismiss?.addEventListener('click', () => {
+        localStorage.removeItem(draftKey);
+        if (draftBanner) draftBanner.style.display = 'none';
+        showToast('Brouillon effacé', 'info');
+      });
+    }
 
     // Upload interactif vers Cloudflare R2 avec bouclier CDN
     const r2FileInput = overlay.querySelector('#content-r2-file');
@@ -1753,6 +2036,7 @@
           showToast('Dossier mis à jour avec succès', 'success');
         } else {
           await client.create(data);
+          localStorage.removeItem(draftKey);
           showToast('Nouveau dossier créé en brouillon avec succès', 'success');
         }
         overlay.remove();
@@ -1800,6 +2084,9 @@
     const existing = document.getElementById('blog-modal-overlay');
     if (existing) existing.remove();
 
+    const draftKey = 'admin_draft_blog';
+    const hasDraft = !post && !!localStorage.getItem(draftKey);
+
     const overlay = document.createElement('div');
     overlay.id = 'blog-modal-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem;';
@@ -1809,6 +2096,15 @@
           <h2 style="margin:0;font-size:1.25rem;">${post ? 'Modifier l\'article' : 'Rédiger un nouvel article'}</h2>
           <button type="button" id="blog-modal-close-btn" style="border:none;background:transparent;font-size:1.5rem;cursor:pointer;line-height:1;">&times;</button>
         </div>
+
+        <div id="blog-draft-restore-banner" class="draft-banner-restore" style="display: ${hasDraft ? 'flex' : 'none'};">
+          <span>⚠️ Un brouillon d'article non enregistré a été retrouvé.</span>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <button type="button" class="btn btn-sm btn-primary" id="btn-blog-restore-draft">Restaurer</button>
+            <button type="button" class="btn btn-sm btn-ghost" id="btn-blog-dismiss-draft">Effacer</button>
+          </div>
+        </div>
+
         <form id="blog-modal-form" style="display:flex;flex-direction:column;gap:0.8rem;">
           <div style="display:grid;grid-template-columns:2fr 1fr;gap:0.75rem;">
             <label>Titre de l'article *
@@ -1885,6 +2181,56 @@
       });
     }
 
+    // Autosave & draft restore
+    if (!post) {
+      const formEl = overlay.querySelector('#blog-modal-form');
+      const draftBanner = overlay.querySelector('#blog-draft-restore-banner');
+      const btnRestore = overlay.querySelector('#btn-blog-restore-draft');
+      const btnDismiss = overlay.querySelector('#btn-blog-dismiss-draft');
+
+      let autosaveTimer = null;
+      formEl.addEventListener('input', () => {
+        clearTimeout(autosaveTimer);
+        autosaveTimer = setTimeout(() => {
+          const formData = new FormData(formEl);
+          const draftObj = {};
+          formData.forEach((val, k) => { draftObj[k] = val; });
+          if (Object.keys(draftObj).length > 0) {
+            localStorage.setItem(draftKey, JSON.stringify(draftObj));
+          }
+        }, 500);
+      });
+
+      btnRestore?.addEventListener('click', () => {
+        try {
+          const raw = localStorage.getItem(draftKey);
+          if (raw) {
+            const draft = JSON.parse(raw);
+            Object.entries(draft).forEach(([k, v]) => {
+              const field = formEl.elements[k];
+              if (field && v != null) {
+                if (field.type === 'checkbox') {
+                  field.checked = v === 'on' || v === true;
+                } else {
+                  field.value = v;
+                }
+              }
+            });
+            showToast('Brouillon d\'article restauré', 'info');
+            if (draftBanner) draftBanner.style.display = 'none';
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      });
+
+      btnDismiss?.addEventListener('click', () => {
+        localStorage.removeItem(draftKey);
+        if (draftBanner) draftBanner.style.display = 'none';
+        showToast('Brouillon effacé', 'info');
+      });
+    }
+
     const closeModal = () => overlay.remove();
     overlay.querySelector('#blog-modal-cancel').addEventListener('click', closeModal);
     overlay.querySelector('#blog-modal-close-btn').addEventListener('click', closeModal);
@@ -1908,6 +2254,7 @@
           showToast('Article mis à jour avec succès', 'success');
         } else {
           await window.AdminApi.blog.create(data);
+          localStorage.removeItem(draftKey);
           showToast('Article créé en brouillon', 'success');
         }
         overlay.remove();
@@ -2145,18 +2492,25 @@
 
   // ===== Utilisateurs =====
   const userFilters = { search: '', role: '', status: '' };
+  let lastUsersItems = [];
 
   async function loadUsers() {
     const response = await window.AdminApi.users.getAll(userFilters);
     const items = response.data || [];
+    lastUsersItems = items;
     const user = window.AdminApp.currentUser;
     const can = permission => window.AdminApp.hasPermission(user, permission);
 
     return `
       <div class="card">
         <div class="card-header">
-          <h2>Utilisateurs</h2>
-          <span class="badge badge-primary">${response.pagination?.total ?? items.length} comptes</span>
+          <div>
+            <h2>Utilisateurs</h2>
+            <span class="badge badge-primary">${response.pagination?.total ?? items.length} comptes</span>
+          </div>
+          <button class="btn btn-secondary" id="btn-export-users-csv" style="display:inline-flex;align-items:center;gap:0.4rem;">
+            <span>📥</span> <span>Exporter CSV</span>
+          </button>
         </div>
         <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
           <input type="text" id="user-search" placeholder="Rechercher (email, nom)…" value="${escapeHtml(userFilters.search)}" style="min-width:220px;">
@@ -4525,7 +4879,7 @@
     const is2faEnabled = !!twoFactorRes.data?.enabled;
 
     const byCategory = {};
-    settings.forEach(s => {
+    settings.filter(s => s.category !== 'vitrine').forEach(s => {
       (byCategory[s.category] = byCategory[s.category] || []).push(s);
     });
     const categoryLabels = { general: 'Général', membres: 'Membres', plateforme: 'Plateforme' };
@@ -4604,6 +4958,325 @@
             </div>
           `}
         </div>
+      </div>
+    `;
+  }
+
+  // ===== Vitrine & Éditorial (À la Une & Frise Chronologique) =====
+  async function loadVitrine() {
+    let settings = [];
+    try {
+      const res = await window.AdminApi.settings.getAll();
+      settings = res.data || [];
+    } catch (e) {
+      console.warn('Impossible de charger les paramètres:', e);
+    }
+
+    const rawFeatured = settings.find(s => s.key === 'home.featured_monthly')?.value;
+    const rawTimeline = settings.find(s => s.key === 'about.timeline_steps')?.value;
+
+    let featured = {
+      tag: '🔥 À la Une ce mois-ci',
+      title: 'Dossier Spécial : IA & Cybersécurité',
+      description: 'Découvrez les compétences les plus recherchées par les recruteurs en 2025 et nos fiches immersives dédiées aux nouveaux métiers technologiques.',
+      perks: [
+        '+2 500 offres analysées',
+        'Salaires et grilles réelles',
+        'Tutoriels d\'experts'
+      ],
+      primaryButtonText: 'Découvrir la sélection',
+      primaryButtonLink: '#orientation',
+      sideboxBadge: 'Tendance Métiers',
+      sideboxCounter: '+34%',
+      sideboxDesc: 'd\'offres dans la tech en Afrique de l\'Ouest ce trimestre',
+      sideboxButtonText: 'Explorer le dossier',
+      sideboxButtonLink: '#contact'
+    };
+
+    if (rawFeatured) {
+      try {
+        const parsed = typeof rawFeatured === 'string' ? JSON.parse(rawFeatured) : rawFeatured;
+        featured = { ...featured, ...parsed };
+      } catch (err) {
+        console.error('Erreur parsing featured_monthly:', err);
+      }
+    }
+
+    let timelineSteps = [
+      {
+        year: '2024',
+        title: 'Idéation & Naissance',
+        description: 'Constat du fossé entre formation académique et marché du travail. Création du noyau fondateur de mentors et experts.'
+      },
+      {
+        year: '2025',
+        title: 'Structuration & Plateforme',
+        description: 'Lancement de la plateforme Le Monde du Travail, des fiches métiers immersives et des premiers cohortes d\'accompagnement.'
+      },
+      {
+        year: '2026',
+        title: 'Réseau National & Impact',
+        description: 'Ouverture aux entreprises partenaires, certifications reconnues et mentorat one-to-one pour des milliers de jeunes talents.'
+      }
+    ];
+
+    if (rawTimeline) {
+      try {
+        const parsed = typeof rawTimeline === 'string' ? JSON.parse(rawTimeline) : rawTimeline;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          timelineSteps = parsed;
+        }
+      } catch (err) {
+        console.error('Erreur parsing timeline_steps:', err);
+      }
+    }
+
+    const perks = featured.perks || [];
+
+    return `
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">
+          <div>
+            <h2 style="display:flex;align-items:center;gap:0.6rem;margin:0;">
+              <span>🎨</span> <span>Vitrine & Éditorial</span>
+            </h2>
+            <p style="margin:0.25rem 0 0 0;font-size:0.85rem;color:var(--color-muted);">
+              Personnalisez les sections stratégiques de la page d'Accueil et de la page À Propos en temps réel.
+            </p>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:center;">
+            <a href="../frontend/index.html" target="_blank" class="btn btn-secondary" style="font-size:0.85rem;display:inline-flex;align-items:center;gap:0.4rem;">
+              <span>🌐</span> <span>Voir le site en direct</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="vitrine-tabs">
+          <button class="vitrine-tab-btn active" data-vitrine-tab="home">
+            🔥 À la Une ce mois-ci (Accueil)
+          </button>
+          <button class="vitrine-tab-btn" data-vitrine-tab="about">
+            🏛️ Les Grandes Étapes du Club (À Propos)
+          </button>
+        </div>
+
+        <!-- TAB 1 : ACCUEIL (À LA UNE CE MOIS-CI) -->
+        <div id="vitrine-tab-home-pane" class="vitrine-tab-pane">
+          <div class="vitrine-grid">
+            <!-- Formulaire d'édition -->
+            <form id="form-vitrine-featured" style="display:flex;flex-direction:column;gap:1.25rem;">
+              
+              <fieldset style="border:1px solid var(--color-border);border-radius:10px;padding:1.2rem;background:var(--color-bg-card);">
+                <legend style="font-weight:700;padding:0 0.5rem;color:var(--color-primary);">🏷️ Accroche & Titre Principal</legend>
+                
+                <label style="display:block;margin-bottom:0.75rem;">
+                  <span style="font-weight:600;font-size:0.85rem;">Badge supérieur (Tag)</span>
+                  <input type="text" id="feat-tag" class="form-input" value="${escapeHtml(featured.tag)}" placeholder="🔥 À la Une ce mois-ci" required style="width:100%;margin-top:0.25rem;">
+                </label>
+
+                <label style="display:block;margin-bottom:0.75rem;">
+                  <span style="font-weight:600;font-size:0.85rem;">Grand Titre du dossier *</span>
+                  <input type="text" id="feat-title" class="form-input" value="${escapeHtml(featured.title)}" placeholder="Ex. Dossier Spécial : IA & Cybersécurité" required style="width:100%;margin-top:0.25rem;">
+                </label>
+
+                <label style="display:block;">
+                  <span style="font-weight:600;font-size:0.85rem;">Description éditoriale *</span>
+                  <textarea id="feat-desc" rows="3" class="form-input" placeholder="Présentation synthétique du dossier..." required style="width:100%;margin-top:0.25rem;resize:vertical;">${escapeHtml(featured.description)}</textarea>
+                </label>
+              </fieldset>
+
+              <fieldset style="border:1px solid var(--color-border);border-radius:10px;padding:1.2rem;background:var(--color-bg-card);">
+                <legend style="font-weight:700;padding:0 0.5rem;color:var(--color-primary);">✨ Points Forts / Avantages Clés (Puces)</legend>
+                
+                <div style="display:grid;grid-template-columns:1fr;gap:0.6rem;">
+                  <label>
+                    <span style="font-size:0.82rem;color:var(--color-muted);">Puce n°1 :</span>
+                    <input type="text" id="feat-perk-1" class="form-input feat-perk-input" value="${escapeHtml(perks[0] || '')}" placeholder="Ex. +2 500 offres analysées" style="width:100%;margin-top:0.2rem;">
+                  </label>
+                  <label>
+                    <span style="font-size:0.82rem;color:var(--color-muted);">Puce n°2 :</span>
+                    <input type="text" id="feat-perk-2" class="form-input feat-perk-input" value="${escapeHtml(perks[1] || '')}" placeholder="Ex. Salaires et grilles réelles" style="width:100%;margin-top:0.2rem;">
+                  </label>
+                  <label>
+                    <span style="font-size:0.82rem;color:var(--color-muted);">Puce n°3 :</span>
+                    <input type="text" id="feat-perk-3" class="form-input feat-perk-input" value="${escapeHtml(perks[2] || '')}" placeholder="Ex. Tutoriels d'experts" style="width:100%;margin-top:0.2rem;">
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset style="border:1px solid var(--color-border);border-radius:10px;padding:1.2rem;background:var(--color-bg-card);">
+                <legend style="font-weight:700;padding:0 0.5rem;color:var(--color-primary);">🚀 Call to Action Principal</legend>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                  <label>
+                    <span style="font-weight:600;font-size:0.85rem;">Libellé du bouton</span>
+                    <input type="text" id="feat-btn-text" class="form-input" value="${escapeHtml(featured.primaryButtonText || 'Découvrir la sélection')}" style="width:100%;margin-top:0.25rem;">
+                  </label>
+                  <label>
+                    <span style="font-weight:600;font-size:0.85rem;">Lien de destination</span>
+                    <input type="text" id="feat-btn-link" class="form-input" value="${escapeHtml(featured.primaryButtonLink || '#orientation')}" placeholder="#orientation ou https://..." style="width:100%;margin-top:0.25rem;">
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset style="border:1px solid var(--color-border);border-radius:10px;padding:1.2rem;background:var(--color-bg-card);">
+                <legend style="font-weight:700;padding:0 0.5rem;color:var(--color-primary);">📊 Encart Latéral Statistique (Sidebox)</legend>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+                  <label>
+                    <span style="font-weight:600;font-size:0.85rem;">Badge de l'encart</span>
+                    <input type="text" id="feat-side-badge" class="form-input" value="${escapeHtml(featured.sideboxBadge || 'Tendance Métiers')}" style="width:100%;margin-top:0.25rem;">
+                  </label>
+                  <label>
+                    <span style="font-weight:600;font-size:0.85rem;">Chiffre clé / Compteur</span>
+                    <input type="text" id="feat-side-counter" class="form-input" value="${escapeHtml(featured.sideboxCounter || '+34%')}" placeholder="+34%" style="width:100%;margin-top:0.25rem;">
+                  </label>
+                </div>
+                <label style="display:block;margin-bottom:0.75rem;">
+                  <span style="font-weight:600;font-size:0.85rem;">Description du chiffre</span>
+                  <input type="text" id="feat-side-desc" class="form-input" value="${escapeHtml(featured.sideboxDesc || '')}" placeholder="d'offres dans la tech..." style="width:100%;margin-top:0.25rem;">
+                </label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                  <label>
+                    <span style="font-weight:600;font-size:0.85rem;">Bouton Encart : Libellé</span>
+                    <input type="text" id="feat-side-btn-text" class="form-input" value="${escapeHtml(featured.sideboxButtonText || 'Explorer le dossier')}" style="width:100%;margin-top:0.25rem;">
+                  </label>
+                  <label>
+                    <span style="font-weight:600;font-size:0.85rem;">Bouton Encart : Lien</span>
+                    <input type="text" id="feat-side-btn-link" class="form-input" value="${escapeHtml(featured.sideboxButtonLink || '#contact')}" style="width:100%;margin-top:0.25rem;">
+                  </label>
+                </div>
+              </fieldset>
+
+              <div style="display:flex;justify-content:flex-end;margin-top:0.5rem;">
+                <button type="button" id="btn-save-featured" class="btn btn-primary" style="padding:0.75rem 1.5rem;font-size:1rem;font-weight:700;">
+                  💾 Enregistrer la section Accueil
+                </button>
+              </div>
+            </form>
+
+            <!-- Aperçu interactif en direct -->
+            <div class="vitrine-preview-sticky">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+                <span style="font-weight:700;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-muted);">
+                  👁️ Aperçu Temps Réel
+                </span>
+                <span class="badge badge-success" style="font-size:0.72rem;">Synchronisé</span>
+              </div>
+              
+              <div class="vitrine-preview-card" id="preview-featured-card">
+                <span id="pv-tag" style="background:rgba(255,255,255,0.15);padding:0.25rem 0.65rem;border-radius:9999px;font-size:0.75rem;font-weight:600;display:inline-block;margin-bottom:0.75rem;">
+                  ${escapeHtml(featured.tag)}
+                </span>
+                
+                <h3 id="pv-title" style="margin:0 0 0.5rem 0;font-size:1.35rem;font-weight:800;line-height:1.25;color:#ffffff;">
+                  ${escapeHtml(featured.title)}
+                </h3>
+                
+                <p id="pv-desc" style="font-size:0.88rem;color:#cbd5e1;line-height:1.5;margin-bottom:1rem;">
+                  ${escapeHtml(featured.description)}
+                </p>
+
+                <div id="pv-perks" style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1.25rem;">
+                  ${perks.filter(Boolean).map(p => `<span class="vitrine-preview-perk-badge">✓ ${escapeHtml(p)}</span>`).join('')}
+                </div>
+
+                <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+                  <span id="pv-btn" style="background:#2563eb;color:#fff;font-weight:700;font-size:0.85rem;padding:0.5rem 1rem;border-radius:6px;display:inline-flex;align-items:center;gap:0.4rem;">
+                    <span id="pv-btn-text">${escapeHtml(featured.primaryButtonText || 'Découvrir')}</span> &rarr;
+                  </span>
+                </div>
+
+                <!-- Mini Encart Sidebox Preview -->
+                <div style="margin-top:1.25rem;padding:1rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                    <span id="pv-side-badge" style="font-size:0.72rem;text-transform:uppercase;color:#93c5fd;font-weight:700;">${escapeHtml(featured.sideboxBadge)}</span>
+                    <span id="pv-side-counter" style="font-size:1.25rem;font-weight:900;color:#60a5fa;">${escapeHtml(featured.sideboxCounter)}</span>
+                  </div>
+                  <p id="pv-side-desc" style="font-size:0.78rem;color:#e2e8f0;margin:0 0 0.6rem 0;line-height:1.4;">
+                    ${escapeHtml(featured.sideboxDesc)}
+                  </p>
+                  <span id="pv-side-btn-text" style="font-size:0.78rem;color:#93c5fd;text-decoration:underline;">${escapeHtml(featured.sideboxButtonText)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2 : À PROPOS (LES GRANDES ÉTAPES DU CLUB) -->
+        <div id="vitrine-tab-about-pane" class="vitrine-tab-pane" style="display:none;">
+          <div class="vitrine-grid">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <p style="margin:0;font-size:0.9rem;color:var(--color-muted);">
+                  Gérez la frise chronologique affichée sur la page <strong>À Propos</strong>.
+                </p>
+                <button type="button" id="btn-add-timeline-step" class="btn btn-secondary" style="font-size:0.85rem;display:inline-flex;align-items:center;gap:0.35rem;">
+                  <span>➕</span> <span>Ajouter une étape</span>
+                </button>
+              </div>
+
+              <div id="timeline-steps-editor">
+                ${timelineSteps.map((step, idx) => `
+                  <div class="timeline-step-card" data-step-index="${idx}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                      <span class="badge badge-primary" style="font-size:0.8rem;">Étape n°${idx + 1}</span>
+                      <button type="button" class="btn btn-danger btn-sm btn-delete-step" data-step-index="${idx}" title="Supprimer cette étape">🗑️ Supprimer</button>
+                    </div>
+                    <div style="display:grid;grid-template-columns:120px 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+                      <label>
+                        <span style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.2rem;">Année / Date</span>
+                        <input type="text" class="form-input step-year-input" value="${escapeHtml(step.year || '')}" placeholder="Ex. 2024" style="width:100%;">
+                      </label>
+                      <label>
+                        <span style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.2rem;">Titre de l'étape *</span>
+                        <input type="text" class="form-input step-title-input" value="${escapeHtml(step.title || '')}" placeholder="Titre marquant de l'étape" style="width:100%;">
+                      </label>
+                    </div>
+                    <label style="display:block;">
+                      <span style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.2rem;">Description détaillée</span>
+                      <textarea rows="2" class="form-input step-desc-input" placeholder="Détaillez les réalisations de cette étape..." style="width:100%;">${escapeHtml(step.description || '')}</textarea>
+                    </label>
+                  </div>
+                `).join('')}
+              </div>
+
+              <div style="display:flex;justify-content:flex-end;margin-top:1.25rem;">
+                <button type="button" id="btn-save-timeline" class="btn btn-primary" style="padding:0.75rem 1.5rem;font-size:1rem;font-weight:700;">
+                  💾 Enregistrer la Frise Chronologique
+                </button>
+              </div>
+            </div>
+
+            <!-- Aperçu interactif Timeline -->
+            <div class="vitrine-preview-sticky">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+                <span style="font-weight:700;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--color-muted);">
+                  👁️ Aperçu Frise Chronologique
+                </span>
+                <span class="badge badge-success" style="font-size:0.72rem;">Synchronisé</span>
+              </div>
+
+              <div class="card" style="background:var(--color-bg-card);border:1px solid var(--color-border);padding:1.5rem;border-radius:12px;">
+                <h4 style="margin:0 0 1.25rem 0;font-size:1.1rem;color:var(--color-text);">Grandes Étapes du Club</h4>
+                <div id="pv-timeline-list">
+                  ${timelineSteps.map(step => `
+                    <div class="vitrine-timeline-preview-item">
+                      <div style="display:inline-block;background:rgba(59,130,246,0.15);color:#2563eb;font-weight:800;font-size:0.75rem;padding:0.15rem 0.5rem;border-radius:4px;margin-bottom:0.25rem;">
+                        ${escapeHtml(step.year || '')}
+                      </div>
+                      <h5 style="margin:0.2rem 0;font-size:0.95rem;color:var(--color-text);font-weight:700;">
+                        ${escapeHtml(step.title || '')}
+                      </h5>
+                      <p style="margin:0;font-size:0.8rem;color:var(--color-muted);line-height:1.4;">
+                        ${escapeHtml(step.description || '')}
+                      </p>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     `;
   }
@@ -4848,6 +5521,43 @@
 
       document.getElementById('btn-create-content')?.addEventListener('click', () => {
         openContentModal(contentKey);
+      });
+
+      document.getElementById(`btn-export-${contentKey}-csv`)?.addEventListener('click', () => {
+        const items = Object.values(contentCache[contentKey] || {});
+        if (items.length === 0) {
+          showToast('Aucun élément à exporter', 'info');
+          return;
+        }
+        if (isJob) {
+          const headers = ['Titre', 'Domaine', 'Catégorie', 'Statut', 'Auteur', 'Créé le', 'Mis à jour le'];
+          const rows = items.map(j => [
+            j.title || '',
+            j.domain || '',
+            j.category || '',
+            j.status || '',
+            j.createdBy ? `${j.createdBy.firstName} ${j.createdBy.lastName}` : '',
+            j.createdAt ? new Date(j.createdAt).toLocaleDateString('fr-FR') : '',
+            j.updatedAt ? new Date(j.updatedAt).toLocaleDateString('fr-FR') : ''
+          ]);
+          exportTableToCsv(`metiers_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+          showToast('Export CSV des métiers téléchargé', 'success');
+        } else {
+          const headers = ['Titre', 'Filière', 'Niveau', 'Format', 'Prix', 'Statut', 'Auteur', 'Créé le', 'Mis à jour le'];
+          const rows = items.map(f => [
+            f.title || '',
+            f.category || '',
+            f.level || '',
+            f.format || '',
+            f.price != null ? `${f.price} FCFA` : '',
+            f.status || '',
+            f.createdBy ? `${f.createdBy.firstName} ${f.createdBy.lastName}` : '',
+            f.createdAt ? new Date(f.createdAt).toLocaleDateString('fr-FR') : '',
+            f.updatedAt ? new Date(f.updatedAt).toLocaleDateString('fr-FR') : ''
+          ]);
+          exportTableToCsv(`formations_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+          showToast('Export CSV des formations téléchargé', 'success');
+        }
       });
 
       document.querySelectorAll('[data-content-action]').forEach(btn => {
@@ -5104,6 +5814,26 @@
           loadPage('users');
         });
       }
+
+      document.getElementById('btn-export-users-csv')?.addEventListener('click', () => {
+        if (!lastUsersItems || lastUsersItems.length === 0) {
+          showToast('Aucun utilisateur à exporter', 'info');
+          return;
+        }
+        const headers = ['Nom', 'Prénom', 'Email', 'Rôle', 'Rôles Secondaires', 'Statut', 'Vérifié', 'Dernière Connexion'];
+        const rows = lastUsersItems.map(u => [
+          u.lastName || '',
+          u.firstName || '',
+          u.email || '',
+          u.role || '',
+          (u.adminRoles || []).join('; '),
+          u.isActive ? 'Actif' : 'Désactivé',
+          u.isVerified ? 'Oui' : 'Non',
+          u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('fr-FR') : 'Jamais'
+        ]);
+        exportTableToCsv(`utilisateurs_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+        showToast('Export CSV des utilisateurs téléchargé', 'success');
+      });
 
       document.querySelectorAll('[data-user-action]').forEach(btn => {
         btn.addEventListener('click', async () => {
@@ -5401,6 +6131,10 @@
       });
     }
 
+    if (module === 'vitrine') {
+      bindVitrineEvents();
+    }
+
     if (module === 'organization') {
       bindOrganizationEvents();
     }
@@ -5543,6 +6277,239 @@
         const userId = btn.getAttribute('data-view-dossier');
         if (userId) openUserDossierModal(userId);
       });
+    });
+  }
+
+  function bindVitrineEvents() {
+    // Gestion des onglets Vitrine
+    const tabBtns = document.querySelectorAll('.vitrine-tab-btn');
+    const paneHome = document.getElementById('vitrine-tab-home-pane');
+    const paneAbout = document.getElementById('vitrine-tab-about-pane');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const target = btn.getAttribute('data-vitrine-tab');
+        if (target === 'home') {
+          if (paneHome) paneHome.style.display = 'block';
+          if (paneAbout) paneAbout.style.display = 'none';
+        } else {
+          if (paneHome) paneHome.style.display = 'none';
+          if (paneAbout) paneAbout.style.display = 'block';
+        }
+      });
+    });
+
+    // Synchronisation en direct pour "À la Une ce mois-ci"
+    const featTag = document.getElementById('feat-tag');
+    const featTitle = document.getElementById('feat-title');
+    const featDesc = document.getElementById('feat-desc');
+    const featBtnText = document.getElementById('feat-btn-text');
+    const featSideBadge = document.getElementById('feat-side-badge');
+    const featSideCounter = document.getElementById('feat-side-counter');
+    const featSideDesc = document.getElementById('feat-side-desc');
+    const featSideBtnText = document.getElementById('feat-side-btn-text');
+
+    const pvTag = document.getElementById('pv-tag');
+    const pvTitle = document.getElementById('pv-title');
+    const pvDesc = document.getElementById('pv-desc');
+    const pvBtnText = document.getElementById('pv-btn-text');
+    const pvSideBadge = document.getElementById('pv-side-badge');
+    const pvSideCounter = document.getElementById('pv-side-counter');
+    const pvSideDesc = document.getElementById('pv-side-desc');
+    const pvSideBtnText = document.getElementById('pv-side-btn-text');
+    const pvPerks = document.getElementById('pv-perks');
+
+    const updateFeaturedPreview = () => {
+      if (pvTag && featTag) pvTag.textContent = featTag.value || '🔥 À la Une ce mois-ci';
+      if (pvTitle && featTitle) pvTitle.textContent = featTitle.value || 'Titre du dossier';
+      if (pvDesc && featDesc) pvDesc.textContent = featDesc.value || 'Description du dossier...';
+      if (pvBtnText && featBtnText) pvBtnText.textContent = featBtnText.value || 'Découvrir';
+      if (pvSideBadge && featSideBadge) pvSideBadge.textContent = featSideBadge.value || 'Tendance';
+      if (pvSideCounter && featSideCounter) pvSideCounter.textContent = featSideCounter.value || '+0%';
+      if (pvSideDesc && featSideDesc) pvSideDesc.textContent = featSideDesc.value || 'Statistique...';
+      if (pvSideBtnText && featSideBtnText) pvSideBtnText.textContent = featSideBtnText.value || 'Explorer';
+
+      if (pvPerks) {
+        const p1 = document.getElementById('feat-perk-1')?.value.trim();
+        const p2 = document.getElementById('feat-perk-2')?.value.trim();
+        const p3 = document.getElementById('feat-perk-3')?.value.trim();
+        const activePerks = [p1, p2, p3].filter(Boolean);
+        pvPerks.innerHTML = activePerks.map(p => `<span class="vitrine-preview-perk-badge">✓ ${escapeHtml(p)}</span>`).join('');
+      }
+    };
+
+    [featTag, featTitle, featDesc, featBtnText, featSideBadge, featSideCounter, featSideDesc, featSideBtnText].forEach(el => {
+      el?.addEventListener('input', updateFeaturedPreview);
+    });
+    document.querySelectorAll('.feat-perk-input').forEach(el => el.addEventListener('input', updateFeaturedPreview));
+
+    // Sauvegarde de la section Accueil
+    document.getElementById('btn-save-featured')?.addEventListener('click', async () => {
+      const btn = document.getElementById('btn-save-featured');
+      const tag = document.getElementById('feat-tag')?.value.trim() || '🔥 À la Une ce mois-ci';
+      const title = document.getElementById('feat-title')?.value.trim();
+      const description = document.getElementById('feat-desc')?.value.trim();
+      const p1 = document.getElementById('feat-perk-1')?.value.trim();
+      const p2 = document.getElementById('feat-perk-2')?.value.trim();
+      const p3 = document.getElementById('feat-perk-3')?.value.trim();
+      const primaryButtonText = document.getElementById('feat-btn-text')?.value.trim() || 'Découvrir la sélection';
+      const primaryButtonLink = document.getElementById('feat-btn-link')?.value.trim() || '#orientation';
+      const sideboxBadge = document.getElementById('feat-side-badge')?.value.trim() || 'Tendance Métiers';
+      const sideboxCounter = document.getElementById('feat-side-counter')?.value.trim() || '+34%';
+      const sideboxDesc = document.getElementById('feat-side-desc')?.value.trim() || '';
+      const sideboxButtonText = document.getElementById('feat-side-btn-text')?.value.trim() || 'Explorer le dossier';
+      const sideboxButtonLink = document.getElementById('feat-side-btn-link')?.value.trim() || '#contact';
+
+      if (!title || !description) {
+        showToast('Veuillez remplir au moins le titre et la description du dossier.', 'warning');
+        return;
+      }
+
+      const payload = {
+        tag,
+        title,
+        description,
+        perks: [p1, p2, p3].filter(Boolean),
+        primaryButtonText,
+        primaryButtonLink,
+        sideboxBadge,
+        sideboxCounter,
+        sideboxDesc,
+        sideboxButtonText,
+        sideboxButtonLink
+      };
+
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Enregistrement en cours...';
+        await window.AdminApi.settings.update('home.featured_monthly', JSON.stringify(payload, null, 2));
+        showToast('Section "À la Une ce mois-ci" enregistrée et déployée avec succès !', 'success');
+      } catch (err) {
+        showToast(err.message || 'Échec de l\'enregistrement', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Enregistrer la section Accueil';
+      }
+    });
+
+    // Synchronisation en direct & édition pour "Les Grandes Étapes du Club"
+    const timelineContainer = document.getElementById('timeline-steps-editor');
+    const pvTimelineList = document.getElementById('pv-timeline-list');
+
+    const updateTimelinePreview = () => {
+      if (!timelineContainer || !pvTimelineList) return;
+      const cards = timelineContainer.querySelectorAll('.timeline-step-card');
+      const steps = [];
+      cards.forEach(c => {
+        const year = c.querySelector('.step-year-input')?.value.trim() || '';
+        const title = c.querySelector('.step-title-input')?.value.trim() || '';
+        const desc = c.querySelector('.step-desc-input')?.value.trim() || '';
+        steps.push({ year, title, description: desc });
+      });
+
+      pvTimelineList.innerHTML = steps.map(s => `
+        <div class="vitrine-timeline-preview-item">
+          <div style="display:inline-block;background:rgba(59,130,246,0.15);color:#2563eb;font-weight:800;font-size:0.75rem;padding:0.15rem 0.5rem;border-radius:4px;margin-bottom:0.25rem;">
+            ${escapeHtml(s.year || '')}
+          </div>
+          <h5 style="margin:0.2rem 0;font-size:0.95rem;color:var(--color-text);font-weight:700;">
+            ${escapeHtml(s.title || 'Titre de l\'étape')}
+          </h5>
+          <p style="margin:0;font-size:0.8rem;color:var(--color-muted);line-height:1.4;">
+            ${escapeHtml(s.description || 'Description...')}
+          </p>
+        </div>
+      `).join('');
+    };
+
+    const attachTimelineStepListeners = (card) => {
+      card.querySelectorAll('input, textarea').forEach(input => {
+        input.addEventListener('input', updateTimelinePreview);
+      });
+      card.querySelector('.btn-delete-step')?.addEventListener('click', () => {
+        const allCards = timelineContainer.querySelectorAll('.timeline-step-card');
+        if (allCards.length <= 1) {
+          showToast('Vous devez conserver au moins une étape chronologique.', 'warning');
+          return;
+        }
+        card.remove();
+        // Renumérotation des étapes
+        timelineContainer.querySelectorAll('.timeline-step-card').forEach((c, i) => {
+          const badge = c.querySelector('.badge');
+          if (badge) badge.textContent = `Étape n°${i + 1}`;
+        });
+        updateTimelinePreview();
+      });
+    };
+
+    timelineContainer?.querySelectorAll('.timeline-step-card').forEach(attachTimelineStepListeners);
+
+    // Ajouter une nouvelle étape
+    document.getElementById('btn-add-timeline-step')?.addEventListener('click', () => {
+      if (!timelineContainer) return;
+      const count = timelineContainer.querySelectorAll('.timeline-step-card').length + 1;
+      const nextYear = new Date().getFullYear() + 1;
+      const card = document.createElement('div');
+      card.className = 'timeline-step-card';
+      card.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+          <span class="badge badge-primary" style="font-size:0.8rem;">Étape n°${count}</span>
+          <button type="button" class="btn btn-danger btn-sm btn-delete-step" title="Supprimer cette étape">🗑️ Supprimer</button>
+        </div>
+        <div style="display:grid;grid-template-columns:120px 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+          <label>
+            <span style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.2rem;">Année / Date</span>
+            <input type="text" class="form-input step-year-input" value="${nextYear}" placeholder="Ex. ${nextYear}" style="width:100%;">
+          </label>
+          <label>
+            <span style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.2rem;">Titre de l'étape *</span>
+            <input type="text" class="form-input step-title-input" value="" placeholder="Titre de la nouvelle étape" style="width:100%;">
+          </label>
+        </div>
+        <label style="display:block;">
+          <span style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.2rem;">Description détaillée</span>
+          <textarea rows="2" class="form-input step-desc-input" placeholder="Détaillez les réalisations de cette étape..." style="width:100%;"></textarea>
+        </label>
+      `;
+      timelineContainer.appendChild(card);
+      attachTimelineStepListeners(card);
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      card.querySelector('.step-title-input')?.focus();
+      updateTimelinePreview();
+    });
+
+    // Sauvegarde de la frise chronologique
+    document.getElementById('btn-save-timeline')?.addEventListener('click', async () => {
+      const btn = document.getElementById('btn-save-timeline');
+      if (!timelineContainer) return;
+      const cards = timelineContainer.querySelectorAll('.timeline-step-card');
+      const steps = [];
+
+      for (const c of cards) {
+        const year = c.querySelector('.step-year-input')?.value.trim();
+        const title = c.querySelector('.step-title-input')?.value.trim();
+        const desc = c.querySelector('.step-desc-input')?.value.trim();
+
+        if (!year || !title) {
+          showToast('Toutes les étapes doivent comporter une année et un titre.', 'warning');
+          return;
+        }
+        steps.push({ year, title, description: desc || '' });
+      }
+
+      try {
+        btn.disabled = true;
+        btn.textContent = 'Enregistrement en cours...';
+        await window.AdminApi.settings.update('about.timeline_steps', JSON.stringify(steps, null, 2));
+        showToast('Frise chronologique enregistrée et déployée avec succès !', 'success');
+      } catch (err) {
+        showToast(err.message || 'Échec de l\'enregistrement', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '💾 Enregistrer la Frise Chronologique';
+      }
     });
   }
 

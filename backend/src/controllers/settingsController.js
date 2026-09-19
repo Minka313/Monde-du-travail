@@ -2,6 +2,27 @@ const settingsService = require('../services/settingsService');
 const AuditService = require('../services/auditService');
 
 class SettingsController {
+  /**
+   * Endpoint public non authentifié pour le frontend
+   */
+  static async getPublicSettings(req, res, next) {
+    try {
+      const publicSettings = await settingsService.getPublicSettings();
+      res.json({ success: true, data: publicSettings });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getPublicSettingByKey(req, res, next) {
+    try {
+      const data = await settingsService.getPublicSetting(req.params.key);
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getAll(req, res, next) {
     try {
       const settings = await settingsService.getAll();
