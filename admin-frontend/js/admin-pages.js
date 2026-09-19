@@ -2868,6 +2868,7 @@
     ]);
     const workflows = workflowsRes?.data || [];
     const memberships = membershipsRes?.data || [];
+    window._currentPendingMemberships = memberships;
     const user = window.AdminApp.currentUser;
     const canManageWorkflows = window.AdminApp.hasPermission(user, 'approvals.manage');
     const canApproveMemberships = window.AdminApp.hasPermission(user, 'membership.approve');
@@ -2911,7 +2912,7 @@
 
       <!-- Section 1 : Demandes d'adhésion (Nouveaux membres) -->
       <div class="card approval-section-card" id="approval-section-memberships">
-        <div class="card-header">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
           <div style="display: flex; align-items: center; gap: 0.6rem;">
             <span style="font-size: 1.25rem;">👤</span>
             <div>
@@ -2919,7 +2920,13 @@
               <p style="margin: 0.15rem 0 0; font-size: 0.82rem; color: #64748b;">Candidats inscrits en attente de validation pour activer leur compte membre.</p>
             </div>
           </div>
-          <span class="badge ${memberships.length > 0 ? 'badge-warning' : 'badge-muted'}">${memberships.length} en attente</span>
+          <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+            <input type="search" id="membershipSearchInput" placeholder="🔍 Rechercher..." style="height: 34px; border-radius: 6px; border: 1px solid #cbd5e1; padding: 0 10px; font-size: 0.82rem; width: 180px;">
+            <button type="button" class="btn btn-outline btn-sm" id="btnExportMembershipsCSV" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.82rem; height: 34px;">
+              <span>📥</span> <span>Export CSV</span>
+            </button>
+            <span class="badge ${memberships.length > 0 ? 'badge-warning' : 'badge-muted'}">${memberships.length} en attente</span>
+          </div>
         </div>
         <div class="table-wrapper">
           <table>
@@ -2932,7 +2939,7 @@
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="membershipsTableBody">
               ${memberships.length === 0 ? `
                 <tr>
                   <td colspan="5">
@@ -2944,7 +2951,7 @@
                   </td>
                 </tr>
               ` : memberships.map(m => `
-                <tr>
+                <tr class="membership-row">
                   <td><strong>${escapeHtml(m.user?.firstName || '')} ${escapeHtml(m.user?.lastName || '')}</strong></td>
                   <td><a href="mailto:${escapeHtml(m.user?.email || '')}" style="color: var(--color-primary); text-decoration: none;">${escapeHtml(m.user?.email || '')}</a></td>
                   <td style="max-width: 320px; line-height: 1.45;">
@@ -5095,6 +5102,49 @@
           }
         });
       });
+
+      // Filtre de recherche instantané adhésions
+      const searchMembershipInput = document.getElementById('membershipSearchInput');
+      if (searchMembershipInput) {
+        searchMembershipInput.addEventListener('input', () => {
+          const q = searchMembershipInput.value.toLowerCase().trim();
+          document.querySelectorAll('#membershipsTableBody .membership-row').forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(q) ? '' : 'none';
+          });
+        });
+      }
+
+      // Export CSV adhésions
+      const btnExportCSV = document.getElementById('btnExportMembershipsCSV');
+      if (btnExportCSV) {
+        btnExportCSV.addEventListener('click', () => {
+          const list = window._currentPendingMemberships || [];
+          if (!list || list.length === 0) {
+            showToast('Aucune demande d\'adhésion à exporter', 'info');
+            return;
+          }
+          const headers = ['Nom', 'Prénom', 'Email', 'Téléphone', 'Motivation', 'Date Inscription'];
+          const rows = list.map(m => [
+            `"${(m.user?.lastName || '').replace(/"/g, '""')}"`,
+            `"${(m.user?.firstName || '').replace(/"/g, '""')}"`,
+            `"${(m.user?.email || '').replace(/"/g, '""')}"`,
+            `"${(m.user?.phone || m.phone || '').replace(/"/g, '""')}"`,
+            `"${(m.motivation || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`,
+            `"${m.createdAt ? new Date(m.createdAt).toLocaleDateString('fr-FR') : ''}"`
+          ]);
+          const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.setAttribute('href', url);
+          link.setAttribute('download', `adhesions_lmt_${new Date().toISOString().slice(0, 10)}.csv`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          showToast('Fichier CSV exporté avec succès !', 'success');
+        });
+      }
 
       // Approbation d'adhésion depuis l'onglet Approbations
       document.querySelectorAll('[data-approve-membership-approval]').forEach(btn => {
