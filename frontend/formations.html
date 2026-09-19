@@ -29,7 +29,9 @@
             <span class="site-title">Le Monde du Travail</span>
         </a>
         <div class="header-actions">
-            <a href="login.html" class="btn-cta">Se connecter</a>
+            <div class="header-auth-slot" id="headerAuthSlot">
+                <a href="login.html" class="btn-cta" id="headerAuthBtn">Se connecter</a>
+            </div>
             <button class="hamburger" aria-label="Menu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
@@ -56,8 +58,8 @@
                 <a href="forum.html">Forum</a>
                 <a href="blog.html">Blog</a>
             </div>
-            <div class="mobile-nav-footer">
-                <a href="login.html" class="btn-mobile-cta">Se connecter / Espace Membre</a>
+            <div class="mobile-nav-footer" id="mobileNavFooter">
+                <a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
             </div>
         </div>
     </div>
@@ -115,6 +117,13 @@
 
                 <div id="formationCategoryPills" class="domain-pills-bar">
                     <!-- Généré dynamiquement -->
+                </div>
+
+                <div id="formationFormatFilters" class="format-filters-row">
+                    <button type="button" class="format-pill active" data-format="">🌐 Tous les formats</button>
+                    <button type="button" class="format-pill" data-format="Présentiel">🏢 Présentiel</button>
+                    <button type="button" class="format-pill" data-format="En ligne">💻 En ligne / Webinaire</button>
+                    <button type="button" class="format-pill" data-format="Atelier">🤝 Ateliers Pratiques</button>
                 </div>
 
                 <div class="cards-grid" id="formationsGrid">
@@ -193,8 +202,10 @@
       document.addEventListener('DOMContentLoaded', async () => {
         const container = document.getElementById('formationsGrid');
         const categoryPillsContainer = document.getElementById('formationCategoryPills');
+        const formatFiltersContainer = document.getElementById('formationFormatFilters');
 
         let currentCategory = '';
+        let currentFormat = '';
         let allFormations = [];
         const formationsMap = {};
 
@@ -381,7 +392,7 @@
               <!-- Footer -->
               <div class="dossier-footer">
                 <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
-                  <a href="login.html" class="btn btn-sm" style="background:#4f46e5;color:#fff;font-weight:600;">S'inscrire à la session</a>
+                  <button type="button" class="btn btn-sm" id="btnOpenPreRegister" style="background:#0284c7;color:#fff;font-weight:600;border:none;cursor:pointer;">⚡ S'inscrire à la session</button>
                   <a href="forum.html" class="btn btn-outline btn-sm">💬 Poser une question</a>
                 </div>
                 <button type="button" class="btn btn-primary btn-sm" id="formation-close-footer">Fermer</button>
@@ -390,6 +401,14 @@
           `;
 
           document.body.appendChild(overlay);
+
+          // Wire Pre-register
+          const btnPreReg = overlay.querySelector('#btnOpenPreRegister');
+          if (btnPreReg) {
+            btnPreReg.addEventListener('click', () => {
+              openPreRegisterModal(f);
+            });
+          }
 
           // Force reflow
           setTimeout(() => overlay.classList.add('active'), 10);
@@ -434,6 +453,126 @@
           });
         }
 
+        function openPreRegisterModal(f) {
+          let currentUser = null;
+          try {
+            const raw = localStorage.getItem('currentUser');
+            if (raw) currentUser = JSON.parse(raw);
+          } catch (_) {}
+
+          const existing = document.getElementById('preregister-overlay');
+          if (existing) existing.remove();
+
+          const overlay = document.createElement('div');
+          overlay.id = 'preregister-overlay';
+          overlay.className = 'dossier-overlay';
+
+          const defaultName = currentUser ? `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim() : '';
+          const defaultEmail = currentUser ? (currentUser.email || '') : '';
+          const defaultPhone = currentUser ? (currentUser.phone || '') : '';
+
+          overlay.innerHTML = `
+            <div class="preregister-modal" role="dialog" aria-modal="true">
+              <div class="preregister-header">
+                <button type="button" class="dossier-close-btn" id="preregister-close-x" aria-label="Fermer">&times;</button>
+                <h3>⚡ Pré-inscription à la session</h3>
+                <p>${escapeHtml(f.title)}</p>
+              </div>
+              <form id="preregisterForm" class="preregister-body">
+                ${currentUser ? `
+                  <div class="preregister-notice">
+                    <span>✨</span>
+                    <div><strong>Membre Connecté :</strong> Vos coordonnées ont été pré-remplies. Validez pour confirmer votre réservation instantanément.</div>
+                  </div>
+                ` : `
+                  <div class="preregister-notice" style="background:#eff6ff;border-color:#bfdbfe;color:#1e40af;">
+                    <span>ℹ️</span>
+                    <div>Remplissez ce formulaire express pour réserver votre place. Les membres connectés s'inscrivent en 1 clic.</div>
+                  </div>
+                `}
+                <div class="preregister-field">
+                  <label for="regName">Nom complet *</label>
+                  <input type="text" id="regName" required value="${escapeHtml(defaultName)}" placeholder="Ex: Aïssatou Diallo">
+                </div>
+                <div class="preregister-field">
+                  <label for="regEmail">Adresse email *</label>
+                  <input type="email" id="regEmail" required value="${escapeHtml(defaultEmail)}" placeholder="votre.email@domaine.com">
+                </div>
+                <div class="preregister-field">
+                  <label for="regPhone">Numéro Téléphone / WhatsApp</label>
+                  <input type="tel" id="regPhone" value="${escapeHtml(defaultPhone)}" placeholder="+221 77 000 00 00">
+                </div>
+                <div class="preregister-field">
+                  <label for="regMotivation">Votre objectif principal pour cette session</label>
+                  <input type="text" id="regMotivation" placeholder="Ex: Préparer mes entretiens, monter en compétences...">
+                </div>
+                <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;">
+                  <button type="button" class="btn btn-outline btn-sm" id="btnCancelPreRegister">Annuler</button>
+                  <button type="submit" class="btn btn-primary btn-sm" style="background:#0284c7;border-color:#0284c7;color:#fff;">✅ Valider ma pré-inscription</button>
+                </div>
+              </form>
+            </div>
+          `;
+
+          document.body.appendChild(overlay);
+          setTimeout(() => overlay.classList.add('active'), 10);
+
+          const closeRegModal = () => {
+            overlay.classList.remove('active');
+            setTimeout(() => overlay.remove(), 250);
+          };
+
+          overlay.querySelector('#preregister-close-x').addEventListener('click', closeRegModal);
+          overlay.querySelector('#btnCancelPreRegister').addEventListener('click', closeRegModal);
+          overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) closeRegModal();
+          });
+
+          const form = overlay.querySelector('#preregisterForm');
+          form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+
+            try {
+              const stored = JSON.parse(localStorage.getItem('member_registered_formations') || '[]');
+              const already = stored.some(item => item.id === f.id);
+              if (!already) {
+                stored.push({
+                  id: f.id,
+                  title: f.title,
+                  category: f.category || 'Formation',
+                  registeredAt: new Date().toISOString(),
+                  status: 'CONFIRMED',
+                  name, email, phone
+                });
+                localStorage.setItem('member_registered_formations', JSON.stringify(stored));
+              }
+            } catch (_) {}
+
+            closeRegModal();
+
+            if (window.toast) {
+              window.toast.success(`🎉 Félicitations ! Votre pré-inscription à "${f.title}" est validée.`);
+            } else {
+              alert(`🎉 Félicitations ! Votre pré-inscription à "${f.title}" est validée.`);
+            }
+          });
+        }
+
+        function initFormatFilters() {
+          if (!formatFiltersContainer) return;
+          formatFiltersContainer.querySelectorAll('.format-pill').forEach(btn => {
+            btn.addEventListener('click', () => {
+              formatFiltersContainer.querySelectorAll('.format-pill').forEach(b => b.classList.remove('active'));
+              btn.classList.add('active');
+              currentFormat = btn.getAttribute('data-format') || '';
+              renderCards();
+            });
+          });
+        }
+
         async function loadCategories() {
           try {
             const res = await window.Api.formations.getCategories();
@@ -462,6 +601,8 @@
                 renderCards();
               });
             });
+
+            initFormatFilters();
           } catch (e) {
             console.warn('Could not load formation categories', e);
           }
@@ -473,6 +614,18 @@
           let filtered = allFormations;
           if (currentCategory) {
             filtered = filtered.filter(f => f.category === currentCategory);
+          }
+
+          if (currentFormat) {
+            filtered = filtered.filter(f => {
+              const loc = (f.location || '').toLowerCase();
+              const title = (f.title || '').toLowerCase();
+              const desc = (f.description || '').toLowerCase();
+              if (currentFormat === 'Présentiel') return loc.includes('dakar') || loc.includes('présentiel') || (!loc.includes('ligne') && !loc.includes('zoom'));
+              if (currentFormat === 'En ligne') return loc.includes('ligne') || loc.includes('zoom') || loc.includes('webinaire') || desc.includes('webinaire');
+              if (currentFormat === 'Atelier') return title.includes('atelier') || desc.includes('atelier') || title.includes('pratique');
+              return true;
+            });
           }
 
           if (filtered.length === 0) {
