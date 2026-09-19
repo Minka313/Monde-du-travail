@@ -66,12 +66,12 @@
 </nav>
 
     <main id="main-content">
-        <section class="hero hero-visual">
+        <section class="hero hero-visual hero-scene scene" data-scene="blog-hero">
             <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1100&auto=format&fit=crop&q=75" alt="Blog et actualités du club" fetchpriority="high">
             <div class="hero-aurora" aria-hidden="true"></div>
             <div class="hero-inner">
-                <div class="hero-content">
-                    <span class="hero-label">📰 Actualités & Réflexions</span>
+                <div class="hero-content reveal-up">
+                    <span class="hero-label">📰 Actualités &amp; Réflexions</span>
                     <h1>Le Blog du Monde du Travail</h1>
                     <p>Découvrez les activités, projets, rencontres et initiatives qui font vivre notre club.</p>
                     <div class="hero-actions">
@@ -81,30 +81,32 @@
             </div>
         </section>
 
-        <section class="section" id="articles">
+        <div class="scene-divider" aria-hidden="true"></div>
+
+        <section class="section scene" id="articles" data-scene="blog-articles">
             <div class="container page-content">
-                <div class="blog-controls">
+                <div class="blog-controls reveal-up">
                     <div class="blog-search">
                         <span class="blog-search-icon">🔍</span>
                         <input type="text" id="blogSearch" placeholder="Rechercher un article, un sujet...">
                     </div>
-                    <div class="blog-filters" id="blogCategoryFilters">
-                        <button class="filter-chip active" data-category="">✨ Tout afficher</button>
-                        <button class="filter-chip" data-category="CLUB">🏛️ Activités du club</button>
-                        <button class="filter-chip" data-category="FORMATION">📚 Formations</button>
-                        <button class="filter-chip" data-category="ATELIER">🎤 Ateliers</button>
-                        <button class="filter-chip" data-category="RENCONTRE">🤝 Rencontres</button>
-                        <button class="filter-chip" data-category="CONFERENCE">🌍 Conférences</button>
-                        <button class="filter-chip" data-category="VISITE">🏢 Visites</button>
-                        <button class="filter-chip" data-category="PROJET">🚀 Projets</button>
-                        <button class="filter-chip" data-category="TEMOIGNAGE">💬 Témoignages</button>
-                        <button class="filter-chip" data-category="ANNONCE">📢 Annonces</button>
+                    <div class="blog-filters stagger-group" id="blogCategoryFilters">
+                        <button class="filter-chip stagger-item active" data-category="">✨ Tout afficher</button>
+                        <button class="filter-chip stagger-item" data-category="CLUB">🏛️ Activités du club</button>
+                        <button class="filter-chip stagger-item" data-category="FORMATION">📚 Formations</button>
+                        <button class="filter-chip stagger-item" data-category="ATELIER">🎤 Ateliers</button>
+                        <button class="filter-chip stagger-item" data-category="RENCONTRE">🤝 Rencontres</button>
+                        <button class="filter-chip stagger-item" data-category="CONFERENCE">🌍 Conférences</button>
+                        <button class="filter-chip stagger-item" data-category="VISITE">🏢 Visites</button>
+                        <button class="filter-chip stagger-item" data-category="PROJET">🚀 Projets</button>
+                        <button class="filter-chip stagger-item" data-category="TEMOIGNAGE">💬 Témoignages</button>
+                        <button class="filter-chip stagger-item" data-category="ANNONCE">📢 Annonces</button>
                     </div>
                 </div>
 
                 <div id="featuredPost" class="blog-featured"></div>
 
-                <div class="cards-grid" id="blogContainer">
+                <div class="cards-grid stagger-group" id="blogContainer">
                     <p class="text-muted text-center">Chargement...</p>
                 </div>
 
@@ -212,7 +214,7 @@
           const categoryIcon = categoryIcons[post.category] || '📄';
 
           featuredContainer.innerHTML = `
-            <article class="blog-featured-card">
+            <article class="blog-featured-card reveal-scale">
               <div class="blog-featured-image">
                 <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="eager">
                 <div class="blog-featured-overlay"></div>
@@ -229,6 +231,7 @@
               </div>
             </article>
           `;
+          if (window.initScrollReveal) window.initScrollReveal();
         }
 
         function renderPagination(pagination) {
@@ -307,13 +310,13 @@
               renderFeatured(null);
             }
 
-            container.innerHTML = posts.map(post => {
+            container.innerHTML = posts.map((post, idx) => {
               const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
               const categoryLabel = categoryLabels[post.category] || post.category;
               const categoryIcon = categoryIcons[post.category] || '📄';
 
               return `
-                <article class="card" data-blog-post-id="${post.id}">
+                <article class="card stagger-item reveal-scale" data-blog-post-id="${post.id}" style="--stagger-idx: ${idx};">
                   <div class="card-image-wrap">
                     <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy">
                     <div class="card-image-overlay"></div>
@@ -333,6 +336,7 @@
             }).join('');
 
             renderPagination(pagination);
+            if (window.initScrollReveal) window.initScrollReveal();
           } catch (error) {
             console.warn('API blog non joignable, affichage des articles de secours :', error);
             if (container) {
@@ -368,12 +372,12 @@
 
               renderFeatured(fallbackPosts[0]);
 
-              container.innerHTML = fallbackPosts.map(post => {
+              container.innerHTML = fallbackPosts.map((post, idx) => {
                 const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
                 const categoryLabel = categoryLabels[post.category] || post.category;
                 const categoryIcon = categoryIcons[post.category] || '📄';
                 return `
-                  <article class="card" data-blog-post-id="${post.id}">
+                  <article class="card stagger-item reveal-scale" data-blog-post-id="${post.id}" style="--stagger-idx: ${idx};">
                     <div class="card-image-wrap">
                       <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy">
                       <div class="card-image-overlay"></div>
@@ -391,6 +395,7 @@
                   </article>
                 `;
               }).join('');
+              if (window.initScrollReveal) window.initScrollReveal();
             }
           }
         }

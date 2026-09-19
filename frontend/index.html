@@ -71,7 +71,7 @@
 </nav>
 
     <main id="main-content">
-        <section class="hero hero-visual">
+        <section class="hero hero-visual scene" id="scene-hero">
             <img src="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=1100&auto=format&fit=crop&q=75" alt="Jeunes professionnels" fetchpriority="high">
             <div class="hero-aurora" aria-hidden="true"></div>
             <div class="hero-inner">
@@ -85,12 +85,13 @@
                     </div>
                 </div>
             </div>
+            <div class="scene-divider" aria-hidden="true"></div>
         </section>
 
         <!-- Bandeau d'Impact Chiffré & Compteurs Animés (Données Véridiques Synchronisées) -->
         <div class="container">
-            <section class="impact-section reveal" aria-label="Statistiques réelles et impact de la communauté">
-                <div class="impact-grid">
+            <section class="impact-section scene reveal-up" aria-label="Statistiques réelles et impact de la communauté">
+                <div class="impact-grid stagger-group">
                     <div class="impact-item">
                         <div class="impact-num-wrapper">
                             <span class="impact-prefix">+</span>
@@ -130,20 +131,20 @@
             </section>
         </div>
 
-        <section class="section section-editorial">
+        <section class="section section-editorial scene" id="scene-editorial">
             <div class="container page-content">
-                <div class="centered-editorial animate-in animate-delay-1">
+                <div class="centered-editorial reveal-up">
                     <span class="section-label">Bienvenue</span>
                     <h2>Là où l'école s'arrête,<br>le club commence.</h2>
                     <p class="editorial-lead">Un diplôme ouvre une porte. Il ne dit rien de ce qu'il y a derrière — les codes non écrits, les silences qu'il faut savoir lire, les choix qui engagent une carrière entière. C'est cette part-là que nous transmettons, celle qu'aucun programme n'enseigne vraiment.</p>
 
-                    <div class="editorial-tags-row">
+                    <div class="editorial-tags-row stagger-group">
                         <span class="editorial-pill">🗣️ Prise de parole</span>
                         <span class="editorial-pill">👔 Lecture des codes professionnels</span>
                         <span class="editorial-pill">🤝 Sens du relationnel</span>
                     </div>
 
-                    <div class="editorial-duo-grid">
+                    <div class="editorial-duo-grid stagger-group">
                         <div class="editorial-duo-card duo-constat">
                             <span class="duo-subtitle">Le constat</span>
                             <p class="duo-text">Le savoir académique s'arrête précisément là où commence le savoir-être.</p>
@@ -155,8 +156,8 @@
                     </div>
                 </div>
 
-                <div class="cards-grid">
-                    <div class="card">
+                <div class="cards-grid stagger-group">
+                    <div class="card reveal-scale">
                         <div class="card-image-wrap">
                             <img src="images/orientation.jpg" alt="Orientation professionnelle" loading="lazy">
                             <div class="card-image-overlay"></div>
@@ -167,7 +168,7 @@
                             <a href="job.html" class="card-link">Explorer les métiers <span>&rarr;</span></a>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card reveal-scale">
                         <div class="card-image-wrap">
                             <img src="images/communication.jpg" alt="Communication et leadership" loading="lazy" style="object-position: center 8%;">
                             <div class="card-image-overlay"></div>
@@ -178,7 +179,7 @@
                             <a href="formations.html" class="card-link">Voir les formations <span>&rarr;</span></a>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card reveal-scale">
                         <div class="card-image-wrap">
                             <img src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=500&auto=format&fit=crop&q=75" alt="Leadership et travail d'équipe" loading="lazy">
                             <div class="card-image-overlay"></div>
@@ -193,15 +194,15 @@
             </div>
         </section>
 
-        <section class="section section-alt">
+        <section class="section section-alt scene" id="scene-values">
             <div class="container page-content">
-                <div class="section-header">
+                <div class="section-header reveal-up">
                     <span class="section-label">Nos Valeurs</span>
                     <h2>Les principes qui guident chaque action du club</h2>
                     <p>Des valeurs fortes pour une communauté ambitieuse et engagée</p>
                 </div>
-                <div class="cards-grid">
-                    <div class="card">
+                <div class="cards-grid stagger-group">
+                    <div class="card reveal-scale">
                         <div class="card-image-wrap">
                             <img src="images/innovation.jpg" alt="Innovation et technologie" loading="lazy">
                             <div class="card-image-overlay"></div>
@@ -211,7 +212,7 @@
                             <p>Encourager la créativité et l'esprit d'innovation pour répondre aux défis contemporains.</p>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card reveal-scale">
                         <div class="card-image-wrap">
                             <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=500&auto=format&fit=crop&q=75" alt="Éthique et responsabilité" loading="lazy">
                             <div class="card-image-overlay"></div>
@@ -221,7 +222,7 @@
                             <p>Promouvoir des pratiques professionnelles responsables, intègres et respectueuses.</p>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card reveal-scale">
                         <div class="card-image-wrap">
                             <img src="images/citoyennete.jpg" alt="Citoyenneté et engagement" loading="lazy">
                             <div class="card-image-overlay"></div>
@@ -236,15 +237,15 @@
         </section>
 
         <!-- Formation à la Une -->
-        <section class="section section-featured-highlight">
+        <section class="section section-featured-highlight scene" id="scene-featured">
             <div class="container">
-                <div class="home-featured-card reveal">
+                <div class="home-featured-card reveal-scale">
                     <div class="home-featured-grid">
                         <div class="home-featured-content">
                             <span class="featured-tag">🔥 À la Une ce mois-ci</span>
                             <h3>Masterclass : L'Art du Pitch & Entretien Décisif</h3>
                             <p>Apprenez à captiver votre auditoire en 2 minutes chrono, décryptez les attentes réelles des recruteurs et transformez vos entretiens en offres concrètes.</p>
-                            <div class="featured-perks-list">
+                            <div class="featured-perks-list stagger-group">
                                 <span class="featured-perk">📅 Samedi 28 Mars 2026</span>
                                 <span class="featured-perk">📍 Présentiel & Streaming</span>
                                 <span class="featured-perk">🎓 Attestation certifiée</span>
@@ -264,9 +265,9 @@
         </section>
 
         <!-- Live Forum Feed -->
-        <section class="section section-forum-preview">
+        <section class="section section-forum-preview scene" id="scene-forum">
             <div class="container">
-                <div class="home-forum-header">
+                <div class="home-forum-header reveal-up">
                     <div>
                         <span class="section-label">Communauté</span>
                         <h2>Discussions & Entraide en Direct</h2>
@@ -274,8 +275,8 @@
                     </div>
                     <a href="forum.html" class="btn btn-secondary">Explorer le forum <span class="btn-arrow">&rarr;</span></a>
                 </div>
-                <div class="home-topics-grid" id="homeForumContainer">
-                    <a href="forum.html" class="home-topic-card">
+                <div class="home-topics-grid stagger-group" id="homeForumContainer">
+                    <a href="forum.html" class="home-topic-card reveal-scale">
                         <div class="home-topic-top">
                             <span class="home-topic-badge">💼 Premier Emploi</span>
                             <h4 class="home-topic-title">Comment négocier son premier salaire en sortie d'école ?</h4>
@@ -286,7 +287,7 @@
                             <span class="home-topic-replies">💬 14 réponses</span>
                         </div>
                     </a>
-                    <a href="forum.html" class="home-topic-card">
+                    <a href="forum.html" class="home-topic-card reveal-scale">
                         <div class="home-topic-top">
                             <span class="home-topic-badge">🎯 Orientation</span>
                             <h4 class="home-topic-title">Data Analyst vs Business Analyst : quelle voie choisir ?</h4>
@@ -297,7 +298,7 @@
                             <span class="home-topic-replies">💬 9 réponses</span>
                         </div>
                     </a>
-                    <a href="forum.html" class="home-topic-card">
+                    <a href="forum.html" class="home-topic-card reveal-scale">
                         <div class="home-topic-top">
                             <span class="home-topic-badge">🤝 Réseau & Mentorat</span>
                             <h4 class="home-topic-title">Les 5 règles d'or pour relancer un contact LinkedIn avec succès</h4>
@@ -313,15 +314,15 @@
         </section>
 
         <!-- Témoignages des Membres -->
-        <section class="section section-testimonials section-alt">
+        <section class="section section-testimonials section-alt scene" id="scene-testimonials">
             <div class="container">
-                <div class="section-header">
+                <div class="section-header reveal-up">
                     <span class="section-label">Impact Réel</span>
                     <h2>Ce que disent nos membres</h2>
                     <p>Découvrez comment le club a propulsé leur entrée dans le monde professionnel</p>
                 </div>
-                <div class="testimonials-grid">
-                    <div class="testimonial-card reveal">
+                <div class="testimonials-grid stagger-group">
+                    <div class="testimonial-card reveal-scale">
                         <div class="testimonial-quote-icon">“</div>
                         <p class="testimonial-text">L'atelier simulation d'entretien m'a permis de comprendre pourquoi je bloquais au dernier tour. Trois semaines plus tard, je signais mon CDI en cabinet de conseil.</p>
                         <div class="testimonial-author-box">
@@ -332,7 +333,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="testimonial-card reveal">
+                    <div class="testimonial-card reveal-scale">
                         <div class="testimonial-quote-icon">“</div>
                         <p class="testimonial-text">Le club n'est pas une simple formation théorique : c'est un réseau bienveillant où des professionnels aguerris prennent le temps de vous challenger sans filtre.</p>
                         <div class="testimonial-author-box">
@@ -343,7 +344,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="testimonial-card reveal">
+                    <div class="testimonial-card reveal-scale">
                         <div class="testimonial-quote-icon">“</div>
                         <p class="testimonial-text">J'ai découvert ma vocation de chef de projet digital grâce aux fiches métiers et aux discussions avec les mentors sur le forum. Une expérience inestimable.</p>
                         <div class="testimonial-author-box">
@@ -359,9 +360,9 @@
         </section>
 
         <!-- Newsletter & Veille Hebdomadaire -->
-        <section class="section section-newsletter">
+        <section class="section section-newsletter scene" id="scene-newsletter">
             <div class="container">
-                <div class="newsletter-card reveal">
+                <div class="newsletter-card reveal-scale">
                     <h3>Recevez notre veille carrière & opportunités</h3>
                     <p>Une sélection hebdomadaire des meilleures offres de stage, conseils d'experts et invitations exclusives aux masterclasses du club.</p>
                     <form class="newsletter-form" id="homeNewsletterForm">

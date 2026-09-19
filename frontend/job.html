@@ -67,7 +67,7 @@
 
 <main id="main-content">
     <!-- HERO SECTION MODERNE & 3 PORTES D'ENTRÉE -->
-    <section class="hero hero-visual hero-orientation">
+    <section class="hero hero-visual hero-orientation scene" id="scene-orientation-hero">
         <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&auto=format&fit=crop&q=80" alt="Orientation professionnelle" fetchpriority="high">
         <div class="hero-aurora" aria-hidden="true"></div>
         <div class="hero-inner">
@@ -77,7 +77,7 @@
                 <p>Découvre les 21 grandes familles, les compétences clés et les formations qui façonnent le monde professionnel contemporain.</p>
                 
                 <!-- Porte A : Barre de recherche instantanée -->
-                <div class="orientation-search-box">
+                <div class="orientation-search-box reveal-up reveal-delay-2">
                     <div class="search-input-wrapper">
                         <span class="search-input-icon">🔎</span>
                         <input type="text" id="orientationSearchInput" class="orientation-search-input" placeholder="Quel métier, domaine, compétence ou formation recherches-tu ?" autocomplete="off" aria-label="Rechercher un métier ou domaine">
@@ -86,7 +86,7 @@
                 </div>
 
                 <!-- Portes B & C : Accès rapides -->
-                <div class="orientation-quick-actions">
+                <div class="orientation-quick-actions stagger-group">
                     <button type="button" id="btnExploreFamilies" class="btn-quick-nav active">
                         <span>🧭</span>
                         <span>Les 21 Grandes Familles</span>
@@ -102,10 +102,11 @@
                 </div>
             </div>
         </div>
+        <div class="scene-divider" aria-hidden="true"></div>
     </section>
 
     <!-- SECTION PRINCIPALE D'EXPLORATION -->
-    <section class="section" id="explorerSection">
+    <section class="section scene" id="explorerSection">
         <div class="container page-content">
             
             <!-- Fil d'Ariane interactif -->
@@ -116,7 +117,7 @@
             </nav>
 
             <!-- Titre et sous-titre de la vue active -->
-            <div class="section-header text-center" id="viewSectionHeader" style="margin-bottom: 2rem;">
+            <div class="section-header text-center reveal-up" id="viewSectionHeader" style="margin-bottom: 2rem;">
                 <span class="section-label" id="viewSectionLabel">Exploration Progressive</span>
                 <h2 id="viewSectionTitle">Les 21 Grandes Familles Professionnelles</h2>
                 <p id="viewSectionSubtitle" class="text-muted">Explore les domaines d’avenir, découvre leurs sous-disciplines et identifie les métiers clés.</p>
@@ -169,12 +170,12 @@
             </div>
 
             <!-- PORTE B (NIVEAU 1) : GRILLE DES 21 GRANDES FAMILLES -->
-            <div class="families-cards-grid" id="familiesGridContainer">
+            <div class="families-cards-grid stagger-group" id="familiesGridContainer">
                 <!-- 21 cartes de familles générées dynamiquement -->
             </div>
 
             <!-- GRILLE DES CARTES DE MÉTIERS (NIVEAU 3) -->
-            <div class="cards-grid jobs-cards-grid" id="jobsGridContainer" style="display:none;">
+            <div class="cards-grid jobs-cards-grid stagger-group" id="jobsGridContainer" style="display:none;">
                 <!-- Cartes métiers générées dynamiquement -->
             </div>
 

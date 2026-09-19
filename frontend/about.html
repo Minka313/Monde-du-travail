@@ -66,22 +66,24 @@
 </nav>
 
     <main id="main-content">
-        <section class="hero hero-visual">
+        <section class="hero hero-visual hero-scene scene" data-scene="about-hero">
             <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1100&auto=format&fit=crop&q=75" alt="Équipe et collaboration" fetchpriority="high">
             <div class="hero-aurora" aria-hidden="true"></div>
             <div class="hero-inner">
-                <div class="hero-content">
-                    <span class="hero-label">🌟 Notre Histoire & Vision</span>
+                <div class="hero-content reveal-up">
+                    <span class="hero-label">🌟 Notre Histoire &amp; Vision</span>
                     <h1>À Propos du Club</h1>
                     <p>Découvrez notre histoire, notre mission et nos valeurs au service de la jeunesse et de l'avenir professionnel.</p>
                 </div>
             </div>
         </section>
 
+        <div class="scene-divider" aria-hidden="true"></div>
+
         <!-- Bandeau d'Impact Chiffré & Compteurs Animés (Données Véridiques Synchronisées) -->
         <div class="container">
-            <section class="impact-section reveal" aria-label="Chiffres réels et vérifiés du Club">
-                <div class="impact-grid">
+            <section class="impact-section reveal-up" aria-label="Chiffres réels et vérifiés du Club">
+                <div class="impact-grid stagger-group">
                     <div class="impact-item">
                         <div class="impact-num-wrapper">
                             <span class="impact-prefix">+</span>
@@ -122,10 +124,10 @@
         </div>
 
         <!-- Section 1 & 2 : Contexte & Notre Mission (Format Split-Section avec les 2 Images d'Origine) -->
-        <section class="section section-editorial">
+        <section class="section section-editorial scene" data-scene="about-mission">
             <div class="container page-content">
                 <!-- Contexte de création (Image 1 : Équipe et collaboration) -->
-                <div class="split-section animate-in">
+                <div class="split-section reveal-up">
                     <div class="split-content">
                         <span class="section-label">Contexte</span>
                         <h2>Contexte de création</h2>
@@ -141,50 +143,52 @@
                             <span class="editorial-pill">🛡️ Apprentissage terrain</span>
                         </div>
                     </div>
-                    <div class="split-image-wrap">
+                    <div class="split-image-wrap reveal-scale">
                         <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=900&auto=format&fit=crop&q=75" alt="Équipe et collaboration" loading="lazy">
                     </div>
                 </div>
 
                 <!-- Notre Mission & Motivations (Image 2 : Mission et motivations) -->
-                <div class="split-section split-section--reverse animate-in animate-delay-1" style="margin-top: var(--space-16);">
+                <div class="split-section split-section--reverse reveal-up" style="margin-top: var(--space-16);">
                     <div class="split-content">
                         <span class="section-label">Mission</span>
                         <h2>Notre Mission &amp; Motivations</h2>
                         <p class="editorial-lead">
                             Notre mission est de devenir une <span class="highlight">plateforme de vulgarisation</span> de l'idéologie du travail. Nous voulons former le maximum de jeunes aux compétences de demain : leadership, communication, esprit critique, innovation et citoyenneté active.
                         </p>
-                        <div class="editorial-duo-grid" style="margin: 1.5rem 0 0 0; max-width: 100%;">
-                            <div class="editorial-duo-card duo-constat">
+                        <div class="editorial-duo-grid stagger-group" style="margin: 1.5rem 0 0 0; max-width: 100%;">
+                            <div class="editorial-duo-card duo-constat stagger-item reveal-scale">
                                 <span class="duo-subtitle">La Raison d'Être</span>
                                 <p class="duo-text">Éveiller des esprits bâtisseurs, conscients de leur valeur et prêts à transformer leur société.</p>
                             </div>
-                            <div class="editorial-duo-card duo-reponse">
+                            <div class="editorial-duo-card duo-reponse stagger-item reveal-scale">
                                 <span class="duo-subtitle">L'Accompagnement</span>
                                 <p class="duo-text">Une transmission bienveillante et concrète portée par des professionnels et mentors engagés.</p>
                             </div>
                         </div>
                     </div>
-                    <div class="split-image-wrap">
+                    <div class="split-image-wrap reveal-scale">
                         <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="Mission et motivations" loading="lazy">
                     </div>
                 </div>
             </div>
         </section>
 
+        <div class="scene-divider" aria-hidden="true"></div>
+
         <!-- Section 3 & 4 : Objectifs Principaux & Nos Valeurs (ADN Visuel du Site) -->
-        <section class="section section-alt">
+        <section class="section section-alt scene" data-scene="about-objectives">
             <div class="container page-content">
                 <!-- Objectifs Principaux : Les 5 Objectifs d'origine au mot près dans une grille moderne -->
-                <div class="section-header text-center animate-in animate-delay-2">
+                <div class="section-header text-center reveal-up">
                     <span class="section-label">Objectifs</span>
                     <h2>Nos Objectifs principaux</h2>
                     <p>Ce que nous nous engageons à construire et apporter concrètement à chaque membre du Club.</p>
                 </div>
 
-                <div class="objectives-dna-grid">
+                <div class="objectives-dna-grid stagger-group">
                     <!-- Objectif 01 -->
-                    <div class="objective-dna-card objective-dna-card--carriere">
+                    <div class="objective-dna-card objective-dna-card--carriere stagger-item reveal-scale">
                         <div class="objective-card-watermark">01</div>
                         <div class="objective-card-header">
                             <span class="objective-card-num">01</span>
@@ -201,7 +205,7 @@
                     </div>
 
                     <!-- Objectif 02 -->
-                    <div class="objective-dna-card objective-dna-card--partage">
+                    <div class="objective-dna-card objective-dna-card--partage stagger-item reveal-scale">
                         <div class="objective-card-watermark">02</div>
                         <div class="objective-card-header">
                             <span class="objective-card-num">02</span>
@@ -218,7 +222,7 @@
                     </div>
 
                     <!-- Objectif 03 -->
-                    <div class="objective-dna-card objective-dna-card--orientation">
+                    <div class="objective-dna-card objective-dna-card--orientation stagger-item reveal-scale">
                         <div class="objective-card-watermark">03</div>
                         <div class="objective-card-header">
                             <span class="objective-card-num">03</span>
@@ -235,7 +239,7 @@
                     </div>
 
                     <!-- Objectif 04 -->
-                    <div class="objective-dna-card objective-dna-card--softskills">
+                    <div class="objective-dna-card objective-dna-card--softskills stagger-item reveal-scale">
                         <div class="objective-card-watermark">04</div>
                         <div class="objective-card-header">
                             <span class="objective-card-num">04</span>
@@ -252,7 +256,7 @@
                     </div>
 
                     <!-- Objectif 05 -->
-                    <div class="objective-dna-card objective-dna-card--ethique">
+                    <div class="objective-dna-card objective-dna-card--ethique stagger-item reveal-scale">
                         <div class="objective-card-watermark">05</div>
                         <div class="objective-card-header">
                             <span class="objective-card-num">05</span>
@@ -270,14 +274,14 @@
                 </div>
 
                 <!-- Section Nos Valeurs (Même ADN que sur index.html : Grille de Cartes avec Images) -->
-                <div class="section-header text-center animate-in animate-delay-3" style="margin-top: 5rem;">
+                <div class="section-header text-center reveal-up" style="margin-top: 5rem;">
                     <span class="section-label">Nos Valeurs</span>
                     <h2>Les principes qui guident chaque action du club</h2>
                     <p>Des valeurs fortes pour une communauté ambitieuse et engagée</p>
                 </div>
 
-                <div class="cards-grid">
-                    <div class="card">
+                <div class="cards-grid stagger-group">
+                    <div class="card stagger-item reveal-scale">
                         <div class="card-image-wrap">
                             <img src="images/innovation.jpg" alt="Innovation et technologie" loading="lazy">
                             <div class="card-image-overlay"></div>
@@ -287,7 +291,7 @@
                             <p>Encourager la créativité et l'esprit d'innovation pour répondre aux défis contemporains.</p>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card stagger-item reveal-scale">
                         <div class="card-image-wrap">
                             <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=500&auto=format&fit=crop&q=75" alt="Éthique et responsabilité" loading="lazy">
                             <div class="card-image-overlay"></div>
@@ -297,7 +301,7 @@
                             <p>Promouvoir des pratiques professionnelles responsables, intègres et respectueuses.</p>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card stagger-item reveal-scale">
                         <div class="card-image-wrap">
                             <img src="images/citoyennete.jpg" alt="Citoyenneté et engagement" loading="lazy">
                             <div class="card-image-overlay"></div>
@@ -311,28 +315,30 @@
             </div>
         </section>
 
+        <div class="scene-divider" aria-hidden="true"></div>
+
         <!-- Mentors & Équipe Pédagogique -->
-        <section class="section section-mentors">
+        <section class="section section-mentors scene" data-scene="about-mentors">
             <div class="container page-content">
-                <div class="section-header text-center">
+                <div class="section-header text-center reveal-up">
                     <span class="section-label">Accompagnement</span>
                     <h2>Les Professionnels & Mentors du Club</h2>
                     <p>Des experts passionnés qui transmettent bénévolement leurs méthodes et leur expérience terrain.</p>
                 </div>
-                <div class="mentors-grid">
-                    <div class="mentor-card reveal">
+                <div class="mentors-grid stagger-group">
+                    <div class="mentor-card stagger-item reveal-up">
                         <div class="mentor-avatar">AB</div>
                         <h3 class="mentor-name">Amadou Bamba D.</h3>
                         <div class="mentor-role">Directeur des Ressources Humaines</div>
                         <p class="mentor-bio">15 ans d'expérience en recrutement et gestion des talents dans les télécoms et l'énergie en Afrique de l'Ouest.</p>
                     </div>
-                    <div class="mentor-card reveal">
+                    <div class="mentor-card stagger-item reveal-up">
                         <div class="mentor-avatar" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">SF</div>
                         <h3 class="mentor-name">Seynabou F.</h3>
                         <div class="mentor-role">Lead Data Architect & Mentor Tech</div>
                         <p class="mentor-bio">Accompagne les jeunes diplômés dans l'acquisition des compétences data, IA et analyse stratégique.</p>
                     </div>
-                    <div class="mentor-card reveal">
+                    <div class="mentor-card stagger-item reveal-up">
                         <div class="mentor-avatar" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%);">MT</div>
                         <h3 class="mentor-name">Mouhamadou T.</h3>
                         <div class="mentor-role">Consultant en Stratégie & Prise de parole</div>
@@ -342,26 +348,28 @@
             </div>
         </section>
 
+        <div class="scene-divider" aria-hidden="true"></div>
+
         <!-- Chronologie & Jalons Clés -->
-        <section class="section section-timeline section-alt">
+        <section class="section section-timeline section-alt scene" data-scene="about-timeline">
             <div class="container page-content">
-                <div class="section-header text-center">
+                <div class="section-header text-center reveal-up">
                     <span class="section-label">Notre Trajectoire</span>
                     <h2>Les Grandes Étapes du Club</h2>
                     <p>De l'idée initiale à une communauté dynamique et engagée</p>
                 </div>
-                <div class="about-timeline">
-                    <div class="timeline-step reveal">
+                <div class="about-timeline stagger-group">
+                    <div class="timeline-step stagger-item reveal-up">
                         <span class="timeline-year">2024</span>
                         <h3>Fondation du Club & Première Cohorte</h3>
                         <p>Naissance de l'initiative à Dakar pour pallier le manque de préparation pratique des diplômés. Lancement des premiers ateliers de simulation d'entretiens et décryptage des codes pro.</p>
                     </div>
-                    <div class="timeline-step reveal">
+                    <div class="timeline-step stagger-item reveal-up">
                         <span class="timeline-year">2025</span>
                         <h3>Masterclasses Soft Skills & Réseau Mentorat</h3>
                         <p>Structuration d'un catalogue de 12 formations certifiantes et ralliement de plus de 10 professionnels et cadres partenaires pour guider les jeunes en individuel.</p>
                     </div>
-                    <div class="timeline-step reveal">
+                    <div class="timeline-step stagger-item reveal-up">
                         <span class="timeline-year">2026</span>
                         <h3>Plateforme Numérique & Communauté Ouverte</h3>
                         <p>Déploiement de l'espace membre interactif, du forum d'entraide et du référentiel des 21 familles de métiers d'avenir pour impacter des milliers de jeunes.</p>
