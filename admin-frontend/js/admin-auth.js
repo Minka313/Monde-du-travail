@@ -165,9 +165,15 @@
     }
 
     if (response.status === 401) {
-      removeTokens();
-      window.location.href = 'login.html';
-      throw new Error('Session expirée');
+      if (!endpoint.includes('/auth/')) {
+        removeTokens();
+        window.location.href = 'login.html';
+        throw new Error('Session expirée');
+      }
+      const err = new Error(data.message || 'Email ou mot de passe incorrect');
+      err.status = 401;
+      err.data = data;
+      throw err;
     }
 
     if (response.status === 403 && data.code === 'REAUTH_REQUIRED' && !options._reauthTried) {
@@ -184,11 +190,17 @@
     }
 
     if (response.status === 403) {
-      throw new Error(data.message || 'Accès interdit');
+      const err = new Error(data.message || 'Accès interdit');
+      err.status = 403;
+      err.data = data;
+      throw err;
     }
 
     if (!response.ok || !data.success) {
-      throw new Error(data.message || `Erreur HTTP ${response.status}`);
+      const err = new Error(data.message || (response.status >= 500 ? 'Erreur technique temporaire du serveur' : `Erreur HTTP ${response.status}`));
+      err.status = response.status;
+      err.data = data;
+      throw err;
     }
 
     return data;

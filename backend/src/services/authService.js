@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const prisma = require('../config/database');
-const { UnauthorizedError, ConflictError, BadRequestError } = require('../utils/errors');
+const { UnauthorizedError, ConflictError, BadRequestError, ForbiddenError } = require('../utils/errors');
 const logger = require('../utils/logger');
 const AuditService = require('./auditService');
 const RbacService = require('./rbacService');
@@ -102,7 +102,7 @@ class AuthService {
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedError('Votre compte n\'est pas encore activé. Veuillez contacter un administrateur.');
+      throw new ForbiddenError('Votre compte n\'est pas encore activé. Veuillez contacter un administrateur.');
     }
 
     // Si le 2FA est activé sur le compte, émettre un jeton temporaire scoped

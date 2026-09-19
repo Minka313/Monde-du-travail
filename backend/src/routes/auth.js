@@ -42,6 +42,31 @@ const login2FASchema = z.object({
 
 const rateLimit = require('express-rate-limit');
 
+// Limiteur ciblé pour la connexion : ne compte que les échecs (skipSuccessfulRequests)
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20, // 20 tentatives infructueuses par IP
+  skipSuccessfulRequests: true,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Trop de tentatives de connexion infructueuses. Veuillez patienter 15 minutes avant de réessayer.',
+  },
+});
+
+// Limiteur pour les inscriptions pour éviter le spam de création de comptes
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 heure
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Trop de demandes d\'inscription depuis cette adresse. Veuillez réessayer plus tard.',
+  },
+});
+
 // Limiteur de requêtes spécifique pour prévenir le spam d'envoi d'emails
 const forgotPasswordLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -71,9 +96,9 @@ const resetPasswordSchema = z.object({
 });
 
 // Routes
-router.post('/register', validate(registerSchema), authController.register);
-router.post('/login', validate(loginSchema), authController.login);
-router.post('/login-2fa', validate(login2FASchema), authController.login2FA);
+router.post('/register', registerLimiter, validate(registerSchema), authController.register);
+router.post('/login', loginLimiter, validate(loginSchema), authController.login);
+router.post('/login-2fa', loginLimiter, validate(login2FASchema), authController.login2FA);
 router.post('/forgot-password', forgotPasswordLimiter, validate(forgotPasswordSchema), authController.forgotPassword);
 router.post('/reset-password', validate(resetPasswordSchema), authController.resetPassword);
 router.post('/refresh', validate(refreshSchema), authController.refresh);

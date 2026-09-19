@@ -156,13 +156,21 @@ return headers;
     try {
       const response = await fetch(url, config);
       status = response.status;
-      const data = await response.json();
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (_) {
+        data = { success: false, message: response.status >= 500 ? 'Erreur interne du serveur' : `Erreur HTTP ${response.status}` };
+      }
 
       const duration = Math.round(performance.now() - startTime);
       NetLog.log(options.method || 'GET', endpoint, status, duration);
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || `Erreur HTTP ${response.status}`);
+        const err = new Error(data.message || `Erreur HTTP ${response.status}`);
+        err.status = response.status;
+        err.data = data;
+        throw err;
       }
 
       return data;
@@ -192,7 +200,12 @@ return headers;
     try {
       const response = await fetch(url, config);
       status = response.status;
-      const data = await response.json();
+      let data = {};
+      try {
+        data = await response.json();
+      } catch (_) {
+        data = { success: false, message: response.status >= 500 ? 'Erreur interne du serveur' : `Erreur HTTP ${response.status}` };
+      }
 
       if (response.status === 401 && !options._retry && !endpoint.includes('/auth/')) {
         const newToken = await refreshToken();
@@ -205,7 +218,10 @@ return headers;
       NetLog.log(options.method || 'GET', endpoint, status, duration);
 
       if (!response.ok || !data.success) {
-        throw new Error(data.message || `Erreur HTTP ${response.status}`);
+        const err = new Error(data.message || `Erreur HTTP ${response.status}`);
+        err.status = response.status;
+        err.data = data;
+        throw err;
       }
 
       return data;
