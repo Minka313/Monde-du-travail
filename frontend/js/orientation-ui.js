@@ -725,6 +725,21 @@
                 </div>
               </div>
             ` : ''}
+
+            <!-- Passerelle directe Formations Club au bas de l'onglet Découvrir -->
+            <div class="dossier-club-callout" style="background:linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);border:1.5px solid #bae6fd;padding:1.25rem 1.5rem;border-radius:12px;margin-top:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+              <div style="flex:1;min-width:260px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.35rem;">
+                  <span style="font-size:1.2rem;">💡</span>
+                  <h4 style="color:#0369a1;margin:0;font-size:1rem;font-weight:700;">Envie de vous former à ce métier ?</h4>
+                </div>
+                <p style="color:#0c4a6e;font-size:0.88rem;line-height:1.5;margin:0;">Découvrez les modules, ateliers pratiques et bootcamps dispensés par nos mentors au sein du Club.</p>
+              </div>
+              <a href="formations.html?search=${encodeURIComponent(job.title)}" class="btn-dossier-formation" style="background:#0284c7;color:#ffffff;font-weight:700;padding:0.65rem 1.25rem;border-radius:8px;font-size:0.88rem;display:inline-flex;align-items:center;gap:0.45rem;text-decoration:none;box-shadow:0 3px 10px rgba(2,132,199,0.3);border:none;">
+                <span>🎓 Voir les formations du Club</span>
+                <span>&rarr;</span>
+              </a>
+            </div>
           </div>
 
           <!-- ONGLET 2 : COMPÉTENCES -->
@@ -940,11 +955,17 @@
 
         <!-- Pied de modal -->
         <div class="dossier-footer">
-          <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
-            <a href="formations.html?search=${encodeURIComponent(job.title)}" class="btn btn-outline btn-sm">🎓 Formations liées</a>
-            <a href="forum.html" class="btn btn-outline btn-sm">💬 Poser une question sur le forum</a>
+          <div class="dossier-footer-actions">
+            <a href="formations.html?search=${encodeURIComponent(job.title)}" class="btn-dossier-action btn-dossier-formation" style="background:#0284c7;color:#ffffff;border:1px solid #0284c7;font-weight:650;padding:0.6rem 1.15rem;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:0.45rem;box-shadow:0 2px 8px rgba(2,132,199,0.25);">
+              <span>🎓</span>
+              <span>Formations du Club</span>
+            </a>
+            <a href="forum.html" class="btn-dossier-action btn-dossier-forum" style="background:#f8fafc;color:#0f172a;border:1.5px solid #cbd5e1;font-weight:600;padding:0.6rem 1.15rem;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:0.45rem;">
+              <span>💬</span>
+              <span>Poser une question</span>
+            </a>
           </div>
-          <button type="button" class="btn btn-primary btn-sm" id="dossierCloseBtn">Fermer la fiche</button>
+          <button type="button" class="btn-dossier-close-footer" id="dossierCloseBtn" style="background:#0f172a;color:#ffffff;font-weight:700;padding:0.65rem 1.35rem;border-radius:8px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;">Fermer la fiche</button>
         </div>
       </div>
     `;
