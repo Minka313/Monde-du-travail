@@ -656,14 +656,20 @@
           <button type="button" class="dossier-close-btn" id="dossierCloseX" aria-label="Fermer le dossier">&times;</button>
           
           <div class="dossier-hero-content">
-            <div class="dossier-hero-badges-row">
-              <span class="dossier-domain-pill">
-                <span>${escapeHtml(job.icon || '💼')}</span>
-                <span>${escapeHtml(job.subdomain || job.familyName || 'Métier')}</span>
-              </span>
-              <span class="dossier-meta-tag" style="background:rgba(255,255,255,0.15);color:#fff;">
-                📁 ${escapeHtml(job.familyName || 'Orientation')}
-              </span>
+            <div class="dossier-hero-badges-row" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span class="dossier-domain-pill">
+                  <span>${escapeHtml(job.icon || '💼')}</span>
+                  <span>${escapeHtml(job.subdomain || job.familyName || 'Métier')}</span>
+                </span>
+                <span class="dossier-meta-tag" style="background:rgba(255,255,255,0.15);color:#fff;">
+                  📁 ${escapeHtml(job.familyName || 'Orientation')}
+                </span>
+              </div>
+              <button type="button" class="btn-dossier-fav" id="btnToggleJobFav" title="Sauvegarder dans mes favoris">
+                <span class="fav-icon">☆</span>
+                <span class="fav-label">Favori</span>
+              </button>
             </div>
 
             <h2 class="dossier-title" id="dossierJobTitle">${escapeHtml(job.title)}</h2>
@@ -961,6 +967,10 @@
               <span>🎓</span>
               <span>Formations du Club</span>
             </a>
+            <button type="button" class="btn-dossier-action btn-dossier-print" id="btnPrintJobSheet" style="background:#f8fafc;color:#0f172a;border:1.5px solid #cbd5e1;font-weight:600;padding:0.6rem 1.15rem;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:0.45rem;">
+              <span>🖨️</span>
+              <span>Imprimer / PDF</span>
+            </button>
             <a href="forum.html" class="btn-dossier-action btn-dossier-forum" style="background:#f8fafc;color:#0f172a;border:1.5px solid #cbd5e1;font-weight:600;padding:0.6rem 1.15rem;border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;gap:0.45rem;">
               <span>💬</span>
               <span>Poser une question</span>
@@ -1011,6 +1021,51 @@
     const closeBtn = overlay.querySelector('#dossierCloseBtn');
     if (closeX) closeX.addEventListener('click', closeModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+    // Print handler
+    const btnPrint = overlay.querySelector('#btnPrintJobSheet');
+    if (btnPrint) {
+      btnPrint.addEventListener('click', () => {
+        window.print();
+      });
+    }
+
+    // Favorite handler
+    const btnFav = overlay.querySelector('#btnToggleJobFav');
+    if (btnFav) {
+      const getFavs = () => {
+        try { return JSON.parse(localStorage.getItem('member_favorite_jobs') || '[]'); } catch (_) { return []; }
+      };
+      const isFav = getFavs().some(item => (item.id === job.id || item.slug === job.slug || item.title === job.title));
+      if (isFav) {
+        btnFav.classList.add('is-fav');
+        btnFav.innerHTML = '<span>⭐</span> <span>Dans mes favoris</span>';
+      }
+
+      btnFav.addEventListener('click', () => {
+        let favs = getFavs();
+        const existingIdx = favs.findIndex(item => (item.id === job.id || item.slug === job.slug || item.title === job.title));
+        if (existingIdx >= 0) {
+          favs.splice(existingIdx, 1);
+          btnFav.classList.remove('is-fav');
+          btnFav.innerHTML = '<span>☆</span> <span>Favori</span>';
+          if (window.toast) window.toast.info('Fiche retirée de vos favoris.');
+        } else {
+          favs.push({
+            id: job.id,
+            slug: job.slug,
+            title: job.title,
+            icon: job.icon || '💼',
+            category: job.familyName || job.subdomain || 'Métier',
+            savedAt: new Date().toISOString()
+          });
+          btnFav.classList.add('is-fav');
+          btnFav.innerHTML = '<span>⭐</span> <span>Dans mes favoris</span>';
+          if (window.toast) window.toast.success(`⭐ "${job.title}" ajouté à vos métiers favoris !`);
+        }
+        localStorage.setItem('member_favorite_jobs', JSON.stringify(favs));
+      });
+    }
 
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeModal();
