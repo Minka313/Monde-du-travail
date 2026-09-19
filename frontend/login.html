@@ -118,11 +118,6 @@
                         <p><small>Note : Toute inscription doit être validée manuellement par nos administrateurs.</small></p>
                         <button type="button" id="btnRegister" class="btn btn-register">Envoyer une demande d'adhésion</button>
 
-                        <div id="transferNotice" class="auth-transfer-banner" style="display:none;" role="status">
-                            <span class="auth-transfer-icon">💡</span>
-                            <span id="transferNoticeText"></span>
-                        </div>
-
                         <form id="registerForm" novalidate autocomplete="off" style="display:none; margin-top:1rem; text-align:left;">
                             <div class="form-group">
                                 <label for="regFirstName" class="form-label">Prénom</label>
@@ -345,8 +340,6 @@
           const regLastName = document.getElementById('regLastName');
           const registerForm = document.getElementById('registerForm');
           const btnRegister = document.getElementById('btnRegister');
-          const transferNotice = document.getElementById('transferNotice');
-          const transferNoticeText = document.getElementById('transferNoticeText');
 
           const emailVal = (emailInput?.value || '').trim();
           const passwordVal = passwordInput?.value || '';
@@ -362,15 +355,6 @@
             registerForm.style.display = 'block';
             if (btnRegister) {
               btnRegister.textContent = 'Masquer le formulaire';
-            }
-            if (transferNotice && transferNoticeText) {
-              if (customMessage) {
-                transferNoticeText.textContent = customMessage;
-                transferNotice.style.display = 'flex';
-              } else if (emailVal || passwordVal) {
-                transferNoticeText.textContent = "Vos informations saisies dans l'espace connexion ont été automatiquement transférées dans le formulaire d'adhésion.";
-                transferNotice.style.display = 'flex';
-              }
             }
 
             // Scroll fluide vers le formulaire d'adhésion
@@ -696,8 +680,6 @@
               } else {
                 registerForm.style.display = 'none';
                 btnRegister.textContent = "Envoyer une demande d'adhésion";
-                const transferNotice = document.getElementById('transferNotice');
-                if (transferNotice) transferNotice.style.display = 'none';
               }
             });
           }
