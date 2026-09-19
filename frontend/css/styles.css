@@ -925,6 +925,43 @@ p {
   transform: translateY(-2px);
 }
 
+/* Version sombre pour arrière-plans clairs */
+.btn-outline-dark {
+  background: #ffffff;
+  color: #0f172a !important;
+  border: 2px solid #cbd5e1 !important;
+  font-weight: 650;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-dark:hover {
+  background: #f8fafc;
+  color: #0284c7 !important;
+  border-color: #0284c7 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+/* Sécurité globale : .btn-outline dans les sections claires n'est JAMAIS invisible */
+.section .btn-outline,
+.section-alt .btn-outline,
+.container .btn-outline,
+.page-content .btn-outline {
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  background: #ffffff !important;
+}
+
+.section .btn-outline:hover,
+.section-alt .btn-outline:hover,
+.container .btn-outline:hover,
+.page-content .btn-outline:hover {
+  color: #0284c7 !important;
+  border-color: #0284c7 !important;
+  background: #f0f9ff !important;
+  transform: translateY(-2px);
+}
+
 .btn-ghost {
   background: transparent;
   color: var(--color-gray-700);
