@@ -141,7 +141,7 @@
   async function apiRequest(endpoint, options = {}) {
     const token = getToken();
     const headers = {
-      'Content-Type': 'application/json',
+      ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     };
@@ -489,6 +489,17 @@
         method: 'POST',
         body: JSON.stringify(data),
       }),
+    },
+    upload: {
+      file: (file, folder = 'metiers') => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('folder', folder);
+        return apiRequestWithRefresh('/upload', {
+          method: 'POST',
+          body: formData,
+        });
+      },
     },
     getToken,
     setToken,

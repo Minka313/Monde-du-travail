@@ -23,6 +23,7 @@
   "author": "Le Monde du Travail",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.600.0",
     "@prisma/client": "^5.7.1",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.6",
