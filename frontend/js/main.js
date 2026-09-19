@@ -807,6 +807,51 @@
     init();
   }
 
+  // ===== Non-blocking Anonymous & Member Visitor Tracking =====
+  function initVisitorTracking() {
+    try {
+      if (window.location.protocol === 'file:') return;
+
+      const STORAGE_KEY = 'lmt_visitor_id';
+      let visitorId = null;
+      try {
+        visitorId = localStorage.getItem(STORAGE_KEY);
+        if (!visitorId) {
+          visitorId = 'lmt_v_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+          localStorage.setItem(STORAGE_KEY, visitorId);
+        }
+      } catch (_) {
+        visitorId = 'anon_' + Math.random().toString(36).substring(2, 10);
+      }
+
+      const width = window.innerWidth || document.documentElement.clientWidth;
+      const device = width <= 768 ? 'mobile' : width <= 1024 ? 'tablet' : 'desktop';
+      const apiBase = (window.LMT_CONFIG && window.LMT_CONFIG.API_URL) ? window.LMT_CONFIG.API_URL : (window.Api && window.Api.baseUrl ? window.Api.baseUrl : '/api');
+
+      const payload = JSON.stringify({
+        visitorId,
+        path: window.location.pathname || '/',
+        referrer: document.referrer || '',
+        device,
+      });
+
+      const token = window.Api?.getToken ? window.Api.getToken() : null;
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      if (typeof fetch === 'function') {
+        fetch(`${apiBase}/analytics/track`, {
+          method: 'POST',
+          headers,
+          body: payload,
+          keepalive: true,
+        }).catch(() => {});
+      }
+    } catch (_) {}
+  }
+
   function init() {
     initPageTransitions();
     initScrollProgressBar();
@@ -821,6 +866,7 @@
     initFilters();
     initForumInteractions();
     initNavAuth();
+    initVisitorTracking();
   }
 
   document.addEventListener('layout:loaded', () => {

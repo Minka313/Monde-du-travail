@@ -23,6 +23,7 @@ const twoFactorRoutes = require('./routes/twoFactorRoutes');
 const statsRoutes = require('./routes/stats');
 const organizationRoutes = require('./routes/organization');
 const notificationRoutes = require('./routes/notifications');
+const analyticsRoutes = require('./routes/analytics');
 const prisma = require('./config/database');
 const app = express();
 
@@ -120,6 +121,7 @@ app.use('/api/public-stats', statsRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/organization', organizationRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // ===== GESTION DES ERREURS =====
 
