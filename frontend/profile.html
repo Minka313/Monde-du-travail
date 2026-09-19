@@ -155,66 +155,7 @@
 
             </div>
         </div>
-    <!-- Modal de Sélection d'Avatar / Photo de Profil -->
-    <div class="avatar-modal-overlay" id="avatarModalOverlay" role="dialog" aria-modal="true" aria-labelledby="avatarModalTitle">
-        <div class="avatar-modal-card">
-            <div class="avatar-modal-header">
-                <h3 id="avatarModalTitle"><span>✨</span> Choisir ma photo de profil</h3>
-                <button type="button" class="avatar-modal-close" id="btnCloseAvatarModal" aria-label="Fermer la boîte de dialogue">&times;</button>
-            </div>
-
-            <div class="avatar-modal-body">
-                <!-- Onglets -->
-                <div class="avatar-tabs">
-                    <button type="button" class="avatar-tab-btn active" data-tab="presets" id="tabBtnPresets">
-                        <span>🎨</span> Avatars illustrés
-                    </button>
-                    <button type="button" class="avatar-tab-btn" data-tab="upload" id="tabBtnUpload">
-                        <span>📷</span> Importer ma photo
-                    </button>
-                </div>
-
-                <!-- Panneau 1 : Avatars illustrés prédéfinis -->
-                <div class="avatar-tab-panel active" id="tabPresets">
-                    <p style="font-size:0.88rem;color:#64748b;margin-top:0;margin-bottom:1rem;">Sélectionnez l'avatar qui correspond le mieux à votre profil professionnel :</p>
-                    <div class="avatar-presets-grid" id="avatarPresetsGrid">
-                        <!-- Généré dynamiquement -->
-                    </div>
-                </div>
-
-                <!-- Panneau 2 : Importation de photo locale -->
-                <div class="avatar-tab-panel" id="tabUpload">
-                    <input type="file" id="avatarFileInput" accept="image/png, image/jpeg, image/webp" style="display:none;">
-                    <div class="avatar-upload-zone" id="avatarDropZone">
-                        <div class="avatar-upload-icon">📁</div>
-                        <div class="avatar-upload-title">Cliquez pour parcourir ou glissez votre photo ici</div>
-                        <p class="avatar-upload-desc">Formats JPG, PNG ou WebP • Recadrage carré automatique</p>
-                    </div>
-                    <div class="avatar-preview-section" id="uploadPreviewSection" style="display:none;">
-                        <div class="avatar-preview-img-wrapper">
-                            <img id="uploadPreviewImg" src="" alt="Aperçu de votre photo importée">
-                        </div>
-                        <div class="avatar-preview-info">
-                            <h5>Photo prête !</h5>
-                            <p>Cliquez sur "Enregistrer" pour l'appliquer à votre profil.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="avatar-modal-footer">
-                <div class="avatar-footer-left">
-                    <button type="button" class="btn-avatar-remove" id="btnRemoveAvatar">Supprimer la photo</button>
-                </div>
-                <div class="avatar-footer-right">
-                    <button type="button" class="btn-avatar-cancel" id="btnCancelAvatar">Annuler</button>
-                    <button type="button" class="btn-avatar-save" id="btnSaveAvatar">
-                        <span>💾</span> Enregistrer
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+    </section>
 </main>
 
 <footer data-layout="footer" class="site-footer">
@@ -240,6 +181,80 @@
         <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
     </div>
 </footer>
+
+<!-- Modal de Sélection d'Avatar / Photo de Profil (au niveau racine du body pour éviter tout conflit de scroll ou transform) -->
+<div class="avatar-modal-overlay" id="avatarModalOverlay" role="dialog" aria-modal="true" aria-labelledby="avatarModalTitle">
+    <div class="avatar-modal-card">
+        <div class="avatar-modal-header">
+            <h3 id="avatarModalTitle"><span>✨</span> Choisir ma photo de profil</h3>
+            <button type="button" class="avatar-modal-close" id="btnCloseAvatarModal" aria-label="Fermer la boîte de dialogue">&times;</button>
+        </div>
+
+        <div class="avatar-modal-body">
+            <!-- Aperçu en direct dynamique -->
+            <div class="avatar-live-preview-box">
+                <div class="avatar-live-preview-circle" id="modalLivePreviewCircle">
+                    <span id="modalLivePreviewInitial">M</span>
+                </div>
+                <div class="avatar-live-preview-meta">
+                    <span class="avatar-preview-badge">Aperçu en temps réel</span>
+                    <div class="avatar-preview-name" id="modalLivePreviewName">Membre</div>
+                    <p class="avatar-preview-hint" id="modalLivePreviewHint">Choisissez un avatar ou importez une photo</p>
+                </div>
+            </div>
+
+            <!-- Onglets de sélection -->
+            <div class="avatar-tabs">
+                <button type="button" class="avatar-tab-btn active" data-tab="presets" id="tabBtnPresets">
+                    <span>🎨</span> Avatars illustrés
+                </button>
+                <button type="button" class="avatar-tab-btn" data-tab="upload" id="tabBtnUpload">
+                    <span>📷</span> Importer ma photo
+                </button>
+            </div>
+
+            <!-- Panneau 1 : Avatars illustrés prédéfinis -->
+            <div class="avatar-tab-panel active" id="tabPresets">
+                <p style="font-size:0.85rem;color:#64748b;margin-top:0;margin-bottom:0.85rem;">Sélectionnez l'avatar qui correspond le mieux à votre profil :</p>
+                <div class="avatar-presets-grid" id="avatarPresetsGrid">
+                    <!-- Rempli dynamiquement par JS -->
+                </div>
+            </div>
+
+            <!-- Panneau 2 : Importation de photo locale -->
+            <div class="avatar-tab-panel" id="tabUpload">
+                <input type="file" id="avatarFileInput" accept="image/png, image/jpeg, image/webp" style="display:none;">
+                <div class="avatar-upload-zone" id="avatarDropZone">
+                    <div class="avatar-upload-icon">📁</div>
+                    <div class="avatar-upload-title">Glissez votre photo ici</div>
+                    <p class="avatar-upload-desc">Formats JPG, PNG ou WebP • Recadrage carré automatique</p>
+                    <button type="button" class="btn-upload-browse" id="btnUploadBrowse">Parcourir mes photos</button>
+                </div>
+                <div class="avatar-preview-section" id="uploadPreviewSection" style="display:none;">
+                    <div class="avatar-preview-img-wrapper">
+                        <img id="uploadPreviewImg" src="" alt="Aperçu de votre photo importée">
+                    </div>
+                    <div class="avatar-preview-info">
+                        <h5>Photo prête !</h5>
+                        <p>Cliquez sur "Enregistrer" pour l'appliquer à votre profil.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="avatar-modal-footer">
+            <div class="avatar-footer-left">
+                <button type="button" class="btn-avatar-remove" id="btnRemoveAvatar">Supprimer la photo</button>
+            </div>
+            <div class="avatar-footer-right">
+                <button type="button" class="btn-avatar-cancel" id="btnCancelAvatar">Annuler</button>
+                <button type="button" class="btn-avatar-save" id="btnSaveAvatar">
+                    <span>💾</span> Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="js/config.js"></script>
 <script src="js/frontend-api.js"></script>
@@ -446,6 +461,22 @@
       return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
     }
 
+    // Helper aperçu en direct dans la modale
+    function updateModalLivePreview(url, hintText) {
+      const circle = document.getElementById('modalLivePreviewCircle');
+      const hint = document.getElementById('modalLivePreviewHint');
+      if (hint && hintText) hint.textContent = hintText;
+      if (!circle) return;
+
+      if (url) {
+        circle.innerHTML = `<img src="${escapeHtml(url)}" alt="Aperçu avatar">`;
+      } else {
+        circle.textContent = initial;
+      }
+      circle.style.transform = 'scale(1.1)';
+      setTimeout(() => { circle.style.transform = 'scale(1)'; }, 160);
+    }
+
     // Générer les boutons de presets
     if (avatarPresetsGrid) {
       avatarPresetsGrid.innerHTML = '';
@@ -467,6 +498,7 @@
           btn.classList.add('selected');
           selectedAvatarUrl = uri;
           if (uploadPreviewSection) uploadPreviewSection.style.display = 'none';
+          updateModalLivePreview(uri, 'Avatar sélectionné : ' + p.label);
         });
         avatarPresetsGrid.appendChild(btn);
       });
@@ -475,6 +507,17 @@
     // Ouverture et fermeture de la modale
     function openAvatarModal() {
       selectedAvatarUrl = user.avatarUrl || null;
+
+      const modalLivePreviewName = document.getElementById('modalLivePreviewName');
+      if (modalLivePreviewName) modalLivePreviewName.textContent = fullName;
+
+      updateModalLivePreview(selectedAvatarUrl, selectedAvatarUrl ? 'Votre photo actuelle' : 'Choisissez un avatar ci-dessous ou importez une photo');
+
+      // Réinitialiser vers le premier onglet (Avatars illustrés)
+      tabBtnPresets?.classList.add('active');
+      tabBtnUpload?.classList.remove('active');
+      tabPresets?.classList.add('active');
+      tabUpload?.classList.remove('active');
 
       // Marquer le preset sélectionné si applicable
       document.querySelectorAll('.avatar-preset-btn').forEach(b => {
@@ -533,6 +576,12 @@
     // Zone d'importation de fichier
     avatarDropZone?.addEventListener('click', () => avatarFileInput?.click());
 
+    const btnUploadBrowse = document.getElementById('btnUploadBrowse');
+    btnUploadBrowse?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      avatarFileInput?.click();
+    });
+
     avatarDropZone?.addEventListener('dragover', (e) => {
       e.preventDefault();
       avatarDropZone.classList.add('dragover');
@@ -589,6 +638,7 @@
 
           if (uploadPreviewImg) uploadPreviewImg.src = croppedUri;
           if (uploadPreviewSection) uploadPreviewSection.style.display = 'flex';
+          updateModalLivePreview(croppedUri, 'Photo personnalisée prête !');
 
           // Décocher les presets
           document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('selected'));
@@ -604,6 +654,7 @@
       document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('selected'));
       if (uploadPreviewSection) uploadPreviewSection.style.display = 'none';
       if (avatarFileInput) avatarFileInput.value = '';
+      updateModalLivePreview(null, 'Photo réinitialisée aux initiales.');
       if (window.toast) window.toast.info('Photo prête à être retirée. Cliquez sur "Enregistrer" pour valider.');
     });
 
