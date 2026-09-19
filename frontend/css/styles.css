@@ -7472,3 +7472,88 @@ input:-webkit-autofill:active {
   color: #ffffff;
   border-color: var(--color-primary);
 }
+
+/* Job Dossier Bookmark & Print styles */
+.btn-dossier-fav {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  padding: 0.45rem 0.95rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.btn-dossier-fav:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-dossier-fav.is-fav {
+  background: #f59e0b;
+  color: #0f172a;
+  border-color: #f59e0b;
+}
+
+@media print {
+  body > *:not(#job-dossier-overlay) {
+    display: none !important;
+  }
+  #job-dossier-overlay {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+    opacity: 1 !important;
+  }
+  #job-dossier-overlay .dossier-modal {
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    position: static !important;
+    transform: none !important;
+    overflow: visible !important;
+  }
+  #job-dossier-overlay .dossier-close-btn,
+  #job-dossier-overlay .dossier-tabs,
+  #job-dossier-overlay .dossier-footer,
+  #job-dossier-overlay .btn-dossier-fav {
+    display: none !important;
+  }
+  #job-dossier-overlay .dossier-tab-content {
+    display: block !important;
+    margin-bottom: 2.5rem !important;
+    page-break-inside: avoid;
+  }
+  #job-dossier-overlay .dossier-body {
+    overflow: visible !important;
+    height: auto !important;
+    padding: 1.5rem 0 !important;
+  }
+  #job-dossier-overlay .dossier-hero {
+    min-height: auto !important;
+    color: #0f172a !important;
+    background: #f8fafc !important;
+    padding: 1.5rem !important;
+    border-bottom: 2px solid #0284c7 !important;
+  }
+  #job-dossier-overlay .dossier-hero-overlay {
+    display: none !important;
+  }
+  #job-dossier-overlay .dossier-title {
+    color: #0f172a !important;
+  }
+  #job-dossier-overlay .dossier-meta-tag {
+    color: #334155 !important;
+    background: #e2e8f0 !important;
+  }
+}
