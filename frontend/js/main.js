@@ -560,8 +560,8 @@
         });
       }, {
         root: null,
-        rootMargin: '0px 0px -40px 0px',
-        threshold: 0.08
+        rootMargin: '120px 0px 120px 0px',
+        threshold: 0.01
       });
     }
 
@@ -582,7 +582,7 @@
       });
     });
 
-    // 3. Éléments cibles : afficher immédiatement ceux au-dessus de la ligne de flottaison
+    // 3. Éléments cibles : afficher immédiatement ceux au-dessus ou proches de la ligne de flottaison
     const targets = document.querySelectorAll(`
       .reveal:not(.is-revealed),
       [data-reveal]:not(.is-revealed),
@@ -591,32 +591,32 @@
       .reveal-fade:not(.is-revealed),
       .reveal-left:not(.is-revealed),
       .reveal-right:not(.is-revealed),
-      .reveal-mask:not(.is-revealed),
-      .card:not(.is-revealed),
-      .job-card:not(.is-revealed),
-      .family-card:not(.is-revealed),
-      .formation-card:not(.is-revealed),
-      .article-card:not(.is-revealed),
-      .impact-item:not(.is-revealed),
-      .feature-card:not(.is-revealed),
-      .home-topic-card:not(.is-revealed),
-      .testimonial-card:not(.is-revealed),
-      .objective-dna-card:not(.is-revealed)
+      .reveal-mask:not(.is-revealed)
     `);
 
     const vh = window.innerHeight || document.documentElement.clientHeight;
     targets.forEach(el => {
       const rect = el.getBoundingClientRect();
-      // Si l'élément est déjà visible dans l'écran ou au-dessus, ne pas le masquer (évite le FOUC)
-      if (rect.top < vh * 0.92 && rect.bottom > 0) {
+      // Si l'élément est déjà visible dans l'écran ou proche, afficher immédiatement (évite tout écran blanc)
+      if (rect.top < vh + 120 && rect.bottom > -100) {
         el.classList.add('is-revealed', 'revealed');
         return;
       }
-      if (!el.classList.contains('reveal') && !el.classList.contains('reveal-up') && !el.classList.contains('reveal-scale') && !el.classList.contains('reveal-fade') && !el.classList.contains('reveal-mask')) {
-        el.classList.add('reveal');
-      }
       revealObserver.observe(el);
     });
+
+    // Filet de sécurité absolu : après 800ms, forcer l'affichage si un observer était bloqué
+    setTimeout(() => {
+      document.querySelectorAll(`
+        .reveal:not(.is-revealed),
+        .reveal-up:not(.is-revealed),
+        .reveal-scale:not(.is-revealed),
+        .reveal-fade:not(.is-revealed),
+        .reveal-mask:not(.is-revealed)
+      `).forEach(el => {
+        el.classList.add('is-revealed', 'revealed');
+      });
+    }, 800);
   }
 
   // ===== Subtle Hero Depth & Cursor Parallax (Desktop Only) =====
@@ -1238,4 +1238,6 @@
 
   window.showAlert = showAlert;
   window.showConfirm = showConfirm;
+  window.initScrollReveal = initScrollReveal;
+  window.initCardSpotlight = initCardSpotlight;
 })();

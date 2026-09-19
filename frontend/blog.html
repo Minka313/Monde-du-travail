@@ -214,7 +214,7 @@
           const categoryIcon = categoryIcons[post.category] || '📄';
 
           featuredContainer.innerHTML = `
-            <article class="blog-featured-card reveal-scale">
+            <article class="blog-featured-card">
               <div class="blog-featured-image">
                 <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="eager">
                 <div class="blog-featured-overlay"></div>
@@ -231,6 +231,7 @@
               </div>
             </article>
           `;
+          if (window.initCardSpotlight) window.initCardSpotlight();
           if (window.initScrollReveal) window.initScrollReveal();
         }
 
@@ -316,7 +317,7 @@
               const categoryIcon = categoryIcons[post.category] || '📄';
 
               return `
-                <article class="card stagger-item reveal-scale" data-blog-post-id="${post.id}" style="--stagger-idx: ${idx};">
+                <article class="card stagger-item" data-blog-post-id="${post.id}" style="--stagger-idx: ${idx};">
                   <div class="card-image-wrap">
                     <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy">
                     <div class="card-image-overlay"></div>
@@ -336,6 +337,7 @@
             }).join('');
 
             renderPagination(pagination);
+            if (window.initCardSpotlight) window.initCardSpotlight();
             if (window.initScrollReveal) window.initScrollReveal();
           } catch (error) {
             console.warn('API blog non joignable, affichage des articles de secours :', error);
@@ -377,7 +379,7 @@
                 const categoryLabel = categoryLabels[post.category] || post.category;
                 const categoryIcon = categoryIcons[post.category] || '📄';
                 return `
-                  <article class="card stagger-item reveal-scale" data-blog-post-id="${post.id}" style="--stagger-idx: ${idx};">
+                  <article class="card stagger-item" data-blog-post-id="${post.id}" style="--stagger-idx: ${idx};">
                     <div class="card-image-wrap">
                       <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy">
                       <div class="card-image-overlay"></div>
@@ -395,6 +397,7 @@
                   </article>
                 `;
               }).join('');
+              if (window.initCardSpotlight) window.initCardSpotlight();
               if (window.initScrollReveal) window.initScrollReveal();
             }
           }
