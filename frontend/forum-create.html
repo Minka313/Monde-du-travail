@@ -21,7 +21,9 @@
             <span class="site-title">Le Monde du Travail</span>
         </a>
         <div class="header-actions">
-            <a href="login.html" class="btn-cta">Se connecter</a>
+            <div class="header-auth-slot" id="headerAuthSlot">
+                <a href="login.html" class="btn-cta" id="headerAuthBtn">Se connecter</a>
+            </div>
             <button class="hamburger" aria-label="Menu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
@@ -48,8 +50,8 @@
                 <a href="forum.html" aria-current="page">Forum</a>
                 <a href="blog.html">Blog</a>
             </div>
-            <div class="mobile-nav-footer">
-                <a href="login.html" class="btn-mobile-cta">Se connecter / Espace Membre</a>
+            <div class="mobile-nav-footer" id="mobileNavFooter">
+                <a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
             </div>
         </div>
     </div>
@@ -87,7 +89,14 @@
 
                         <div class="forum-form-group">
                             <label for="topicContent">Contenu</label>
-                            <textarea id="topicContent" required minlength="10" placeholder="Décrivez votre question ou votre sujet en détail..."></textarea>
+                            <div class="markdown-toolbar" id="markdownToolbar">
+                                <button type="button" class="md-btn" data-tag="bold" title="Gras"><strong>B</strong></button>
+                                <button type="button" class="md-btn" data-tag="italic" title="Italique"><em>I</em></button>
+                                <button type="button" class="md-btn" data-tag="quote" title="Citation">❝❞ Citation</button>
+                                <button type="button" class="md-btn" data-tag="list" title="Liste à puces">• Liste</button>
+                                <button type="button" class="md-btn" data-tag="link" title="Lien hypertexte">🔗 Lien</button>
+                            </div>
+                            <textarea id="topicContent" class="with-toolbar" required minlength="10" placeholder="Décrivez votre question ou votre sujet en détail..."></textarea>
                         </div>
 
                         <div class="forum-form-actions">
@@ -144,6 +153,26 @@
         if (categoryParam) {
           categorySelect.value = categoryParam;
         }
+
+        // Markdown toolbar logic
+        const topicTextarea = document.getElementById('topicContent');
+        document.querySelectorAll('.md-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const tag = btn.getAttribute('data-tag');
+            const start = topicTextarea.selectionStart;
+            const end = topicTextarea.selectionEnd;
+            const val = topicTextarea.value;
+            const selected = val.substring(start, end);
+            let replacement = '';
+            if (tag === 'bold') replacement = `**${selected || 'texte en gras'}**`;
+            else if (tag === 'italic') replacement = `*${selected || 'texte en italique'}*`;
+            else if (tag === 'quote') replacement = `\n> ${selected || 'citation'}\n`;
+            else if (tag === 'list') replacement = `\n- ${selected || 'élément'}\n`;
+            else if (tag === 'link') replacement = `[${selected || 'titre du lien'}](https://)`;
+            topicTextarea.setRangeText(replacement, start, end, 'select');
+            topicTextarea.focus();
+          });
+        });
 
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
