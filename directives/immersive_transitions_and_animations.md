@@ -1,37 +1,51 @@
-# Directive : Transitions Immersives & Expérience Vivante (Animations Professionnelles)
+# Directive : Transitions Naturelles & Expérience Fluide (UX Organique)
 
 ## 1. Objectifs & Philosophie
-Transformer la navigation du site « Le Monde du Travail » en une expérience fluide, cinématographique et vivante, sans latence ni lourdeur (« transitions de ouf, qu'on ne se sente pas sur un document PDF mais totalement immergé, tout en restant très pro »).
+Offrir au site « Le Monde du Travail » une navigation naturelle, douce et continue, inspirée des standards d'excellence produit (Apple, Linear, Stripe). 
+Les transitions ne doivent jamais être brusques, distrayantes ou précipitées, mais accompagner le regard de l'utilisateur avec élégance et stabilité.
+
+---
 
 ## 2. Piliers d'Architecture
 
 ### A. Transitions Inter-Pages (Page Transitions)
-* **View Transitions API (`document.startViewTransition`)** : Utilisée nativement dès que supportée par le navigateur.
-* **Fallback Universel (CSS/JS)** :
-  - Lors d'un clic sur un lien interne, déclencher immédiatement une classe d'éviction `page-is-exiting` avec fondu et léger zoom arrière (180ms).
-  - Activer la barre de progression dynamique en tête d'écran (`#pageTransitionProgress`).
-  - À l'arrivée sur la nouvelle page (`DOMContentLoaded`), déclencher `page-is-entering` puis retirer la classe après transition pour laisser le DOM net.
-  - Intercepter `pageshow` avec `event.persisted` pour garantir que l'historique et le bouton retour du navigateur ne figent jamais l'affichage.
+* **Stabilité absolue du Header** :
+  - La barre de navigation `.site-header` possède la propriété `view-transition-name: site-header;`.
+  - Elle reste statique, immobile et parfaitement ancrée lors des changements de page. Seul le contenu (`#main-content`) effectue une transition douce.
+* **Cross-Document View Transitions (Chromium 126+)** :
+  - Déclarée via `@view-transition { navigation: auto; }`.
+  - Le navigateur orchestre la transition nativement sans blocage artificiel par `e.preventDefault()`.
+  - Courbe d'amorti organique : `cubic-bezier(0.22, 1, 0.36, 1)` avec une durée de **340ms à 380ms** et un micro-glissement vertical de 4px seulement (dissolving naturel).
+* **Préchargement Intelligent (Hover & Touch Preload)** :
+  - Au survol (`mouseenter`) ou au toucher (`touchstart`) d'un lien interne, le document cible est préchargé en arrière-plan via cache navigateur.
+  - La navigation devient quasi-instantanée, éliminant tout écran blanc intermédiaire.
+* **Fallback Universel sans saut de Header (Safari / Firefox)** :
+  - La classe de sortie `content-is-exiting` s'applique exclusivement sur `#main-content` (et JAMAIS sur `body`, ce qui briserait `position: fixed`).
+  - Durée de fondu douce (260ms) avec amorti naturel.
+  - Écoute de l'événement `pageshow` (`bfcache`) pour assurer un retour/avance immédiat sans freeze.
+* **Indicateur de Progression Épuré** :
+  - Barre discrète de 2px aux teintes ambrées du club (`#f5a623`) avec progression continue fluide (sans sauts par à-coups ni néon criard).
 
-### B. Scroll Reveal & Cascades (Intersection Observer)
-* Observer automatique ciblant :
-  - `.reveal`, `.reveal-up`, `.reveal-fade`, `.reveal-scale`, `.reveal-left`, `.reveal-right`
-  - Les conteneurs de cartes (`.cards-grid`, `.card`, `.formation-card`, `.job-card`, `.impact-item`, `.blog-card`)
-* Attribution automatique d'un délai en cascade (`--stagger-delay: calc(var(--item-idx) * 70ms)`) pour une arrivée fluide et ordonnée.
-* Easing standard : `cubic-bezier(0.16, 1, 0.3, 1)` (courbe naturelle et réactive).
+### B. Scroll Reveal Organique & Sans FOUC
+* **Zéro Clignotement au Chargement (FOUC)** :
+  - Les éléments déjà visibles dans le viewport au moment de l'initialisation sont immédiatement marqués comme révélés.
+* **Micro-déplacement Doux** :
+  - Translation ramenée à **12-14px** (au lieu de 28-36px).
+  - Courbe d'apparition : `0.5s cubic-bezier(0.22, 1, 0.36, 1)`.
+* **Cascade (Stagger) Allégée** :
+  - Délai échelonné de **35ms à 45ms** par élément (au lieu de 80ms) pour une arrivée vive mais ordonnée qui ne retarde pas la consultation.
 
-### C. Arrière-Plans Vivants & Éléments Flottants
-* Effet d'aurore vivante (`.hero-aurora`) : gradient animé en translation 3D et rotation lente continue (GPU accelerated).
-* Halos d'ambiance et micro-mouvements non intrusifs.
+### C. Tactilité & Micro-Interactions Apaisées
+* **Cartes & Conteneurs** :
+  - Élévation mesurée au survol : `-3px` (au lieu de `-6px`) et légère ouverture de l'ombre portée.
+  - Zoom très doux de l'image : `scale(1.025)` (au lieu de `1.05`) sur `0.4s`.
+  - Halo de reflet de curseur (`--mouse-x`, `--mouse-y`) subtil et discret.
+* **Boutons & Éléments d'Action** :
+  - Micro-pression tactile naturelle : `active: scale(0.98)` (au lieu de `0.96`).
+  - Balayage lumineux satiné (`0.8s ease-out`).
 
-### D. Tactilité & Micro-Interactions
-* **Cartes avec Spotlight Suiveur (Desktop)** : Les cartes capturent le mouvement de la souris (`--mouse-x`, `--mouse-y`) pour projeter un reflet subtil d'accentuation.
-* **Boutons CTA** : Balayage lumineux (`shimmer sweep`) et press effect (`active: scale(0.96)`).
-* **Menu Mobile** :
-  - Glissement avec courbe de ressort fluide (`cubic-bezier(0.32, 0.72, 0, 1)`).
-  - Flou d'arrière-plan profond (`backdrop-filter: blur(18px)`).
-  - Apparition échelonnée des liens (`transition-delay: calc(index * 45ms)`).
+---
 
 ## 3. Garde-Fous de Performance & Accessibilité
-* **60/120 FPS** : Utilisation exclusive des propriétés GPU (`transform`, `opacity`). Pas d'animation sur `top`, `left`, `width`, `height`.
-* **Prefers-Reduced-Motion** : Si l'utilisateur a configuré une réduction de mouvement, désactiver les transitions de déplacement et conserver un affichage immédiat ou de légers fondus.
+* **60/120 FPS Garanti** : Mouvement exclusivement calculé sur `transform` et `opacity` (GPU accelerated).
+* **Respect de `prefers-reduced-motion`** : Désactivation instantanée de tout mouvement de translation pour les utilisateurs sensibles, remplacé par un simple fondu ou un affichage direct.
