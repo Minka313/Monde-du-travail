@@ -8852,139 +8852,110 @@ input:-webkit-autofill:active {
 }
 
 /* ========================================================
-   SECTION À PROPOS — CONTEXTE, MISSION, OBJECTIFS & VALEURS
-   Harmonisation avec l'ADN Visuel du Site
+   OBJECTIFS PRINCIPAUX & DESIGN DNA — PAGE À PROPOS
    ======================================================== */
 
-/* --- Conteneur Image Moderne pour Contexte & Mission --- */
-.about-image-card {
+.split-image-wrap {
   position: relative;
-  border-radius: var(--radius-2xl);
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  border: 1px solid var(--color-gray-200);
-  background: var(--color-white);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  border-radius: var(--radius-2xl, 1.25rem);
+  box-shadow: var(--shadow-lg, 0 10px 25px -5px rgba(0, 0, 0, 0.1));
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
-.about-image-card:hover {
+.split-image-wrap:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-xl, 0 20px 30px -10px rgba(0, 0, 0, 0.15));
 }
 
-.about-image-card img {
+.split-image-wrap img {
   width: 100%;
   height: 100%;
   max-height: 420px;
   object-fit: cover;
   display: block;
-  transition: transform var(--transition-slow);
+  transition: transform 0.6s ease;
 }
 
-.about-image-card:hover img {
-  transform: scale(1.03);
+.split-image-wrap:hover img {
+  transform: scale(1.02);
 }
 
-/* --- Section Objectifs : Cartes Modernes dans l'ADN du site --- */
-.objectives-cards-grid {
+.objectives-dna-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: var(--space-6);
-  margin-top: var(--space-8);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-5, 1.25rem);
+  margin: var(--space-8, 2rem) auto var(--space-12, 3rem);
+  max-width: 1040px;
 }
 
-.objective-card-item {
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6) var(--space-6);
+.objective-dna-card {
+  background: var(--color-white, #ffffff);
+  border: 1px solid var(--color-gray-200, #e2e8f0);
+  border-radius: var(--radius-xl, 1rem);
+  padding: 1.5rem 1.6rem;
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-4);
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-.objective-card-item:hover {
+.objective-dna-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: rgba(245, 166, 35, 0.4);
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: 0 10px 24px -4px rgba(37, 99, 235, 0.08);
 }
 
-.objective-badge-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, rgba(15, 43, 70, 0.08) 0%, rgba(15, 43, 70, 0.03) 100%);
-  color: var(--color-primary);
-  font-weight: 800;
-  font-size: 1.05rem;
-  letter-spacing: -0.02em;
-  border: 1px solid rgba(15, 43, 70, 0.12);
-  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
-}
-
-.objective-card-item:hover .objective-badge-num {
-  background: var(--color-secondary);
-  color: var(--color-primary-dark);
-  border-color: var(--color-secondary);
-}
-
-.objective-card-item p {
-  color: var(--color-gray-700);
-  font-size: 0.96rem;
-  line-height: 1.6;
-  margin: 0;
-  font-weight: 500;
-}
-
-/* --- Section Valeurs : Cartes Modernes avec Badges Circulaires --- */
-.value-card {
-  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
-}
-
-.value-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
-.value-icon-circle {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
+.objective-dna-badge {
+  font-family: var(--font-display, serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-primary, #2563eb);
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg, 0.75rem);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  margin-bottom: var(--space-4);
-  transition: transform var(--transition-base);
+  flex-shrink: 0;
+  transition: all 0.25s ease;
 }
 
-.value-card:hover .value-icon-circle {
-  transform: scale(1.08);
+.objective-dna-card:hover .objective-dna-badge {
+  background: var(--color-primary, #2563eb);
+  color: #ffffff;
 }
 
-.value-icon--gold {
-  background: rgba(245, 166, 35, 0.12);
-  border: 1px solid rgba(245, 166, 35, 0.3);
+.objective-dna-body {
+  flex: 1;
 }
 
-.value-icon--blue {
-  background: rgba(15, 43, 70, 0.08);
-  border: 1px solid rgba(15, 43, 70, 0.2);
+.objective-dna-text {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--color-slate-800, #1e293b);
+  line-height: 1.55;
+  margin: 0;
 }
 
-.value-icon--green {
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-@media (max-width: 768px) {
-  .objectives-cards-grid {
+@media (max-width: 640px) {
+  .objectives-dna-grid {
     grid-template-columns: 1fr;
+  }
+  .objective-dna-card {
+    padding: 1.25rem 1.15rem;
+    gap: 1rem;
+  }
+  .objective-dna-badge {
+    width: 42px;
+    height: 42px;
+    font-size: 1.15rem;
+  }
+  .objective-dna-text {
+    font-size: 0.95rem;
   }
 }
