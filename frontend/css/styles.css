@@ -8850,3 +8850,522 @@ input:-webkit-autofill:active {
     grid-template-columns: 1fr;
   }
 }
+
+/* ========================================================
+   REFONTE ÉDITORIALE & STORYTELLING — PAGE À PROPOS
+   ======================================================== */
+
+/* --- 1. SECTION GENÈSE & CONTEXTE (Bento Grid) --- */
+.about-genesis-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: var(--space-8, 2rem);
+  align-items: stretch;
+  margin-bottom: var(--space-12, 3rem);
+}
+
+.genesis-story-card {
+  background: var(--color-white, #ffffff);
+  border-radius: 1.25rem;
+  padding: 2.25rem;
+  border: 1px solid var(--color-gray-200, #e2e8f0);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+}
+
+.genesis-story-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.genesis-headline {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--color-gray-900, #0f172a);
+  line-height: 1.3;
+  margin: 0.75rem 0 1.25rem 0;
+  letter-spacing: -0.02em;
+}
+
+.genesis-lead {
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--color-gray-650, #475569);
+  margin-bottom: 1.5rem;
+}
+
+.genesis-reality-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.genesis-reality-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  transition: all 0.25s ease;
+}
+
+.genesis-reality-item:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateX(4px);
+}
+
+.genesis-reality-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #fef3c7;
+  color: #b45309;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.genesis-reality-text strong {
+  display: block;
+  font-size: 0.92rem;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.genesis-reality-text span {
+  font-size: 0.84rem;
+  color: #64748b;
+  line-height: 1.45;
+}
+
+/* Carte Visuelle Solution */
+.genesis-visual-card {
+  position: relative;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  min-height: 380px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.75rem;
+}
+
+.genesis-visual-card img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.genesis-visual-card:hover img {
+  transform: scale(1.04);
+}
+
+.genesis-visual-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.1) 0%, rgba(15, 23, 42, 0.5) 45%, rgba(15, 23, 42, 0.92) 100%);
+  pointer-events: none;
+}
+
+.genesis-visual-content {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+}
+
+.genesis-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+  color: #f8fafc;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.genesis-visual-content h3 {
+  font-size: 1.35rem;
+  font-weight: 750;
+  color: #ffffff;
+  line-height: 1.35;
+  margin-bottom: 0.5rem;
+}
+
+.genesis-visual-content p {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* --- 2. SECTION MISSION & PILIERS D'ACTION --- */
+.mission-manifesto-container {
+  background: linear-gradient(135deg, #0b1528 0%, #172554 50%, #1e1b4b 100%);
+  border-radius: 1.5rem;
+  padding: 3.25rem 2.5rem;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--space-12, 3rem);
+  box-shadow: 0 20px 35px -10px rgba(11, 21, 40, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mission-manifesto-container::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.mission-header-block {
+  max-width: 800px;
+  margin: 0 auto 2.5rem auto;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.mission-pill-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  color: #7dd3fc;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.mission-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.mission-quote {
+  font-size: 1.08rem;
+  color: #cbd5e1;
+  line-height: 1.7;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.mission-pillars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  position: relative;
+  z-index: 2;
+}
+
+.pillar-card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.pillar-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.3);
+}
+
+.pillar-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.pillar-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.5rem 0;
+}
+
+.pillar-card p {
+  font-size: 0.88rem;
+  color: #94a3b8;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* --- 3. SECTION OBJECTIFS STRATÉGIQUES (Cartes Numérotées) --- */
+.objectives-section-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 2.5rem auto;
+}
+
+.objectives-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: var(--space-12, 3rem);
+}
+
+.objective-card {
+  background: var(--color-white, #ffffff);
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  border: 1px solid var(--color-gray-200, #e2e8f0);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.objective-card:hover {
+  transform: translateY(-6px);
+  border-color: #f59e0b;
+  box-shadow: 0 16px 30px -8px rgba(245, 158, 11, 0.15), 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.objective-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.objective-number {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #cbd5e1;
+  line-height: 1;
+  font-family: inherit;
+  transition: color 0.3s ease;
+}
+
+.objective-card:hover .objective-number {
+  color: #f59e0b;
+}
+
+.objective-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.objective-card h3 {
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: var(--color-gray-900, #0f172a);
+  margin: 0 0 0.65rem 0;
+  line-height: 1.35;
+}
+
+.objective-card p {
+  font-size: 0.9rem;
+  color: var(--color-gray-600, #64748b);
+  line-height: 1.6;
+  margin: 0;
+  flex-grow: 1;
+}
+
+/* --- 4. SECTION VALEURS SIGNATURES (Glow & Glass) --- */
+.values-section-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 2.5rem auto;
+}
+
+.values-glow-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.75rem;
+  margin-bottom: var(--space-8, 2rem);
+}
+
+.value-card-signature {
+  background: #ffffff;
+  border-radius: 1.25rem;
+  padding: 2.25rem 1.85rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.value-card-signature::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  transition: height 0.3s ease;
+}
+
+.value-card--innovation::before {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+.value-card--ethique::before {
+  background: linear-gradient(90deg, #0284c7, #38bdf8);
+}
+.value-card--citoyennete::before {
+  background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.value-card-signature:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 35px -8px rgba(15, 23, 42, 0.1), 0 6px 12px rgba(0, 0, 0, 0.04);
+}
+
+.value-card-signature:hover::before {
+  height: 6px;
+}
+
+.value-icon-badge {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.value-card--innovation .value-icon-badge {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+.value-card--ethique .value-icon-badge {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+.value-card--citoyennete .value-icon-badge {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+
+.value-card-signature h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-gray-900, #0f172a);
+  margin: 0 0 0.75rem 0;
+}
+
+.value-card-signature p {
+  font-size: 0.94rem;
+  color: var(--color-gray-600, #475569);
+  line-height: 1.65;
+  margin: 0 0 1rem 0;
+  flex-grow: 1;
+}
+
+.value-signature-quote {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-top: 0.85rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.value-card--innovation .value-signature-quote { color: #d97706; }
+.value-card--ethique .value-signature-quote { color: #0284c7; }
+.value-card--citoyennete .value-signature-quote { color: #059669; }
+
+/* Responsive Media Queries */
+@media (max-width: 900px) {
+  .about-genesis-grid {
+    grid-template-columns: 1fr;
+  }
+  .genesis-visual-card {
+    min-height: 280px;
+  }
+  .mission-manifesto-container {
+    padding: 2rem 1.5rem;
+  }
+  .mission-title {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .genesis-story-card {
+    padding: 1.5rem;
+  }
+  .genesis-headline {
+    font-size: 1.35rem;
+  }
+  .objectives-grid {
+    grid-template-columns: 1fr;
+  }
+  .values-glow-grid {
+    grid-template-columns: 1fr;
+  }
+}
