@@ -1477,6 +1477,35 @@
       return all.filter(j => j.id !== currentJob.id && j.familyId === currentJob.familyId).slice(0, 3);
     },
 
+    // Recommandations croisées (« Parcours Découverte » / Passerelles interdisciplinaires)
+    getCrossRecommendations: async function (currentJob) {
+      if (!currentJob) return [];
+      const all = await this.getAllJobs();
+      
+      // Recherche de métiers hors de la famille d'origine pour élargir les perspectives d'orientation
+      const otherJobs = all.filter(j => j.id !== currentJob.id && j.familyId !== currentJob.familyId);
+      
+      // Score de proximité par centres d'intérêt ou compétences transversales
+      const scored = otherJobs.map(j => {
+        let score = 0;
+        if (Array.isArray(currentJob.interests) && Array.isArray(j.interests)) {
+          const common = currentJob.interests.filter(int => j.interests.includes(int));
+          score += common.length * 3;
+        }
+        if (currentJob.level && j.level && currentJob.level === j.level) {
+          score += 1;
+        }
+        return { job: j, score };
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      const results = scored.filter(s => s.score > 0).slice(0, 3).map(s => s.job);
+      if (results.length > 0) return results;
+
+      // Secours : 3 métiers populaires diversifiés
+      return otherJobs.slice(0, 3);
+    },
+
     // Recherche universelle en temps réel (métier, famille, sous-domaine, compétence, formation, école)
     searchJobs: async function (query) {
       if (!query || typeof query !== 'string' || !query.trim()) {

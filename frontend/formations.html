@@ -196,6 +196,7 @@
 
     <script src="js/config.js"></script>
     <script src="js/frontend-api.js"></script>
+    <script src="js/analytics-tracker.js"></script>
     <script src="js/layout.js"></script>
     <script src="js/main.js"></script>
     <script>
@@ -387,6 +388,20 @@
                     </div>
                   </div>
                 ` : ''}
+
+                <!-- Micro-Sondage de satisfaction formation -->
+                <div class="orientation-survey-widget" id="formationSurveyWidget" style="margin-top:1.5rem;">
+                  <h4 class="survey-question-title">Cette formation correspond-elle à tes projets ?</h4>
+                  <div class="survey-buttons-row" id="fSurveyButtons">
+                    <button type="button" class="btn-survey-vote" data-f-vote="up"><span>👍</span> <span>Oui, tout à fait</span></button>
+                    <button type="button" class="btn-survey-vote" data-f-vote="neutral"><span>😐</span> <span>Partiellement</span></button>
+                    <button type="button" class="btn-survey-vote" data-f-vote="down"><span>👎</span> <span>Pas vraiment</span></button>
+                  </div>
+                  <div class="survey-thanks-msg" id="fSurveyThanks" style="display:none;">
+                    <span>✨</span>
+                    <span>Merci pour ton retour ! Ton avis nous aide à peaufiner nos programmes.</span>
+                  </div>
+                </div>
               </div>
 
               <!-- Footer -->
@@ -402,10 +417,32 @@
 
           document.body.appendChild(overlay);
 
-          // Wire Pre-register
+          // Tracking de consultation de la fiche formation
+          window.AnalyticsTracker?.trackTrainingView(f.id || f.title, {
+            title: f.title,
+            category: f.category,
+          });
+
+          // Wire Micro-Survey
+          const fSurvey = overlay.querySelector('#formationSurveyWidget');
+          if (fSurvey) {
+            fSurvey.querySelectorAll('.btn-survey-vote').forEach(b => {
+              b.addEventListener('click', () => {
+                const vote = b.getAttribute('data-f-vote');
+                window.AnalyticsTracker?.trackSurveyVote('training', f.id || f.title, vote);
+                const buttons = fSurvey.querySelector('#fSurveyButtons');
+                const thanks = fSurvey.querySelector('#fSurveyThanks');
+                if (buttons) buttons.style.display = 'none';
+                if (thanks) thanks.style.display = 'flex';
+              });
+            });
+          }
+
+          // Wire Pre-register avec tracking
           const btnPreReg = overlay.querySelector('#btnOpenPreRegister');
           if (btnPreReg) {
             btnPreReg.addEventListener('click', () => {
+              window.AnalyticsTracker?.track('training_preregister_click', 'training', f.id || f.title);
               openPreRegisterModal(f);
             });
           }

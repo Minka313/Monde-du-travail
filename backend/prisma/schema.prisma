@@ -246,6 +246,7 @@ model User {
   assignedClubRoles  ClubAssignment[]    @relation("ClubAssignmentCreator")
   notifications      Notification[]      @relation("UserNotifications")
   pushSubscriptions  PushSubscription[]  @relation("UserPushSubscriptions")
+  analyticsEvents    AnalyticsEvent[]    @relation("UserAnalyticsEvents")
 
   @@map("users")
 }
@@ -495,5 +496,27 @@ model PushSubscription {
 
   @@index([userId])
   @@map("push_subscriptions")
+}
+
+model AnalyticsEvent {
+  id          String   @id @default(uuid())
+  sessionId   String   @map("session_id")
+  userId      String?  @map("user_id")
+  userProfile String?  @map("user_profile")
+  eventType   String   @map("event_type")
+  entityType  String?  @map("entity_type")
+  entityId    String?  @map("entity_id")
+  metadata    Json?    @default("{}") @map("metadata")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User? @relation("UserAnalyticsEvents", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([eventType])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@index([userProfile])
+  @@map("analytics_events")
 }
 
