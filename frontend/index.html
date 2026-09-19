@@ -34,7 +34,9 @@
             <span class="site-title">Le Monde du Travail</span>
         </a>
         <div class="header-actions">
-            <a href="login.html" class="btn-cta">Se connecter</a>
+            <div class="header-auth-slot" id="headerAuthSlot">
+                <a href="login.html" class="btn-cta" id="headerAuthBtn">Se connecter</a>
+            </div>
             <button class="hamburger" aria-label="Menu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
@@ -61,8 +63,8 @@
                 <a href="forum.html" style="--item-idx: 5">Forum</a>
                 <a href="blog.html" style="--item-idx: 6">Blog</a>
             </div>
-            <div class="mobile-nav-footer">
-                <a href="login.html" class="btn-mobile-cta">Se connecter / Espace Membre</a>
+            <div class="mobile-nav-footer" id="mobileNavFooter">
+                <a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
             </div>
         </div>
     </div>
@@ -74,6 +76,10 @@
             <div class="hero-aurora" aria-hidden="true"></div>
             <div class="hero-inner">
                 <div class="hero-content">
+                    <div class="hero-badge-pill">
+                        <span class="pulse-dot"></span>
+                        Inscriptions ouvertes — Formations Printemps 2026
+                    </div>
                     <span class="hero-label">✨ Club Le Monde du Travail</span>
                     <h1>On sort diplômé.<br>Rarement prêt.</h1>
                     <p>Entre l'école et le premier vrai poste, il y a un fossé que personne ne comble. Le club, c'est ce pont : des jeunes accompagnés par des pros pour apprendre ce que les cours ne disent pas, avant que le monde du travail leur apprenne à la dure.</p>
@@ -229,6 +235,144 @@
                             <p>Former des acteurs de changement engagés pour le développement de leur communauté.</p>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formation à la Une -->
+        <section class="section section-featured-highlight">
+            <div class="container">
+                <div class="home-featured-card reveal">
+                    <div class="home-featured-grid">
+                        <div class="home-featured-content">
+                            <span class="featured-tag">🔥 À la Une ce mois-ci</span>
+                            <h3>Masterclass : L'Art du Pitch & Entretien Décisif</h3>
+                            <p>Apprenez à captiver votre auditoire en 2 minutes chrono, décryptez les attentes réelles des recruteurs et transformez vos entretiens en offres concrètes.</p>
+                            <div class="featured-perks-list">
+                                <span class="featured-perk">📅 Samedi 28 Mars 2026</span>
+                                <span class="featured-perk">📍 Présentiel & Streaming</span>
+                                <span class="featured-perk">🎓 Attestation certifiée</span>
+                                <span class="featured-perk">👥 Limité à 30 places</span>
+                            </div>
+                            <a href="formations.html" class="btn btn-primary btn-lg">Réserver ma place <span class="btn-arrow">&rarr;</span></a>
+                        </div>
+                        <div class="home-featured-sidebox">
+                            <span class="sidebox-badge">⚡ Session Intensive</span>
+                            <div class="sidebox-counter">4h</div>
+                            <p class="sidebox-desc">D'exercices réels avec simulations filmées et débriefing personnalisé par des professionnels RH.</p>
+                            <a href="formations.html" class="btn btn-outline" style="border-color: rgba(255,255,255,0.3); color: #fff; width: 100%;">Voir le programme</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Forum Feed -->
+        <section class="section section-forum-preview">
+            <div class="container">
+                <div class="home-forum-header">
+                    <div>
+                        <span class="section-label">Communauté</span>
+                        <h2>Discussions & Entraide en Direct</h2>
+                        <p style="color: var(--color-gray-600); margin-top: 4px;">Posez vos questions, échangez des astuces et partagez vos retours d'expérience.</p>
+                    </div>
+                    <a href="forum.html" class="btn btn-secondary">Explorer le forum <span class="btn-arrow">&rarr;</span></a>
+                </div>
+                <div class="home-topics-grid" id="homeForumContainer">
+                    <a href="forum.html" class="home-topic-card">
+                        <div class="home-topic-top">
+                            <span class="home-topic-badge">💼 Premier Emploi</span>
+                            <h4 class="home-topic-title">Comment négocier son premier salaire en sortie d'école ?</h4>
+                            <p class="home-topic-snippet">Des conseils pratiques sur les grilles salariales, les primes et la posture à adopter lors des discussions d'embauche.</p>
+                        </div>
+                        <div class="home-topic-footer">
+                            <span class="home-topic-author">👤 Aïssatou D.</span>
+                            <span class="home-topic-replies">💬 14 réponses</span>
+                        </div>
+                    </a>
+                    <a href="forum.html" class="home-topic-card">
+                        <div class="home-topic-top">
+                            <span class="home-topic-badge">🎯 Orientation</span>
+                            <h4 class="home-topic-title">Data Analyst vs Business Analyst : quelle voie choisir ?</h4>
+                            <p class="home-topic-snippet">Comparatif concret sur les compétences requises, les outils (SQL/PowerBI) et les débouchés réels sur le marché.</p>
+                        </div>
+                        <div class="home-topic-footer">
+                            <span class="home-topic-author">👤 Mamadou S.</span>
+                            <span class="home-topic-replies">💬 9 réponses</span>
+                        </div>
+                    </a>
+                    <a href="forum.html" class="home-topic-card">
+                        <div class="home-topic-top">
+                            <span class="home-topic-badge">🤝 Réseau & Mentorat</span>
+                            <h4 class="home-topic-title">Les 5 règles d'or pour relancer un contact LinkedIn avec succès</h4>
+                            <p class="home-topic-snippet">Modèles de messages d'approche personnalisés ayant suscité de réelles opportunités professionnelles.</p>
+                        </div>
+                        <div class="home-topic-footer">
+                            <span class="home-topic-author">👤 Cheikh T.</span>
+                            <span class="home-topic-replies">💬 18 réponses</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Témoignages des Membres -->
+        <section class="section section-testimonials section-alt">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">Impact Réel</span>
+                    <h2>Ce que disent nos membres</h2>
+                    <p>Découvrez comment le club a propulsé leur entrée dans le monde professionnel</p>
+                </div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card reveal">
+                        <div class="testimonial-quote-icon">“</div>
+                        <p class="testimonial-text">L'atelier simulation d'entretien m'a permis de comprendre pourquoi je bloquais au dernier tour. Trois semaines plus tard, je signais mon CDI en cabinet de conseil.</p>
+                        <div class="testimonial-author-box">
+                            <div class="testimonial-avatar">FK</div>
+                            <div class="testimonial-meta">
+                                <span class="testimonial-name">Fatou Kiné S.</span>
+                                <span class="testimonial-role">Consultante Junior — Promotion 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card reveal">
+                        <div class="testimonial-quote-icon">“</div>
+                        <p class="testimonial-text">Le club n'est pas une simple formation théorique : c'est un réseau bienveillant où des professionnels aguerris prennent le temps de vous challenger sans filtre.</p>
+                        <div class="testimonial-author-box">
+                            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">AB</div>
+                            <div class="testimonial-meta">
+                                <span class="testimonial-name">Abdoulaye B.</span>
+                                <span class="testimonial-role">Ingénieur Logiciel — Membre actif</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card reveal">
+                        <div class="testimonial-quote-icon">“</div>
+                        <p class="testimonial-text">J'ai découvert ma vocation de chef de projet digital grâce aux fiches métiers et aux discussions avec les mentors sur le forum. Une expérience inestimable.</p>
+                        <div class="testimonial-author-box">
+                            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%);">MN</div>
+                            <div class="testimonial-meta">
+                                <span class="testimonial-name">Mariama N.</span>
+                                <span class="testimonial-role">Chef de Projet — Promotion 2024</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Newsletter & Veille Hebdomadaire -->
+        <section class="section section-newsletter">
+            <div class="container">
+                <div class="newsletter-card reveal">
+                    <h3>Recevez notre veille carrière & opportunités</h3>
+                    <p>Une sélection hebdomadaire des meilleures offres de stage, conseils d'experts et invitations exclusives aux masterclasses du club.</p>
+                    <form class="newsletter-form" id="homeNewsletterForm">
+                        <input type="email" class="newsletter-input" placeholder="Entrez votre adresse email..." required aria-label="Adresse email pour la newsletter">
+                        <button type="submit" class="newsletter-btn">S'inscrire gratuitement</button>
+                    </form>
+                    <div id="newsletterFeedback" style="display:none; margin-top: 14px; font-weight: 600; color: #86efac;"></div>
                 </div>
             </div>
         </section>

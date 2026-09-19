@@ -747,56 +747,192 @@
     }
   }
 
-  // ===== Navigation Auth State =====
-  // Seul l'ULTRA_ADMIN voit les liens Administration.
-  // Tous les autres utilisateurs gardent le nav par défaut (Connexion + Espace Membre).
+  // ===== Navigation Auth State (Membre & Administrateur) =====
   async function initNavAuth() {
     if (!window.Api) return;
     const token = window.Api.getToken();
     if (!token) return;
 
+    let user = null;
+    try {
+      const cached = localStorage.getItem('currentUser');
+      if (cached) user = JSON.parse(cached);
+    } catch (_) {}
+
+    // Rendu immédiat si les données sont en cache pour zéro clignotement
+    if (user) {
+      renderNavUser(user);
+    }
+
+    // Validation silencieuse et fraîche auprès de l'API
     try {
       const res = await window.Api.auth.me();
-      const user = res?.data;
-      if (!user || user.role !== 'ULTRA_ADMIN') return;
-
-      // Synchroniser le token pour l'espace d'administration
-      if (token) {
-        try { localStorage.setItem('adminAccessToken', token); } catch (_) {}
-      }
-
-      const adminUrl = window.location.protocol === 'file:' ? '../admin-frontend/index.html' : '/admin-frontend/index.html';
-
-      function onAdminClick() {
-        const curToken = window.Api?.getToken();
-        if (curToken) {
-          try { localStorage.setItem('adminAccessToken', curToken); } catch (_) {}
-        }
-      }
-
-      // — Nav link : remplacer "Connexion" par "Administration" —
-      const navLinks = document.getElementById('navLinks');
-      if (navLinks) {
-        const loginLink = Array.from(navLinks.querySelectorAll('a')).find(a => a.getAttribute('href') === 'login.html');
-        if (loginLink) {
-          loginLink.href = adminUrl;
-          loginLink.innerHTML = '🛡️ Administration';
-          loginLink.style.color = 'var(--color-primary)';
-          loginLink.style.fontWeight = '600';
-          loginLink.onclick = onAdminClick;
-        }
-      }
-
-      // — Header CTA : remplacer "Espace Membre" par "Administration" —
-      const headerBtn = document.querySelector('.header-actions .btn-cta');
-      if (headerBtn) {
-        headerBtn.href = adminUrl;
-        headerBtn.innerHTML = '🛡️ Administration';
-        headerBtn.onclick = onAdminClick;
+      user = res?.data;
+      if (user) {
+        try { localStorage.setItem('currentUser', JSON.stringify(user)); } catch (_) {}
+        renderNavUser(user);
       }
     } catch (e) {
-      // Token invalide → nettoyage silencieux, le nav reste par défaut
-      window.Api.removeToken();
+      if (e.message?.includes('401') || e.message?.includes('invalide') || e.message?.includes('expiré')) {
+        window.Api.removeToken();
+        try { localStorage.removeItem('currentUser'); } catch (_) {}
+      }
+    }
+  }
+
+  function renderNavUser(user) {
+    if (!user) return;
+    const isUltraAdmin = user.role === 'ULTRA_ADMIN';
+    const adminRoles = user.adminRoles || [];
+    const isAdmin = isUltraAdmin || user.role === 'ADMIN' || adminRoles.length > 0;
+    const firstName = user.firstName || 'Membre';
+    const lastName = user.lastName || '';
+    const fullName = `${firstName} ${lastName}`.trim();
+    const initial = (firstName[0] || 'M').toUpperCase();
+    const adminUrl = window.location.protocol === 'file:' ? '../admin-frontend/index.html' : '/admin-frontend/index.html';
+
+    let roleBadge = 'Membre du Club';
+    if (isUltraAdmin) roleBadge = 'Ultra Admin';
+    else if (user.role === 'ADMIN') roleBadge = 'Administrateur';
+    else if (user.membershipStatus === 'PENDING') roleBadge = 'Adhésion en cours';
+
+    // 1. Desktop Header Slot (#headerAuthSlot ou .header-actions .btn-cta)
+    const authSlot = document.getElementById('headerAuthSlot') || document.querySelector('.header-actions');
+    if (authSlot) {
+      const existingContainer = document.getElementById('userMenuContainer');
+      if (!existingContainer) {
+        const slotWrapper = document.createElement('div');
+        slotWrapper.id = 'userMenuContainer';
+        slotWrapper.className = 'user-menu-container';
+        slotWrapper.innerHTML = `
+          <button type="button" class="user-menu-btn" id="userMenuBtn" aria-expanded="false" aria-label="Menu de ${escapeHtml(firstName)}">
+            <span class="user-avatar-badge">${escapeHtml(initial)}</span>
+            <span class="user-menu-name">${escapeHtml(firstName)}</span>
+            <span class="user-menu-arrow">▾</span>
+          </button>
+          <div class="user-dropdown-menu" id="userDropdownMenu" style="display:none;">
+            <div class="user-dropdown-info">
+              <span class="user-dropdown-name">${escapeHtml(fullName)}</span>
+              <span class="user-dropdown-badge">${escapeHtml(roleBadge)}</span>
+            </div>
+            <div class="user-dropdown-divider"></div>
+            <a href="profile.html" class="user-dropdown-item"><span>👤</span> Mon Espace & Profil</a>
+            <a href="formations.html" class="user-dropdown-item"><span>🎓</span> Mes Formations</a>
+            <a href="forum.html" class="user-dropdown-item"><span>💬</span> Forum Communautaire</a>
+            ${isAdmin ? `<a href="${adminUrl}" class="user-dropdown-item user-dropdown-admin"><span>🛡️</span> Administration</a>` : ''}
+            <div class="user-dropdown-divider"></div>
+            <button type="button" class="user-dropdown-item user-dropdown-logout" id="btnLogoutAction"><span>🚪</span> Se déconnecter</button>
+          </div>
+        `;
+
+        const oldBtn = authSlot.querySelector('#headerAuthBtn, .btn-cta');
+        if (oldBtn) {
+          oldBtn.replaceWith(slotWrapper);
+        } else {
+          authSlot.appendChild(slotWrapper);
+        }
+
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userDropdownMenu = document.getElementById('userDropdownMenu');
+        if (userMenuBtn && userDropdownMenu) {
+          userMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = userDropdownMenu.style.display !== 'none';
+            userDropdownMenu.style.display = isOpen ? 'none' : 'block';
+            userMenuBtn.setAttribute('aria-expanded', !isOpen);
+          });
+
+          document.addEventListener('click', (e) => {
+            if (!slotWrapper.contains(e.target)) {
+              userDropdownMenu.style.display = 'none';
+              userMenuBtn.setAttribute('aria-expanded', 'false');
+            }
+          });
+        }
+
+        const btnLogoutAction = document.getElementById('btnLogoutAction');
+        if (btnLogoutAction) {
+          btnLogoutAction.addEventListener('click', async () => {
+            try { await window.Api?.auth?.logout(); } catch (_) {}
+            window.Api?.removeToken();
+            try { localStorage.removeItem('currentUser'); } catch (_) {}
+            window.location.href = 'index.html';
+          });
+        }
+      }
+    }
+
+    // 2. Mobile Nav Drawer (#mobileNavFooter)
+    const mobileFooter = document.getElementById('mobileNavFooter') || document.querySelector('.mobile-nav-footer');
+    if (mobileFooter) {
+      mobileFooter.innerHTML = `
+        <div class="mobile-user-box">
+          <a href="profile.html" class="btn-mobile-cta">
+            <span>👤</span> Mon Espace (${escapeHtml(firstName)})
+          </a>
+          ${isAdmin ? `<a href="${adminUrl}" class="btn-mobile-secondary"><span>🛡️</span> Administration</a>` : ''}
+          <button type="button" class="btn-mobile-logout" id="btnMobileLogout">Se déconnecter</button>
+        </div>
+      `;
+
+      const btnMobileLogout = document.getElementById('btnMobileLogout');
+      if (btnMobileLogout) {
+        btnMobileLogout.addEventListener('click', async () => {
+          try { await window.Api?.auth?.logout(); } catch (_) {}
+          window.Api?.removeToken();
+          try { localStorage.removeItem('currentUser'); } catch (_) {}
+          window.location.href = 'index.html';
+        });
+      }
+    }
+  }
+
+  // ===== Dynamic Sections on Homepage (Discussions récentes du Forum & Newsletter) =====
+  async function initHomeDynamicSections() {
+    const forumContainer = document.getElementById('homeForumContainer');
+    if (forumContainer && window.Api?.forum) {
+      try {
+        const res = await window.Api.forum.getTopics({ limit: 3 });
+        const topics = res?.data?.topics || res?.data || [];
+        if (Array.isArray(topics) && topics.length > 0) {
+          forumContainer.innerHTML = topics.slice(0, 3).map(t => {
+            const cat = t.category?.name || 'Général';
+            const replies = t._count?.replies ?? t.repliesCount ?? 0;
+            const author = t.author ? `${t.author.firstName || ''} ${t.author.lastName ? t.author.lastName[0] + '.' : ''}`.trim() : 'Membre';
+            const snippet = t.content ? escapeHtml(t.content.substring(0, 110)) + '...' : 'Rejoins la discussion pour échanger avec la communauté.';
+            return `
+              <a href="forum-topic.html?id=${t.id}" class="home-topic-card">
+                <div class="home-topic-top">
+                  <span class="home-topic-badge">${escapeHtml(cat)}</span>
+                  <h4 class="home-topic-title">${escapeHtml(t.title)}</h4>
+                  <p class="home-topic-snippet">${snippet}</p>
+                </div>
+                <div class="home-topic-footer">
+                  <span class="home-topic-author">👤 ${escapeHtml(author)}</span>
+                  <span class="home-topic-replies">💬 ${replies} réponse${replies > 1 ? 's' : ''}</span>
+                </div>
+              </a>
+            `;
+          }).join('');
+        }
+      } catch (_) {}
+    }
+
+    const newsletterForm = document.getElementById('homeNewsletterForm');
+    if (newsletterForm) {
+      newsletterForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = newsletterForm.querySelector('input[type="email"]');
+        const feedback = document.getElementById('newsletterFeedback');
+        if (input && input.value.trim()) {
+          input.value = '';
+          if (feedback) {
+            feedback.style.display = 'block';
+            feedback.textContent = '🎉 Merci ! Vous êtes désormais inscrit à notre veille hebdomadaire.';
+            setTimeout(() => { feedback.style.display = 'none'; }, 6000);
+          }
+        }
+      });
     }
   }
 
@@ -866,6 +1002,7 @@
     initFilters();
     initForumInteractions();
     initNavAuth();
+    initHomeDynamicSections();
     initVisitorTracking();
   }
 
@@ -873,6 +1010,8 @@
     safeInit();
     initMobileMenu();
     initActiveNav();
+    initNavAuth();
+    initHomeDynamicSections();
     initMobileMenuEnhancements();
     initScrollReveal();
   });
