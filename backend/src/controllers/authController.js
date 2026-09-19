@@ -1,4 +1,5 @@
 const authService = require('../services/authService');
+const prisma = require('../config/database');
 const logger = require('../utils/logger');
 
 class AuthController {
@@ -128,6 +129,44 @@ class AuthController {
       success: true,
       data: req.user,
     });
+  }
+
+  // Mise à jour de la photo de profil ou de l'avatar choisi
+  static async updateAvatar(req, res, next) {
+    try {
+      const { avatarUrl } = req.body || {};
+      if (!avatarUrl || typeof avatarUrl !== 'string') {
+        return res.status(400).json({ success: false, message: 'avatarUrl requis' });
+      }
+
+      // Limite raisonnable de taille (ex: max 2.5 Mo pour base64 ou url)
+      if (avatarUrl.length > 2.5 * 1024 * 1024) {
+        return res.status(400).json({ success: false, message: 'L\'image dépasse la taille maximale autorisée (2.5 Mo)' });
+      }
+
+      const updatedUser = await prisma.user.update({
+        where: { id: req.user.id },
+        data: { avatarUrl },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          role: true,
+          avatarUrl: true,
+          isActive: true,
+          isVerified: true,
+        },
+      });
+
+      return res.json({
+        success: true,
+        message: 'Photo de profil mise à jour avec succès',
+        data: updatedUser,
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
   // Demande de réinitialisation de mot de passe (Forgot Password)

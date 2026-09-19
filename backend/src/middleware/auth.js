@@ -33,6 +33,7 @@ const authenticate = async (req, res, next) => {
         role: true,
         isActive: true,
         isVerified: true,
+        avatarUrl: true,
       },
     });
 
