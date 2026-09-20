@@ -543,7 +543,9 @@
             ? "Cartographie d'Excellence Agriculture, Élevage & Agroalimentaire"
             : (family.id === 'peche-maritime'
               ? "Cartographie d'Excellence Pêche, Aquaculture & Ressources Marines"
-              : `Cartographie d'Excellence — ${family.name}`)));
+              : (family.id === 'energie-renouvelable'
+                ? "Cartographie d'Excellence Énergie, Électricité & Transition Énergétique"
+                : `Cartographie d'Excellence — ${family.name}`))))));
 
       const cartographyBadge = (family.id === 'numerique-ia')
         ? "13 Pôles • 100+ Métiers"
@@ -553,7 +555,9 @@
             ? "11 Domaines • 67 Fiches Métiers"
             : (family.id === 'peche-maritime'
               ? "1 Domaine • 12 Fiches Métiers"
-              : `${familyDomains.length} Domaines d'expertise`)));
+              : (family.id === 'energie-renouvelable'
+                ? "14 Domaines • 26 Fiches Métiers"
+                : `${familyDomains.length} Domaines d'expertise`))));
 
       const allDomainsLabel = (family.id === 'numerique-ia')
         ? `Tous les pôles (${familyDomains.length})`
@@ -1253,6 +1257,11 @@
                     🌊 Référence ÉvoluPêches
                   </span>
                 ` : ''}
+                ${job.sourceEnergierecrute ? `
+                  <span class="dossier-meta-tag" style="background:rgba(234,179,8,0.25);border-color:rgba(250,204,21,0.5);color:#fef08a;" title="Fiche documentée d'après le référentiel officiel Energierecrute">
+                    ⚡ Référence Energierecrute
+                  </span>
+                ` : ''}
               </div>
               <button type="button" class="btn-dossier-fav" id="btnToggleJobFav" title="Sauvegarder dans mes favoris">
                 <span class="fav-icon">☆</span>
@@ -1337,6 +1346,14 @@
               <div class="dossier-species-row" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;padding:0.75rem 1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;">
                 <span style="font-size:0.86rem;font-weight:700;color:#475569;">🐾 Espèces & cheptels :</span>
                 ${job.species.map(sp => `<span class="badge" style="background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;padding:2px 9px;border-radius:16px;font-size:0.82rem;font-weight:600;">${escapeHtml(sp)}</span>`).join(' ')}
+              </div>
+            ` : ''}
+
+            <!-- Technologies énergétiques associées si spécifiées -->
+            ${(job.energyTechnology && Array.isArray(job.energyTechnology) && job.energyTechnology.length > 0) ? `
+              <div class="dossier-energy-tech-row" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;padding:0.75rem 1rem;background:#fefce8;border:1px solid #fef08a;border-radius:10px;">
+                <span style="font-size:0.86rem;font-weight:700;color:#854d0e;">⚡ Technologies & vecteurs :</span>
+                ${job.energyTechnology.map(tech => `<span class="badge" style="background:#fef9c3;color:#a16207;border:1px solid #fde047;padding:2px 9px;border-radius:16px;font-size:0.82rem;font-weight:600;">${escapeHtml(tech)}</span>`).join(' ')}
               </div>
             ` : ''}
 
