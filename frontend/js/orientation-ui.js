@@ -315,6 +315,71 @@
   }
 
   // =========================================================================
+  // COMPOSANT : GRILLE DES 21 GRANDES FAMILLES (NIVEAU 1)
+  // =========================================================================
+  function renderFamiliesGrid() {
+    if (!dom.familiesGridContainer) return;
+    const families = window.OrientationData.getFamilies();
+
+    dom.familiesGridContainer.innerHTML = families.map((family, idx) => {
+      const sampleJobs = (family.representativeJobs || []).slice(0, 3);
+      const img = safeUrl(family.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80');
+
+      return `
+        <article class="family-card stagger-item" data-family-id="${escapeHtml(family.id)}" style="--family-accent: ${escapeHtml(family.color || '#3b82f6')}; --stagger-idx: ${idx % 8};">
+          <div class="family-card-media">
+            <img src="${escapeHtml(img)}" alt="${escapeHtml(family.name)}" loading="lazy">
+            <div class="family-card-media-overlay"></div>
+            <div class="family-card-badge">
+              <span class="family-badge-icon">${escapeHtml(family.icon)}</span>
+              <span class="family-badge-order">#${family.order}</span>
+            </div>
+          </div>
+          <div class="family-card-content">
+            <div class="family-card-header">
+              <h3 class="family-card-title">${escapeHtml(family.name)}</h3>
+              <p class="family-card-desc">${escapeHtml(family.description)}</p>
+            </div>
+
+            <div class="family-card-stats">
+              <span class="family-stat-tag">📂 ${escapeHtml(family.stats.subdomainsCount)} sous-domaines</span>
+              <span class="family-stat-tag">💼 ${escapeHtml(family.stats.jobsEstimate)}</span>
+            </div>
+
+            ${sampleJobs.length > 0 ? `
+              <div class="family-sample-jobs">
+                <span class="family-sample-label">Exemples :</span>
+                <div class="family-sample-chips">
+                  ${sampleJobs.map(j => `<span class="sample-job-chip">${escapeHtml(j)}</span>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <div class="family-card-action">
+              <button type="button" class="btn-explore-family" aria-label="Explorer la famille ${escapeHtml(family.name)}">
+                <span>Explorer la famille</span>
+                <span class="arrow-icon">&rarr;</span>
+              </button>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    // Clics sur les cartes de familles
+    dom.familiesGridContainer.querySelectorAll('.family-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const familyId = card.getAttribute('data-family-id');
+        setView('FAMILY_DRILLDOWN', { familyId, subdomain: 'all' });
+        window.scrollTo({ top: dom.familyDrilldownContainer ? dom.familyDrilldownContainer.offsetTop - 80 : 200, behavior: 'smooth' });
+      });
+    });
+
+    if (window.initCardSpotlight) window.initCardSpotlight();
+    if (window.initScrollReveal) window.initScrollReveal();
+  }
+
+  // =========================================================================
   // COMPOSANT : EN-TÊTE DE FAMILLE & SOUS-DOMAINES (NIVEAU 2)
   // =========================================================================
   function renderFamilyHeader(family) {
