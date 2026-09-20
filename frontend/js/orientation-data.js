@@ -503,6 +503,12 @@
         { type: 'mooc', title: 'The Odin Project — Formation complète au développement Full-Stack', url: 'https://www.theodinproject.com', source: 'The Odin Project', duration: 'En autonomie' }
       ],
       sources: ['Observatoire International des Métiers du Numérique', 'Syntec Numérique'],
+      saviezVous: {
+        statut: 'en_transformation',
+        fait: 'L\'adoption des assistants de code IA accélère de 35 % à 50 % la production des fonctionnalités courantes selon plusieurs études d\'ingénierie logicielle.',
+        pourquoi: 'Les outils génératifs automatisent les tâches répétitives comme les tests unitaires et le boilerplate. Le rôle du développeur évolue vers la supervision d\'architecture, la sécurité applicative, la validation critique du code et la compréhension fine des logiques métier.',
+        a_retenir: 'L\'expertise se déplace de la simple saisie de syntaxe vers la conception système globale et le contrôle qualité exigeant.'
+      },
       interests: ['resoudre-problemes', 'technologie-code', 'creer-designer']
     },
     {
@@ -561,6 +567,12 @@
         { type: 'mooc', title: 'Machine Learning Specialization par Andrew Ng', url: 'https://www.coursera.org', source: 'Coursera / DeepLearning.AI' }
       ],
       sources: ['AIMS Network', 'Stanford AI Index'],
+      saviezVous: {
+        statut: 'en_emergence',
+        fait: 'Les offres d\'emploi ciblant le déploiement de modèles d\'IA et de LLMs ont augmenté de plus de 180 % en trois ans à l\'échelle mondiale.',
+        pourquoi: 'La transition des prototypes de laboratoire vers des applications industrielles en production exige des spécialistes capables d\'optimiser la latence, de maîtriser la consommation de ressources et de garantir la fiabilité éthique et réglementaire des algorithmes.',
+        a_retenir: 'Un profil charnière en forte expansion, combinant rigueur mathématique, génie logiciel distribué et gouvernance des données.'
+      },
       interests: ['resoudre-problemes', 'technologie-code', 'donnees-chiffres', 'explorer-decouvrir']
     },
 
@@ -624,6 +636,12 @@
         { type: 'article', title: 'Les 5 cybermenaces qui visent l’Afrique de l’Ouest en 2026', url: '#', source: 'CIRT Sénégal' }
       ],
       sources: ['CIRT Sénégal', 'ENISA', 'Cybersecurity Ventures'],
+      saviezVous: {
+        statut: 'valeur_sure',
+        fait: 'Le déficit mondial de professionnels qualifiés en cybersécurité dépasse 3,5 millions de postes ouverts selon les observatoires internationaux.',
+        pourquoi: 'La numérisation critique des services publics, des banques et de la santé démultiplie les surfaces d\'attaque. Les compétences en détection d\'intrusions, en réponse à incident et en conformité restent indispensables et indépendantes des fluctuations économiques.',
+        a_retenir: 'Un rempart stratégique durable offrant une employabilité pérenne et des perspectives stables sur tous les continents.'
+      },
       interests: ['proteger-defendre', 'resoudre-problemes', 'technologie-code']
     },
     {
@@ -1398,6 +1416,7 @@
               gettingStarted: dJob.gettingStarted || combined[existingIdx].gettingStarted,
               aiImpact: dJob.aiImpact || combined[existingIdx].aiImpact,
               africaContext: dJob.africaContext || combined[existingIdx].africaContext,
+              saviezVous: combined[existingIdx].saviezVous || dJob.saviezVous || null,
               sourceESD: dJob.sourceESD,
               isEmerging: dJob.isEmerging
             });
@@ -1415,10 +1434,16 @@
 
           if (Array.isArray(apiJobs) && apiJobs.length > 0) {
             apiJobs.forEach(apiJob => {
-              const exists = combined.some(j => j.id === apiJob.id || j.title.toLowerCase() === (apiJob.title || '').toLowerCase());
-              if (!exists) {
+              const existingIdx = combined.findIndex(j => (apiJob.id && (j.id === apiJob.id || j.backendId === apiJob.id)) || (j.slug && apiJob.slug && j.slug === apiJob.slug) || (j.title && apiJob.title && j.title.toLowerCase() === apiJob.title.toLowerCase()));
+              if (existingIdx >= 0) {
+                if (apiJob.saviezVous) {
+                  combined[existingIdx].saviezVous = apiJob.saviezVous;
+                }
+                if (apiJob.id) combined[existingIdx].backendId = apiJob.id;
+              } else {
                 combined.push({
                   id: apiJob.id || 'job-' + Math.random().toString(36).substr(2, 9),
+                  backendId: apiJob.id || null,
                   slug: (apiJob.title || 'metier').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
                   title: apiJob.title,
                   icon: apiJob.icon || '💼',
@@ -1430,6 +1455,7 @@
                   longDescription: apiJob.content || apiJob.description || '',
                   level: 'Niveau d’études adapté',
                   salary: apiJob.salary || 'Rémunération selon profil',
+                  saviezVous: apiJob.saviezVous || null,
                   workEnvironment: ['💼 Environnement professionnel stimulant', '👥 Travail d’équipe'],
                   typicalDay: [],
                   skills: {

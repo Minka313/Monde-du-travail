@@ -8,6 +8,14 @@ const requireReauth = require('../middleware/reauth');
 const validate = require('../middleware/validate');
 const { z } = require('zod');
 
+const saviezVousSchema = z.object({
+  statut: z.enum(['en_transformation', 'valeur_sure', 'en_emergence']),
+  fait: z.string().min(5, 'Le fait doit comporter au moins 5 caractères').max(200, 'Le fait ne doit pas dépasser 200 caractères'),
+  pourquoi: z.string().min(10, 'L\'explication doit comporter au moins 10 caractères').max(350, 'L\'explication ne doit pas dépasser 350 caractères'),
+  a_retenir: z.string().max(200, 'Le conseil à retenir ne doit pas dépasser 200 caractères').optional().nullable(),
+  aRetenir: z.string().max(200, 'Le conseil à retenir ne doit pas dépasser 200 caractères').optional().nullable(),
+}).passthrough();
+
 const jobSchema = z.object({
   body: z.object({
     title: z.string().min(3, 'Titre requis'),
@@ -26,6 +34,13 @@ const jobSchema = z.object({
     subProfessions: z.union([z.array(z.string()), z.string()]).optional().nullable(),
     videoUrl: z.string().optional().nullable(),
     location: z.string().optional().nullable(),
+    saviezVous: saviezVousSchema.optional().nullable(),
+  }),
+});
+
+const patchSaviezVousSchema = z.object({
+  body: z.object({
+    saviezVous: saviezVousSchema.optional().nullable(),
   }),
 });
 
@@ -49,6 +64,7 @@ router.get('/:id', optionalAuth, jobController.getJobById);
 // Gestion (authentifiée, cloisonnée au module métiers)
 router.post('/', ...adminGate, authorize('metier.create'), validate(jobSchema), jobController.createJob);
 router.put('/:id', ...adminGate, authorize('metier.update'), validate(jobSchema), jobController.updateJob);
+router.patch('/:id/saviez-vous', ...adminGate, authorize('metier.update'), validate(patchSaviezVousSchema), jobController.updateSaviezVous);
 router.delete('/:id', ...adminGate, authorize('metier.delete'), jobController.deleteJob);
 
 // Suppression massive : action critique (double confirmation par mot de passe)

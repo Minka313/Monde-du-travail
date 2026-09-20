@@ -198,6 +198,12 @@
     "shortDescription": "Conçoit et programme les applications web de bout en bout, de l’interface utilisateur intuitive (Front-end) aux serveurs et bases de données (Back-end).",
     "longDescription": "Le développeur Full-stack est le profil polyvalent par excellence dans les équipes technologiques. Il comprend l’ensemble de la chaîne de création logicielle : il sait intégrer une maquette graphique élégante et réactive en JavaScript/React, tout en construisant des APIs sécurisées en Python, Node.js ou Java reliées à des bases de données SQL ou NoSQL. Dans une startup ou une PME, sa vision globale est un atout stratégique pour prototyper rapidement des fonctionnalités.",
     "mainObjective": "Créer des applications web et logicielles complètes, sécurisées, rapides et agréables à utiliser.",
+    "saviezVous": {
+      "statut": "en_transformation",
+      "fait": "L'adoption des assistants de code IA accélère de 35 % à 50 % la production des fonctionnalités courantes selon plusieurs études d'ingénierie logicielle.",
+      "pourquoi": "Les outils génératifs automatisent les tâches répétitives comme les tests unitaires et le boilerplate. Le rôle du développeur évolue vers la supervision d'architecture, la sécurité applicative, la validation critique du code et la compréhension fine des logiques métier.",
+      "a_retenir": "L'expertise se déplace de la simple saisie de syntaxe vers la conception système globale et le contrôle qualité exigeant."
+    },
     "companyRole": "Pilier technique transversal faisant le lien entre les besoins utilisateurs, le design et l’infrastructure serveur.",
     "workEnvironment": [
       "💻 Travail sur ordinateur (100%)",
@@ -6091,6 +6097,12 @@
     "shortDescription": "Surveille les réseaux et serveurs en temps réel, qualifie les alertes de sécurité et neutralise les cybermenaces.",
     "longDescription": "Installé dans le centre de surveillance de la sécurité (Security Operations Center - SOC), l’analyste scrute des milliers de signaux suspects (tentatives de connexion frauduleuses, virus, exfiltration de données). Il analyse les journaux d’événements (logs), bloque les adresses malveillantes et participe à la riposte pour préserver l’intégrité des données bancaires ou industrielles.",
     "mainObjective": "Concevoir et délivrer des solutions numériques fiables et performantes.",
+    "saviezVous": {
+      "statut": "valeur_sure",
+      "fait": "Le déficit mondial de professionnels qualifiés en cybersécurité dépasse 3,5 millions de postes ouverts selon les observatoires internationaux.",
+      "pourquoi": "La numérisation critique des services publics, des banques et de la santé démultiplie les surfaces d'attaque. Les compétences en détection d'intrusions, en réponse à incident et en conformité restent indispensables et indépendantes des fluctuations économiques.",
+      "a_retenir": "Un rempart stratégique durable offrant une employabilité pérenne et des perspectives stables sur tous les continents."
+    },
     "companyRole": "Expert opérationnel garant de l’excellence technique et de l’expérience utilisateur.",
     "workEnvironment": [
       "💻 Travail sur ordinateur (100%)",
