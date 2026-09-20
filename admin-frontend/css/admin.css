@@ -136,8 +136,21 @@ html, body {
   border-top: 1px solid #1e293b;
 }
 
+.nav-theme-item {
+  color: #94a3b8 !important;
+  margin-bottom: 0.35rem !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+}
+
+.nav-theme-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
 .nav-logout-item {
   color: #f87171 !important;
+  cursor: pointer !important;
 }
 
 .nav-logout-item:hover {
@@ -1846,6 +1859,28 @@ body[data-theme="dark"] .btn-outline {
   background-color: #1e293b;
   border-color: #334155;
   color: #e2e8f0;
+}
+
+body[data-theme="dark"] .dossier-modal-card {
+  background-color: #111827 !important;
+  border-color: #1f2937 !important;
+  color: #f3f4f6 !important;
+}
+
+body[data-theme="dark"] .dossier-modal-header,
+body[data-theme="dark"] .dossier-modal-footer {
+  background-color: #111827 !important;
+  border-color: #1f2937 !important;
+}
+
+body[data-theme="dark"] .dossier-stat-box,
+body[data-theme="dark"] .dossier-section {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+}
+
+body[data-theme="dark"] .nav-theme-item {
+  color: #cbd5e1 !important;
 }
 
 /* ==========================================================================
