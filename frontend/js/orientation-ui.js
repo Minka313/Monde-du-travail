@@ -550,7 +550,7 @@
         : (family.id === 'finance-fintech'
           ? "10 Domaines • 27+ Fiches Métiers"
           : (family.id === 'agriculture-agritech'
-            ? "11 Domaines • 45 Fiches Métiers"
+            ? "11 Domaines • 67 Fiches Métiers"
             : (family.id === 'peche-maritime'
               ? "1 Domaine • 12 Fiches Métiers"
               : `${familyDomains.length} Domaines d'expertise`)));
@@ -1243,6 +1243,16 @@
                     🎓 Référence ESD
                   </span>
                 ` : ''}
+                ${job.sourceESA ? `
+                  <span class="dossier-meta-tag" style="background:rgba(22,163,74,0.25);border-color:rgba(34,197,94,0.5);color:#dcfce7;" title="Fiche documentée d'après le Groupe ESA (École Supérieure des Agricultures d'Angers)">
+                    🐄 Référence Groupe ESA
+                  </span>
+                ` : ''}
+                ${job.sourceEvoluPeches ? `
+                  <span class="dossier-meta-tag" style="background:rgba(6,182,212,0.25);border-color:rgba(34,211,238,0.5);color:#cffafe;" title="Fiche documentée d'après le référentiel ÉvoluPêches">
+                    🌊 Référence ÉvoluPêches
+                  </span>
+                ` : ''}
               </div>
               <button type="button" class="btn-dossier-fav" id="btnToggleJobFav" title="Sauvegarder dans mes favoris">
                 <span class="fav-icon">☆</span>
@@ -1306,6 +1316,27 @@
                 <p style="margin:0;color:#1e3a8a;font-size:0.95rem;line-height:1.6;font-weight:500;">
                   ${escapeHtml(job.simpleDefinition)}
                 </p>
+              </div>
+            ` : ''}
+
+            <!-- Note documentaire & méthodologique si présente -->
+            ${job.documentaryNote ? `
+              <div class="dossier-documentary-note-box" style="background:linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);border:1.5px solid #fde047;border-radius:12px;padding:1.15rem 1.35rem;margin-bottom:1.5rem;">
+                <div style="display:flex;align-items:center;gap:0.45rem;font-weight:750;color:#854d0e;font-size:0.92rem;margin-bottom:0.4rem;">
+                  <span>📋</span>
+                  <span>Note méthodologique & documentaire :</span>
+                </div>
+                <p style="margin:0;color:#713f12;font-size:0.92rem;line-height:1.6;font-weight:500;">
+                  ${escapeHtml(job.documentaryNote)}
+                </p>
+              </div>
+            ` : ''}
+
+            <!-- Espèces & Cheptels associés si spécifiés -->
+            ${(job.species && Array.isArray(job.species) && job.species.length > 0) ? `
+              <div class="dossier-species-row" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;padding:0.75rem 1rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;">
+                <span style="font-size:0.86rem;font-weight:700;color:#475569;">🐾 Espèces & cheptels :</span>
+                ${job.species.map(sp => `<span class="badge" style="background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;padding:2px 9px;border-radius:16px;font-size:0.82rem;font-weight:600;">${escapeHtml(sp)}</span>`).join(' ')}
               </div>
             ` : ''}
 

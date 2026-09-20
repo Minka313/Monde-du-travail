@@ -9,8 +9,9 @@ from agri_jobs_part1 import JOBS_PART1
 from agri_jobs_part2 import JOBS_PART2
 from agri_jobs_part3 import JOBS_PART3
 from maritime_jobs import MARITIME_JOBS
+from animal_production_jobs import ANIMAL_PRODUCTION_JOBS
 
-ALL_JOBS = JOBS_PART1 + JOBS_PART2 + JOBS_PART3 + MARITIME_JOBS
+ALL_JOBS = JOBS_PART1 + JOBS_PART2 + JOBS_PART3 + MARITIME_JOBS + ANIMAL_PRODUCTION_JOBS
 
 # 11 Domaines structurés de la famille Agriculture, Élevage & Agroalimentaire
 AGRI_DOMAINS = [
@@ -43,14 +44,22 @@ AGRI_DOMAINS = [
     },
     {
         "id": "elevage-productions-animales",
-        "name": "Élevage, Santé & Productions Animales",
+        "name": "Production Animale, Élevage & Filières",
         "icon": "🐄",
-        "description": "Élevage bovin, ovin, caprin et porcin, aviculture moderne, conseil zootechnique, nutrition et reproduction animale.",
+        "description": "Conduite d'élevages (bovins, porcins, ovins, caprins, avicoles), sélection génétique, nutrition animale et provenderie, conseil zootechnique, bien-être animal, bâtiments d'élevage, collecte laitière, centres d'allotement, filières viandes, qualité sanitaire et commerce du bétail.",
         "subdomains": [
-            "Élevage bovin, ovin & caprin",
-            "Aviculture & petits élevages",
-            "Conseil zootechnique & nutrition",
-            "Santé animale & reproduction"
+            "Élevage & conduite des animaux",
+            "Génétique & reproduction animale",
+            "Alimentation animale & agrofourniture",
+            "Santé, bien-être & suivi des animaux",
+            "Recherche & expérimentation animale",
+            "Conseil & accompagnement des élevages",
+            "Bâtiments & infrastructures d'élevage",
+            "Filière lait & collecte",
+            "Filière viande & allotement",
+            "Filières avicole, porcine, ovine & caprine",
+            "Qualité, hygiène, sécurité & environnement (QHSE)",
+            "Achats, approvisionnement & commerce du bétail"
         ]
     },
     {
@@ -169,6 +178,16 @@ for job in ALL_JOBS:
         elif job.get("subdomain") == "Gestion des stocks & biologie marine":
             job["subdomain"] = "Gestion des ressources marines"
 
+    # Harmonisation domaine Production Animale, Élevage & Filières
+    if job.get("domainId") == "elevage-productions-animales":
+        job["domain"] = "Production Animale, Élevage & Filières"
+        if job.get("id") == "responsable-elevage":
+            job["subdomain"] = "Élevage & conduite des animaux"
+        elif job.get("id") == "technicien-conseil-elevage":
+            job["subdomain"] = "Conseil & accompagnement des élevages"
+        elif job.get("id") == "aviculteur":
+            job["subdomain"] = "Filières avicole, porcine, ovine & caprine"
+
     # Construction ou normalisation de salaryRanges
     if not job.get("salaryRanges") and job.get("salary"):
         parts = job["salary"].split("•")
@@ -182,7 +201,7 @@ for job in ALL_JOBS:
             sr["france"] = {
                 "raw": fr_clean,
                 "range": fr_clean,
-                "source": "Onisep / Studyrama" if job.get("sourceOnisep") else "APECITA / Marché agro-maritime"
+                "source": "Groupe ESA / APEC / Référentiel Élevage" if job.get("sourceESA") else ("Onisep / Studyrama" if job.get("sourceOnisep") else "APECITA / Marché agro-maritime")
             }
         if qc_part:
             qc_clean = re.sub(r"^.*?🇨🇦\s*(?:Québec|Canada)\s*:\s*", "", qc_part, flags=re.IGNORECASE).strip()
@@ -196,7 +215,7 @@ for job in ALL_JOBS:
             sr["senegal"] = {
                 "raw": sn_clean,
                 "range": sn_clean,
-                "source": "Filières maritimes & halieutiques (Sénégal / UEMOA)" if job.get("sourceEvoluPeches") else "Filières agricoles & agro-industries (Sénégal / UEMOA)"
+                "source": "Filières animales & élevage (Sénégal / UEMOA)" if job.get("sourceESA") else ("Filières maritimes & halieutiques (Sénégal / UEMOA)" if job.get("sourceEvoluPeches") else "Filières agricoles & agro-industries (Sénégal / UEMOA)")
             }
         job["salaryRanges"] = sr
 
@@ -204,14 +223,15 @@ print(f"Compilation de {len(ALL_JOBS)} fiches métiers sur {len(AGRI_DOMAINS)} d
 
 # Construction du fichier JS
 header = """/**
- * CATALOGUE DES MÉTIERS DE L'AGRICULTURE, ÉLEVAGE, AGROALIMENTAIRE & RESSOURCES MARINES ENRICHI
+ * CATALOGUE DES MÉTIERS DE L'AGRICULTURE, ÉLEVAGE, AGROALIMENTAIRE, PRODUCTION ANIMALE & RESSOURCES MARINES
  * Le Monde du Travail — 11 Domaines d'Excellence & Référentiel Pédagogique
  * Sources documentaires principales :
+ * - Groupe ESA (École Supérieure des Agricultures d'Angers - Filières Productions Animales, BTS Métiers de l'élevage, Licence Pro PA, URSE)
  * - ÉvoluPêches (Comité sectoriel de main-d'œuvre de la pêche maritime du Québec)
  * - Onisep (Agronomie, Halieutique, Forêt, Agroalimentaire)
  * - Studyrama (Agriculture, Élevage, Viticulture, Machinisme)
- * Contextualisation Afrique de l'Ouest : ISRA, ENSA Thiès, ENFM Dakar, CRODT, IUPA, ANA
- * Total métiers documentés : 45 fiches détaillées haute profondeur
+ * Contextualisation Afrique de l'Ouest : EISMV Dakar, ISFAR Bambey, ISRA LNERV, ENSA Thiès, ENFM Dakar, CRODT, IUPA, ANA
+ * Total métiers documentés : 67 fiches détaillées haute profondeur (dont 25 dédiées aux productions animales et 12 aux métiers maritimes)
  */
 
 (function () {
@@ -223,7 +243,7 @@ header = """/**
   const AGRI_DOMAINS = """ + json.dumps(AGRI_DOMAINS, ensure_ascii=False, indent=4) + """;
 
   // =========================================================================
-  // 2. LES 45 FICHES MÉTIERS DÉTAILLÉES HAUTE PROFONDEUR
+  // 2. LES 67 FICHES MÉTIERS DÉTAILLÉES HAUTE PROFONDEUR
   // =========================================================================
   const AGRI_JOBS = """ + json.dumps(ALL_JOBS, ensure_ascii=False, indent=4) + """;
 

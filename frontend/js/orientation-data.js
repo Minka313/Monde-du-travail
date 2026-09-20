@@ -111,11 +111,15 @@
       color: '#16a34a', // Vert émeraude / agriculture
       image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&auto=format&fit=crop&q=80',
       description: 'Explorer toutes les facettes du vivant : des sciences agronomiques et de la production végétale à l’élevage, l’agroécologie, l’agroéquipement, la pêche/aquaculture, la forêt, l’agroalimentaire, l’économie rurale et l’AgriTech.',
-      stats: { jobsEstimate: '80+ métiers', subdomainsCount: 35 },
-      representativeJobs: ['Ingénieur Agronome', 'Capitaine-Propriétaire', 'Responsable d’Élevage', 'Mariculteur', 'Ingénieur AgriTech', 'Chef d’Exploitation'],
+      stats: { jobsEstimate: '100+ métiers', subdomainsCount: 42 },
+      representativeJobs: ['Ingénieur Agronome', 'Éleveur Polyvalent', 'Ingénieur Production Animale', 'Capitaine-Propriétaire', 'Généticien Animal', 'Responsable Collecte Laitière', 'Ingénieur AgriTech'],
       subdomains: [
         'Agronomie & sciences agricoles', 'Grandes cultures & céréales', 'Maraîchage & horticulture',
-        'Élevage & productions animales', 'Agroécologie & sols vivants', 'Hydraulique agricole & eau',
+        'Production animale & élevage', 'Élevage & conduite des animaux', 'Génétique & reproduction animale',
+        'Alimentation animale & agrofourniture', 'Santé, bien-être & suivi des animaux', 'Recherche & expérimentation animale',
+        'Conseil & accompagnement des élevages', 'Bâtiments & infrastructures d\'élevage', 'Filière lait & collecte',
+        'Filière viande & allotement', 'Filières avicole, porcine, ovine & caprine', 'Qualité, hygiène, sécurité & environnement (QHSE)',
+        'Achats, approvisionnement & commerce du bétail', 'Agroécologie & sols vivants', 'Hydraulique agricole & eau',
         'Agroéquipement & robotique', 'Pêche, aquaculture & ressources marines', 'Pêche & capture',
         'Aquaculture & mariculture', 'Transformation des produits marins', 'Maintenance & équipements marins',
         'Qualité & sécurité des produits aquatiques', 'Gestion des ressources marines', 'Biologie marine',
@@ -1493,6 +1497,9 @@
               sourceOnisep: aJob.sourceOnisep,
               sourceStudyrama: aJob.sourceStudyrama,
               sourceEvoluPeches: aJob.sourceEvoluPeches,
+              sourceESA: aJob.sourceESA,
+              species: aJob.species || combined[existingIdx].species,
+              documentaryNote: aJob.documentaryNote || combined[existingIdx].documentaryNote,
               characteristics: aJob.characteristics || combined[existingIdx].characteristics,
               regions: aJob.regions || combined[existingIdx].regions,
               sourceContext: aJob.sourceContext || combined[existingIdx].sourceContext,
@@ -1728,6 +1735,12 @@
         if (job.characteristics && Array.isArray(job.characteristics) && job.characteristics.some(c => c.toLowerCase().includes(q))) return true;
         if (job.regions && Array.isArray(job.regions) && job.regions.some(r => r.toLowerCase().includes(q))) return true;
         if (job.sourceContext && job.sourceContext.toLowerCase().includes(q)) return true;
+
+        // Filières animales, Espèces, Missions, Sources & Notes documentaires
+        if (job.species && Array.isArray(job.species) && job.species.some(sp => sp.toLowerCase().includes(q))) return true;
+        if (job.missions && Array.isArray(job.missions) && job.missions.some(m => m.toLowerCase().includes(q))) return true;
+        if (job.sources && Array.isArray(job.sources) && job.sources.some(src => src.toLowerCase().includes(q))) return true;
+        if (job.documentaryNote && job.documentaryNote.toLowerCase().includes(q)) return true;
 
         return false;
       });
