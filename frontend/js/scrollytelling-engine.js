@@ -106,6 +106,12 @@
         smoothWheel: CONFIG.lenis.smoothWheel,
         touchMultiplier: CONFIG.lenis.touchMultiplier,
         infinite: CONFIG.lenis.infinite,
+        prevent: (node) => {
+          if (!node || typeof node.closest !== 'function') return false;
+          return Boolean(
+            node.closest('#job-dossier-overlay, #formation-dossier-overlay, .dossier-overlay, .dossier-modal, .dossier-body, [data-lenis-prevent]')
+          );
+        }
       });
 
       window.lenis = lenisInstance;

@@ -113,6 +113,38 @@ console.log(`  ✓ OrientationData.getDigitalDomains() successfully returned ${d
   assert(filtered.length > 0, 'Search for "prompt" should find matching jobs');
   console.log(`  ✓ Filter for "${query}" returned ${filtered.length} match(es): ${filtered.map(j => j.title).join(', ')}`);
 
+  // 6. Test Job Dossier Modal Scroll Architecture
+  console.log('\n--- 6. Testing Job Dossier Modal Scroll Architecture ---');
+  const uiJs = fs.readFileSync(path.join(__dirname, '../frontend/js/orientation-ui.js'), 'utf8');
+  const scrollyJs = fs.readFileSync(path.join(__dirname, '../frontend/js/scrollytelling-engine.js'), 'utf8');
+
+  // Verify Lenis prevent config
+  assert(scrollyJs.includes('prevent: (node) =>'), 'Lenis must have prevent callback in config');
+  assert(scrollyJs.includes('job-dossier-overlay'), 'Lenis prevent callback must check job-dossier-overlay');
+  console.log('  ✓ Lenis prevent callback successfully installed in scrollytelling-engine.js');
+
+  // Verify data-lenis-prevent attributes
+  assert(uiJs.includes("overlay.setAttribute('data-lenis-prevent', 'true')"), 'overlay must have data-lenis-prevent attribute');
+  assert(uiJs.includes('data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true" tabindex="-1"'), 'dossier-body must have data-lenis-prevent and tabindex');
+  console.log('  ✓ data-lenis-prevent, data-lenis-prevent-wheel, data-lenis-prevent-touch, tabindex present on modal & body');
+
+  // Verify wheel and touch forwarding
+  assert(uiJs.includes("overlay.addEventListener('wheel'"), 'overlay must forward wheel events to dossierBody');
+  assert(uiJs.includes("dossierBody.scrollTop += e.deltaY"), 'wheel event must update dossierBody.scrollTop');
+  assert(uiJs.includes("overlay.addEventListener('touchmove'"), 'overlay must forward touchmove events to dossierBody');
+  console.log('  ✓ Wheel and touch delegation to dossierBody verified');
+
+  // Verify tab scroll reset & keyboard escape
+  assert(uiJs.includes("dossierBody.scrollTo({ top: 0, behavior: 'smooth' })"), 'Tab switch must reset scroll to top');
+  assert(uiJs.includes("e.key === 'Escape'"), 'Escape key must close modal');
+  console.log('  ✓ Tab switch scroll reset & Escape key navigation verified');
+
+  // Verify CSS rules
+  assert(cssContent.includes('body.modal-open {\n  overflow: hidden !important;'), 'Global body.modal-open must lock overflow');
+  assert(cssContent.includes('.dossier-body {\n  padding: 1.5rem 1.75rem;\n  overflow-y: auto !important;'), 'dossier-body must enforce overflow-y: auto !important');
+  assert(cssContent.includes('.dossier-body::-webkit-scrollbar'), 'dossier-body must have custom visible scrollbar');
+  console.log('  ✓ CSS scroll locking, overflow containment and custom scrollbars verified');
+
   console.log('\n======================================================');
   console.log('🎉 ALL INTEGRATION & VERIFICATION TESTS PASSED SUCCESSFULLY!');
   console.log('======================================================\n');
