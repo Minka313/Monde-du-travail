@@ -541,15 +541,19 @@
           ? "Cartographie d'Excellence Finance, Banque & Assurance"
           : (family.id === 'agriculture-agritech'
             ? "Cartographie d'Excellence Agriculture, Élevage & Agroalimentaire"
-            : `Cartographie d'Excellence — ${family.name}`));
+            : (family.id === 'peche-maritime'
+              ? "Cartographie d'Excellence Pêche, Aquaculture & Ressources Marines"
+              : `Cartographie d'Excellence — ${family.name}`)));
 
       const cartographyBadge = (family.id === 'numerique-ia')
         ? "13 Pôles • 100+ Métiers"
         : (family.id === 'finance-fintech'
           ? "10 Domaines • 27+ Fiches Métiers"
           : (family.id === 'agriculture-agritech'
-            ? "11 Domaines • 35 Fiches Métiers"
-            : `${familyDomains.length} Domaines d'expertise`));
+            ? "11 Domaines • 45 Fiches Métiers"
+            : (family.id === 'peche-maritime'
+              ? "1 Domaine • 12 Fiches Métiers"
+              : `${familyDomains.length} Domaines d'expertise`)));
 
       const allDomainsLabel = (family.id === 'numerique-ia')
         ? `Tous les pôles (${familyDomains.length})`
@@ -1509,6 +1513,20 @@
               </div>
             </div>
 
+            <!-- Caractéristiques & Aptitudes Personnelles (Source Référentiel ÉvoluPêches) -->
+            ${job.characteristics && job.characteristics.length > 0 ? `
+              <div class="dossier-section" style="margin-top:1.5rem;background:#f0fdfa;border:1.5px solid #99f6e4;padding:1.25rem;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                  <span style="font-size:1.25rem;">🧭</span>
+                  <h4 style="margin:0;color:#0f766e;font-size:0.96rem;font-weight:750;">Caractéristiques & Profil Personnel Recommandé (ÉvoluPêches)</h4>
+                </div>
+                <p style="color:#115e59;font-size:0.85rem;margin-bottom:0.85rem;">Qualités et aptitudes identifiées par les professionnels du secteur maritime pour s'épanouir dans ce métier :</p>
+                <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                  ${job.characteristics.map(c => `<span style="background:#ffffff;color:#0f766e;border:1.5px solid #2dd4bf;padding:0.4rem 0.85rem;border-radius:8px;font-size:0.84rem;font-weight:650;box-shadow:0 1px 2px rgba(0,0,0,0.04);display:inline-flex;align-items:center;gap:0.35rem;"><span>⚓</span> ${escapeHtml(c)}</span>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+
             <!-- Voies de spécialisation -->
             ${job.specializations && job.specializations.length > 0 ? `
               <div class="dossier-section" style="margin-top:1.5rem;background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:10px;">
@@ -1596,6 +1614,20 @@
                 <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
                   ${job.studies.certifications.map(c => `<span style="background:#ffffff;border:1px solid #cbd5e1;color:#334155;padding:0.3rem 0.7rem;border-radius:6px;font-size:0.82rem;font-weight:600;">${escapeHtml(c)}</span>`).join('')}
                 </div>
+              </div>
+            ` : ''}
+
+            <!-- Dispositif de Reconnaissance des Compétences (RAC / PAMT) -->
+            ${job.skillsRecognition && job.skillsRecognition.description ? `
+              <div class="dossier-section" style="margin-top:1.25rem;background:#f0fdf4;border:1.5px solid #86efac;padding:1.25rem;border-radius:10px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+                  <span style="font-size:1.25rem;">🎖️</span>
+                  <h4 style="color:#166534;font-size:0.95rem;margin:0;font-weight:750;">Reconnaissance des compétences de la main-d'œuvre (RAC / PAMT)</h4>
+                </div>
+                <p style="color:#14532d;font-size:0.86rem;line-height:1.6;margin:0;">${escapeHtml(job.skillsRecognition.description)}</p>
+                ${job.skillsRecognition.source ? `
+                  <span style="display:inline-block;margin-top:0.45rem;font-size:0.78rem;color:#15803d;font-weight:600;">Source : ${escapeHtml(job.skillsRecognition.source)}</span>
+                ` : ''}
               </div>
             ` : ''}
 
@@ -1700,6 +1732,24 @@
                 </div>
               ` : ''}
 
+              <!-- Contexte Régions Maritimes & Québec (Source ÉvoluPêches) -->
+              ${(job.regions && job.regions.length > 0) || job.sourceContext ? `
+                <div class="dossier-section" style="margin-top:1.5rem;background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);border:1.5px solid #bfdbfe;border-radius:12px;padding:1.35rem;">
+                  <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem;">
+                    <span style="font-size:1.4rem;">🌊</span>
+                    <div>
+                      <h4 style="margin:0;color:#1e40af;font-size:1rem;font-weight:750;">Territoires Maritimes Clés & Bassins d'Emplois (${escapeHtml(job.sourceContext || 'Maritime')})</h4>
+                      <p style="margin:0.2rem 0 0 0;color:#2563eb;font-size:0.84rem;">Régions d'activité et territoires documentés :</p>
+                    </div>
+                  </div>
+                  ${job.regions && job.regions.length > 0 ? `
+                    <div style="display:flex;flex-wrap:wrap;gap:0.45rem;margin-top:0.75rem;">
+                      ${job.regions.map(r => `<span style="background:#ffffff;border:1px solid #93c5fd;color:#1e40af;padding:0.35rem 0.8rem;border-radius:6px;font-size:0.82rem;font-weight:650;box-shadow:0 1px 2px rgba(0,0,0,0.04);">📍 ${escapeHtml(r)}</span>`).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              ` : ''}
+
               <!-- Grille Multi-Territoriale des Salaires & Rémunérations -->
               ${job.salaryRanges ? `
                 <div class="salary-ranges-box" style="margin-top:1.25rem;background:#ffffff;border:1.5px solid #e2e8f0;padding:1.25rem;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
@@ -1708,12 +1758,24 @@
                     <h4 style="color:#0f172a;font-size:0.95rem;margin:0;font-weight:750;">Repères de Rémunération Multi-Territoriaux</h4>
                   </div>
                   <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:0.85rem;">
+                    ${job.salaryRanges.quebec ? `
+                      <div style="background:#eff6ff;border-left:4px solid #0284c7;padding:0.9rem;border-radius:6px;">
+                        <span style="font-weight:700;font-size:0.84rem;color:#0369a1;display:block;margin-bottom:0.35rem;">🇨🇦 Québec / Canada (Source : ${escapeHtml(job.salaryRanges.quebec.source || 'ÉvoluPêches')})</span>
+                        <div style="font-size:0.82rem;color:#334155;line-height:1.6;">
+                          ${job.salaryRanges.quebec.range ? `<div><strong>Fourchette constatée :</strong> ${escapeHtml(job.salaryRanges.quebec.range)}</div>` : ''}
+                          ${job.salaryRanges.quebec.junior ? `<div><strong>Débutant / Junior :</strong> ${escapeHtml(job.salaryRanges.quebec.junior)}</div>` : ''}
+                          ${job.salaryRanges.quebec.senior ? `<div><strong>Confirmé / Senior :</strong> ${escapeHtml(job.salaryRanges.quebec.senior)}</div>` : ''}
+                        </div>
+                      </div>
+                    ` : ''}
                     ${job.salaryRanges.france ? `
                       <div style="background:#f8fafc;border-left:4px solid #3b82f6;padding:0.9rem;border-radius:6px;">
                         <span style="font-weight:700;font-size:0.84rem;color:#1e40af;display:block;margin-bottom:0.35rem;">🇫🇷 France (Source : ${escapeHtml(job.salaryRanges.france.source || 'L’Étudiant / APEC')})</span>
                         <div style="font-size:0.82rem;color:#334155;line-height:1.6;">
-                          <div><strong>Débutant / Junior :</strong> ${escapeHtml(job.salaryRanges.france.junior || 'N/C')}</div>
-                          <div><strong>Confirmé / Senior :</strong> ${escapeHtml(job.salaryRanges.france.senior || 'N/C')}</div>
+                          ${job.salaryRanges.france.range ? `<div><strong>Fourchette constatée :</strong> ${escapeHtml(job.salaryRanges.france.range)}</div>` : `
+                            <div><strong>Débutant / Junior :</strong> ${escapeHtml(job.salaryRanges.france.junior || 'N/C')}</div>
+                            <div><strong>Confirmé / Senior :</strong> ${escapeHtml(job.salaryRanges.france.senior || 'N/C')}</div>
+                          `}
                         </div>
                       </div>
                     ` : ''}
@@ -1721,8 +1783,10 @@
                       <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:0.9rem;border-radius:6px;">
                         <span style="font-weight:700;font-size:0.84rem;color:#065f46;display:block;margin-bottom:0.35rem;">🇸🇳 Sénégal / Afrique de l'Ouest (Source : ${escapeHtml(job.salaryRanges.senegal.source || 'Marché UEMOA')})</span>
                         <div style="font-size:0.82rem;color:#334155;line-height:1.6;">
-                          <div><strong>Débutant / Junior :</strong> ${escapeHtml(job.salaryRanges.senegal.junior || 'Donnée locale à vérifier')}</div>
-                          <div><strong>Confirmé / Senior :</strong> ${escapeHtml(job.salaryRanges.senegal.senior || 'Donnée locale à vérifier')}</div>
+                          ${job.salaryRanges.senegal.range ? `<div><strong>Fourchette constatée :</strong> ${escapeHtml(job.salaryRanges.senegal.range)}</div>` : `
+                            <div><strong>Débutant / Junior :</strong> ${escapeHtml(job.salaryRanges.senegal.junior || 'Donnée locale à vérifier')}</div>
+                            <div><strong>Confirmé / Senior :</strong> ${escapeHtml(job.salaryRanges.senegal.senior || 'Donnée locale à vérifier')}</div>
+                          `}
                         </div>
                       </div>
                     ` : ''}

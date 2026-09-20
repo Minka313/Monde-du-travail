@@ -2,13 +2,15 @@
 import json
 import os
 import sys
+import re
 
-# Importer les listes de métiers des 3 parties
+# Importer les listes de métiers des 4 modules
 from agri_jobs_part1 import JOBS_PART1
 from agri_jobs_part2 import JOBS_PART2
 from agri_jobs_part3 import JOBS_PART3
+from maritime_jobs import MARITIME_JOBS
 
-ALL_JOBS = JOBS_PART1 + JOBS_PART2 + JOBS_PART3
+ALL_JOBS = JOBS_PART1 + JOBS_PART2 + JOBS_PART3 + MARITIME_JOBS
 
 # 11 Domaines structurés de la famille Agriculture, Élevage & Agroalimentaire
 AGRI_DOMAINS = [
@@ -79,14 +81,20 @@ AGRI_DOMAINS = [
     },
     {
         "id": "peche-aquaculture",
-        "name": "Pêche, Aquaculture & Ressources Halieutiques",
-        "icon": "🐟",
-        "description": "Élevage en eau douce et mer (pisciculture, conchyliculture), gestion durable des stocks halieutiques, biologie marine et océanographie des pêches.",
+        "name": "Pêche, Aquaculture & Ressources Marines",
+        "icon": "🌊",
+        "description": "Pêche commerciale et hauturière, mariculture côtière, conchyliculture, valorisation et transformation industrielle des captures marines, contrôle de la qualité halieutique et gestion durable des écosystèmes océaniques.",
         "subdomains": [
-            "Pêche maritime & fluviale",
-            "Aquaculture continentale & marine",
-            "Conchyliculture",
-            "Gestion des stocks & biologie marine"
+            "Pêche & capture",
+            "Aquaculture & mariculture",
+            "Transformation des produits marins",
+            "Maintenance & équipements marins",
+            "Qualité & sécurité des produits aquatiques",
+            "Gestion des ressources marines",
+            "Biologie marine",
+            "Navigation & opérations maritimes",
+            "Logistique & commercialisation",
+            "Technologies marines & numériques"
         ]
     },
     {
@@ -151,57 +159,73 @@ AGRI_DOMAINS = [
     }
 ]
 
+# Normalisation et enrichissement de chaque fiche métier
+for job in ALL_JOBS:
+    # Harmonisation domaine Pêche, Aquaculture & Ressources Marines
+    if job.get("domainId") == "peche-aquaculture":
+        job["domain"] = "Pêche, Aquaculture & Ressources Marines"
+        if job.get("subdomain") == "Aquaculture continentale & marine":
+            job["subdomain"] = "Aquaculture & mariculture"
+        elif job.get("subdomain") == "Gestion des stocks & biologie marine":
+            job["subdomain"] = "Gestion des ressources marines"
+
+    # Construction ou normalisation de salaryRanges
+    if not job.get("salaryRanges") and job.get("salary"):
+        parts = job["salary"].split("•")
+        fr_part = next((p for p in parts if "France" in p or "🇫🇷" in p), "")
+        qc_part = next((p for p in parts if "Québec" in p or "Canada" in p or "🇨🇦" in p), "")
+        sn_part = next((p for p in parts if "Sénégal" in p or "🇸🇳" in p or "Afrique" in p), "")
+
+        sr = {}
+        if fr_part:
+            fr_clean = re.sub(r"^.*?🇫🇷\s*France\s*:\s*", "", fr_part, flags=re.IGNORECASE).strip()
+            sr["france"] = {
+                "raw": fr_clean,
+                "range": fr_clean,
+                "source": "Onisep / Studyrama" if job.get("sourceOnisep") else "APECITA / Marché agro-maritime"
+            }
+        if qc_part:
+            qc_clean = re.sub(r"^.*?🇨🇦\s*(?:Québec|Canada)\s*:\s*", "", qc_part, flags=re.IGNORECASE).strip()
+            sr["quebec"] = {
+                "raw": qc_clean,
+                "range": qc_clean,
+                "source": "ÉvoluPêches" if job.get("sourceEvoluPeches") else "Référentiel Québec"
+            }
+        if sn_part:
+            sn_clean = re.sub(r"^.*?(?:🇸🇳\s*Sénégal|🇸🇳\s*International\s*/\s*Afrique)\s*:\s*", "", sn_part, flags=re.IGNORECASE).strip()
+            sr["senegal"] = {
+                "raw": sn_clean,
+                "range": sn_clean,
+                "source": "Filières maritimes & halieutiques (Sénégal / UEMOA)" if job.get("sourceEvoluPeches") else "Filières agricoles & agro-industries (Sénégal / UEMOA)"
+            }
+        job["salaryRanges"] = sr
+
 print(f"Compilation de {len(ALL_JOBS)} fiches métiers sur {len(AGRI_DOMAINS)} domaines...")
 
 # Construction du fichier JS
 header = """/**
- * CATALOGUE DES MÉTIERS DE L'AGRICULTURE, ÉLEVAGE & AGROALIMENTAIRE ENRICHI
+ * CATALOGUE DES MÉTIERS DE L'AGRICULTURE, ÉLEVAGE, AGROALIMENTAIRE & RESSOURCES MARINES ENRICHI
  * Le Monde du Travail — 11 Domaines d'Excellence & Référentiel Pédagogique
- * Sources documentaires principales : Onisep (Agronome, Expérimentation, Halieutique, Forêt, Agroalimentaire)
- * & Studyrama (Fiches Métiers Agriculture, Élevage, Viticulture, Paysage, Agroéquipement)
- * Contextualisation Afrique de l'Ouest : ISRA, ENSA Thiès, CFPH Cambérène, ITA Dakar, SAED
- * Total métiers documentés : 35 fiches détaillées haute profondeur
+ * Sources documentaires principales :
+ * - ÉvoluPêches (Comité sectoriel de main-d'œuvre de la pêche maritime du Québec)
+ * - Onisep (Agronomie, Halieutique, Forêt, Agroalimentaire)
+ * - Studyrama (Agriculture, Élevage, Viticulture, Machinisme)
+ * Contextualisation Afrique de l'Ouest : ISRA, ENSA Thiès, ENFM Dakar, CRODT, IUPA, ANA
+ * Total métiers documentés : 45 fiches détaillées haute profondeur
  */
 
 (function () {
   'use strict';
 
   // =========================================================================
-  // 1. LES 11 DOMAINES DE L'AGRICULTURE, ÉLEVAGE & AGROALIMENTAIRE
+  // 1. LES 11 DOMAINES DE L'AGRICULTURE, ÉLEVAGE, AGROALIMENTAIRE & RESSOURCES MARINES
   // =========================================================================
   const AGRI_DOMAINS = """ + json.dumps(AGRI_DOMAINS, ensure_ascii=False, indent=4) + """;
 
   // =========================================================================
-  // 2. LES 35 FICHES MÉTIERS DÉTAILLÉES HAUTE PROFONDEUR
+  // 2. LES 45 FICHES MÉTIERS DÉTAILLÉES HAUTE PROFONDEUR
   // =========================================================================
   const AGRI_JOBS = """ + json.dumps(ALL_JOBS, ensure_ascii=False, indent=4) + """;
-
-  // =========================================================================
-  // 2.b NORMALISATION MULTI-TERRITORIALE DES SALAIRES
-  // =========================================================================
-  AGRI_JOBS.forEach(job => {
-    if (!job.salaryRanges && job.salary) {
-      const parts = job.salary.split('•');
-      const frPart = parts.find(p => p.includes('France') || p.includes('🇫🇷')) || '';
-      const snPart = parts.find(p => p.includes('Sénégal') || p.includes('🇸🇳') || p.includes('Afrique')) || '';
-
-      const frRange = frPart.replace(/🇫🇷\s*France\s*:\s*/i, '').trim();
-      const snRange = snPart.replace(/(?:🇸🇳\s*Sénégal|🇸🇳\s*International\s*\/\s*Afrique)\s*:\s*/i, '').trim();
-
-      job.salaryRanges = {
-        france: {
-          raw: frRange,
-          range: frRange,
-          source: job.sourceOnisep ? (job.sourceStudyrama ? 'Onisep / Studyrama' : 'Onisep') : 'Studyrama / APECITA'
-        },
-        senegal: {
-          raw: snRange,
-          range: snRange,
-          source: 'Filières agricoles & agro-industries (Sénégal / UEMOA)'
-        }
-      };
-    }
-  });
 
   // =========================================================================
   // 3. EXPORT DU MODULE ORIENTATION AGRI DATA
@@ -229,7 +253,7 @@ header = """/**
   }
 
   if (typeof console !== 'undefined' && console.log) {
-    console.log('✅ OrientationAgriData : ' + AGRI_JOBS.length + ' fiches détaillées Agriculture, Élevage & Agroalimentaire initialisées sur ' + AGRI_DOMAINS.length + ' domaines d\\\'excellence.');
+    console.log('✅ OrientationAgriData : ' + AGRI_JOBS.length + ' fiches détaillées Agriculture, Élevage, Agroalimentaire & Pêche maritime initialisées sur ' + AGRI_DOMAINS.length + ' domaines d\\\'excellence.');
   }
 })();
 """

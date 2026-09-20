@@ -111,14 +111,17 @@
       color: '#16a34a', // Vert émeraude / agriculture
       image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&auto=format&fit=crop&q=80',
       description: 'Explorer toutes les facettes du vivant : des sciences agronomiques et de la production végétale à l’élevage, l’agroécologie, l’agroéquipement, la pêche/aquaculture, la forêt, l’agroalimentaire, l’économie rurale et l’AgriTech.',
-      stats: { jobsEstimate: '70+ métiers', subdomainsCount: 28 },
-      representativeJobs: ['Ingénieur Agronome', 'Ingénieur Agroécologue', 'Responsable d’Élevage', 'Œnologue', 'Ingénieur AgriTech', 'Chef d’Exploitation'],
+      stats: { jobsEstimate: '80+ métiers', subdomainsCount: 35 },
+      representativeJobs: ['Ingénieur Agronome', 'Capitaine-Propriétaire', 'Responsable d’Élevage', 'Mariculteur', 'Ingénieur AgriTech', 'Chef d’Exploitation'],
       subdomains: [
         'Agronomie & sciences agricoles', 'Grandes cultures & céréales', 'Maraîchage & horticulture',
         'Élevage & productions animales', 'Agroécologie & sols vivants', 'Hydraulique agricole & eau',
-        'Agroéquipement & robotique', 'Aquaculture & pêche', 'Forêt & sylviculture', 'Paysage & espaces verts',
-        'Transformation agroalimentaire & qualité', 'Conseil & gestion rurale', 'Financement agricole',
-        'AgriTech & agriculture numérique', 'Drones & télédétection', 'Entrepreneuriat & coopératives'
+        'Agroéquipement & robotique', 'Pêche, aquaculture & ressources marines', 'Pêche & capture',
+        'Aquaculture & mariculture', 'Transformation des produits marins', 'Maintenance & équipements marins',
+        'Qualité & sécurité des produits aquatiques', 'Gestion des ressources marines', 'Biologie marine',
+        'Forêt & sylviculture', 'Paysage & espaces verts', 'Transformation agroalimentaire & qualité',
+        'Conseil & gestion rurale', 'Financement agricole', 'AgriTech & agriculture numérique',
+        'Drones & télédétection', 'Entrepreneuriat & coopératives'
       ]
     },
     {
@@ -130,12 +133,13 @@
       color: '#06b6d4', // Cyan océan
       image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop&q=80',
       description: 'Valoriser les ressources marines, développer les fermes aquacoles durables et organiser la logistique portuaire et de haute mer.',
-      stats: { jobsEstimate: '25+ métiers', subdomainsCount: 8 },
-      representativeJobs: ['Ingénieur Halieute', 'Responsable Aquaculture', 'Biologiste Marin', 'Technicien de Transformation des Produits de la Mer'],
+      stats: { jobsEstimate: '35+ métiers', subdomainsCount: 10 },
+      representativeJobs: ['Capitaine-Propriétaire', 'Aide-Pêcheur', 'Mécanicien Marin', 'Mariculteur', 'Ingénieur Halieute', 'Biologiste Marin'],
       subdomains: [
-        'Pêche', 'Aquaculture', 'Biologie marine', 'Océanographie',
-        'Transformation des produits de la mer', 'Gestion des ressources halieutiques',
-        'Économie maritime', 'Logistique maritime'
+        'Pêche & capture', 'Aquaculture & mariculture', 'Transformation des produits marins',
+        'Maintenance & équipements marins', 'Qualité & sécurité des produits aquatiques',
+        'Gestion des ressources marines', 'Biologie marine', 'Navigation & opérations maritimes',
+        'Logistique & commercialisation', 'Technologies marines & numériques'
       ]
     },
     {
@@ -1488,6 +1492,12 @@
               saviezVous: combined[existingIdx].saviezVous || aJob.saviezVous || null,
               sourceOnisep: aJob.sourceOnisep,
               sourceStudyrama: aJob.sourceStudyrama,
+              sourceEvoluPeches: aJob.sourceEvoluPeches,
+              characteristics: aJob.characteristics || combined[existingIdx].characteristics,
+              regions: aJob.regions || combined[existingIdx].regions,
+              sourceContext: aJob.sourceContext || combined[existingIdx].sourceContext,
+              skillsRecognition: aJob.skillsRecognition || combined[existingIdx].skillsRecognition,
+              cnpCode: aJob.cnpCode || combined[existingIdx].cnpCode,
               isEmerging: aJob.isEmerging !== undefined ? aJob.isEmerging : combined[existingIdx].isEmerging
             });
           } else {
@@ -1574,6 +1584,9 @@
 
         return all.filter(j => j.familyId === 'numerique-ia' || j.sourceESD || (j.domain && digitalDomainNames.includes(j.domain)));
       }
+      if (familyId === 'peche-maritime') {
+        return all.filter(j => j.familyId === 'peche-maritime' || j.domainId === 'peche-aquaculture');
+      }
       return all.filter(j => j.familyId === familyId);
     },
 
@@ -1588,6 +1601,8 @@
             : (typeof global !== 'undefined' && global.OrientationDigitalData ? global.OrientationDigitalData : null);
           const digitalDomainNames = (digitalData && digitalData.DOMAINS) ? digitalData.DOMAINS.map(d => d.name) : [];
           matchesFamily = j.familyId === 'numerique-ia' || j.sourceESD || (j.domain && digitalDomainNames.includes(j.domain));
+        } else if (familyId === 'peche-maritime') {
+          matchesFamily = (j.familyId === 'peche-maritime' || j.domainId === 'peche-aquaculture');
         } else {
           matchesFamily = (j.familyId === familyId);
         }
@@ -1708,6 +1723,12 @@
           if (Array.isArray(job.career.employerTypes) && job.career.employerTypes.some(emp => emp.toLowerCase().includes(q))) return true;
         }
 
+        // Code CNP, Caractéristiques, Régions & Contexte ÉvoluPêches
+        if (job.cnpCode && job.cnpCode.toLowerCase().includes(q)) return true;
+        if (job.characteristics && Array.isArray(job.characteristics) && job.characteristics.some(c => c.toLowerCase().includes(q))) return true;
+        if (job.regions && Array.isArray(job.regions) && job.regions.some(r => r.toLowerCase().includes(q))) return true;
+        if (job.sourceContext && job.sourceContext.toLowerCase().includes(q)) return true;
+
         return false;
       });
     },
@@ -1786,6 +1807,9 @@
       }
       if (familyId === 'agriculture-agritech') {
         return this.getAgriDomains();
+      }
+      if (familyId === 'peche-maritime') {
+        return (this.getAgriDomains() || []).filter(d => d.id === 'peche-aquaculture');
       }
       return [];
     },
