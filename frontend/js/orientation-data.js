@@ -19,13 +19,15 @@
       color: '#3b82f6', // Bleu vibrant
       image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80',
       description: 'Concevoir les logiciels, architectures cloud, applications et intelligences artificielles qui automatisent et transforment les organisations.',
-      stats: { jobsEstimate: '80+ métiers', subdomainsCount: 20 },
-      representativeJobs: ['Développeur Full-stack', 'Ingénieur IA', 'DevOps Engineer', 'Product Designer', 'Cloud Architect'],
+      stats: { jobsEstimate: '100+ métiers', subdomainsCount: 24 },
+      representativeJobs: ['Développeur Full-Stack', 'Ingénieur IA & ML', 'Prompt Engineer', 'DevOps Engineer', 'Product Designer', 'Cloud Architect'],
       subdomains: [
-        'Développement logiciel', 'Développement web', 'Développement mobile', 'Génie logiciel',
-        'Architecture logicielle', 'Intelligence artificielle', 'Machine Learning', 'Deep Learning',
-        'NLP / traitement du langage', 'Computer Vision', 'LLM / IA générative', 'Robotique',
-        'IoT', 'Cloud', 'DevOps', 'SRE', 'QA / tests logiciels', 'UX/UI', 'Product', 'Solutions digitales'
+        'Développement web', 'Développement Front-end', 'Développement Back-end', 'Développement Full-Stack',
+        'Développement mobile', 'Génie logiciel & Architecture', 'Intelligence artificielle', 'Machine Learning',
+        'Deep Learning', 'IA Générative & LLM', 'Prompt Engineering', 'AI Engineering', 'MLOps',
+        'Data Analysis', 'Data Science', 'Data Engineering', 'SOC & Détection d’incidents',
+        'Sécurité offensive & Pentest', 'Cloud Architecture', 'CI/CD & Automatisation', 'UX/UI Design',
+        'Product Design', 'Growth & Acquisition', 'Innovation & Stratégie'
       ]
     },
     {
@@ -1372,24 +1374,49 @@
     // Cache pour les jobs combinés
     _allJobsCache: null,
 
-    // Chargement hybride : combine la base statique enrichie avec les métiers publiés du backend
+    // Chargement hybride : combine la base statique enrichie avec le catalogue numérique et les métiers publiés du backend
     getAllJobs: async function () {
       if (this._allJobsCache) return this._allJobsCache;
 
       let combined = [...JOBS];
 
-      // Tenter de récupérer les métiers dynamiques du backend sans faire planter si l'API est indisponible
+      // 1. Intégration du catalogue numérique enrichi (OrientationDigitalData)
+      const digitalData = (typeof window !== 'undefined' && window.OrientationDigitalData) 
+        ? window.OrientationDigitalData 
+        : (typeof global !== 'undefined' && global.OrientationDigitalData ? global.OrientationDigitalData : null);
+
+      if (digitalData && typeof digitalData.getJobs === 'function') {
+        const digitalJobs = digitalData.getJobs();
+        digitalJobs.forEach(dJob => {
+          const existingIdx = combined.findIndex(j => j.slug === dJob.slug || j.id === dJob.id);
+          if (existingIdx >= 0) {
+            // Enrichissement préservant les données existantes
+            combined[existingIdx] = Object.assign({}, dJob, combined[existingIdx], {
+              aliases: [...new Set([...(dJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              specializations: [...new Set([...(dJob.specializations || []), ...(combined[existingIdx].specializations || [])])],
+              domain: dJob.domain || combined[existingIdx].domain,
+              gettingStarted: dJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: dJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: dJob.africaContext || combined[existingIdx].africaContext,
+              sourceESD: dJob.sourceESD,
+              isEmerging: dJob.isEmerging
+            });
+          } else {
+            combined.push(dJob);
+          }
+        });
+      }
+
+      // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
-        if (window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
+        if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
           const res = await window.Api.jobs.getAll();
           const apiJobs = res && res.data ? res.data : [];
 
           if (Array.isArray(apiJobs) && apiJobs.length > 0) {
             apiJobs.forEach(apiJob => {
-              // Vérifier si un métier avec ce titre existe déjà pour éviter doublons
               const exists = combined.some(j => j.id === apiJob.id || j.title.toLowerCase() === (apiJob.title || '').toLowerCase());
               if (!exists) {
-                // Normaliser le métier backend vers notre contrat complet
                 combined.push({
                   id: apiJob.id || 'job-' + Math.random().toString(36).substr(2, 9),
                   slug: (apiJob.title || 'metier').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
@@ -1442,14 +1469,38 @@
     // Récupérer les métiers d'une grande famille
     getJobsByFamily: async function (familyId) {
       const all = await this.getAllJobs();
+      if (familyId === 'numerique-ia') {
+        // Pour la grande famille numérique, inclure l'ensemble de la cartographie numérique
+        return all.filter(j => j.familyId === 'numerique-ia' || (j.domain && j.domain.length > 0));
+      }
       return all.filter(j => j.familyId === familyId);
     },
 
     // Récupérer les métiers d'un sous-domaine au sein d'une famille
-    getJobsBySubdomain: async function (familyId, subdomain) {
+    getJobsBySubdomain: async function (familyId, subdomain, domain = null) {
       const all = await this.getAllJobs();
       return all.filter(j => {
-        if (j.familyId !== familyId) return false;
+        const matchesFamily = (familyId === 'numerique-ia')
+          ? (j.familyId === 'numerique-ia' || (j.domain && j.domain.length > 0))
+          : (j.familyId === familyId);
+
+        if (!matchesFamily) return false;
+
+        // Filtrage optionnel par domaine numérique (par ID ou par Nom)
+        if (domain && domain !== 'all') {
+          const domObj = (typeof OrientationDigitalData !== 'undefined' && OrientationDigitalData.DOMAINS)
+            ? OrientationDigitalData.DOMAINS.find(d => d.id.toLowerCase() === domain.toLowerCase() || d.name.toLowerCase() === domain.toLowerCase())
+            : null;
+          const targetName = domObj ? domObj.name.toLowerCase() : domain.toLowerCase();
+          const targetId = domObj ? domObj.id.toLowerCase() : domain.toLowerCase();
+
+          const jobDom = (j.domain || '').toLowerCase();
+          const jobDomId = (j.domainId || '').toLowerCase();
+          const matchesDom = jobDom === targetName || jobDom === targetId || jobDomId === targetId || (domObj && domObj.subdomains && domObj.subdomains.some(s => s.toLowerCase() === (j.subdomain || '').toLowerCase()));
+          if (!matchesDom) return false;
+        }
+
+        // Filtrage par sous-domaine
         if (!subdomain || subdomain === 'all') return true;
         return (j.subdomain || '').toLowerCase() === subdomain.toLowerCase();
       });
@@ -1474,7 +1525,7 @@
       }
 
       // 2. Sinon chercher dans la même famille ou le même sous-domaine
-      return all.filter(j => j.id !== currentJob.id && j.familyId === currentJob.familyId).slice(0, 3);
+      return all.filter(j => j.id !== currentJob.id && (j.familyId === currentJob.familyId || j.domain === currentJob.domain)).slice(0, 3);
     },
 
     // Recommandations croisées (« Parcours Découverte » / Passerelles interdisciplinaires)
@@ -1506,7 +1557,7 @@
       return otherJobs.slice(0, 3);
     },
 
-    // Recherche universelle en temps réel (métier, famille, sous-domaine, compétence, formation, école)
+    // Recherche universelle en temps réel (métier, alias, famille, domaine, sous-domaine, compétence, outil, formation, école)
     searchJobs: async function (query) {
       if (!query || typeof query !== 'string' || !query.trim()) {
         return [];
@@ -1515,21 +1566,37 @@
       const all = await this.getAllJobs();
 
       return all.filter(job => {
-        if (job.title.toLowerCase().includes(q)) return true;
+        if (job.title && job.title.toLowerCase().includes(q)) return true;
+        if (job.aliases && Array.isArray(job.aliases) && job.aliases.some(a => a.toLowerCase().includes(q))) return true;
+        if (job.domain && job.domain.toLowerCase().includes(q)) return true;
         if (job.familyName && job.familyName.toLowerCase().includes(q)) return true;
         if (job.subdomain && job.subdomain.toLowerCase().includes(q)) return true;
         if (job.shortDescription && job.shortDescription.toLowerCase().includes(q)) return true;
-        
-        // Compétences
+        if (job.longDescription && job.longDescription.toLowerCase().includes(q)) return true;
+        if (job.simpleDefinition && job.simpleDefinition.toLowerCase().includes(q)) return true;
+
+        // Spécialisations
+        if (job.specializations && Array.isArray(job.specializations) && job.specializations.some(s => s.toLowerCase().includes(q))) return true;
+
+        // Compétences & Outils
         if (job.skills) {
           if (Array.isArray(job.skills.technical) && job.skills.technical.some(s => s.toLowerCase().includes(q))) return true;
-          if (Array.isArray(job.skills.human) && job.skills.human.some(s => s.toLowerCase().includes(q))) return true;
           if (Array.isArray(job.skills.tools) && job.skills.tools.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.skills.human) && job.skills.human.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.skills.analytical) && job.skills.analytical.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.skills.creative) && job.skills.creative.some(s => s.toLowerCase().includes(q))) return true;
         }
 
         // Formations & Écoles
-        if (job.studies && Array.isArray(job.studies.schools)) {
-          if (job.studies.schools.some(sc => sc.name.toLowerCase().includes(q))) return true;
+        if (job.studies) {
+          if (Array.isArray(job.studies.schools) && job.studies.schools.some(sc => sc.name.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.studies.certifications) && job.studies.certifications.some(c => c.toLowerCase().includes(q))) return true;
+        }
+
+        // Secteurs & Employeurs
+        if (job.career) {
+          if (Array.isArray(job.career.sectors) && job.career.sectors.some(sec => sec.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.career.employerTypes) && job.career.employerTypes.some(emp => emp.toLowerCase().includes(q))) return true;
         }
 
         return false;
@@ -1565,6 +1632,13 @@
       };
     },
 
+    getDigitalDomains: function () {
+      if (typeof OrientationDigitalData !== 'undefined' && OrientationDigitalData.DOMAINS) {
+        return OrientationDigitalData.DOMAINS;
+      }
+      return [];
+    },
+
     // Aide pour mapper les catégories d'anciennes versions vers les nouvelles 21 familles
     _mapCategoryToFamily: function (category) {
       if (!category) return 'numerique-ia';
@@ -1581,6 +1655,11 @@
     }
   };
 
-  // Exposer sur l'objet global window
-  window.OrientationData = OrientationData;
+  // Exposer sur l'objet global window et module.exports
+  if (typeof window !== 'undefined') {
+    window.OrientationData = OrientationData;
+  }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = OrientationData;
+  }
 })();

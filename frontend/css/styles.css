@@ -6377,6 +6377,77 @@ input:-webkit-autofill:active {
   box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
 }
 
+/* Cartographie Numérique : Pôles & Domaines d'Excellence */
+.digital-domains-wrapper {
+  margin-bottom: 0.5rem;
+}
+
+.family-drilldown-banner .digital-domains-label span {
+  color: #ffffff;
+}
+
+.family-drilldown-banner .domain-pills-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.85rem 0;
+}
+
+.family-drilldown-banner .domain-pill {
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #f1f5f9;
+  padding: 0.45rem 0.95rem;
+  border-radius: 9999px;
+  font-size: 0.86rem;
+  font-weight: 650;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.family-drilldown-banner .domain-pill:hover {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+.family-drilldown-banner .domain-pill.active {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5);
+}
+
+/* Badges Émergent & ESD sur les cartes */
+.job-badge-emerging {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.job-badge-esd {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+}
+
 /* Interest Explorer Card (« Je ne sais pas encore ») */
 .interest-explorer-card {
   background: #ffffff;

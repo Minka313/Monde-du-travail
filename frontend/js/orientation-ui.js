@@ -42,6 +42,7 @@
   const AppState = {
     currentView: 'FAMILIES', // 'FAMILIES' | 'FAMILY_DRILLDOWN' | 'ALL_JOBS' | 'INTERESTS' | 'SEARCH'
     selectedFamilyId: null,
+    selectedDomain: 'all',
     selectedSubdomain: 'all',
     selectedAffinities: [],
     searchQuery: '',
@@ -106,8 +107,10 @@
     switch (viewName) {
       case 'FAMILIES':
         AppState.selectedFamilyId = null;
+        AppState.selectedDomain = 'all';
         AppState.selectedSubdomain = 'all';
         url.searchParams.delete('family');
+        url.searchParams.delete('domain');
         url.searchParams.delete('subdomain');
         url.searchParams.delete('search');
         window.history.replaceState({}, '', url.toString());
@@ -133,9 +136,15 @@
 
       case 'FAMILY_DRILLDOWN':
         AppState.selectedFamilyId = params.familyId || AppState.selectedFamilyId;
+        AppState.selectedDomain = params.domain || 'all';
         AppState.selectedSubdomain = params.subdomain || 'all';
 
         url.searchParams.set('family', AppState.selectedFamilyId);
+        if (AppState.selectedDomain !== 'all') {
+          url.searchParams.set('domain', AppState.selectedDomain);
+        } else {
+          url.searchParams.delete('domain');
+        }
         if (AppState.selectedSubdomain !== 'all') {
           url.searchParams.set('subdomain', AppState.selectedSubdomain);
         } else {
@@ -151,11 +160,7 @@
           if (dom.breadcrumbNav) dom.breadcrumbNav.style.display = 'block';
           if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'none';
 
-          renderBreadcrumbs([
-            { label: 'Accueil', url: 'index.html' },
-            { label: 'Métiers & Orientation', action: () => setView('FAMILIES') },
-            { label: `${family.icon} ${family.name}`, active: true }
-          ]);
+          updateFamilyBreadcrumbs(family);
 
           if (dom.familyDrilldownContainer) {
             dom.familyDrilldownContainer.style.display = 'block';
@@ -165,7 +170,7 @@
 
           if (dom.jobsGridContainer) {
             dom.jobsGridContainer.style.display = 'grid';
-            renderJobsForFamily(AppState.selectedFamilyId, AppState.selectedSubdomain);
+            renderJobsForFamily(AppState.selectedFamilyId, AppState.selectedSubdomain, AppState.selectedDomain);
           }
         }
         break;
@@ -273,69 +278,40 @@
     });
   }
 
-  // =========================================================================
-  // COMPOSANT : GRILLE DES 21 GRANDES FAMILLES (NIVEAU 1)
-  // =========================================================================
-  function renderFamiliesGrid() {
-    if (!dom.familiesGridContainer) return;
-    const families = window.OrientationData.getFamilies();
+  function updateFamilyBreadcrumbs(family) {
+    if (!dom.breadcrumbList) return;
+    const digitalDomains = (typeof window.OrientationData.getDigitalDomains === 'function') ? window.OrientationData.getDigitalDomains() : [];
+    const activeDomObj = (family.id === 'numerique-ia' && AppState.selectedDomain && AppState.selectedDomain !== 'all') 
+      ? digitalDomains.find(d => d.id === AppState.selectedDomain) 
+      : null;
 
-    dom.familiesGridContainer.innerHTML = families.map((family, idx) => {
-      const sampleJobs = (family.representativeJobs || []).slice(0, 3);
-      const img = safeUrl(family.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80');
-
-      return `
-        <article class="family-card stagger-item" data-family-id="${escapeHtml(family.id)}" style="--family-accent: ${escapeHtml(family.color || '#3b82f6')}; --stagger-idx: ${idx % 8};">
-          <div class="family-card-media">
-            <img src="${escapeHtml(img)}" alt="${escapeHtml(family.name)}" loading="lazy">
-            <div class="family-card-media-overlay"></div>
-            <div class="family-card-badge">
-              <span class="family-badge-icon">${escapeHtml(family.icon)}</span>
-              <span class="family-badge-order">#${family.order}</span>
-            </div>
-          </div>
-          <div class="family-card-content">
-            <div class="family-card-header">
-              <h3 class="family-card-title">${escapeHtml(family.name)}</h3>
-              <p class="family-card-desc">${escapeHtml(family.description)}</p>
-            </div>
-
-            <div class="family-card-stats">
-              <span class="family-stat-tag">📂 ${escapeHtml(family.stats.subdomainsCount)} sous-domaines</span>
-              <span class="family-stat-tag">💼 ${escapeHtml(family.stats.jobsEstimate)}</span>
-            </div>
-
-            ${sampleJobs.length > 0 ? `
-              <div class="family-sample-jobs">
-                <span class="family-sample-label">Exemples :</span>
-                <div class="family-sample-chips">
-                  ${sampleJobs.map(j => `<span class="sample-job-chip">${escapeHtml(j)}</span>`).join('')}
-                </div>
-              </div>
-            ` : ''}
-
-            <div class="family-card-action">
-              <button type="button" class="btn-explore-family" aria-label="Explorer la famille ${escapeHtml(family.name)}">
-                <span>Explorer la famille</span>
-                <span class="arrow-icon">&rarr;</span>
-              </button>
-            </div>
-          </div>
-        </article>
-      `;
-    }).join('');
-
-    // Clics sur les cartes de familles
-    dom.familiesGridContainer.querySelectorAll('.family-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const familyId = card.getAttribute('data-family-id');
-        setView('FAMILY_DRILLDOWN', { familyId, subdomain: 'all' });
-        window.scrollTo({ top: dom.familyDrilldownContainer ? dom.familyDrilldownContainer.offsetTop - 80 : 200, behavior: 'smooth' });
-      });
-    });
-
-    if (window.initCardSpotlight) window.initCardSpotlight();
-    if (window.initScrollReveal) window.initScrollReveal();
+    if (activeDomObj) {
+      renderBreadcrumbs([
+        { label: 'Accueil', url: 'index.html' },
+        { label: 'Métiers & Orientation', action: () => setView('FAMILIES') },
+        { 
+          label: `${family.icon} ${family.name}`, 
+          action: () => {
+            AppState.selectedDomain = 'all';
+            AppState.selectedSubdomain = 'all';
+            const url = new URL(window.location.href);
+            url.searchParams.delete('domain');
+            url.searchParams.delete('subdomain');
+            window.history.replaceState({}, '', url.toString());
+            renderSubdomainsBar(family);
+            updateFamilyBreadcrumbs(family);
+            renderJobsForFamily(family.id, 'all', 'all');
+          } 
+        },
+        { label: `${activeDomObj.icon} ${activeDomObj.name}`, active: true }
+      ]);
+    } else {
+      renderBreadcrumbs([
+        { label: 'Accueil', url: 'index.html' },
+        { label: 'Métiers & Orientation', action: () => setView('FAMILIES') },
+        { label: `${family.icon} ${family.name}`, active: true }
+      ]);
+    }
   }
 
   // =========================================================================
@@ -355,6 +331,129 @@
 
   function renderSubdomainsBar(family) {
     if (!dom.subdomainsBarContainer) return;
+
+    // Traitement spécifique à haute valeur ajoutée pour le Pôle Numérique (13 pôles d'excellence)
+    if (family.id === 'numerique-ia') {
+      const digitalDomains = (typeof window.OrientationData.getDigitalDomains === 'function') 
+        ? window.OrientationData.getDigitalDomains() 
+        : [];
+      
+      const activeDomObj = (AppState.selectedDomain !== 'all')
+        ? digitalDomains.find(d => d.id === AppState.selectedDomain)
+        : null;
+
+      const subdomainsList = activeDomObj
+        ? (activeDomObj.subdomains || [])
+        : (family.subdomains || []);
+
+      dom.subdomainsBarContainer.innerHTML = `
+        <div class="digital-domains-wrapper">
+          <div class="digital-domains-label" style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.92rem;font-weight:700;color:#0f172a;">
+              <span>🌐</span>
+              <span>Cartographie d'Excellence du Numérique</span>
+              <span style="background:#e0f2fe;color:#0369a1;padding:0.2rem 0.6rem;border-radius:9999px;font-size:0.78rem;font-weight:700;">13 Pôles • 100+ Métiers</span>
+            </div>
+            ${AppState.selectedDomain !== 'all' ? `
+              <button type="button" class="btn-reset-domain" id="btnResetDigitalDomain" style="background:none;border:none;color:#0284c7;font-size:0.84rem;font-weight:650;cursor:pointer;display:inline-flex;align-items:center;gap:0.3rem;">
+                <span>&larr; Revenir à tous les pôles</span>
+              </button>
+            ` : ''}
+          </div>
+
+          <!-- Ligne 1 : Les 13 Pôles du Numérique (Domaines) -->
+          <div class="domain-pills-bar" style="margin:0 0 1rem 0;">
+            <button type="button" class="domain-pill ${AppState.selectedDomain === 'all' ? 'active' : ''}" data-domain="all">
+              <span>🌟</span>
+              <span>Tous les pôles (13)</span>
+            </button>
+            ${digitalDomains.map(d => `
+              <button type="button" class="domain-pill ${AppState.selectedDomain === d.id ? 'active' : ''}" data-domain="${escapeHtml(d.id)}">
+                <span>${escapeHtml(d.icon)}</span>
+                <span>${escapeHtml(d.name)}</span>
+              </button>
+            `).join('')}
+          </div>
+
+          <!-- Ligne 2 : Sous-domaines et spécialisations -->
+          <div class="subdomains-scroll-track" style="padding-top:0.25rem;">
+            <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === 'all' ? 'active' : ''}" data-subdomain="all">
+              <span>🌟</span>
+              <span>${activeDomObj ? `Tous les métiers de ce pôle (${escapeHtml(activeDomObj.name)})` : 'Tous les sous-domaines'}</span>
+            </button>
+            ${subdomainsList.map(sub => `
+              <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === sub ? 'active' : ''}" data-subdomain="${escapeHtml(sub)}">
+                <span>📁</span>
+                <span>${escapeHtml(sub)}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      // Clics sur les boutons de pôles / domaines
+      dom.subdomainsBarContainer.querySelectorAll('.domain-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const chosenDomain = btn.getAttribute('data-domain');
+          AppState.selectedDomain = chosenDomain;
+          AppState.selectedSubdomain = 'all';
+
+          const url = new URL(window.location.href);
+          if (chosenDomain !== 'all') {
+            url.searchParams.set('domain', chosenDomain);
+          } else {
+            url.searchParams.delete('domain');
+          }
+          url.searchParams.delete('subdomain');
+          window.history.replaceState({}, '', url.toString());
+
+          renderSubdomainsBar(family);
+          updateFamilyBreadcrumbs(family);
+          renderJobsForFamily(family.id, 'all', chosenDomain);
+        });
+      });
+
+      // Bouton Reset domaine
+      const btnResetDomain = document.getElementById('btnResetDigitalDomain');
+      if (btnResetDomain) {
+        btnResetDomain.addEventListener('click', () => {
+          AppState.selectedDomain = 'all';
+          AppState.selectedSubdomain = 'all';
+          const url = new URL(window.location.href);
+          url.searchParams.delete('domain');
+          url.searchParams.delete('subdomain');
+          window.history.replaceState({}, '', url.toString());
+
+          renderSubdomainsBar(family);
+          updateFamilyBreadcrumbs(family);
+          renderJobsForFamily(family.id, 'all', 'all');
+        });
+      }
+
+      // Clics sur les sous-domaines
+      dom.subdomainsBarContainer.querySelectorAll('.subdomain-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          dom.subdomainsBarContainer.querySelectorAll('.subdomain-pill').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const chosenSub = btn.getAttribute('data-subdomain');
+          AppState.selectedSubdomain = chosenSub;
+
+          const url = new URL(window.location.href);
+          if (chosenSub !== 'all') {
+            url.searchParams.set('subdomain', chosenSub);
+          } else {
+            url.searchParams.delete('subdomain');
+          }
+          window.history.replaceState({}, '', url.toString());
+
+          renderJobsForFamily(family.id, chosenSub, AppState.selectedDomain);
+        });
+      });
+
+      return;
+    }
+
+    // Comportement standard pour les autres grandes familles
     const subdomains = family.subdomains || [];
 
     dom.subdomainsBarContainer.innerHTML = `
@@ -378,7 +477,7 @@
         btn.classList.add('active');
         const chosenSub = btn.getAttribute('data-subdomain');
         AppState.selectedSubdomain = chosenSub;
-        renderJobsForFamily(family.id, chosenSub);
+        renderJobsForFamily(family.id, chosenSub, 'all');
       });
     });
   }
@@ -386,19 +485,20 @@
   // =========================================================================
   // COMPOSANT : CARTES MÉTIERS MODERNISÉES (NIVEAU 3)
   // =========================================================================
-  async function renderJobsForFamily(familyId, subdomain) {
+  async function renderJobsForFamily(familyId, subdomain, domain = null) {
     if (!dom.jobsGridContainer) return;
     dom.jobsGridContainer.innerHTML = '<p class="text-muted text-center" style="grid-column:1/-1;padding:2rem;">Chargement des fiches métiers...</p>';
 
-    const jobs = await window.OrientationData.getJobsBySubdomain(familyId, subdomain);
+    const activeDomain = (domain !== null && domain !== undefined) ? domain : AppState.selectedDomain;
+    const jobs = await window.OrientationData.getJobsBySubdomain(familyId, subdomain, activeDomain);
 
     if (jobs.length === 0) {
       dom.jobsGridContainer.innerHTML = `
         <div class="empty-state-card" style="grid-column:1/-1;">
           <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem;">🧭</span>
-          <h4 style="font-size:1.15rem;color:#0f172a;margin-bottom:0.5rem;">Dossiers en cours de documentation pour ce sous-domaine</h4>
+          <h4 style="font-size:1.15rem;color:#0f172a;margin-bottom:0.5rem;">Dossiers en cours de documentation pour cette sélection</h4>
           <p style="color:#64748b;max-width:550px;margin:0 auto 1.25rem auto;font-size:0.92rem;line-height:1.6;">
-            Nos mentors et professionnels partenaires enrichissent continuellement les fiches métiers. Tu peux explorer l'ensemble des métiers de la famille ou consulter les ressources d'orientation.
+            Nos mentors et professionnels partenaires enrichissent continuellement les fiches métiers. Tu peux explorer l'ensemble des métiers de cette famille ou réinitialiser les filtres.
           </p>
           <button type="button" class="btn btn-outline-dark btn-sm" id="btnShowAllFamilyJobs" style="background:#ffffff;color:#0284c7;border:1.5px solid #0284c7;font-weight:650;padding:0.6rem 1.25rem;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;">
             <span>Voir tous les métiers de cette famille</span>
@@ -409,13 +509,14 @@
       const btn = document.getElementById('btnShowAllFamilyJobs');
       if (btn) {
         btn.addEventListener('click', () => {
+          AppState.selectedDomain = 'all';
           AppState.selectedSubdomain = 'all';
-          const allPill = dom.subdomainsBarContainer.querySelector('[data-subdomain="all"]');
-          if (allPill) {
-            dom.subdomainsBarContainer.querySelectorAll('.subdomain-pill').forEach(b => b.classList.remove('active'));
-            allPill.classList.add('active');
+          const family = window.OrientationData.getFamily(familyId);
+          if (family) {
+            renderSubdomainsBar(family);
+            updateFamilyBreadcrumbs(family);
           }
-          renderJobsForFamily(familyId, 'all');
+          renderJobsForFamily(familyId, 'all', 'all');
         });
       }
       return;
@@ -438,6 +539,9 @@
       const img = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80');
       const techSkills = job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.slice(0, 3) : [];
       const totalSkillsCount = (job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.length : 0);
+      const isEmerging = Boolean(job.isEmerging);
+      const isESD = Boolean(job.sourceESD);
+      const domainName = job.domainName || '';
 
       return `
         <article class="card job-card-modern stagger-item" data-job-slug="${escapeHtml(job.slug || job.id)}" style="--stagger-idx: ${idx % 8};">
@@ -452,12 +556,14 @@
           </div>
 
           <div class="job-card-body">
-            <div class="job-card-meta-line">
+            <div class="job-card-meta-line" style="display:flex;align-items:center;gap:0.45rem;flex-wrap:wrap;">
               <span class="job-card-level-badge">🎓 ${escapeHtml(job.level || 'Bac +3 / +5')}</span>
+              ${isEmerging ? '<span class="job-badge-emerging" style="background:#fef3c7;color:#92400e;border:1px solid #fde68a;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Métier d’avenir émergent">✨ Émergent</span>' : ''}
+              ${isESD ? '<span class="job-badge-esd" style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : École Supérieure du Digital">🎓 ESD</span>' : ''}
             </div>
 
             <h3 class="job-card-title">${escapeHtml(job.title)}</h3>
-            <p class="job-card-desc">${escapeHtml(job.shortDescription || job.description || '')}</p>
+            <p class="job-card-desc">${escapeHtml(job.simpleDefinition || job.shortDescription || job.description || '')}</p>
 
             ${techSkills.length > 0 ? `
               <div class="job-card-skills-row">
@@ -684,9 +790,25 @@
                   <span>${escapeHtml(job.icon || '💼')}</span>
                   <span>${escapeHtml(job.subdomain || job.familyName || 'Métier')}</span>
                 </span>
-                <span class="dossier-meta-tag" style="background:rgba(255,255,255,0.15);color:#fff;">
-                  📁 ${escapeHtml(job.familyName || 'Orientation')}
-                </span>
+                ${job.domainName ? `
+                  <span class="dossier-meta-tag" style="background:rgba(14,165,233,0.25);border-color:rgba(56,189,248,0.4);color:#e0f2fe;">
+                    🌐 ${escapeHtml(job.domainName)}
+                  </span>
+                ` : `
+                  <span class="dossier-meta-tag" style="background:rgba(255,255,255,0.15);color:#fff;">
+                    📁 ${escapeHtml(job.familyName || 'Orientation')}
+                  </span>
+                `}
+                ${job.isEmerging ? `
+                  <span class="dossier-meta-tag" style="background:rgba(245,158,11,0.25);border-color:rgba(251,191,36,0.5);color:#fef3c7;">
+                    ✨ Métier Émergent
+                  </span>
+                ` : ''}
+                ${job.sourceESD ? `
+                  <span class="dossier-meta-tag" style="background:rgba(16,185,129,0.25);border-color:rgba(52,211,153,0.5);color:#d1fae5;" title="Fiche documentée d'après le référentiel ESD">
+                    🎓 Référence ESD
+                  </span>
+                ` : ''}
               </div>
               <button type="button" class="btn-dossier-fav" id="btnToggleJobFav" title="Sauvegarder dans mes favoris">
                 <span class="fav-icon">☆</span>
@@ -695,6 +817,11 @@
             </div>
 
             <h2 class="dossier-title" id="dossierJobTitle">${escapeHtml(job.title)}</h2>
+            ${(job.aliases && job.aliases.length > 0) ? `
+              <div style="font-size:0.86rem;color:#cbd5e1;margin-top:-0.2rem;margin-bottom:0.5rem;font-style:italic;">
+                Aussi appelé : ${job.aliases.map(a => escapeHtml(a)).join(' • ')}
+              </div>
+            ` : ''}
             
             <div class="dossier-meta-tags">
               <span class="dossier-meta-tag">🎓 <strong>${escapeHtml(job.level || 'Bac +3 à +5')}</strong></span>
@@ -735,13 +862,73 @@
           
           <!-- ONGLET 1 : DÉCOUVRIR -->
           <div class="dossier-tab-content active" id="tab-discover">
+            <!-- Définition simple et pédagogique accessible à tous -->
+            ${job.simpleDefinition ? `
+              <div class="dossier-simple-def-box" style="background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);border:1.5px solid #bfdbfe;border-radius:12px;padding:1.15rem 1.35rem;margin-bottom:1.5rem;">
+                <div style="display:flex;align-items:center;gap:0.45rem;font-weight:750;color:#1e40af;font-size:0.92rem;margin-bottom:0.4rem;">
+                  <span>💡</span>
+                  <span>Comprendre ce métier simplement :</span>
+                </div>
+                <p style="margin:0;color:#1e3a8a;font-size:0.95rem;line-height:1.6;font-weight:500;">
+                  ${escapeHtml(job.simpleDefinition)}
+                </p>
+              </div>
+            ` : ''}
+
             <div class="dossier-section">
               <h3 class="dossier-section-title">En quoi consiste ce métier concrètement ?</h3>
               <p class="dossier-editorial-lead">${escapeHtml(job.longDescription || job.shortDescription || '')}</p>
             </div>
 
+            ${(job.mainObjective || job.companyRole) ? `
+              <div class="dossier-role-objective-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;margin:1.25rem 0;">
+                ${job.mainObjective ? `
+                  <div class="role-objective-card" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1.15rem;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#0f172a;font-size:0.9rem;margin-bottom:0.4rem;">
+                      <span>🎯</span>
+                      <span>Objectif principal du poste</span>
+                    </div>
+                    <p style="margin:0;font-size:0.88rem;color:#334155;line-height:1.5;">${escapeHtml(job.mainObjective)}</p>
+                  </div>
+                ` : ''}
+                ${job.companyRole ? `
+                  <div class="role-objective-card" style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1.15rem;">
+                    <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#0f172a;font-size:0.9rem;margin-bottom:0.4rem;">
+                      <span>🏢</span>
+                      <span>Place dans l'organisation</span>
+                    </div>
+                    <p style="margin:0;font-size:0.88rem;color:#334155;line-height:1.5;">${escapeHtml(job.companyRole)}</p>
+                  </div>
+                ` : ''}
+              </div>
+            ` : ''}
+
+            ${job.missions && (job.missions.primary || job.missions.secondary) ? `
+              <div class="dossier-section" style="margin-top:1.25rem;">
+                <h4 style="color:#0f172a;font-size:0.96rem;margin-bottom:0.75rem;">⚡ Responsabilités & Missions concrètes</h4>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;">
+                  ${job.missions.primary && job.missions.primary.length > 0 ? `
+                    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;">
+                      <strong style="color:#0284c7;font-size:0.86rem;display:block;margin-bottom:0.5rem;">Missions principales (Cœur de métier)</strong>
+                      <ul style="margin:0;padding-left:1.2rem;font-size:0.86rem;color:#334155;line-height:1.6;">
+                        ${job.missions.primary.map(m => `<li>${escapeHtml(m)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                  ${job.missions.secondary && job.missions.secondary.length > 0 ? `
+                    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;">
+                      <strong style="color:#64748b;font-size:0.86rem;display:block;margin-bottom:0.5rem;">Missions secondaires & Transverses</strong>
+                      <ul style="margin:0;padding-left:1.2rem;font-size:0.86rem;color:#334155;line-height:1.6;">
+                        ${job.missions.secondary.map(m => `<li>${escapeHtml(m)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            ` : ''}
+
             ${job.workEnvironment && job.workEnvironment.length > 0 ? `
-              <div class="dossier-section" style="background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:10px;">
+              <div class="dossier-section" style="background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:10px;margin-top:1.25rem;">
                 <h4 style="color:#0f172a;font-size:0.95rem;margin-bottom:0.75rem;">💻 À quoi ressemble ce métier au quotidien ?</h4>
                 <div class="work-environment-tags-grid">
                   ${job.workEnvironment.map(tag => `
@@ -754,7 +941,7 @@
             ` : ''}
 
             ${job.typicalDay && job.typicalDay.length > 0 ? `
-              <div class="dossier-section">
+              <div class="dossier-section" style="margin-top:1.5rem;">
                 <h3 class="dossier-section-title">Journée type indicative</h3>
                 <p style="color:#64748b;font-size:0.88rem;margin-bottom:1rem;">À quoi peut ressembler une journée de travail typique :</p>
                 <div class="typical-day-timeline">
@@ -767,6 +954,37 @@
                       </div>
                     </div>
                   `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Impact de l'Intelligence Artificielle -->
+            ${job.aiImpact ? `
+              <div class="dossier-ai-impact-section" style="margin-top:1.75rem;background:linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);border:1.5px solid #e9d5ff;border-radius:12px;padding:1.35rem;">
+                <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem;">
+                  <span style="font-size:1.4rem;">🤖</span>
+                  <div>
+                    <h4 style="margin:0;color:#6b21a8;font-size:1rem;font-weight:750;">Révolution & Impact de l'Intelligence Artificielle</h4>
+                    <p style="margin:0.2rem 0 0 0;color:#7e22ce;font-size:0.84rem;">Comment l'IA redéfinit la pratique de ce métier sans remplacer l'humain :</p>
+                  </div>
+                </div>
+                <div class="ai-impact-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:0.85rem;margin-top:1rem;">
+                  <div style="background:#ffffff;border-radius:8px;padding:0.95rem;border-left:4px solid #3b82f6;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                    <strong style="display:flex;align-items:center;gap:0.35rem;font-size:0.84rem;color:#1e40af;margin-bottom:0.35rem;"><span>⚡</span> Tâches assistées par l'IA</strong>
+                    <p style="margin:0;font-size:0.82rem;color:#334155;line-height:1.5;">${escapeHtml(job.aiImpact.assistedTasks || '')}</p>
+                  </div>
+                  <div style="background:#ffffff;border-radius:8px;padding:0.95rem;border-left:4px solid #f59e0b;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                    <strong style="display:flex;align-items:center;gap:0.35rem;font-size:0.84rem;color:#b45309;margin-bottom:0.35rem;"><span>🔄</span> Tâches automatisables</strong>
+                    <p style="margin:0;font-size:0.82rem;color:#334155;line-height:1.5;">${escapeHtml(job.aiImpact.automatedTasks || '')}</p>
+                  </div>
+                  <div style="background:#ffffff;border-radius:8px;padding:0.95rem;border-left:4px solid #10b981;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                    <strong style="display:flex;align-items:center;gap:0.35rem;font-size:0.84rem;color:#047857;margin-bottom:0.35rem;"><span>🧠</span> Compétences humaines cruciales</strong>
+                    <p style="margin:0;font-size:0.82rem;color:#334155;line-height:1.5;">${escapeHtml(job.aiImpact.crucialHumanSkills || '')}</p>
+                  </div>
+                  <div style="background:#ffffff;border-radius:8px;padding:0.95rem;border-left:4px solid #8b5cf6;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                    <strong style="display:flex;align-items:center;gap:0.35rem;font-size:0.84rem;color:#6d28d9;margin-bottom:0.35rem;"><span>🚀</span> Spécialisations émergentes</strong>
+                    <p style="margin:0;font-size:0.82rem;color:#334155;line-height:1.5;">${escapeHtml(job.aiImpact.emergingSpecializations || '')}</p>
+                  </div>
                 </div>
               </div>
             ` : ''}
@@ -807,6 +1025,32 @@
                   </ul>
                 </div>
 
+                <!-- Compétences Analytiques (si présentes) -->
+                ${(job.skills && job.skills.analytical && job.skills.analytical.length > 0) ? `
+                  <div class="skill-category-box tech-box" style="border-top-color:#0284c7;">
+                    <div class="skill-cat-header">
+                      <span>📊</span>
+                      <h4>Compétences Analytiques & Données</h4>
+                    </div>
+                    <ul class="skills-list">
+                      ${job.skills.analytical.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
+
+                <!-- Compétences Créatives (si présentes) -->
+                ${(job.skills && job.skills.creative && job.skills.creative.length > 0) ? `
+                  <div class="skill-category-box tech-box" style="border-top-color:#8b5cf6;">
+                    <div class="skill-cat-header">
+                      <span>🎨</span>
+                      <h4>Créativité, Design & UX</h4>
+                    </div>
+                    <ul class="skills-list">
+                      ${job.skills.creative.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                    </ul>
+                  </div>
+                ` : ''}
+
                 <!-- Compétences Humaines -->
                 <div class="skill-category-box human-box">
                   <div class="skill-cat-header">
@@ -834,10 +1078,66 @@
                 </div>
               </div>
             </div>
+
+            <!-- Voies de spécialisation -->
+            ${job.specializations && job.specializations.length > 0 ? `
+              <div class="dossier-section" style="margin-top:1.5rem;background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:10px;">
+                <h4 style="color:#0f172a;font-size:0.95rem;margin-bottom:0.6rem;">🎯 Voies de spécialisation & Orientations</h4>
+                <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                  ${job.specializations.map(sp => `<span style="background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd;padding:0.35rem 0.8rem;border-radius:9999px;font-size:0.82rem;font-weight:650;">${escapeHtml(sp)}</span>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Pour commencer dès aujourd'hui (Projets & Portfolio) -->
+            ${job.gettingStarted ? `
+              <div class="dossier-section" style="margin-top:1.5rem;background:#ffffff;border:1.5px solid #cbd5e1;padding:1.35rem;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+                  <span style="font-size:1.3rem;">🛠️</span>
+                  <h4 style="margin:0;color:#0f172a;font-size:0.98rem;font-weight:750;">Pour commencer dès aujourd'hui (Projets & Portfolio)</h4>
+                </div>
+                <p style="color:#64748b;font-size:0.86rem;margin-bottom:1rem;">Construis ton expérience concrète pas à pas pour convaincre recruteurs et clients :</p>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:0.85rem;">
+                  ${job.gettingStarted.beginnerProject ? `
+                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:0.9rem;">
+                      <span style="color:#15803d;font-weight:750;font-size:0.78rem;display:block;margin-bottom:0.3rem;">🌱 Niveau Débutant</span>
+                      <p style="margin:0;font-size:0.82rem;color:#166534;line-height:1.5;">${escapeHtml(job.gettingStarted.beginnerProject)}</p>
+                    </div>
+                  ` : ''}
+                  ${job.gettingStarted.intermediateProject ? `
+                    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:0.9rem;">
+                      <span style="color:#1d4ed8;font-weight:750;font-size:0.78rem;display:block;margin-bottom:0.3rem;">🌿 Niveau Intermédiaire</span>
+                      <p style="margin:0;font-size:0.82rem;color:#1e40af;line-height:1.5;">${escapeHtml(job.gettingStarted.intermediateProject)}</p>
+                    </div>
+                  ` : ''}
+                  ${job.gettingStarted.advancedProject ? `
+                    <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:8px;padding:0.9rem;">
+                      <span style="color:#7e22ce;font-weight:750;font-size:0.78rem;display:block;margin-bottom:0.3rem;">🌳 Projet Avancé / Portfolio</span>
+                      <p style="margin:0;font-size:0.82rem;color:#6b21a8;line-height:1.5;">${escapeHtml(job.gettingStarted.advancedProject)}</p>
+                    </div>
+                  ` : ''}
+                </div>
+                ${(job.gettingStarted.portfolioIdeas && job.gettingStarted.portfolioIdeas.length > 0) ? `
+                  <div style="margin-top:1rem;background:#f8fafc;border-left:3px solid #0284c7;padding:0.75rem 1rem;font-size:0.84rem;color:#334155;">
+                    <strong>📁 Idée pour ton portfolio :</strong> ${job.gettingStarted.portfolioIdeas.map(i => escapeHtml(i)).join(' • ')}
+                  </div>
+                ` : ''}
+              </div>
+            ` : ''}
           </div>
 
           <!-- ONGLET 3 : SE FORMER -->
           <div class="dossier-tab-content" id="tab-studies">
+            <!-- Matières scolaires utiles au lycée -->
+            ${job.studies && job.studies.schoolSubjects && job.studies.schoolSubjects.length > 0 ? `
+              <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:1rem 1.25rem;border-radius:10px;margin-bottom:1.25rem;">
+                <span style="font-size:0.86rem;font-weight:700;color:#0f172a;display:block;margin-bottom:0.4rem;">📚 Matières recommandées au secondaire / lycée :</span>
+                <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
+                  ${job.studies.schoolSubjects.map(sub => `<span style="background:#e2e8f0;color:#1e293b;padding:0.25rem 0.65rem;border-radius:6px;font-size:0.8rem;font-weight:600;">${escapeHtml(sub)}</span>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+
             <div class="dossier-section">
               <h3 class="dossier-section-title">Parcours d’études & Filières recommandées</h3>
               <p style="color:#64748b;font-size:0.9rem;margin-bottom:1.25rem;">Comment accéder à ce métier depuis le secondaire jusqu’aux cycles supérieurs :</p>
@@ -859,8 +1159,18 @@
               `}
             </div>
 
+            <!-- Certifications reconnues si disponibles -->
+            ${job.studies && job.studies.certifications && job.studies.certifications.length > 0 ? `
+              <div class="dossier-section" style="margin-top:1.25rem;background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:10px;">
+                <h4 style="color:#0f172a;font-size:0.95rem;margin-bottom:0.6rem;">📜 Certifications professionnelles valorisées</h4>
+                <div style="display:flex;flex-wrap:wrap;gap:0.45rem;">
+                  ${job.studies.certifications.map(c => `<span style="background:#ffffff;border:1px solid #cbd5e1;color:#334155;padding:0.3rem 0.7rem;border-radius:6px;font-size:0.82rem;font-weight:600;">${escapeHtml(c)}</span>`).join('')}
+                </div>
+              </div>
+            ` : ''}
+
             ${job.studies && job.studies.schools && job.studies.schools.length > 0 ? `
-              <div class="dossier-section">
+              <div class="dossier-section" style="margin-top:1.5rem;">
                 <h3 class="dossier-section-title">Établissements & Pôles d'excellence</h3>
                 <div class="schools-cards-grid">
                   ${job.studies.schools.map(sc => `
@@ -911,6 +1221,47 @@
                   </ul>
                 </div>
               </div>
+
+              <!-- Contexte Sénégal & Afrique -->
+              ${job.africaContext ? `
+                <div class="dossier-section" style="margin-top:1.5rem;background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);border:1.5px solid #bbf7d0;border-radius:12px;padding:1.35rem;">
+                  <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem;">
+                    <span style="font-size:1.4rem;">🌍</span>
+                    <div>
+                      <h4 style="margin:0;color:#166534;font-size:1rem;font-weight:750;">Opportunités au Sénégal & en Afrique de l'Ouest</h4>
+                      <p style="margin:0.2rem 0 0 0;color:#15803d;font-size:0.84rem;">Hub technologique de Dakar, Pôle de Diamniadio et débouchés en télétravail international :</p>
+                    </div>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:0.85rem;margin-top:1rem;">
+                    ${job.africaContext.senegalInsight ? `
+                      <div style="background:#ffffff;border-radius:8px;padding:0.95rem;grid-column:1/-1;border-left:4px solid #10b981;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                        <strong style="color:#065f46;font-size:0.86rem;display:block;margin-bottom:0.35rem;">🇸🇳 Écosystème & Hub Dakar / Diamniadio</strong>
+                        <p style="margin:0;font-size:0.84rem;color:#334155;line-height:1.5;">${escapeHtml(job.africaContext.senegalInsight)}</p>
+                      </div>
+                    ` : ''}
+                    ${job.africaContext.localSectors && job.africaContext.localSectors.length > 0 ? `
+                      <div style="background:#ffffff;border-radius:8px;padding:0.95rem;border-left:4px solid #0284c7;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                        <strong style="color:#0369a1;font-size:0.86rem;display:block;margin-bottom:0.35rem;">🏢 Secteurs porteurs locaux</strong>
+                        <ul style="margin:0;padding-left:1.2rem;font-size:0.82rem;color:#334155;line-height:1.5;">
+                          ${job.africaContext.localSectors.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                        </ul>
+                      </div>
+                    ` : ''}
+                    ${job.africaContext.remoteWork ? `
+                      <div style="background:#ffffff;border-radius:8px;padding:0.95rem;border-left:4px solid #8b5cf6;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                        <strong style="color:#6d28d9;font-size:0.86rem;display:block;margin-bottom:0.35rem;">🏠 Télétravail & Remote International</strong>
+                        <p style="margin:0;font-size:0.82rem;color:#334155;line-height:1.5;">${escapeHtml(job.africaContext.remoteWork)}</p>
+                      </div>
+                    ` : ''}
+                    ${job.africaContext.entrepreneurship ? `
+                      <div style="background:#ffffff;border-radius:8px;padding:0.95rem;border-left:4px solid #f59e0b;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                        <strong style="color:#b45309;font-size:0.86rem;display:block;margin-bottom:0.35rem;">🚀 Entrepreneuriat & Création d'activité</strong>
+                        <p style="margin:0;font-size:0.82rem;color:#334155;line-height:1.5;">${escapeHtml(job.africaContext.entrepreneurship)}</p>
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+              ` : ''}
 
               ${job.career && job.career.evolution ? `
                 <div class="career-evolution-box" style="margin-top:1.25rem;background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:10px;">
@@ -1405,6 +1756,7 @@
     // Analyse des paramètres d'URL (Deep Linking)
     const urlParams = new URLSearchParams(window.location.search);
     const familyParam = urlParams.get('family');
+    const domainParam = urlParams.get('domain');
     const subdomainParam = urlParams.get('subdomain');
     const jobParam = urlParams.get('job');
     const searchParam = urlParams.get('search');
@@ -1415,7 +1767,7 @@
     }
 
     if (familyParam) {
-      setView('FAMILY_DRILLDOWN', { familyId: familyParam, subdomain: subdomainParam || 'all' });
+      setView('FAMILY_DRILLDOWN', { familyId: familyParam, domain: domainParam || 'all', subdomain: subdomainParam || 'all' });
     } else if (searchParam) {
       if (dom.heroSearchInput) dom.heroSearchInput.value = searchParam;
       AppState.searchQuery = searchParam;
