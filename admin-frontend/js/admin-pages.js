@@ -1761,6 +1761,88 @@
         <label style="margin-top:0.5rem;">Lien vidéo YouTube d'immersion
           <input type="url" name="videoUrl" value="${escapeHtml(item?.videoUrl || '')}" placeholder="https://www.youtube.com/watch?v=...">
         </label>
+
+        <!-- Section Éditoriale : Le saviez-vous ? -->
+        <div style="border-top:2px solid #e2e8f0;padding-top:1rem;margin-top:1.25rem;background:#f8fafc;padding:1.1rem;border-radius:10px;border:1px solid #e2e8f0;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <span style="font-size:1.2rem;">💡</span>
+              <div>
+                <h4 style="margin:0;font-size:1rem;color:#0f172a;font-weight:700;">Rubrique « Le saviez-vous ? »</h4>
+                <p style="margin:0.15rem 0 0 0;font-size:0.78rem;color:#64748b;">
+                  Situe le métier dans son évolution face aux mutations technologiques (automatisation, stabilité, émergence).
+                </p>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+              <button type="button" id="btn-clear-saviez-vous" class="btn btn-sm" style="background:#fff;border:1px solid #cbd5e1;color:#64748b;font-size:0.78rem;padding:0.35rem 0.7rem;cursor:pointer;border-radius:6px;">
+                🧹 Vider / Désactiver
+              </button>
+              ${item?.id ? `
+                <button type="button" id="btn-save-only-saviez-vous" class="btn btn-sm btn-primary" style="font-size:0.78rem;padding:0.35rem 0.7rem;cursor:pointer;border-radius:6px;display:inline-flex;align-items:center;gap:0.3rem;">
+                  💾 Enregistrer cette rubrique uniquement
+                </button>
+              ` : ''}
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr;gap:0.75rem;">
+            <label style="font-weight:600;font-size:0.85rem;color:#334155;">
+              Statut d'évolution du métier *
+              <select id="field-sv-statut" name="sv_statut" style="width:100%;margin-top:0.25rem;padding:0.55rem;border:1px solid #cbd5e1;border-radius:6px;background:#fff;font-size:0.88rem;color:#0f172a;">
+                <option value="">-- Non renseigné (rubrique masquée sur la fiche) --</option>
+                <option value="en_transformation" ${(item?.saviezVous?.statut === 'en_transformation') ? 'selected' : ''}>🔸 En transformation (Automatisation / Mutation des compétences)</option>
+                <option value="valeur_sure" ${(item?.saviezVous?.statut === 'valeur_sure') ? 'selected' : ''}>🔹 Valeur sûre (Stabilité / Résilience durable de l'emploi)</option>
+                <option value="en_emergence" ${(item?.saviezVous?.statut === 'en_emergence') ? 'selected' : ''}>🟢 En émergence (Forte création / Besoins pionniers)</option>
+              </select>
+            </label>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;">
+                <label style="font-weight:600;font-size:0.85rem;color:#334155;margin:0;">Fait marquant / Chiffre clé (~120-160 car.)</label>
+                <span id="sv-count-fait" style="font-size:0.75rem;color:#64748b;">0 / 160 car.</span>
+              </div>
+              <textarea id="field-sv-fait" name="sv_fait" rows="2" maxlength="300" placeholder="Ex. L'adoption des assistants de code IA accélère de 35 % à 50 % la production des fonctionnalités courantes..." style="width:100%;padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.88rem;font-family:inherit;">${escapeHtml(item?.saviezVous?.fait || '')}</textarea>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;">
+                <label style="font-weight:600;font-size:0.85rem;color:#334155;margin:0;">Explication / Pourquoi (~200-300 car.)</label>
+                <span id="sv-count-pourquoi" style="font-size:0.75rem;color:#64748b;">0 / 300 car.</span>
+              </div>
+              <textarea id="field-sv-pourquoi" name="sv_pourquoi" rows="3" maxlength="500" placeholder="Ex. Les outils génératifs automatisent les tâches répétitives. Le rôle du développeur évolue vers la supervision d'architecture et la sécurité applicative..." style="width:100%;padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.88rem;font-family:inherit;">${escapeHtml(item?.saviezVous?.pourquoi || '')}</textarea>
+            </div>
+
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.25rem;">
+                <label style="font-weight:600;font-size:0.85rem;color:#334155;margin:0;">Clé de lecture / À retenir (~120-160 car.)</label>
+                <span id="sv-count-aretenir" style="font-size:0.75rem;color:#64748b;">0 / 160 car.</span>
+              </div>
+              <textarea id="field-sv-aretenir" name="sv_aretenir" rows="2" maxlength="300" placeholder="Ex. L'expertise se déplace de la simple saisie de syntaxe vers la conception système globale et le contrôle qualité exigeant..." style="width:100%;padding:0.5rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.88rem;font-family:inherit;">${escapeHtml(item?.saviezVous?.a_retenir || item?.saviezVous?.aRetenir || '')}</textarea>
+            </div>
+          </div>
+
+          <!-- Aperçu en direct (Live Preview) -->
+          <div style="margin-top:1rem;border-top:1px dashed #cbd5e1;padding-top:0.75rem;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+              <span style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#475569;">👁️ Aperçu en direct (Rendu public)</span>
+              <span id="sv-preview-status-indicator" style="font-size:0.75rem;color:#64748b;">Masqué</span>
+            </div>
+            <div id="sv-live-preview-box" style="display:none;background:#ffffff;border:1px solid #e2e8f0;border-left:4px solid #f59e0b;border-radius:8px;padding:0.9rem 1.1rem;box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+                <span style="font-weight:750;color:#0f172a;font-size:0.92rem;display:inline-flex;align-items:center;gap:0.35rem;">
+                  <span>💡</span> Le saviez-vous ?
+                </span>
+                <span id="sv-preview-dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#f59e0b;" title="Statut"></span>
+              </div>
+              <p id="sv-preview-fait" style="font-weight:650;color:#1e293b;font-size:0.88rem;margin:0 0 0.45rem 0;line-height:1.45;"></p>
+              <p id="sv-preview-pourquoi" style="color:#475569;font-size:0.82rem;margin:0 0 0.5rem 0;line-height:1.5;"></p>
+              <div id="sv-preview-takeaway-wrap" style="background:#f1f5f9;border-radius:6px;padding:0.5rem 0.75rem;font-size:0.8rem;color:#334155;">
+                <strong style="color:#0f172a;">À retenir :</strong> <span id="sv-preview-aretenir" style="font-style:italic;"></span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     ` : `
       <!-- Section Formation Spécifique -->
@@ -1997,6 +2079,134 @@
     overlay.querySelector('#content-modal-close-btn').addEventListener('click', closeModal);
     overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
 
+    // Gestion interactive spécifique de la rubrique "Le saviez-vous ?"
+    if (isJob) {
+      const svStatutEl = overlay.querySelector('#field-sv-statut');
+      const svFaitEl = overlay.querySelector('#field-sv-fait');
+      const svPourquoiEl = overlay.querySelector('#field-sv-pourquoi');
+      const svARetenirEl = overlay.querySelector('#field-sv-aretenir');
+      const svPreviewBox = overlay.querySelector('#sv-live-preview-box');
+      const svPreviewStatus = overlay.querySelector('#sv-preview-status-indicator');
+      const svPreviewDot = overlay.querySelector('#sv-preview-dot');
+      const svPreviewFait = overlay.querySelector('#sv-preview-fait');
+      const svPreviewPourquoi = overlay.querySelector('#sv-preview-pourquoi');
+      const svPreviewARetenir = overlay.querySelector('#sv-preview-aretenir');
+      const svTakeawayWrap = overlay.querySelector('#sv-preview-takeaway-wrap');
+      const countFait = overlay.querySelector('#sv-count-fait');
+      const countPourquoi = overlay.querySelector('#sv-count-pourquoi');
+      const countARetenir = overlay.querySelector('#sv-count-aretenir');
+
+      const dotColorMap = {
+        en_transformation: '#f59e0b',
+        valeur_sure: '#3b82f6',
+        en_emergence: '#10b981'
+      };
+
+      const dotTitleMap = {
+        en_transformation: 'Métier en transformation',
+        valeur_sure: 'Métier valeur sûre',
+        en_emergence: 'Métier en émergence'
+      };
+
+      const updateSaviezVousPreview = () => {
+        const statut = svStatutEl?.value || '';
+        const fait = (svFaitEl?.value || '').trim();
+        const pourquoi = (svPourquoiEl?.value || '').trim();
+        const aRetenir = (svARetenirEl?.value || '').trim();
+
+        if (countFait) countFait.textContent = `${(svFaitEl?.value || '').length} / 160 car.`;
+        if (countPourquoi) countPourquoi.textContent = `${(svPourquoiEl?.value || '').length} / 300 car.`;
+        if (countARetenir) countARetenir.textContent = `${(svARetenirEl?.value || '').length} / 160 car.`;
+
+        const isVisible = statut && fait;
+        if (isVisible && svPreviewBox) {
+          svPreviewBox.style.display = 'block';
+          const color = dotColorMap[statut] || '#f59e0b';
+          svPreviewBox.style.borderLeftColor = color;
+          if (svPreviewDot) {
+            svPreviewDot.style.background = color;
+            svPreviewDot.title = dotTitleMap[statut] || statut;
+          }
+          if (svPreviewFait) svPreviewFait.textContent = fait;
+          if (svPreviewPourquoi) {
+            svPreviewPourquoi.textContent = pourquoi;
+            svPreviewPourquoi.style.display = pourquoi ? 'block' : 'none';
+          }
+          if (svTakeawayWrap && svPreviewARetenir) {
+            svPreviewARetenir.textContent = aRetenir;
+            svTakeawayWrap.style.display = aRetenir ? 'block' : 'none';
+          }
+          if (svPreviewStatus) {
+            svPreviewStatus.innerHTML = '<span style="color:#10b981;font-weight:600;">✓ Affiché en public</span>';
+          }
+        } else if (svPreviewBox) {
+          svPreviewBox.style.display = 'none';
+          if (svPreviewStatus) {
+            svPreviewStatus.innerHTML = '<span style="color:#94a3b8;">Masqué (statut ou fait manquant)</span>';
+          }
+        }
+      };
+
+      [svStatutEl, svFaitEl, svPourquoiEl, svARetenirEl].forEach(el => {
+        el?.addEventListener('input', updateSaviezVousPreview);
+        el?.addEventListener('change', updateSaviezVousPreview);
+      });
+      updateSaviezVousPreview();
+
+      // Bouton Vider / Désactiver
+      const btnClearSv = overlay.querySelector('#btn-clear-saviez-vous');
+      btnClearSv?.addEventListener('click', () => {
+        if (svStatutEl) svStatutEl.value = '';
+        if (svFaitEl) svFaitEl.value = '';
+        if (svPourquoiEl) svPourquoiEl.value = '';
+        if (svARetenirEl) svARetenirEl.value = '';
+        updateSaviezVousPreview();
+        showToast('Rubrique « Le saviez-vous ? » réinitialisée.', 'info');
+      });
+
+      // Bouton Sauvegarde indépendante
+      const btnSaveOnlySv = overlay.querySelector('#btn-save-only-saviez-vous');
+      btnSaveOnlySv?.addEventListener('click', async () => {
+        if (!item || !item.id) {
+          showToast('Veuillez d\'abord enregistrer la fiche métier.', 'warning');
+          return;
+        }
+
+        const statut = svStatutEl?.value || '';
+        const fait = (svFaitEl?.value || '').trim();
+        const pourquoi = (svPourquoiEl?.value || '').trim();
+        const aRetenir = (svARetenirEl?.value || '').trim();
+
+        let svPayload = null;
+        if (statut || fait || pourquoi || aRetenir) {
+          if (!statut || !fait) {
+            showToast('Le statut et le fait marquant sont obligatoires pour activer la rubrique.', 'warning');
+            return;
+          }
+          svPayload = {
+            statut,
+            fait,
+            pourquoi: pourquoi || undefined,
+            a_retenir: aRetenir || undefined,
+            aRetenir: aRetenir || undefined
+          };
+        }
+
+        btnSaveOnlySv.disabled = true;
+        btnSaveOnlySv.textContent = '⏳ Enregistrement...';
+        try {
+          await window.AdminApi.jobs.updateSaviezVous(item.id, svPayload);
+          if (item) item.saviezVous = svPayload;
+          showToast(svPayload ? 'Rubrique « Le saviez-vous ? » mise à jour avec succès !' : 'Rubrique « Le saviez-vous ? » retirée.', 'success');
+        } catch (err) {
+          showToast('Erreur : ' + err.message, 'error');
+        } finally {
+          btnSaveOnlySv.disabled = false;
+          btnSaveOnlySv.textContent = '💾 Enregistrer cette rubrique uniquement';
+        }
+      });
+    }
+
     overlay.querySelector('#content-modal-form').addEventListener('submit', async e => {
       e.preventDefault();
       const formData = new FormData(e.target);
@@ -2024,6 +2234,28 @@
         }
         if (typeof data.subProfessions === 'string') {
           data.subProfessions = data.subProfessions.split(',').map(s => s.trim()).filter(Boolean);
+        }
+
+        // Rubrique Le saviez-vous ?
+        const svStatut = data.sv_statut;
+        const svFait = (data.sv_fait || '').trim();
+        const svPourquoi = (data.sv_pourquoi || '').trim();
+        const svARetenir = (data.sv_aretenir || '').trim();
+        delete data.sv_statut;
+        delete data.sv_fait;
+        delete data.sv_pourquoi;
+        delete data.sv_aretenir;
+
+        if (svStatut && svFait) {
+          data.saviezVous = {
+            statut: svStatut,
+            fait: svFait,
+            pourquoi: svPourquoi || undefined,
+            a_retenir: svARetenir || undefined,
+            aRetenir: svARetenir || undefined
+          };
+        } else {
+          data.saviezVous = null;
         }
       } else {
         // Résolution de la catégorie pour formation

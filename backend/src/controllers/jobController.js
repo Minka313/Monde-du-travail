@@ -108,6 +108,28 @@ class JobController {
     }
   }
 
+  // Mise à jour autonome et ciblée de la rubrique "Le saviez-vous ?"
+  static async updateSaviezVous(req, res, next) {
+    try {
+      const job = await jobService.updateSaviezVous(req.params.id, req.body.saviezVous);
+
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'metier.update_saviez_vous',
+        module: 'metier',
+        resource: 'Job',
+        resourceId: job.id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        metadata: { title: job.title, hasSaviezVous: Boolean(req.body.saviezVous) },
+      });
+
+      res.json({ success: true, message: 'Rubrique « Le saviez-vous ? » enregistrée avec succès', data: job });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // Soumettre à validation : PENDING_REVIEW + création du workflow d'approbation
   static async submitJob(req, res, next) {
     try {

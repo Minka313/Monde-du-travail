@@ -1091,6 +1091,60 @@
   }
 
   // =========================================================================
+  // RUBRIQUE ÉDITORIALE « LE SAVIEZ-VOUS ? » (Évolution, automatisation & émergence)
+  // =========================================================================
+  function renderSaviezVousHtml(job) {
+    const sv = job?.saviezVous;
+    if (!sv || !sv.statut || !sv.fait || !sv.fait.trim()) {
+      return '';
+    }
+
+    const dotColors = {
+      en_transformation: '#f59e0b',
+      valeur_sure: '#3b82f6',
+      en_emergence: '#10b981'
+    };
+
+    const statusLabels = {
+      en_transformation: 'Métier en transformation',
+      valeur_sure: 'Métier valeur sûre',
+      en_emergence: 'Métier en émergence'
+    };
+
+    const color = dotColors[sv.statut] || '#f59e0b';
+    const statusLabel = statusLabels[sv.statut] || 'Évolution du métier';
+    const aRetenir = (sv.a_retenir || sv.aRetenir || '').trim();
+
+    return `
+      <!-- ENCART ÉDITORIAL : LE SAVIEZ-VOUS ? -->
+      <aside class="saviez-vous-card status-${escapeHtml(sv.statut)}" style="--status-color: ${color};" aria-label="Le saviez-vous ?">
+        <div class="saviez-vous-header">
+          <div class="saviez-vous-title-wrap">
+            <span class="saviez-vous-icon" aria-hidden="true">💡</span>
+            <h4 class="saviez-vous-title">Le saviez-vous ?</h4>
+          </div>
+          <span class="saviez-vous-dot" title="${escapeHtml(statusLabel)}" aria-label="${escapeHtml(statusLabel)}" role="img"></span>
+        </div>
+        
+        <div class="saviez-vous-body">
+          <p class="saviez-vous-fait">${escapeHtml(sv.fait.trim())}</p>
+          
+          ${sv.pourquoi && sv.pourquoi.trim() ? `
+            <p class="saviez-vous-pourquoi">${escapeHtml(sv.pourquoi.trim())}</p>
+          ` : ''}
+          
+          ${aRetenir ? `
+            <div class="saviez-vous-takeaway">
+              <span class="takeaway-label">À retenir :</span>
+              <span class="takeaway-text">${escapeHtml(aRetenir)}</span>
+            </div>
+          ` : ''}
+        </div>
+      </aside>
+    `;
+  }
+
+  // =========================================================================
   // FICHE MÉTIER HAUTE PROFONDEUR — MODAL INTERACTIVE 6 ONGLETS (NIVEAU 4 & 5)
   // =========================================================================
   async function openJobModal(job) {
@@ -1696,6 +1750,9 @@
               ` : ''}
             </div>
           </div>
+
+          <!-- 2. BIS : ENCART ÉDITORIAL « LE SAVIEZ-VOUS ? » -->
+          ${renderSaviezVousHtml(job)}
 
           <!-- 3. RECOMMANDATIONS CROISÉES (« Parcours Découverte ») -->
           ${crossJobs.length > 0 ? `

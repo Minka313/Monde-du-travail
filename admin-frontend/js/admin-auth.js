@@ -378,6 +378,7 @@
       getAdmin: (params = {}) => contentListQuery('/jobs/admin/list', params),
       create: (data) => apiRequestWithRefresh('/jobs', { method: 'POST', body: JSON.stringify(data) }),
       update: (id, data) => apiRequestWithRefresh(`/jobs/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+      updateSaviezVous: (id, saviezVous) => apiRequestWithRefresh(`/jobs/${id}/saviez-vous`, { method: 'PATCH', body: JSON.stringify({ saviezVous }) }),
       remove: (id) => apiRequestWithRefresh(`/jobs/${id}`, { method: 'DELETE' }),
       removeBulk: (ids) => apiRequestWithRefresh('/jobs/bulk-delete', { method: 'POST', body: JSON.stringify({ ids }) }),
       submit: (id) => apiRequestWithRefresh(`/jobs/${id}/submit`, { method: 'POST' }),

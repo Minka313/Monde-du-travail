@@ -120,6 +120,7 @@ class JobService {
         subProfessions: this.parseSkills(subProfessions),
         videoUrl: videoUrl || null,
         location: location || null,
+        saviezVous: data.saviezVous || null,
         status: 'DRAFT',
         createdById: userId,
       },
@@ -134,7 +135,7 @@ class JobService {
     const {
       title, description, content, category, domain, icon, image,
       salary, skills, prerequisites, studies, advantages, disadvantages,
-      subProfessions, videoUrl, location
+      subProfessions, videoUrl, location, saviezVous
     } = data;
 
     const updateData = {};
@@ -154,10 +155,22 @@ class JobService {
     if (subProfessions !== undefined) updateData.subProfessions = this.parseSkills(subProfessions);
     if (videoUrl !== undefined) updateData.videoUrl = videoUrl || null;
     if (location !== undefined) updateData.location = location || null;
+    if (saviezVous !== undefined) updateData.saviezVous = saviezVous || null;
 
     return prisma.job.update({
       where: { id },
       data: updateData,
+      include: {
+        createdBy: { select: { id: true, firstName: true, lastName: true } },
+      },
+    });
+  }
+
+  static async updateSaviezVous(id, saviezVous) {
+    await this.getJobOrThrow(id);
+    return prisma.job.update({
+      where: { id },
+      data: { saviezVous: saviezVous || null },
       include: {
         createdBy: { select: { id: true, firstName: true, lastName: true } },
       },
