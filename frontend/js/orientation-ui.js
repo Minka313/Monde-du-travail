@@ -549,7 +549,9 @@
                   ? "Cartographie d'Excellence BTP, Architecture & Construction"
                   : (family.id === 'lettres-langues-sciences-humaines'
                     ? "Cartographie d'Excellence Lettres, Langues & Sciences Humaines"
-                    : `Cartographie d'Excellence — ${family.name}`)))))));
+                    : (family.id === 'industrie-mecanique' || family.id === 'industrie-technologies-ingenierie'
+                      ? "Cartographie d'Excellence Industrie, Technologies & Ingénierie"
+                      : `Cartographie d'Excellence — ${family.name}`))))))));
 
       const cartographyBadge = (family.id === 'numerique-ia')
         ? "13 Pôles • 100+ Métiers"
@@ -565,7 +567,9 @@
                   ? "15 Domaines • 37 Fiches Métiers"
                   : (family.id === 'lettres-langues-sciences-humaines'
                     ? "20 Domaines • 32 Fiches Métiers"
-                    : `${familyDomains.length} Domaines d'expertise`)))))));
+                    : (family.id === 'industrie-mecanique' || family.id === 'industrie-technologies-ingenierie'
+                      ? "30 Domaines • 36 Fiches Métiers"
+                      : `${familyDomains.length} Domaines d'expertise`))))))));
 
       const allDomainsLabel = (family.id === 'numerique-ia')
         ? `Tous les pôles (${familyDomains.length})`
@@ -880,6 +884,8 @@
               ${isEmerging ? '<span class="job-badge-emerging" style="background:#fef3c7;color:#92400e;border:1px solid #fde68a;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Métier d’avenir émergent">✨ Émergent</span>' : ''}
               ${isESD ? '<span class="job-badge-esd" style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : École Supérieure du Digital">🎓 ESD</span>' : ''}
               ${job.sourceImagineTonFutur ? '<span class="job-badge-itf" style="background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : Imagine ton Futur">📚 Imagine ton Futur</span>' : ''}
+              ${job.sourceLetudiant ? '<span class="job-badge-letudiant" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : L\'Étudiant">🎓 L\'Étudiant</span>' : ''}
+              ${job.sourceOnisep ? '<span class="job-badge-onisep" style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : Onisep Mécanique">⚙️ Onisep</span>' : ''}
             </div>
 
             <h3 class="job-card-title">${escapeHtml(job.title)}</h3>
@@ -1279,6 +1285,16 @@
                 ${job.sourceImagineTonFutur ? `
                   <span class="dossier-meta-tag" style="background:rgba(124,58,237,0.25);border-color:rgba(167,139,250,0.5);color:#ede9fe;" title="Fiche documentée d'après le référentiel Imagine ton Futur (Lettres, Langues & Sciences Humaines)">
                     📚 Référence Imagine ton Futur
+                  </span>
+                ` : ''}
+                ${job.sourceLetudiant ? `
+                  <span class="dossier-meta-tag" style="background:rgba(30,64,175,0.25);border-color:rgba(96,165,250,0.5);color:#dbeafe;" title="Fiche documentée d'après le référentiel officiel L'Étudiant (Secteur Industrie & Technologies)">
+                    🎓 Référence L'Étudiant
+                  </span>
+                ` : ''}
+                ${job.sourceOnisep ? `
+                  <span class="dossier-meta-tag" style="background:rgba(220,38,38,0.25);border-color:rgba(248,113,113,0.5);color:#fee2e2;" title="Fiche documentée d'après le référentiel officiel Onisep (Métiers de la mécanique)">
+                    ⚙️ Référence Onisep
                   </span>
                 ` : ''}
               </div>
