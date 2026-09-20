@@ -202,17 +202,26 @@
     {
       id: 'industrie-mecanique',
       order: 11,
-      name: 'Industrie, Mécanique & Automatisation',
+      name: 'Industrie, Technologies & Ingénierie',
       slug: 'industrie-mecanique',
+      aliasSlug: 'industrie-technologies-ingenierie',
       icon: '🏭',
-      color: '#475569', // Métal
+      color: '#475569', // Métal / Acier industriel
       image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=80',
-      description: 'Piloter les lignes de production robotisées, usiner les pièces de précision, garantir le Lean manufacturing et maintenir les parcs machines.',
-      stats: { jobsEstimate: '50+ métiers', subdomainsCount: 10 },
-      representativeJobs: ['Ingénieur Automatisme', 'Roboticien Industriel', 'Ingénieur Mécanique', 'Responsable Qualité & Lean'],
+      description: 'Concevoir, modéliser, usiner, automatiser, piloter la fabrication industrielle, optimiser la supply chain et bâtir l\'Industrie 4.0 et les usines de demain.',
+      stats: { jobsEstimate: '85+ métiers', subdomainsCount: 30 },
+      representativeJobs: ['Ingénieur Mécanique', 'Roboticien Industriel', 'Automaticien', 'Ingénieur R&D', 'Technicien Maintenance', 'Ingénieur Qualité'],
       subdomains: [
-        'Génie industriel', 'Génie mécanique', 'Maintenance', 'Automatisation',
-        'Robotique', 'Production', 'Qualité', 'Lean Manufacturing', 'Électromécanique', 'Métallurgie'
+        'Conception & Ingénierie', 'Mécanique & Usinage', 'Génie Industriel & Organisation',
+        'Production & Fabrication', 'Automatisation & Robotique', 'Maintenance Industrielle',
+        'Électrotechnique & Électronique', 'Chimie & Procédés Industriels', 'Matériaux & Métallurgie',
+        'Aéronautique & Spatial', 'Automobile & Mobilité', 'Naval & Maritime Industriel',
+        'Textile & Matériaux Souples', 'Pharmacie & Biotechnologies', 'Agro-Industrie & Lignes',
+        'Nucléaire & Sûreté', 'Énergie Industrielle & Procédés', 'Recherche & Développement (R&D)',
+        'Essais & Bancs de Test', 'Qualité, Sécurité & Environnement (QSE)', 'Contrôle & Métrologie (CND)',
+        'Logistique Industrielle & Supply Chain', 'Planification & Ordonnancement', 'Achats Industriels',
+        'Commerce & Ingénierie B2B', 'Éco-Conception & Industrie Durable', 'Industrie 4.0 & IoT',
+        'Jumeau Numérique & Simulation', 'Fabrication Additive (3D)', 'Management Industriel & Direction'
       ]
     },
     {
@@ -417,7 +426,7 @@
       icon: '🎨',
       label: 'Créer, dessiner, imaginer & designer',
       description: 'Tu as une sensibilité visuelle, tu aimes inventer de nouveaux concepts, assembler des formes et des couleurs.',
-      familyIds: ['culture-medias', 'numerique-ia', 'btp-architecture', 'commerce-marketing', 'lettres-langues-sciences-humaines']
+      familyIds: ['culture-medias', 'numerique-ia', 'btp-architecture', 'commerce-marketing', 'lettres-langues-sciences-humaines', 'industrie-mecanique']
     },
     {
       id: 'donnees-chiffres',
@@ -431,7 +440,7 @@
       icon: '⚡',
       label: 'Manipuler la technologie, coder & automatiser',
       description: 'Tu es fasciné par les ordinateurs, les applications mobiles, l’IA, les robots et les objets connectés.',
-      familyIds: ['numerique-ia', 'cybersecurite-reseaux', 'finance-fintech', 'energie-renouvelable', 'metiers-emergents']
+      familyIds: ['numerique-ia', 'cybersecurite-reseaux', 'finance-fintech', 'energie-renouvelable', 'metiers-emergents', 'industrie-mecanique']
     },
     {
       id: 'soigner-aider',
@@ -502,6 +511,27 @@
       label: 'Transmettre le savoir, valoriser le patrimoine & animer la culture',
       description: 'Tu es passionné par les musées, les archives, la vulgarisation scientifique, l’enseignement et l’action culturelle citoyenne.',
       familyIds: ['lettres-langues-sciences-humaines', 'education-formation', 'culture-medias', 'tourisme-hotellerie']
+    },
+    {
+      id: 'fabriquer-machines',
+      icon: '⚙️',
+      label: 'Fabriquer, usiner, souder & façonner la matière',
+      description: 'Tu aimes travailler le métal, manier les machines-outils de précision, comprendre la résistance des matériaux et fabriquer des pièces réelles.',
+      familyIds: ['industrie-mecanique', 'btp-architecture', 'naval-maritime']
+    },
+    {
+      id: 'reparer-maintenance',
+      icon: '🔧',
+      label: 'Diagnostiquer, réparer & maintenir les équipements',
+      description: 'Tu as l’âme d’un dépanneur, tu aimes démonter, chercher l’origine d’une panne mécanique ou électrique et remettre en état de marche.',
+      familyIds: ['industrie-mecanique', 'energie-renouvelable', 'transports-logistique', 'btp-architecture']
+    },
+    {
+      id: 'robotique-automatisation',
+      icon: '🤖',
+      label: 'Programmer des robots & automatiser les usines',
+      description: 'Tu es passionné par les bras robotisés, les automates industriels, les lignes intelligentes et l’Industrie 4.0.',
+      familyIds: ['industrie-mecanique', 'numerique-ia', 'cybersecurite-reseaux', 'metiers-emergents']
     }
   ];
 
@@ -1437,15 +1467,15 @@
   // 4. SERVICE DATA & MÉTHODES D'ACCÈS DU MODULE
   // =========================================================================
   const OrientationData = {
-    // Récupérer toutes les 21 familles triées par ordre
+    // Récupérer toutes les 22 familles triées par ordre
     getFamilies: function () {
       return [...FAMILIES].sort((a, b) => a.order - b.order);
     },
 
-    // Récupérer une famille par son ID ou son Slug
+    // Récupérer une famille par son ID, son Slug ou son Alias
     getFamily: function (idOrSlug) {
       if (!idOrSlug) return null;
-      return FAMILIES.find(f => f.id === idOrSlug || f.slug === idOrSlug) || null;
+      return FAMILIES.find(f => f.id === idOrSlug || f.slug === idOrSlug || (f.aliasSlug && f.aliasSlug === idOrSlug)) || null;
     },
 
     // Récupérer les centres d'intérêt / affinités
@@ -1661,6 +1691,36 @@
         });
       }
 
+      // 1.g Intégration du catalogue Industrie, Technologies & Ingénierie (OrientationIndustryData)
+      const industryData = (typeof window !== 'undefined' && window.OrientationIndustryData)
+        ? window.OrientationIndustryData
+        : (typeof global !== 'undefined' && global.OrientationIndustryData ? global.OrientationIndustryData : null);
+
+      if (industryData && typeof industryData.getJobs === 'function') {
+        const indJobs = industryData.getJobs();
+        indJobs.forEach(iJob => {
+          const existingIdx = combined.findIndex(j => j.slug === iJob.slug || j.id === iJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, iJob, combined[existingIdx], {
+              aliases: [...new Set([...(iJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              domain: iJob.domain || combined[existingIdx].domain,
+              domainId: iJob.domainId || combined[existingIdx].domainId,
+              subdomain: iJob.subdomain || combined[existingIdx].subdomain,
+              gettingStarted: iJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: iJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || iJob.africaContext,
+              salary: iJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || iJob.saviezVous || null,
+              sourceLetudiant: iJob.sourceLetudiant !== undefined ? iJob.sourceLetudiant : combined[existingIdx].sourceLetudiant,
+              sourceOnisep: iJob.sourceOnisep !== undefined ? iJob.sourceOnisep : combined[existingIdx].sourceOnisep,
+              sources: iJob.sources || combined[existingIdx].sources
+            });
+          } else {
+            combined.push(iJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -1742,6 +1802,9 @@
       if (familyId === 'peche-maritime') {
         return all.filter(j => j.familyId === 'peche-maritime' || j.domainId === 'peche-aquaculture');
       }
+      if (familyId === 'industrie-mecanique' || familyId === 'industrie-technologies-ingenierie') {
+        return all.filter(j => j.familyId === 'industrie-mecanique' || j.familyId === 'industrie-technologies-ingenierie');
+      }
       return all.filter(j => j.familyId === familyId);
     },
 
@@ -1758,6 +1821,8 @@
           matchesFamily = j.familyId === 'numerique-ia' || j.sourceESD || (j.domain && digitalDomainNames.includes(j.domain));
         } else if (familyId === 'peche-maritime') {
           matchesFamily = (j.familyId === 'peche-maritime' || j.domainId === 'peche-aquaculture');
+        } else if (familyId === 'industrie-mecanique' || familyId === 'industrie-technologies-ingenierie') {
+          matchesFamily = (j.familyId === 'industrie-mecanique' || j.familyId === 'industrie-technologies-ingenierie');
         } else {
           matchesFamily = (j.familyId === familyId);
         }
@@ -1909,6 +1974,12 @@
         // Technologies énergétiques & Secteurs de l'énergie (Energierecrute)
         if (job.energyTechnology && Array.isArray(job.energyTechnology) && job.energyTechnology.some(t => t.toLowerCase().includes(q))) return true;
         if (job.energySector && job.energySector.toLowerCase().includes(q)) return true;
+
+        // Industrie, Technologies & Ingénierie (L'Étudiant & Onisep)
+        if (job.sourceLetudiant && "l'étudiant".includes(q)) return true;
+        if (job.sourceOnisep && "onisep".includes(q)) return true;
+        if (job.chainStage && job.chainStage.toLowerCase().includes(q)) return true;
+        if (job.skills && job.skills.tools && Array.isArray(job.skills.tools) && job.skills.tools.some(tool => tool.toLowerCase().includes(q))) return true;
         if (job.studies) {
           if (Array.isArray(job.studies.france) && job.studies.france.some(f => f.toLowerCase().includes(q))) return true;
           if (Array.isArray(job.studies.senegal) && job.studies.senegal.some(s => s.toLowerCase().includes(q))) return true;
@@ -2040,6 +2111,18 @@
       return [];
     },
 
+    getIndustryDomains: function () {
+      const industryData = (typeof window !== 'undefined' && window.OrientationIndustryData)
+        ? window.OrientationIndustryData
+        : (typeof global !== 'undefined' && global.OrientationIndustryData
+          ? global.OrientationIndustryData
+          : (typeof OrientationIndustryData !== 'undefined' ? OrientationIndustryData : null));
+      if (industryData && typeof industryData.getDomains === 'function') {
+        return industryData.getDomains();
+      }
+      return [];
+    },
+
     getFamilyDomains: function (familyId) {
       if (familyId === 'numerique-ia') {
         return this.getDigitalDomains();
@@ -2061,6 +2144,9 @@
       }
       if (familyId === 'lettres-langues-sciences-humaines') {
         return this.getLlshDomains();
+      }
+      if (familyId === 'industrie-mecanique' || familyId === 'industrie-technologies-ingenierie') {
+        return this.getIndustryDomains();
       }
       return [];
     },
