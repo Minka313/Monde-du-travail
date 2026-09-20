@@ -537,11 +537,19 @@
 
       const cartographyTitle = (family.id === 'numerique-ia')
         ? "Cartographie d'Excellence du Numérique"
-        : (family.id === 'finance-fintech' ? "Cartographie d'Excellence Finance, Banque & Assurance" : `Cartographie d'Excellence — ${family.name}`);
+        : (family.id === 'finance-fintech'
+          ? "Cartographie d'Excellence Finance, Banque & Assurance"
+          : (family.id === 'agriculture-agritech'
+            ? "Cartographie d'Excellence Agriculture, Élevage & Agroalimentaire"
+            : `Cartographie d'Excellence — ${family.name}`));
 
       const cartographyBadge = (family.id === 'numerique-ia')
         ? "13 Pôles • 100+ Métiers"
-        : (family.id === 'finance-fintech' ? "10 Domaines • 27+ Fiches Métiers" : `${familyDomains.length} Domaines d'expertise`);
+        : (family.id === 'finance-fintech'
+          ? "10 Domaines • 27+ Fiches Métiers"
+          : (family.id === 'agriculture-agritech'
+            ? "11 Domaines • 35 Fiches Métiers"
+            : `${familyDomains.length} Domaines d'expertise`));
 
       const allDomainsLabel = (family.id === 'numerique-ia')
         ? `Tous les pôles (${familyDomains.length})`
