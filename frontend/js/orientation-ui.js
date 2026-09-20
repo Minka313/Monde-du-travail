@@ -545,7 +545,9 @@
               ? "Cartographie d'Excellence Pêche, Aquaculture & Ressources Marines"
               : (family.id === 'energie-renouvelable'
                 ? "Cartographie d'Excellence Énergie, Électricité & Transition Énergétique"
-                : `Cartographie d'Excellence — ${family.name}`))))));
+                : (family.id === 'btp-architecture'
+                  ? "Cartographie d'Excellence BTP, Architecture & Construction"
+                  : `Cartographie d'Excellence — ${family.name}`))))));
 
       const cartographyBadge = (family.id === 'numerique-ia')
         ? "13 Pôles • 100+ Métiers"
@@ -557,7 +559,9 @@
               ? "1 Domaine • 12 Fiches Métiers"
               : (family.id === 'energie-renouvelable'
                 ? "14 Domaines • 26 Fiches Métiers"
-                : `${familyDomains.length} Domaines d'expertise`))));
+                : (family.id === 'btp-architecture'
+                  ? "15 Domaines • 37 Fiches Métiers"
+                  : `${familyDomains.length} Domaines d'expertise`))))));
 
       const allDomainsLabel = (family.id === 'numerique-ia')
         ? `Tous les pôles (${familyDomains.length})`
@@ -1260,6 +1264,11 @@
                 ${job.sourceEnergierecrute ? `
                   <span class="dossier-meta-tag" style="background:rgba(234,179,8,0.25);border-color:rgba(250,204,21,0.5);color:#fef08a;" title="Fiche documentée d'après le référentiel officiel Energierecrute">
                     ⚡ Référence Energierecrute
+                  </span>
+                ` : ''}
+                ${job.sourceEtudiant ? `
+                  <span class="dossier-meta-tag" style="background:rgba(217,119,6,0.25);border-color:rgba(245,158,11,0.5);color:#fef3c7;" title="Fiche documentée d'après le référentiel officiel L'Étudiant (Secteur BTP, Architecture & Construction)">
+                    🎓 Référence L'Étudiant
                   </span>
                 ` : ''}
               </div>

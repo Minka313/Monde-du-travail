@@ -183,17 +183,20 @@
     {
       id: 'btp-architecture',
       order: 10,
-      name: 'BTP, Architecture, Urbanisme & Immobilier',
+      name: 'BTP, Architecture & Construction',
       slug: 'btp-architecture',
       icon: '🏗️',
-      color: '#64748b', // Ardoise BTP
+      color: '#d97706', // Ocre / Ambre BTP
       image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&auto=format&fit=crop&q=80',
-      description: 'Concevoir, modéliser (BIM) et ériger les infrastructures durables, les édifices modernes et les éco-quartiers de demain.',
-      stats: { jobsEstimate: '65+ métiers', subdomainsCount: 11 },
-      representativeJobs: ['Architecte DPLG', 'Ingénieur Génie Civil', 'Conducteur de Travaux', 'BIM Manager', 'Urbaniste'],
+      description: 'Le secteur regroupe les activités liées à la conception, la construction, la rénovation et l\'entretien des bâtiments et des infrastructures, ainsi qu\'un ensemble de métiers techniques, de gestion, d\'encadrement et de nouvelles spécialités liées au numérique et à la transition environnementale.',
+      stats: { jobsEstimate: '75+ métiers', subdomainsCount: 15 },
+      representativeJobs: ['Architecte DPLG', 'Ingénieur Génie Civil', 'Conducteur de Travaux', 'BIM Manager', 'Chef de Chantier', 'Électricien du BTP'],
       subdomains: [
-        'Génie civil', 'Architecture', 'Construction', 'Topographie', 'Urbanisme',
-        'Aménagement', 'BIM', 'Immobilier', 'Gestion immobilière', 'Promotion immobilière', 'Maintenance des bâtiments'
+        'Architecture & Conception', 'Ingénierie & Bureaux d\'Études', 'Économie de la Construction & Métrés',
+        'Géomètre & Topographie', 'Urbanisme & Aménagement', 'Gros Œuvre & Maçonnerie',
+        'Charpente & Couverture', 'Travaux Publics & Infrastructures', 'Terrassement & Engins',
+        'Gestion & Conduite de Chantier', 'Second Œuvre & Finitions', 'Menuiserie & Spécialités',
+        'Équipements : Électricité, Plomberie & CVC', 'BIM & Bâtiment Intelligent', 'Construction Durable & Éco-Conception'
       ]
     },
     {
@@ -1549,6 +1552,36 @@
         });
       }
 
+      // 1.e Intégration du catalogue BTP, Architecture & Construction (OrientationBtpData)
+      const btpData = (typeof window !== 'undefined' && window.OrientationBtpData)
+        ? window.OrientationBtpData
+        : (typeof global !== 'undefined' && global.OrientationBtpData ? global.OrientationBtpData : null);
+
+      if (btpData && typeof btpData.getJobs === 'function') {
+        const btpJobs = btpData.getJobs();
+        btpJobs.forEach(bJob => {
+          const existingIdx = combined.findIndex(j => j.slug === bJob.slug || j.id === bJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, bJob, combined[existingIdx], {
+              aliases: [...new Set([...(bJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              domain: bJob.domain || combined[existingIdx].domain,
+              domainId: bJob.domainId || combined[existingIdx].domainId,
+              subdomain: bJob.subdomain || combined[existingIdx].subdomain,
+              sectors: [...new Set([...(bJob.sectors || []), ...(combined[existingIdx].sectors || [])])],
+              gettingStarted: bJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: bJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || bJob.africaContext,
+              salary: bJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || bJob.saviezVous || null,
+              sourceEtudiant: bJob.sourceEtudiant,
+              isEmerging: bJob.isEmerging !== undefined ? bJob.isEmerging : combined[existingIdx].isEmerging
+            });
+          } else {
+            combined.push(bJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -1766,6 +1799,9 @@
           if (Array.isArray(job.career.employerTypes) && job.career.employerTypes.some(emp => emp.toLowerCase().includes(q))) return true;
         }
 
+        // Secteurs & Corps d'état BTP (L'Étudiant)
+        if (job.sectors && Array.isArray(job.sectors) && job.sectors.some(sec => sec.toLowerCase().includes(q))) return true;
+
         // Code CNP, Caractéristiques, Régions & Contexte ÉvoluPêches
         if (job.cnpCode && job.cnpCode.toLowerCase().includes(q)) return true;
         if (job.characteristics && Array.isArray(job.characteristics) && job.characteristics.some(c => c.toLowerCase().includes(q))) return true;
@@ -1888,6 +1924,18 @@
       return [];
     },
 
+    getBtpDomains: function () {
+      const btpData = (typeof window !== 'undefined' && window.OrientationBtpData)
+        ? window.OrientationBtpData
+        : (typeof global !== 'undefined' && global.OrientationBtpData
+          ? global.OrientationBtpData
+          : (typeof OrientationBtpData !== 'undefined' ? OrientationBtpData : null));
+      if (btpData && typeof btpData.getDomains === 'function') {
+        return btpData.getDomains();
+      }
+      return [];
+    },
+
     getFamilyDomains: function (familyId) {
       if (familyId === 'numerique-ia') {
         return this.getDigitalDomains();
@@ -1903,6 +1951,9 @@
       }
       if (familyId === 'energie-renouvelable') {
         return this.getEnergyDomains();
+      }
+      if (familyId === 'btp-architecture') {
+        return this.getBtpDomains();
       }
       return [];
     },
