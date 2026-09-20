@@ -46,7 +46,12 @@
     selectedSubdomain: 'all',
     selectedAffinities: [],
     searchQuery: '',
-    cachedJobs: []
+    cachedJobs: [],
+    // Pagination et filtres locaux améliorés
+    jobsPageSize: 18,
+    jobsDisplayedCount: 18,
+    currentFilteredJobsList: [],
+    localSearchQuery: ''
   };
 
   // Références DOM
@@ -54,6 +59,7 @@
 
   function initDomRefs() {
     dom = {
+      explorerSection: document.getElementById('explorerSection'),
       heroSearchInput: document.getElementById('orientationSearchInput'),
       heroSearchClear: document.getElementById('searchClearBtn'),
       btnDiscoverInterests: document.getElementById('btnDiscoverInterests'),
@@ -78,7 +84,29 @@
       
       // Reset & retours
       btnBackToFamilies: document.getElementById('btnBackToFamilies'),
-      btnResetSearch: document.getElementById('btnResetSearch')
+      btnResetSearch: document.getElementById('btnResetSearch'),
+
+      // Sticky Orientation Toolbar
+      stickyOrientationToolbar: document.getElementById('stickyOrientationToolbar'),
+      stickyBtnBackFamilies: document.getElementById('stickyBtnBackFamilies'),
+      stickyFamilyIcon: document.getElementById('stickyFamilyIcon'),
+      stickyFamilyName: document.getElementById('stickyFamilyName'),
+      stickySep: document.getElementById('stickySep'),
+      stickyPôleName: document.getElementById('stickyPôleName'),
+      stickyDomainDropdownWrap: document.getElementById('stickyDomainDropdownWrap'),
+      stickyDomainSelect: document.getElementById('stickyDomainSelect'),
+      stickyCountBadge: document.getElementById('stickyCountBadge'),
+      stickyBtnScrollTop: document.getElementById('stickyBtnScrollTop'),
+
+      // Filtre rapide local dans la famille / catalogue
+      localJobsFilterBar: document.getElementById('localJobsFilterBar'),
+      localJobsFilterInput: document.getElementById('localJobsFilterInput'),
+      localJobsFilterClear: document.getElementById('localJobsFilterClear'),
+      localJobsFilterCount: document.getElementById('localJobsFilterCount'),
+
+      // Pagination progressive & Bouton flottant
+      orientationPaginationWrap: document.getElementById('orientationPaginationWrap'),
+      btnFloatingScrollTop: document.getElementById('btnFloatingScrollTop')
     };
   }
 
@@ -87,6 +115,48 @@
       if (b) b.classList.remove('active');
     });
     if (activeBtn) activeBtn.classList.add('active');
+  }
+
+  // =========================================================================
+  // ASSISTANCE AU DÉFILEMENT DOUX (LENIS / SCROLL SYNCHRONIZER)
+  // =========================================================================
+  function scrollToElement(target, offset = -90) {
+    if (!target && target !== 0) return;
+    
+    if (window.scrollytelling && typeof window.scrollytelling.scrollTo === 'function') {
+      window.scrollytelling.scrollTo(target, { offset, duration: 0.75 });
+    } else if (window.lenis && typeof window.lenis.scrollTo === 'function') {
+      window.lenis.scrollTo(target, { offset, duration: 0.75 });
+    } else {
+      let top = 0;
+      if (typeof target === 'number') {
+        top = target;
+      } else if (target && typeof target.getBoundingClientRect === 'function') {
+        top = target.getBoundingClientRect().top + window.scrollY + offset;
+      }
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+    }
+  }
+
+  function syncScrollLayout() {
+    const raf = (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function')
+      ? window.requestAnimationFrame
+      : (typeof requestAnimationFrame === 'function')
+        ? requestAnimationFrame
+        : (cb) => setTimeout(cb, 16);
+
+    raf(() => {
+      if (typeof window !== 'undefined') {
+        if (window.scrollytelling && typeof window.scrollytelling.resize === 'function') {
+          window.scrollytelling.resize();
+        } else if (window.lenis && typeof window.lenis.resize === 'function') {
+          window.lenis.resize();
+        }
+        if (typeof window.ScrollTrigger !== 'undefined') {
+          window.ScrollTrigger.refresh();
+        }
+      }
+    });
   }
 
   // =========================================================================
@@ -100,6 +170,8 @@
     if (dom.familyDrilldownContainer) dom.familyDrilldownContainer.style.display = 'none';
     if (dom.interestExplorerBox) dom.interestExplorerBox.style.display = 'none';
     if (dom.searchResultsSummary) dom.searchResultsSummary.style.display = 'none';
+    if (dom.localJobsFilterBar) dom.localJobsFilterBar.style.display = 'none';
+    if (dom.orientationPaginationWrap) dom.orientationPaginationWrap.style.display = 'none';
 
     // Mise à jour de l'URL hash/params de manière transparente
     const url = new URL(window.location.href);
@@ -132,12 +204,20 @@
         if (dom.jobsGridContainer) {
           dom.jobsGridContainer.style.display = 'none';
         }
+
+        if (dom.stickyOrientationToolbar) dom.stickyOrientationToolbar.style.display = 'none';
+        if (dom.btnFloatingScrollTop) dom.btnFloatingScrollTop.classList.remove('is-visible');
+        syncScrollLayout();
         break;
 
       case 'FAMILY_DRILLDOWN':
         AppState.selectedFamilyId = params.familyId || AppState.selectedFamilyId;
         AppState.selectedDomain = params.domain || 'all';
         AppState.selectedSubdomain = params.subdomain || 'all';
+        AppState.jobsDisplayedCount = AppState.jobsPageSize;
+        AppState.localSearchQuery = '';
+        if (dom.localJobsFilterInput) dom.localJobsFilterInput.value = '';
+        if (dom.localJobsFilterClear) dom.localJobsFilterClear.style.display = 'none';
 
         url.searchParams.set('family', AppState.selectedFamilyId);
         if (AppState.selectedDomain !== 'all') {
@@ -161,11 +241,16 @@
           if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'none';
 
           updateFamilyBreadcrumbs(family);
+          updateStickyToolbarInfo(family);
 
           if (dom.familyDrilldownContainer) {
             dom.familyDrilldownContainer.style.display = 'block';
             renderFamilyHeader(family);
             renderSubdomainsBar(family);
+          }
+
+          if (dom.localJobsFilterBar) {
+            dom.localJobsFilterBar.style.display = 'flex';
           }
 
           if (dom.jobsGridContainer) {
@@ -180,7 +265,13 @@
         url.searchParams.delete('subdomain');
         window.history.replaceState({}, '', url.toString());
 
+        AppState.jobsDisplayedCount = AppState.jobsPageSize;
+        AppState.localSearchQuery = '';
+        if (dom.localJobsFilterInput) dom.localJobsFilterInput.value = '';
+        if (dom.localJobsFilterClear) dom.localJobsFilterClear.style.display = 'none';
+
         updateQuickNavButtons(dom.btnViewAllJobs);
+        updateStickyToolbarInfo(null);
 
         if (dom.breadcrumbNav) dom.breadcrumbNav.style.display = 'block';
         if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'block';
@@ -195,6 +286,10 @@
         if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Tous les dossiers métiers';
         if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Parcours l’ensemble des fiches métiers documentées par Le Monde du Travail.';
 
+        if (dom.localJobsFilterBar) {
+          dom.localJobsFilterBar.style.display = 'flex';
+        }
+
         if (dom.jobsGridContainer) {
           dom.jobsGridContainer.style.display = 'grid';
           renderAllJobsGrid();
@@ -203,6 +298,7 @@
 
       case 'INTERESTS':
         updateQuickNavButtons(dom.btnDiscoverInterests);
+        updateStickyToolbarInfo(null);
 
         if (dom.breadcrumbNav) dom.breadcrumbNav.style.display = 'block';
         if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'block';
@@ -228,6 +324,7 @@
 
       case 'SEARCH':
         updateQuickNavButtons(null);
+        updateStickyToolbarInfo(null);
 
         if (dom.breadcrumbNav) dom.breadcrumbNav.style.display = 'block';
         if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'block';
@@ -371,12 +468,37 @@
       card.addEventListener('click', () => {
         const familyId = card.getAttribute('data-family-id');
         setView('FAMILY_DRILLDOWN', { familyId, subdomain: 'all' });
-        window.scrollTo({ top: dom.familyDrilldownContainer ? dom.familyDrilldownContainer.offsetTop - 80 : 200, behavior: 'smooth' });
+        scrollToElement(dom.familyDrilldownContainer, -80);
       });
     });
 
     if (window.initCardSpotlight) window.initCardSpotlight();
     if (window.initScrollReveal) window.initScrollReveal();
+  }
+
+  // =========================================================================
+  // ASSISTANCE AU DÉFILEMENT HORIZONTAL (SOUS-DOMAINES)
+  // =========================================================================
+  function bindHorizontalScrollAssist(track, btnLeft, btnRight) {
+    if (!track) return;
+    if (btnLeft) {
+      btnLeft.addEventListener('click', (e) => {
+        e.stopPropagation();
+        track.scrollBy({ left: -260, behavior: 'smooth' });
+      });
+    }
+    if (btnRight) {
+      btnRight.addEventListener('click', (e) => {
+        e.stopPropagation();
+        track.scrollBy({ left: 260, behavior: 'smooth' });
+      });
+    }
+    track.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && track.scrollWidth > track.clientWidth) {
+        e.preventDefault();
+        track.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
   }
 
   // =========================================================================
@@ -391,7 +513,7 @@
     if (headerTitle) headerTitle.textContent = family.name;
     if (headerDesc) headerDesc.textContent = family.description;
     if (headerIcon) headerIcon.textContent = family.icon;
-    if (headerBadge) headerBadge.textContent = `${family.stats.subdomainsCount} sous-domaines • ${family.stats.jobsEstimate}`;
+    if (headerBadge) headerBadge.textContent = `#${family.order} • ${family.stats.jobsEstimate}`;
   }
 
   function renderSubdomainsBar(family) {
@@ -440,21 +562,33 @@
             `).join('')}
           </div>
 
-          <!-- Ligne 2 : Sous-domaines et spécialisations -->
-          <div class="subdomains-scroll-track" style="padding-top:0.25rem;">
-            <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === 'all' ? 'active' : ''}" data-subdomain="all">
-              <span>🌟</span>
-              <span>${activeDomObj ? `Tous les métiers de ce pôle (${escapeHtml(activeDomObj.name)})` : 'Tous les sous-domaines'}</span>
-            </button>
-            ${subdomainsList.map(sub => `
-              <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === sub ? 'active' : ''}" data-subdomain="${escapeHtml(sub)}">
-                <span>📁</span>
-                <span>${escapeHtml(sub)}</span>
-              </button>
-            `).join('')}
+          <!-- Ligne 2 : Sous-domaines et spécialisations avec chevrons -->
+          <div class="subdomains-bar-wrapper">
+            <button type="button" class="scroll-chevron-btn chevron-left" id="btnScrollDigitalLeft" aria-label="Défiler vers la gauche">&larr;</button>
+            <div class="subdomains-bar-track" id="trackDigitalSubdomains" data-lenis-prevent="true">
+              <div class="subdomains-scroll-track" style="padding-top:0.25rem;">
+                <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === 'all' ? 'active' : ''}" data-subdomain="all">
+                  <span>🌟</span>
+                  <span>${activeDomObj ? `Tous les métiers de ce pôle (${escapeHtml(activeDomObj.name)})` : 'Tous les sous-domaines'}</span>
+                </button>
+                ${subdomainsList.map(sub => `
+                  <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === sub ? 'active' : ''}" data-subdomain="${escapeHtml(sub)}">
+                    <span>📁</span>
+                    <span>${escapeHtml(sub)}</span>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+            <button type="button" class="scroll-chevron-btn chevron-right" id="btnScrollDigitalRight" aria-label="Défiler vers la droite">&rarr;</button>
           </div>
         </div>
       `;
+
+      bindHorizontalScrollAssist(
+        document.getElementById('trackDigitalSubdomains'),
+        document.getElementById('btnScrollDigitalLeft'),
+        document.getElementById('btnScrollDigitalRight')
+      );
 
       // Clics sur les boutons de pôles / domaines
       dom.subdomainsBarContainer.querySelectorAll('.domain-pill').forEach(btn => {
@@ -474,6 +608,7 @@
 
           renderSubdomainsBar(family);
           updateFamilyBreadcrumbs(family);
+          updateStickyToolbarInfo(family);
           renderJobsForFamily(family.id, 'all', chosenDomain);
         });
       });
@@ -491,6 +626,7 @@
 
           renderSubdomainsBar(family);
           updateFamilyBreadcrumbs(family);
+          updateStickyToolbarInfo(family);
           renderJobsForFamily(family.id, 'all', 'all');
         });
       }
@@ -522,19 +658,31 @@
     const subdomains = family.subdomains || [];
 
     dom.subdomainsBarContainer.innerHTML = `
-      <div class="subdomains-scroll-track">
-        <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === 'all' ? 'active' : ''}" data-subdomain="all">
-          <span>🌟</span>
-          <span>Tous les sous-domaines</span>
-        </button>
-        ${subdomains.map(sub => `
-          <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === sub ? 'active' : ''}" data-subdomain="${escapeHtml(sub)}">
-            <span>📁</span>
-            <span>${escapeHtml(sub)}</span>
-          </button>
-        `).join('')}
+      <div class="subdomains-bar-wrapper">
+        <button type="button" class="scroll-chevron-btn chevron-left" id="btnScrollOtherLeft" aria-label="Défiler vers la gauche">&larr;</button>
+        <div class="subdomains-bar-track" id="trackOtherSubdomains" data-lenis-prevent="true">
+          <div class="subdomains-scroll-track">
+            <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === 'all' ? 'active' : ''}" data-subdomain="all">
+              <span>🌟</span>
+              <span>Tous les sous-domaines</span>
+            </button>
+            ${subdomains.map(sub => `
+              <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === sub ? 'active' : ''}" data-subdomain="${escapeHtml(sub)}">
+                <span>📁</span>
+                <span>${escapeHtml(sub)}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+        <button type="button" class="scroll-chevron-btn chevron-right" id="btnScrollOtherRight" aria-label="Défiler vers la droite">&rarr;</button>
       </div>
     `;
+
+    bindHorizontalScrollAssist(
+      document.getElementById('trackOtherSubdomains'),
+      document.getElementById('btnScrollOtherLeft'),
+      document.getElementById('btnScrollOtherRight')
+    );
 
     dom.subdomainsBarContainer.querySelectorAll('.subdomain-pill').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -548,7 +696,7 @@
   }
 
   // =========================================================================
-  // COMPOSANT : CARTES MÉTIERS MODERNISÉES (NIVEAU 3)
+  // COMPOSANT : CARTES MÉTIERS MODERNISÉES & PROGRESSIVES (NIVEAU 3)
   // =========================================================================
   async function renderJobsForFamily(familyId, subdomain, domain = null) {
     if (!dom.jobsGridContainer) return;
@@ -580,10 +728,13 @@
           if (family) {
             renderSubdomainsBar(family);
             updateFamilyBreadcrumbs(family);
+            updateStickyToolbarInfo(family);
           }
           renderJobsForFamily(familyId, 'all', 'all');
         });
       }
+      if (dom.orientationPaginationWrap) dom.orientationPaginationWrap.style.display = 'none';
+      syncScrollLayout();
       return;
     }
 
@@ -599,19 +750,80 @@
 
   function renderJobCardsList(jobs) {
     if (!dom.jobsGridContainer) return;
+    AppState.currentFilteredJobsList = jobs || [];
 
-    dom.jobsGridContainer.innerHTML = jobs.map((job, idx) => {
+    // 1. Filtrage local en temps réel si une recherche locale est active
+    let listToDisplay = AppState.currentFilteredJobsList;
+    if (AppState.localSearchQuery && AppState.localSearchQuery.trim()) {
+      const q = AppState.localSearchQuery.trim().toLowerCase();
+      listToDisplay = listToDisplay.filter(job => {
+        if (job.title && job.title.toLowerCase().includes(q)) return true;
+        if (job.subdomain && job.subdomain.toLowerCase().includes(q)) return true;
+        if (job.domain && job.domain.toLowerCase().includes(q)) return true;
+        if (job.shortDescription && job.shortDescription.toLowerCase().includes(q)) return true;
+        if (job.simpleDefinition && job.simpleDefinition.toLowerCase().includes(q)) return true;
+        if (job.skills) {
+          if (Array.isArray(job.skills.technical) && job.skills.technical.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.skills.tools) && job.skills.tools.some(s => s.toLowerCase().includes(q))) return true;
+        }
+        return false;
+      });
+    }
+
+    const totalCount = listToDisplay.length;
+
+    // Mise à jour des compteurs
+    if (dom.localJobsFilterCount) {
+      dom.localJobsFilterCount.textContent = `${totalCount} métier${totalCount > 1 ? 's' : ''}`;
+    }
+    if (dom.stickyCountBadge) {
+      dom.stickyCountBadge.textContent = `${totalCount} métier${totalCount > 1 ? 's' : ''}`;
+    }
+
+    // Cas zéro résultat
+    if (totalCount === 0) {
+      dom.jobsGridContainer.innerHTML = `
+        <div class="empty-state-card" style="grid-column:1/-1;">
+          <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem;">🔍</span>
+          <h4 style="font-size:1.15rem;color:#0f172a;margin-bottom:0.5rem;">Aucun métier ne correspond à « ${escapeHtml(AppState.localSearchQuery)} »</h4>
+          <p style="color:#64748b;max-width:550px;margin:0 auto 1.25rem auto;font-size:0.92rem;line-height:1.6;">
+            Essaie d'autres termes clés (ex : Python, IA, Dev, Cloud, UX, Chef de projet) ou réinitialise ce filtre.
+          </p>
+          <button type="button" class="btn btn-outline-dark btn-sm" id="btnResetLocalFilter" style="background:#ffffff;color:#0284c7;border:1.5px solid #0284c7;font-weight:650;padding:0.6rem 1.25rem;border-radius:8px;cursor:pointer;">
+            Réinitialiser le filtre
+          </button>
+        </div>
+      `;
+      const btnReset = document.getElementById('btnResetLocalFilter');
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          AppState.localSearchQuery = '';
+          if (dom.localJobsFilterInput) dom.localJobsFilterInput.value = '';
+          if (dom.localJobsFilterClear) dom.localJobsFilterClear.style.display = 'none';
+          renderJobCardsList(AppState.currentFilteredJobsList);
+        });
+      }
+      if (dom.orientationPaginationWrap) dom.orientationPaginationWrap.style.display = 'none';
+      syncScrollLayout();
+      return;
+    }
+
+    // 2. Découpage progressif (Pagination)
+    const pageSize = AppState.jobsPageSize || 18;
+    const displayedCount = Math.min(totalCount, AppState.jobsDisplayedCount || pageSize);
+    const visibleJobs = listToDisplay.slice(0, displayedCount);
+
+    dom.jobsGridContainer.innerHTML = visibleJobs.map((job, idx) => {
       const img = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80');
       const techSkills = job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.slice(0, 3) : [];
       const totalSkillsCount = (job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.length : 0);
       const isEmerging = Boolean(job.isEmerging);
       const isESD = Boolean(job.sourceESD);
-      const domainName = job.domainName || '';
 
       return `
         <article class="card job-card-modern stagger-item" data-job-slug="${escapeHtml(job.slug || job.id)}" style="--stagger-idx: ${idx % 8};">
           <div class="job-card-media-wrap">
-            <img src="${escapeHtml(img)}" alt="${escapeHtml(job.title)}" loading="lazy">
+            <img src="${escapeHtml(img)}" alt="${escapeHtml(job.title)}" loading="lazy" width="600" height="370">
             <div class="job-card-overlay"></div>
             <div class="job-card-pill-tag">
               <span>${escapeHtml(job.icon || '💼')}</span>
@@ -648,6 +860,75 @@
       `;
     }).join('');
 
+    // 3. Rendu de la barre de pagination
+    if (dom.orientationPaginationWrap) {
+      if (totalCount > displayedCount) {
+        dom.orientationPaginationWrap.style.display = 'flex';
+        const nextBatch = Math.min(pageSize, totalCount - displayedCount);
+        const pct = Math.round((displayedCount / totalCount) * 100);
+
+        dom.orientationPaginationWrap.innerHTML = `
+          <div class="pagination-stats-row">
+            <span class="pagination-counter-text">
+              Affichage de <strong>${displayedCount}</strong> sur <strong>${totalCount}</strong> fiches métiers
+            </span>
+            <div class="pagination-progress-track" aria-hidden="true">
+              <div class="pagination-progress-fill" style="width: ${pct}%;"></div>
+            </div>
+          </div>
+          <div class="pagination-actions-row">
+            <button type="button" class="btn-load-more-jobs" id="btnLoadMoreJobs">
+              <span>📄</span>
+              <span>Afficher plus de métiers (+${nextBatch})</span>
+            </button>
+            <button type="button" class="btn-show-all-jobs" id="btnShowAllJobs">
+              <span>🌟 Tout afficher (${totalCount})</span>
+            </button>
+          </div>
+        `;
+
+        const btnMore = document.getElementById('btnLoadMoreJobs');
+        if (btnMore) {
+          btnMore.addEventListener('click', () => {
+            AppState.jobsDisplayedCount += pageSize;
+            renderJobCardsList(AppState.currentFilteredJobsList);
+          });
+        }
+
+        const btnAll = document.getElementById('btnShowAllJobs');
+        if (btnAll) {
+          btnAll.addEventListener('click', () => {
+            AppState.jobsDisplayedCount = totalCount;
+            renderJobCardsList(AppState.currentFilteredJobsList);
+          });
+        }
+      } else if (totalCount > pageSize) {
+        dom.orientationPaginationWrap.style.display = 'flex';
+        dom.orientationPaginationWrap.innerHTML = `
+          <div class="pagination-complete-notice">
+            <span>✅</span>
+            <span>L'ensemble des ${totalCount} fiches métiers sont affichées</span>
+          </div>
+          <button type="button" class="btn-show-all-jobs" id="btnScrollTopPagination">
+            <span>&uarr;</span>
+            <span>Remonter en haut de la liste</span>
+          </button>
+        `;
+
+        const btnTop = document.getElementById('btnScrollTopPagination');
+        if (btnTop) {
+          btnTop.addEventListener('click', () => {
+            const target = dom.familyDrilldownContainer && dom.familyDrilldownContainer.style.display !== 'none'
+              ? dom.familyDrilldownContainer
+              : (dom.localJobsFilterBar || dom.jobsGridContainer || 200);
+            scrollToElement(target, -90);
+          });
+        }
+      } else {
+        dom.orientationPaginationWrap.style.display = 'none';
+      }
+    }
+
     // Clics sur les cartes de métiers
     dom.jobsGridContainer.querySelectorAll('.job-card-modern').forEach(card => {
       card.addEventListener('click', async () => {
@@ -657,6 +938,7 @@
       });
     });
 
+    syncScrollLayout();
     if (window.initCardSpotlight) window.initCardSpotlight();
     if (window.initScrollReveal) window.initScrollReveal();
   }
@@ -1779,18 +2061,163 @@
   }
 
   // =========================================================================
+  // COMPOSANTS DE NAVIGATION AMÉLIORÉE (STICKY TOOLBAR & FILTRE LOCAL)
+  // =========================================================================
+  function initLocalJobsFilter() {
+    if (!dom.localJobsFilterInput) return;
+
+    dom.localJobsFilterInput.addEventListener('input', (e) => {
+      const q = (e.target.value || '').trim();
+      AppState.localSearchQuery = q;
+      AppState.jobsDisplayedCount = AppState.jobsPageSize;
+      if (dom.localJobsFilterClear) {
+        dom.localJobsFilterClear.style.display = q ? 'block' : 'none';
+      }
+      renderJobCardsList(AppState.currentFilteredJobsList);
+    });
+
+    if (dom.localJobsFilterClear) {
+      dom.localJobsFilterClear.addEventListener('click', () => {
+        dom.localJobsFilterInput.value = '';
+        AppState.localSearchQuery = '';
+        dom.localJobsFilterClear.style.display = 'none';
+        AppState.jobsDisplayedCount = AppState.jobsPageSize;
+        renderJobCardsList(AppState.currentFilteredJobsList);
+      });
+    }
+  }
+
+  function updateStickyToolbarInfo(family) {
+    if (!dom.stickyOrientationToolbar) return;
+
+    if (family) {
+      if (dom.stickyFamilyIcon) dom.stickyFamilyIcon.textContent = family.icon || '💼';
+      if (dom.stickyFamilyName) dom.stickyFamilyName.textContent = family.name || 'Famille';
+
+      if (family.id === 'numerique-ia') {
+        const digitalDomains = (typeof window.OrientationData.getDigitalDomains === 'function')
+          ? window.OrientationData.getDigitalDomains()
+          : [];
+
+        if (dom.stickyDomainDropdownWrap) dom.stickyDomainDropdownWrap.style.display = 'block';
+        if (dom.stickyDomainSelect) {
+          dom.stickyDomainSelect.innerHTML = `
+            <option value="all" ${AppState.selectedDomain === 'all' ? 'selected' : ''}>🌟 Tous les pôles (13)</option>
+            ${digitalDomains.map(d => `<option value="${escapeHtml(d.id)}" ${AppState.selectedDomain === d.id ? 'selected' : ''}>${escapeHtml(d.icon)} ${escapeHtml(d.name)}</option>`).join('')}
+          `;
+        }
+
+        const activeDomObj = (AppState.selectedDomain !== 'all')
+          ? digitalDomains.find(d => d.id === AppState.selectedDomain)
+          : null;
+
+        if (activeDomObj) {
+          if (dom.stickySep) dom.stickySep.style.display = 'inline';
+          if (dom.stickyPôleName) {
+            dom.stickyPôleName.style.display = 'inline';
+            dom.stickyPôleName.textContent = `${activeDomObj.icon} ${activeDomObj.name}`;
+          }
+        } else {
+          if (dom.stickySep) dom.stickySep.style.display = 'none';
+          if (dom.stickyPôleName) dom.stickyPôleName.style.display = 'none';
+        }
+      } else {
+        if (dom.stickyDomainDropdownWrap) dom.stickyDomainDropdownWrap.style.display = 'none';
+        if (dom.stickySep) dom.stickySep.style.display = 'none';
+        if (dom.stickyPôleName) dom.stickyPôleName.style.display = 'none';
+      }
+    } else {
+      if (dom.stickyFamilyIcon) dom.stickyFamilyIcon.textContent = '📁';
+      if (dom.stickyFamilyName) dom.stickyFamilyName.textContent = 'Tous les dossiers métiers';
+      if (dom.stickyDomainDropdownWrap) dom.stickyDomainDropdownWrap.style.display = 'none';
+      if (dom.stickySep) dom.stickySep.style.display = 'none';
+      if (dom.stickyPôleName) dom.stickyPôleName.style.display = 'none';
+    }
+  }
+
+  function initStickyToolbar() {
+    if (dom.stickyBtnBackFamilies) {
+      dom.stickyBtnBackFamilies.addEventListener('click', () => {
+        setView('FAMILIES');
+        scrollToElement(dom.familiesGridContainer || dom.explorerSection || 200, -80);
+      });
+    }
+
+    if (dom.stickyBtnScrollTop) {
+      dom.stickyBtnScrollTop.addEventListener('click', () => {
+        const target = (dom.familyDrilldownContainer && dom.familyDrilldownContainer.style.display !== 'none')
+          ? dom.familyDrilldownContainer
+          : (dom.localJobsFilterBar || dom.jobsGridContainer || 200);
+        scrollToElement(target, -90);
+      });
+    }
+
+    if (dom.btnFloatingScrollTop) {
+      dom.btnFloatingScrollTop.addEventListener('click', () => {
+        scrollToElement(0, 0);
+      });
+    }
+
+    if (dom.stickyDomainSelect) {
+      dom.stickyDomainSelect.addEventListener('change', (e) => {
+        const chosenDomain = e.target.value;
+        AppState.selectedDomain = chosenDomain;
+        AppState.selectedSubdomain = 'all';
+
+        const url = new URL(window.location.href);
+        if (chosenDomain !== 'all') {
+          url.searchParams.set('domain', chosenDomain);
+        } else {
+          url.searchParams.delete('domain');
+        }
+        url.searchParams.delete('subdomain');
+        window.history.replaceState({}, '', url.toString());
+
+        const family = window.OrientationData.getFamily(AppState.selectedFamilyId);
+        if (family) {
+          renderSubdomainsBar(family);
+          updateFamilyBreadcrumbs(family);
+          updateStickyToolbarInfo(family);
+          renderJobsForFamily(family.id, 'all', chosenDomain);
+          scrollToElement(dom.jobsGridContainer, -140);
+        }
+      });
+    }
+
+    const checkStickyScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const isEligible = ['FAMILY_DRILLDOWN', 'ALL_JOBS', 'SEARCH'].includes(AppState.currentView);
+
+      if (isEligible && scrollY > 480) {
+        if (dom.stickyOrientationToolbar) dom.stickyOrientationToolbar.style.display = 'block';
+        if (dom.btnFloatingScrollTop) dom.btnFloatingScrollTop.classList.add('is-visible');
+      } else {
+        if (dom.stickyOrientationToolbar) dom.stickyOrientationToolbar.style.display = 'none';
+        if (dom.btnFloatingScrollTop) dom.btnFloatingScrollTop.classList.remove('is-visible');
+      }
+    };
+
+    window.addEventListener('scroll', checkStickyScroll, { passive: true });
+    if (window.lenis && typeof window.lenis.on === 'function') {
+      window.lenis.on('scroll', checkStickyScroll);
+    }
+  }
+
+  // =========================================================================
   // INITIALISATION GLOBALE DU MODULE
   // =========================================================================
   document.addEventListener('DOMContentLoaded', async () => {
     initDomRefs();
     initUniversalSearch();
     initAffinityExplorer();
+    initLocalJobsFilter();
+    initStickyToolbar();
 
     // Bouton de navigation vers les 21 familles
     if (dom.btnExploreFamilies) {
       dom.btnExploreFamilies.addEventListener('click', () => {
         setView('FAMILIES');
-        if (dom.familiesGridContainer) dom.familiesGridContainer.scrollIntoView({ behavior: 'smooth' });
+        scrollToElement(dom.familiesGridContainer || dom.explorerSection || 200, -80);
       });
     }
 
@@ -1798,6 +2225,7 @@
     if (dom.btnDiscoverInterests) {
       dom.btnDiscoverInterests.addEventListener('click', () => {
         setView('INTERESTS');
+        scrollToElement(dom.interestExplorerBox || dom.explorerSection || 200, -80);
       });
     }
 
@@ -1805,6 +2233,7 @@
     if (dom.btnViewAllJobs) {
       dom.btnViewAllJobs.addEventListener('click', () => {
         setView('ALL_JOBS');
+        scrollToElement(dom.localJobsFilterBar || dom.jobsGridContainer || 200, -80);
       });
     }
 
@@ -1812,6 +2241,7 @@
     if (dom.btnBackToFamilies) {
       dom.btnBackToFamilies.addEventListener('click', () => {
         setView('FAMILIES');
+        scrollToElement(dom.familiesGridContainer || dom.explorerSection || 200, -80);
       });
     }
 
@@ -1847,7 +2277,9 @@
   // Exposer les méthodes d'accès public
   window.OrientationUI = {
     setView,
-    openJobModal
+    openJobModal,
+    scrollToElement,
+    syncScrollLayout
   };
 
 })();

@@ -664,10 +664,13 @@
   }
 
   // ===== Card Spotlight & Cursor Tracking (Desktop) =====
+  let cardSpotlightInitialized = false;
   function initCardSpotlight() {
+    if (cardSpotlightInitialized) return;
     if (!window.matchMedia || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
       return;
     }
+    cardSpotlightInitialized = true;
 
     let ticking = false;
     document.addEventListener('mousemove', (e) => {
@@ -677,7 +680,8 @@
         const card = e.target.closest(`
           .card, .formation-card, .article-card, .job-card,
           .impact-item, .feature-card, .home-topic-card,
-          .testimonial-card, .family-card, .objective-dna-card
+          .testimonial-card, .family-card, .objective-dna-card,
+          .job-card-modern
         `);
         if (card) {
           const rect = card.getBoundingClientRect();
