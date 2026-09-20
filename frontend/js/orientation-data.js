@@ -72,13 +72,17 @@
       icon: '🏦',
       color: '#10b981', // Émeraude
       image: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&auto=format&fit=crop&q=80',
-      description: 'Gérer les capitaux, structurer les investissements, piloter les risques et concevoir les solutions de paiement et d’inclusion financière.',
-      stats: { jobsEstimate: '50+ métiers', subdomainsCount: 13 },
-      representativeJobs: ['Analyste Financier', 'Expert-Comptable', 'Chargé d’Affaires Entreprises', 'FinTech Product Manager', 'Contrôleur de Gestion'],
+      description: 'Financer l’économie réelle, gérer les capitaux, couvrir les risques des particuliers et des entreprises, et inventer la finance de demain grâce à la FinTech et aux technologies d’analyse prédictive.',
+      stats: { jobsEstimate: '60+ métiers', subdomainsCount: 22 },
+      representativeJobs: ['Actuaire', 'Trader', 'Analyste Financier', 'Directeur d’Agence Bancaire', 'Risk Manager', 'Gestionnaire de Patrimoine', 'Expert d’Assurances', 'Spécialiste Crypto-actifs'],
       subdomains: [
-        'Banque', 'Finance d’entreprise', 'Comptabilité', 'Audit', 'Assurance',
-        'Risque', 'Trésorerie', 'Investissement', 'FinTech', 'Paiements',
-        'Crédit', 'Conformité', 'Finance quantitative'
+        'Banque & Services Financiers', 'Finance de Marché', 'Finance d’Entreprise', 'Comptabilité & Audit',
+        'Assurance & Gestion des Risques', 'Actuariat', 'Patrimoine & Investissement', 'Risque, Conformité & Contrôle',
+        'Opérations & Back-Office', 'Finance Numérique & FinTech',
+        'Banque de détail', 'Banque d’entreprise', 'Trading & Marchés', 'Asset Management',
+        'Credit Management', 'Audit & Commissariat aux comptes', 'Souscription d’assurances',
+        'Courtage & Agents généraux', 'Actuariat Big Data', 'Gestion de patrimoine',
+        'Compliance & LCB-FT', 'Blockchain & Crypto-actifs'
       ]
     },
     {
@@ -369,7 +373,7 @@
       icon: '🧩',
       label: 'Résoudre des énigmes & des problèmes logiques',
       description: 'Tu aimes décortiquer les puzzles, analyser pourquoi quelque chose ne fonctionne pas et concevoir une solution astucieuse.',
-      familyIds: ['numerique-ia', 'cybersecurite-reseaux', 'data-decision', 'industrie-mecanique', 'sciences-biotech']
+      familyIds: ['numerique-ia', 'cybersecurite-reseaux', 'data-decision', 'finance-fintech', 'industrie-mecanique', 'sciences-biotech']
     },
     {
       id: 'creer-designer',
@@ -390,7 +394,7 @@
       icon: '⚡',
       label: 'Manipuler la technologie, coder & automatiser',
       description: 'Tu es fasciné par les ordinateurs, les applications mobiles, l’IA, les robots et les objets connectés.',
-      familyIds: ['numerique-ia', 'cybersecurite-reseaux', 'energie-renouvelable', 'metiers-emergents']
+      familyIds: ['numerique-ia', 'cybersecurite-reseaux', 'finance-fintech', 'energie-renouvelable', 'metiers-emergents']
     },
     {
       id: 'soigner-aider',
@@ -425,7 +429,7 @@
       icon: '🛡️',
       label: 'Protéger, faire respecter les règles & défendre',
       description: 'Tu as un sens aigu de la justice, de l’éthique, de la protection des biens, des données ou des citoyens.',
-      familyIds: ['cybersecurite-reseaux', 'droit-management', 'metiers-emergents']
+      familyIds: ['cybersecurite-reseaux', 'finance-fintech', 'droit-management', 'metiers-emergents']
     },
     {
       id: 'explorer-decouvrir',
@@ -1426,6 +1430,37 @@
         });
       }
 
+      // 1.b Intégration du catalogue Finance, Banque & Assurance enrichi (OrientationFinanceData)
+      const financeData = (typeof window !== 'undefined' && window.OrientationFinanceData)
+        ? window.OrientationFinanceData
+        : (typeof global !== 'undefined' && global.OrientationFinanceData ? global.OrientationFinanceData : null);
+
+      if (financeData && typeof financeData.getJobs === 'function') {
+        const financeJobs = financeData.getJobs();
+        financeJobs.forEach(fJob => {
+          const existingIdx = combined.findIndex(j => j.slug === fJob.slug || j.id === fJob.id);
+          if (existingIdx >= 0) {
+            // Enrichissement préservant les données existantes (ex: contexte local Sénégal d'analyste-financier)
+            combined[existingIdx] = Object.assign({}, fJob, combined[existingIdx], {
+              aliases: [...new Set([...(fJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              specializations: [...new Set([...(fJob.specializations || []), ...(combined[existingIdx].specializations || [])])],
+              domain: fJob.domain || combined[existingIdx].domain,
+              domainId: fJob.domainId || combined[existingIdx].domainId,
+              gettingStarted: fJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: fJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || fJob.africaContext,
+              salaryRanges: fJob.salaryRanges || combined[existingIdx].salaryRanges,
+              salary: combined[existingIdx].salary || fJob.salary,
+              saviezVous: combined[existingIdx].saviezVous || fJob.saviezVous || null,
+              sourceEtudiant: fJob.sourceEtudiant,
+              isEmerging: fJob.isEmerging !== undefined ? fJob.isEmerging : combined[existingIdx].isEmerging
+            });
+          } else {
+            combined.push(fJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -1496,8 +1531,13 @@
     getJobsByFamily: async function (familyId) {
       const all = await this.getAllJobs();
       if (familyId === 'numerique-ia') {
-        // Pour la grande famille numérique, inclure l'ensemble de la cartographie numérique
-        return all.filter(j => j.familyId === 'numerique-ia' || (j.domain && j.domain.length > 0));
+        // Pour la grande famille numérique, inclure l'ensemble de la cartographie numérique (104 métiers)
+        const digitalData = (typeof window !== 'undefined' && window.OrientationDigitalData)
+          ? window.OrientationDigitalData
+          : (typeof global !== 'undefined' && global.OrientationDigitalData ? global.OrientationDigitalData : null);
+        const digitalDomainNames = (digitalData && digitalData.DOMAINS) ? digitalData.DOMAINS.map(d => d.name) : [];
+
+        return all.filter(j => j.familyId === 'numerique-ia' || j.sourceESD || (j.domain && digitalDomainNames.includes(j.domain)));
       }
       return all.filter(j => j.familyId === familyId);
     },
@@ -1506,21 +1546,25 @@
     getJobsBySubdomain: async function (familyId, subdomain, domain = null) {
       const all = await this.getAllJobs();
       return all.filter(j => {
-        const matchesFamily = (familyId === 'numerique-ia')
-          ? (j.familyId === 'numerique-ia' || (j.domain && j.domain.length > 0))
-          : (j.familyId === familyId);
+        let matchesFamily = false;
+        if (familyId === 'numerique-ia') {
+          const digitalData = (typeof window !== 'undefined' && window.OrientationDigitalData)
+            ? window.OrientationDigitalData
+            : (typeof global !== 'undefined' && global.OrientationDigitalData ? global.OrientationDigitalData : null);
+          const digitalDomainNames = (digitalData && digitalData.DOMAINS) ? digitalData.DOMAINS.map(d => d.name) : [];
+          matchesFamily = j.familyId === 'numerique-ia' || j.sourceESD || (j.domain && digitalDomainNames.includes(j.domain));
+        } else {
+          matchesFamily = (j.familyId === familyId);
+        }
 
         if (!matchesFamily) return false;
 
-        // Filtrage optionnel par domaine numérique (par ID ou par Nom)
+        // Filtrage optionnel par domaine (par ID ou par Nom)
         if (domain && domain !== 'all') {
-          const digitalData = (typeof window !== 'undefined' && window.OrientationDigitalData)
-            ? window.OrientationDigitalData
-            : (typeof global !== 'undefined' && global.OrientationDigitalData
-              ? global.OrientationDigitalData
-              : (typeof OrientationDigitalData !== 'undefined' ? OrientationDigitalData : null));
-          const digitalDomains = (digitalData && digitalData.DOMAINS) ? digitalData.DOMAINS : [];
-          const domObj = digitalDomains.find(d => d.id.toLowerCase() === domain.toLowerCase() || d.name.toLowerCase() === domain.toLowerCase()) || null;
+          const familyDomains = (typeof this.getFamilyDomains === 'function')
+            ? this.getFamilyDomains(familyId)
+            : ((typeof this.getDigitalDomains === 'function') ? this.getDigitalDomains() : []);
+          const domObj = familyDomains.find(d => (d.id && d.id.toLowerCase() === domain.toLowerCase()) || (d.name && d.name.toLowerCase() === domain.toLowerCase())) || null;
           const targetName = domObj ? domObj.name.toLowerCase() : domain.toLowerCase();
           const targetId = domObj ? domObj.id.toLowerCase() : domain.toLowerCase();
 
@@ -1670,6 +1714,28 @@
           : (typeof OrientationDigitalData !== 'undefined' ? OrientationDigitalData : null));
       if (digitalData && digitalData.DOMAINS) {
         return digitalData.DOMAINS;
+      }
+      return [];
+    },
+
+    getFinanceDomains: function () {
+      const financeData = (typeof window !== 'undefined' && window.OrientationFinanceData)
+        ? window.OrientationFinanceData
+        : (typeof global !== 'undefined' && global.OrientationFinanceData
+          ? global.OrientationFinanceData
+          : (typeof OrientationFinanceData !== 'undefined' ? OrientationFinanceData : null));
+      if (financeData && financeData.DOMAINS) {
+        return financeData.DOMAINS;
+      }
+      return [];
+    },
+
+    getFamilyDomains: function (familyId) {
+      if (familyId === 'numerique-ia') {
+        return this.getDigitalDomains();
+      }
+      if (familyId === 'finance-fintech') {
+        return this.getFinanceDomains();
       }
       return [];
     },

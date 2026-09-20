@@ -377,9 +377,11 @@
 
   function updateFamilyBreadcrumbs(family) {
     if (!dom.breadcrumbList) return;
-    const digitalDomains = (typeof window.OrientationData.getDigitalDomains === 'function') ? window.OrientationData.getDigitalDomains() : [];
-    const activeDomObj = (family.id === 'numerique-ia' && AppState.selectedDomain && AppState.selectedDomain !== 'all') 
-      ? digitalDomains.find(d => d.id === AppState.selectedDomain) 
+    const familyDomains = (typeof window.OrientationData.getFamilyDomains === 'function')
+      ? window.OrientationData.getFamilyDomains(family.id)
+      : (family.id === 'numerique-ia' && typeof window.OrientationData.getDigitalDomains === 'function' ? window.OrientationData.getDigitalDomains() : []);
+    const activeDomObj = (familyDomains && familyDomains.length > 0 && AppState.selectedDomain && AppState.selectedDomain !== 'all') 
+      ? familyDomains.find(d => d.id === AppState.selectedDomain) 
       : null;
 
     if (activeDomObj) {
@@ -519,42 +521,58 @@
   function renderSubdomainsBar(family) {
     if (!dom.subdomainsBarContainer) return;
 
-    // Traitement spécifique à haute valeur ajoutée pour le Pôle Numérique (13 pôles d'excellence)
-    if (family.id === 'numerique-ia') {
-      const digitalDomains = (typeof window.OrientationData.getDigitalDomains === 'function') 
-        ? window.OrientationData.getDigitalDomains() 
-        : [];
-      
+    // Cartographie d'excellence avec double niveau (Domaines & Sous-domaines) pour les familles équipées
+    const familyDomains = (typeof window.OrientationData.getFamilyDomains === 'function') 
+      ? window.OrientationData.getFamilyDomains(family.id) 
+      : ((family.id === 'numerique-ia' && typeof window.OrientationData.getDigitalDomains === 'function') ? window.OrientationData.getDigitalDomains() : []);
+
+    if (familyDomains && familyDomains.length > 0) {
       const activeDomObj = (AppState.selectedDomain !== 'all')
-        ? digitalDomains.find(d => d.id === AppState.selectedDomain)
+        ? familyDomains.find(d => d.id === AppState.selectedDomain)
         : null;
 
       const subdomainsList = activeDomObj
         ? (activeDomObj.subdomains || [])
         : (family.subdomains || []);
 
+      const cartographyTitle = (family.id === 'numerique-ia')
+        ? "Cartographie d'Excellence du Numérique"
+        : (family.id === 'finance-fintech' ? "Cartographie d'Excellence Finance, Banque & Assurance" : `Cartographie d'Excellence — ${family.name}`);
+
+      const cartographyBadge = (family.id === 'numerique-ia')
+        ? "13 Pôles • 100+ Métiers"
+        : (family.id === 'finance-fintech' ? "10 Domaines • 27+ Fiches Métiers" : `${familyDomains.length} Domaines d'expertise`);
+
+      const allDomainsLabel = (family.id === 'numerique-ia')
+        ? `Tous les pôles (${familyDomains.length})`
+        : `Tous les domaines (${familyDomains.length})`;
+
+      const resetDomainsLabel = (family.id === 'numerique-ia')
+        ? `← Revenir à tous les pôles`
+        : `← Revenir à tous les domaines`;
+
       dom.subdomainsBarContainer.innerHTML = `
         <div class="digital-domains-wrapper">
           <div class="digital-domains-label" style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.75rem;flex-wrap:wrap;">
             <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.92rem;font-weight:700;color:#0f172a;">
-              <span>🌐</span>
-              <span>Cartographie d'Excellence du Numérique</span>
-              <span style="background:#e0f2fe;color:#0369a1;padding:0.2rem 0.6rem;border-radius:9999px;font-size:0.78rem;font-weight:700;">13 Pôles • 100+ Métiers</span>
+              <span>${escapeHtml(family.icon || '🌐')}</span>
+              <span>${escapeHtml(cartographyTitle)}</span>
+              <span style="background:#e0f2fe;color:#0369a1;padding:0.2rem 0.6rem;border-radius:9999px;font-size:0.78rem;font-weight:700;">${escapeHtml(cartographyBadge)}</span>
             </div>
             ${AppState.selectedDomain !== 'all' ? `
               <button type="button" class="btn-reset-domain" id="btnResetDigitalDomain" style="background:none;border:none;color:#0284c7;font-size:0.84rem;font-weight:650;cursor:pointer;display:inline-flex;align-items:center;gap:0.3rem;">
-                <span>&larr; Revenir à tous les pôles</span>
+                <span>${escapeHtml(resetDomainsLabel)}</span>
               </button>
             ` : ''}
           </div>
 
-          <!-- Ligne 1 : Les 13 Pôles du Numérique (Domaines) -->
+          <!-- Ligne 1 : Les Domaines d'excellence de la famille -->
           <div class="domain-pills-bar" style="margin:0 0 1rem 0;">
             <button type="button" class="domain-pill ${AppState.selectedDomain === 'all' ? 'active' : ''}" data-domain="all">
               <span>🌟</span>
-              <span>Tous les pôles (13)</span>
+              <span>${escapeHtml(allDomainsLabel)}</span>
             </button>
-            ${digitalDomains.map(d => `
+            ${familyDomains.map(d => `
               <button type="button" class="domain-pill ${AppState.selectedDomain === d.id ? 'active' : ''}" data-domain="${escapeHtml(d.id)}">
                 <span>${escapeHtml(d.icon)}</span>
                 <span>${escapeHtml(d.name)}</span>
@@ -569,7 +587,7 @@
               <div class="subdomains-scroll-track" style="padding-top:0.25rem;">
                 <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === 'all' ? 'active' : ''}" data-subdomain="all">
                   <span>🌟</span>
-                  <span>${activeDomObj ? `Tous les métiers de ce pôle (${escapeHtml(activeDomObj.name)})` : 'Tous les sous-domaines'}</span>
+                  <span>${activeDomObj ? `Tous les métiers (${escapeHtml(activeDomObj.name)})` : 'Tous les sous-domaines'}</span>
                 </button>
                 ${subdomainsList.map(sub => `
                   <button type="button" class="subdomain-pill ${AppState.selectedSubdomain === sub ? 'active' : ''}" data-subdomain="${escapeHtml(sub)}">
@@ -1674,6 +1692,36 @@
                 </div>
               ` : ''}
 
+              <!-- Grille Multi-Territoriale des Salaires & Rémunérations -->
+              ${job.salaryRanges ? `
+                <div class="salary-ranges-box" style="margin-top:1.25rem;background:#ffffff;border:1.5px solid #e2e8f0;padding:1.25rem;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+                  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+                    <span style="font-size:1.2rem;">💰</span>
+                    <h4 style="color:#0f172a;font-size:0.95rem;margin:0;font-weight:750;">Repères de Rémunération Multi-Territoriaux</h4>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:0.85rem;">
+                    ${job.salaryRanges.france ? `
+                      <div style="background:#f8fafc;border-left:4px solid #3b82f6;padding:0.9rem;border-radius:6px;">
+                        <span style="font-weight:700;font-size:0.84rem;color:#1e40af;display:block;margin-bottom:0.35rem;">🇫🇷 France (Source : ${escapeHtml(job.salaryRanges.france.source || 'L’Étudiant / APEC')})</span>
+                        <div style="font-size:0.82rem;color:#334155;line-height:1.6;">
+                          <div><strong>Débutant / Junior :</strong> ${escapeHtml(job.salaryRanges.france.junior || 'N/C')}</div>
+                          <div><strong>Confirmé / Senior :</strong> ${escapeHtml(job.salaryRanges.france.senior || 'N/C')}</div>
+                        </div>
+                      </div>
+                    ` : ''}
+                    ${job.salaryRanges.senegal ? `
+                      <div style="background:#f0fdf4;border-left:4px solid #10b981;padding:0.9rem;border-radius:6px;">
+                        <span style="font-weight:700;font-size:0.84rem;color:#065f46;display:block;margin-bottom:0.35rem;">🇸🇳 Sénégal / Afrique de l'Ouest (Source : ${escapeHtml(job.salaryRanges.senegal.source || 'Marché UEMOA')})</span>
+                        <div style="font-size:0.82rem;color:#334155;line-height:1.6;">
+                          <div><strong>Débutant / Junior :</strong> ${escapeHtml(job.salaryRanges.senegal.junior || 'Donnée locale à vérifier')}</div>
+                          <div><strong>Confirmé / Senior :</strong> ${escapeHtml(job.salaryRanges.senegal.senior || 'Donnée locale à vérifier')}</div>
+                        </div>
+                      </div>
+                    ` : ''}
+                  </div>
+                </div>
+              ` : ''}
+
               <!-- Atouts & Vigilances -->
               <div class="pros-cons-grid" style="margin-top:1.5rem;">
                 <div class="pros-box">
@@ -2215,21 +2263,25 @@
       if (dom.stickyFamilyIcon) dom.stickyFamilyIcon.textContent = family.icon || '💼';
       if (dom.stickyFamilyName) dom.stickyFamilyName.textContent = family.name || 'Famille';
 
-      if (family.id === 'numerique-ia') {
-        const digitalDomains = (typeof window.OrientationData.getDigitalDomains === 'function')
-          ? window.OrientationData.getDigitalDomains()
-          : [];
+      const familyDomains = (typeof window.OrientationData.getFamilyDomains === 'function')
+        ? window.OrientationData.getFamilyDomains(family.id)
+        : ((family.id === 'numerique-ia' && typeof window.OrientationData.getDigitalDomains === 'function') ? window.OrientationData.getDigitalDomains() : []);
 
+      if (familyDomains && familyDomains.length > 0) {
         if (dom.stickyDomainDropdownWrap) dom.stickyDomainDropdownWrap.style.display = 'block';
         if (dom.stickyDomainSelect) {
+          const allDomainsLabel = (family.id === 'numerique-ia')
+            ? `🌟 Tous les pôles (${familyDomains.length})`
+            : `🌟 Tous les domaines (${familyDomains.length})`;
+
           dom.stickyDomainSelect.innerHTML = `
-            <option value="all" ${AppState.selectedDomain === 'all' ? 'selected' : ''}>🌟 Tous les pôles (13)</option>
-            ${digitalDomains.map(d => `<option value="${escapeHtml(d.id)}" ${AppState.selectedDomain === d.id ? 'selected' : ''}>${escapeHtml(d.icon)} ${escapeHtml(d.name)}</option>`).join('')}
+            <option value="all" ${AppState.selectedDomain === 'all' ? 'selected' : ''}>${escapeHtml(allDomainsLabel)}</option>
+            ${familyDomains.map(d => `<option value="${escapeHtml(d.id)}" ${AppState.selectedDomain === d.id ? 'selected' : ''}>${escapeHtml(d.icon)} ${escapeHtml(d.name)}</option>`).join('')}
           `;
         }
 
         const activeDomObj = (AppState.selectedDomain !== 'all')
-          ? digitalDomains.find(d => d.id === AppState.selectedDomain)
+          ? familyDomains.find(d => d.id === AppState.selectedDomain)
           : null;
 
         if (activeDomObj) {
