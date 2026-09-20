@@ -1,12 +1,13 @@
 /**
- * CATALOGUE DES MÉTIERS DE L'AGRICULTURE, ÉLEVAGE, AGROALIMENTAIRE & RESSOURCES MARINES ENRICHI
+ * CATALOGUE DES MÉTIERS DE L'AGRICULTURE, ÉLEVAGE, AGROALIMENTAIRE, PRODUCTION ANIMALE & RESSOURCES MARINES
  * Le Monde du Travail — 11 Domaines d'Excellence & Référentiel Pédagogique
  * Sources documentaires principales :
+ * - Groupe ESA (École Supérieure des Agricultures d'Angers - Filières Productions Animales, BTS Métiers de l'élevage, Licence Pro PA, URSE)
  * - ÉvoluPêches (Comité sectoriel de main-d'œuvre de la pêche maritime du Québec)
  * - Onisep (Agronomie, Halieutique, Forêt, Agroalimentaire)
  * - Studyrama (Agriculture, Élevage, Viticulture, Machinisme)
- * Contextualisation Afrique de l'Ouest : ISRA, ENSA Thiès, ENFM Dakar, CRODT, IUPA, ANA
- * Total métiers documentés : 45 fiches détaillées haute profondeur
+ * Contextualisation Afrique de l'Ouest : EISMV Dakar, ISFAR Bambey, ISRA LNERV, ENSA Thiès, ENFM Dakar, CRODT, IUPA, ANA
+ * Total métiers documentés : 67 fiches détaillées haute profondeur (dont 25 dédiées aux productions animales et 12 aux métiers maritimes)
  */
 
 (function () {
@@ -45,14 +46,22 @@
     },
     {
         "id": "elevage-productions-animales",
-        "name": "Élevage, Santé & Productions Animales",
+        "name": "Production Animale, Élevage & Filières",
         "icon": "🐄",
-        "description": "Élevage bovin, ovin, caprin et porcin, aviculture moderne, conseil zootechnique, nutrition et reproduction animale.",
+        "description": "Conduite d'élevages (bovins, porcins, ovins, caprins, avicoles), sélection génétique, nutrition animale et provenderie, conseil zootechnique, bien-être animal, bâtiments d'élevage, collecte laitière, centres d'allotement, filières viandes, qualité sanitaire et commerce du bétail.",
         "subdomains": [
-            "Élevage bovin, ovin & caprin",
-            "Aviculture & petits élevages",
-            "Conseil zootechnique & nutrition",
-            "Santé animale & reproduction"
+            "Élevage & conduite des animaux",
+            "Génétique & reproduction animale",
+            "Alimentation animale & agrofourniture",
+            "Santé, bien-être & suivi des animaux",
+            "Recherche & expérimentation animale",
+            "Conseil & accompagnement des élevages",
+            "Bâtiments & infrastructures d'élevage",
+            "Filière lait & collecte",
+            "Filière viande & allotement",
+            "Filières avicole, porcine, ovine & caprine",
+            "Qualité, hygiène, sécurité & environnement (QHSE)",
+            "Achats, approvisionnement & commerce du bétail"
         ]
     },
     {
@@ -162,7 +171,7 @@
 ];
 
   // =========================================================================
-  // 2. LES 45 FICHES MÉTIERS DÉTAILLÉES HAUTE PROFONDEUR
+  // 2. LES 67 FICHES MÉTIERS DÉTAILLÉES HAUTE PROFONDEUR
   // =========================================================================
   const AGRI_JOBS = [
     {
@@ -2283,9 +2292,9 @@
         "image": "https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=800&auto=format&fit=crop&q=80",
         "familyId": "agriculture-agritech",
         "familyName": "Agriculture, Élevage & Agroalimentaire",
-        "domain": "Élevage, Santé & Productions Animales",
+        "domain": "Production Animale, Élevage & Filières",
         "domainId": "elevage-productions-animales",
-        "subdomain": "Élevage bovin, ovin & caprin",
+        "subdomain": "Élevage & conduite des animaux",
         "sourceOnisep": true,
         "sourceStudyrama": true,
         "isEmerging": false,
@@ -2515,9 +2524,9 @@
         "image": "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=800&auto=format&fit=crop&q=80",
         "familyId": "agriculture-agritech",
         "familyName": "Agriculture, Élevage & Agroalimentaire",
-        "domain": "Élevage, Santé & Productions Animales",
+        "domain": "Production Animale, Élevage & Filières",
         "domainId": "elevage-productions-animales",
-        "subdomain": "Conseil zootechnique & nutrition",
+        "subdomain": "Conseil & accompagnement des élevages",
         "sourceOnisep": true,
         "sourceStudyrama": true,
         "isEmerging": false,
@@ -2742,9 +2751,9 @@
         "image": "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&auto=format&fit=crop&q=80",
         "familyId": "agriculture-agritech",
         "familyName": "Agriculture, Élevage & Agroalimentaire",
-        "domain": "Élevage, Santé & Productions Animales",
+        "domain": "Production Animale, Élevage & Filières",
         "domainId": "elevage-productions-animales",
-        "subdomain": "Aviculture & petits élevages",
+        "subdomain": "Filières avicole, porcine, ovine & caprine",
         "sourceOnisep": false,
         "sourceStudyrama": true,
         "isEmerging": false,
@@ -10679,6 +10688,5294 @@
                 "raw": "450 000 - 1 500 000 FCFA / mois (CRODT/ISRA, Universités, IRD)",
                 "range": "450 000 - 1 500 000 FCFA / mois (CRODT/ISRA, Universités, IRD)",
                 "source": "Filières maritimes & halieutiques (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "eleveur",
+        "slug": "eleveur",
+        "title": "Éleveur / Éleveuse — Conduite d'Élevage & Polyproduction",
+        "aliases": [
+            "Éleveuse professionnelle",
+            "Conducteur d'élevage",
+            "Agriculteur-éleveur",
+            "Chef d'atelier d'élevage"
+        ],
+        "icon": "🐄",
+        "image": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Élevage & conduite des animaux",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Bac Pro Agricole (CGEA) ou BTS Métiers de l'élevage (Productions Animales)",
+        "salary": "🇫🇷 France : 1 800 - 3 400 € net/mois selon taille du cheptel et statut (Source : Référentiel Élevage / ESA) • 🇸🇳 Sénégal : 250 000 - 1 200 000 FCFA / mois (Fermes d'embouche bovine et laitière, Niayes / Dahra)",
+        "simpleDefinition": "L'éleveur veille au quotidien à la santé, à l'alimentation, à la reproduction et au bien-être des animaux de la ferme (bovins, ovins, caprins, porcins ou volailles), tout en entretenant les pâtures et les bâtiments.",
+        "shortDescription": "Métier socle documenté par le Groupe ESA (BTS Métiers de l'élevage), il combine passion du vivant, rigueur zootechnique, gestion économique et respect des normes environnementales.",
+        "longDescription": "L'éleveur assure la conduite globale des animaux dont il a la charge : alimentation équilibrée, suivi de la croissance, soins quotidiens, surveillance des vêlages/mises bas et entretien des locaux et des pâturages. Comme le souligne le Groupe ESA dans son programme de BTS Métiers de l'élevage, l'éleveur moderne pilote un système d'élevage complexe intégrant autonomie fourragère, transition agroécologique, santé globale du troupeau et valorisation commerciale des productions (lait, viande, laine, fumier composté).",
+        "mainObjective": "Assurer la prospérité et le bien-être du troupeau tout en garantissant une production saine, durable et économiquement viable.",
+        "companyRole": "Gestionnaire du vivant, premier maillon et garant de la qualité de la chaîne alimentaire.",
+        "species": [
+            "Bovins lait",
+            "Bovins viande",
+            "Ovins",
+            "Caprins",
+            "Porcins",
+            "Volailles"
+        ],
+        "workEnvironment": [
+            "🏡 Exploitation agricole, étables, stabulations libres, bergerie ou porcherie",
+            "🌿 Pâturages, prairies permanentes et parcelles de culture fourragère",
+            "🚜 Tracteurs, pailleuses, mélangeuses et salles/robots de traite connectés"
+        ],
+        "missions": [
+            "Distribuer les rations alimentaires adaptées aux stades physiologiques des bêtes (gestation, lactation, engraissement)",
+            "Observer quotidiennement le comportement des animaux, détecter les signes précoces de maladie et prodiguer les premiers soins",
+            "Planifier et conduire la reproduction (choix des reproducteurs, insémination, suivi des naissances)",
+            "Entretenir les bâtiments d'élevage (paillage, curage, désinfection) et gérer les clôtures et pâturages tournants",
+            "Piloter la gestion technico-économique de l'exploitation et commercialiser les animaux ou le lait auprès des coopératives"
+        ],
+        "typicalDay": [
+            {
+                "time": "06:00",
+                "title": "Tournée matinale et traite / alimentation",
+                "desc": "Contrôle des box, traite des vaches ou chèvres et distribution du foin et des compléments minéraux."
+            },
+            {
+                "time": "09:30",
+                "title": "Soins vétérinaires et surveillance reproduction",
+                "desc": "Vérification des chaleurs, inséminations prévues, soins aux nouveau-nés et désinfection du cordon ombilical."
+            },
+            {
+                "time": "14:00",
+                "title": "Travaux de plaine et entretien des clôtures",
+                "desc": "Déplacement des fils du pâturage tournant, vérification des abreuvoirs et entretien mécanique du matériel."
+            },
+            {
+                "time": "17:30",
+                "title": "Deuxième traite et saisie du carnet sanitaire",
+                "desc": "Traite du soir, alimentation du cheptel et enregistrement informatique des mouvements d'animaux."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Zootechnie approfondie (nutrition, physiologie de la rumination, reproduction animale)",
+                "Conduite et entretien du machinisme agricole d'élevage (mélangeuses, pailleuses)",
+                "Normes d'hygiène de la traite et de biosécurité des bâtiments",
+                "Gestion des prairies et calcul de chargement à l'hectare",
+                "Gestion administrative et tenue du registre d'élevage réglementaire"
+            ],
+            "human": [
+                "Patience et sang-froid face aux réactions imprévisibles des grands animaux",
+                "Endurance physique et grande résistance aux rythmes soutenus du calendrier d'élevage",
+                "Sens aigu de l'observation et empathie envers le bien-être animal",
+                "Rigueur et sens de l'anticipation face aux aléas climatiques"
+            ],
+            "tools": [
+                "Robots et stalles de traite automatisés (DeLaval, Lely)",
+                "Colliers et boucles RFID connectés de détection des chaleurs et de rumination",
+                "Logiciels de gestion de troupeau et de carnet sanitaire",
+                "Tracteurs équipés de chargeurs frontaux et dérouleuses de balles"
+            ],
+            "analytical": [
+                "Calcul du coût de revient au litre de lait ou au kilogramme de carcasse",
+                "Évaluation de la note d'état corporel (NEC) des animaux"
+            ]
+        },
+        "specializations": [
+            "Élevage bovin laitier haute performance",
+            "Élevage allaitant bovin charolais/limousin",
+            "Élevage caprin avec transformation fromagère fermière",
+            "Élevage ovin plein air pastoral"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme professionnel",
+                    "title": "Bac Pro CGEA (Conduite et Gestion de l'Entreprise Agricole)",
+                    "desc": "Acquisition des bases de la zootechnie, de l'agronomie et de la conduite des engins."
+                },
+                {
+                    "step": "Formation supérieure clé",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                    "desc": "Formation de 2 ans formant au pilotage d'un système d'élevage et à l'accompagnement du changement."
+                },
+                {
+                    "step": "Spécialisation / Perfectionnement",
+                    "title": "Licence Pro Métiers du Conseil en Élevage ou Installation DJA",
+                    "desc": "Préparation à l'installation en tant que chef d'exploitation indépendant ou conseiller."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA (École Supérieure des Agricultures) — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Lycées agricoles partenaires de l'enseignement supérieur agricole — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Supérieur de Formation Agricole et Rurale (ISFAR Bambey) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                },
+                {
+                    "name": "Centre de Recherches Zootechniques de Dahra (ISRA CRZ) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Certificat de Capacité Animaux Domestiques",
+                "Certificat d'Aptitude au Transport d'Animaux Vivants (CAPTAV)",
+                "Certiphyto"
+            ],
+            "schoolSubjects": [
+                "Biologie animale",
+                "Agronomie fourragère",
+                "Gestion d'entreprise",
+                "Santé animale"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Exploitations d'élevage familial ou sociétaire (GAEC, SCEA)",
+                "Fermes expérimentales et conservatoires de races rustiques",
+                "Grandes unités d'embouche ou d'élevage laitier"
+            ],
+            "employerTypes": [
+                "Chef d'exploitation agricole indépendant",
+                "Salarié qualifié d'élevage / Second d'exploitation"
+            ],
+            "evolution": "Salarié agricole d'élevage ➔ Chef d'atelier élevage ➔ Associé en GAEC ➔ Responsable d'exploitation agricole autonome ➔ Administrateur de coopérative",
+            "pros": "Contact quotidien gratifiant avec les animaux, indépendance au travail, participation directe à la souveraineté alimentaire.",
+            "cons": "Astreinte 365 jours par an pour la traite et les soins, forte sensibilité aux cours des matières premières et aux épizooties."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Effectuer un stage d'immersion de 2 semaines sur une ferme laitière ou allaitante pendant la période des naissances.",
+            "intermediateProject": "Participer à la notation de l'état corporel d'un lot de 30 génisses et ajuster la ration fourragère.",
+            "advancedProject": "Élaborer le plan prévisionnel de transition vers un système de pâturage tournant dynamique pour 50 vaches.",
+            "portfolioIdeas": [
+                "Journal de bord de suivi d'une saison de vêlage",
+                "Tableau de bord de calcul de la marge alimentaire d'un troupeau"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré à Élevé",
+            "summary": "L'IA transforme l'élevage via les capteurs biométriques (détection prédictive des boiteries, des mammites et du stress thermique), mais l'œil de l'éleveur reste irremplaçable.",
+            "automatedTasks": [
+                "Enregistrement automatique des volumes de traite et de la conductivité du lait",
+                "Pesée automatique au passage des animaux sur balance connectée"
+            ],
+            "emergingSkills": [
+                "Interprétation des flux de données des colliers connectés",
+                "Pilotage d'outils d'optimisation de l'empreinte carbone de l'élevage"
+            ],
+            "humanEdge": "L'instinct et le sens relationnel pour rassurer un animal malade, l'assistance physique aux vêlages délicats et l'amour du cheptel."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, l'élevage représente plus de 28% de la valeur ajoutée du secteur primaire. Des bassins comme Dahra-Djoloff, Kolda et les fermes intensives des Niayes combinent pastoralisme traditionnel et fermes laitières modernes soutenues par le LNERV/ISRA.",
+            "localSectors": [
+                "Fermes d'embouche bovine et ovine (Tabaski)",
+                "Réseaux de collecte laitière pastorale (Laiterie du Berger à Richard-Toll)",
+                "Aviculture semi-industrielle des Niayes"
+            ],
+            "remoteWork": "Totalement impossible, présence physique requise auprès des bêtes.",
+            "entrepreneurship": "Création d'une unité d'embouche bovine avec production de fourrage irrigué (maralfalfa) pour valoriser les sous-produits agro-industriels locaux."
+        },
+        "relatedJobSlugs": [
+            "responsable-elevage",
+            "technicien-conseil-elevage",
+            "responsable-collecte-laitiere",
+            "ingenieur-production-animale"
+        ],
+        "connectedFamilies": [
+            "environnement-climat",
+            "sante-biomedical",
+            "artisanat-metiers-dart"
+        ],
+        "resources": [
+            {
+                "type": "formation",
+                "title": "BTS Métiers de l'élevage — Groupe ESA",
+                "url": "https://www.groupe-esa.com/formation/bts-production-animales/",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "article",
+                "title": "Les métiers de la production animale — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "BTS Métiers de l'élevage ESA",
+            "Chambres d'Agriculture France",
+            "ISRA CRZ Dahra"
+        ],
+        "interests": [
+            "nature-environnement",
+            "construire-fabriquer"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les données de l'enseignement agricole et du Groupe ESA, plus de 50% des chefs d'exploitation d'élevage atteindront l'âge de la retraite d'ici 2030, ouvrant des opportunités sans précédent pour la relève.",
+            "pourquoi": "L'automatisation et la numérisation des étables réduisent la pénibilité physique tout en offrant une meilleure qualité de vie aux nouvelles générations d'éleveurs.",
+            "a_retenir": "Un métier noble et moderne où l'on est à la fois biologiste, chef d'entreprise et gardien des paysages ruraux."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "1 800 - 3 400 € net/mois selon taille du cheptel et statut (Source : Référentiel Élevage / ESA)",
+                "range": "1 800 - 3 400 € net/mois selon taille du cheptel et statut (Source : Référentiel Élevage / ESA)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "250 000 - 1 200 000 FCFA / mois (Fermes d'embouche bovine et laitière, Niayes / Dahra)",
+                "range": "250 000 - 1 200 000 FCFA / mois (Fermes d'embouche bovine et laitière, Niayes / Dahra)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "technicien-centre-allotement",
+        "slug": "technicien-centre-allotement",
+        "title": "Technicien de Centre d'Allotement de Bétail",
+        "aliases": [
+            "Responsable de centre d'allotement",
+            "Alloteur de bétail",
+            "Technicien de tri et groupement bovin/ovin"
+        ],
+        "icon": "🐂",
+        "image": "https://images.unsplash.com/photo-1541625602330-2277a4c46182?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Filière viande & allotement",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Bac Pro Agricole ou BTS Métiers de l'élevage (Productions Animales)",
+        "salary": "🇫🇷 France : 1 900 - 2 900 € net/mois (Source : Groupe ESA / Coopératives de bétail) • 🇸🇳 Sénégal : 220 000 - 800 000 FCFA / mois (Foirails et centres de regroupement pastoral, Dahra / Touba)",
+        "simpleDefinition": "Le technicien de centre d'allotement réceptionne, trie et regroupe les animaux d'élevage par lots homogènes selon leur race, poids, conformation et statut sanitaire en vue de leur engraissement ou abattage.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, ce spécialiste assure le maillon clé entre les fermes d'élevage naisseurs et les filières aval d'engraissement et de viande.",
+        "longDescription": "Véritable pivot logistique et zootechnique de la filière viande, le technicien de centre d'allotement accueille les animaux provenant de dizaines d'élevages différents. Comme documenté sur la page officielle du Groupe ESA, ce métier exige un excellent sens relationnel avec les éleveurs, le sens du travail d'équipe et de la persuasion. Il contrôle la conformité des passeports et de la traçabilité sanitaire, pèse les animaux, évalue leur conformation musculaire et compose des lots rigoureusement homogènes pour répondre aux exigences des engraisseurs ou des abattoirs.",
+        "mainObjective": "Garantir un tri rapide, sécurisé et sans stress du bétail pour constituer des lots commerciaux homogènes conformes aux cahiers des charges.",
+        "companyRole": "Régulateur de flux, garant de la conformité zootechnique et sanitaire lors des transferts d'animaux.",
+        "species": [
+            "Bovins viande (broutards, taurillons)",
+            "Ovins (agneaux)",
+            "Veaux d'élevage"
+        ],
+        "workEnvironment": [
+            "🏢 Centres d'allotement régionaux, quais de déchargement et parcs de contention",
+            "🚛 Camions bétaillères climatisés et zones de pesée automatisées",
+            "📋 Bureaux de gestion logistique et systèmes informatiques d'identification bovine (BDNI)"
+        ],
+        "missions": [
+            "Réceptionner les animaux arrivant des élevages naisseurs et vérifier la stricte conformité sanitaire et réglementaire",
+            "Évaluer la race, le gabarit, l'état d'engraissement et la conformation musculaire des bovins ou ovins",
+            "Trier et alloter les bêtes dans les parcs de stabulation en lots harmonieux prêts pour l'export ou l'engraissement",
+            "Veiller au bien-être des animaux en transit (abreuvement, repos, alimentation légère, absence de stress)",
+            "Organiser les plannings de départ avec les transporteurs bétaillères et les acheteurs"
+        ],
+        "typicalDay": [
+            {
+                "time": "05:30",
+                "title": "Réception des bétaillères et contrôle sanitaire",
+                "desc": "Déchargement sécurisé des broutards, vérification des boucles auriculaires et examen vétérinaire d'admission."
+            },
+            {
+                "time": "08:30",
+                "title": "Pesée officielle et tri par lots",
+                "desc": "Passage des animaux sur la bascule électronique et aiguillage vers les parcs selon le poids et le type racial."
+            },
+            {
+                "time": "12:00",
+                "title": "Soins et abreuvement du cheptel en transit",
+                "desc": "Distribution de paille fraîche, vérification des abreuvoirs automatiques et surveillance comportementale."
+            },
+            {
+                "time": "15:00",
+                "title": "Allotement final et expédition",
+                "desc": "Édition des bons de transport, chargement méthodique des camions à destination des centres d'engraissement."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Typologie et grille de classement des carcasses et animaux vifs (grille EUROP)",
+                "Techniques de contention sans violence et manipulation respectueuse des animaux",
+                "Réglementation sur la traçabilité animale (boucles RFID, passeports, certificats sanitaires)",
+                "Normes de biosécurité et désinfection des quais de chargement"
+            ],
+            "human": [
+                "Sens aigu du relationnel et esprit de persuasion (documenté par le Groupe ESA)",
+                "Goût affirmé pour le travail d'équipe avec les chauffeurs et les éleveurs",
+                "Réactivité et vigilance permanente face aux mouvements brusques des animaux",
+                "Calme et sang-froid dans les parcs de contention"
+            ],
+            "tools": [
+                "Systèmes de contention hydrauliques et couloirs anti-recul",
+                "Lecteurs électroniques de boucles RFID",
+                "Bascules et ponts-bascules connectés",
+                "Logiciels de gestion des flux d'allotement"
+            ],
+            "analytical": [
+                "Estimation instantanée du poids vif et du rendement carcasse à l'œil",
+                "Optimisation du taux de remplissage des camions et du confort de transport"
+            ]
+        },
+        "specializations": [
+            "Allotement de broutards maigres pour engraissement",
+            "Allotement d'agneaux de boucherie",
+            "Gestion de centres de quarantaine export",
+            "Logistique sanitaire des foirails"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Formation initiale",
+                    "title": "Bac Pro CGEA ou BTS Métiers de l'élevage — Groupe ESA",
+                    "desc": "Maîtrise de la zootechnie des filières herbivores et de la conduite des animaux."
+                },
+                {
+                    "step": "Certification d'aptitude",
+                    "title": "Certificat de compétence au transport des animaux vivants (CAPTAV)",
+                    "desc": "Agrément officiel garantissant le respect de la réglementation sur le bien-être animal."
+                },
+                {
+                    "step": "Spécialisation",
+                    "title": "Formation continue en classement des animaux de boucherie",
+                    "desc": "Perfectionnement sur les grilles de conformation musculaire."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Lycées d'enseignement agricole spécialisés élevage — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Centre de Recherches Zootechniques de Dahra — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "CAPTAV",
+                "Habilitation à la manipulation des animaux en centre de rassemblement"
+            ],
+            "schoolSubjects": [
+                "Zootechnie",
+                "Bien-être animal",
+                "Logistique commerciale",
+                "Réglementation sanitaire"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Coopératives d'élevage et groupements de producteurs bovins/ovins",
+                "Négociants en bestiaux et entreprises de commerce d'animaux vivants",
+                "Centres de rassemblement agréés pour l'exportation"
+            ],
+            "employerTypes": [
+                "Coopératives agricoles de commercialisation de bétail",
+                "Entreprises privées de négoce de bestiaux"
+            ],
+            "evolution": "Technicien d'allotement ➔ Responsable de centre d'allotement ➔ Acheteur-estimateur de bétail ➔ Directeur logistique bétail vif",
+            "pros": "Métier dynamique très concret, au carrefour du monde agricole et du commerce, diversité des races manipulées.",
+            "cons": "Exposition aux intempéries sur les quais, horaires très matinaux, vigilance physique constante face aux bêtes nerveuses."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Visiter un centre de tri coopératif un jour d'allotement de broutards pour comprendre la gestuelle de guidage.",
+            "intermediateProject": "S'entraîner à la lecture rapide des boucles et à la saisie de passeports sans erreur sur un lot de 20 veaux.",
+            "advancedProject": "Proposer un plan de réaménagement d'un couloir de contention pour réduire les hésitations des animaux selon les principes de Temple Grandin.",
+            "portfolioIdeas": [
+                "Schéma d'optimisation des flux d'animaux dans un centre de transit",
+                "Grille synthétique d'estimation du poids vif"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré",
+            "summary": "L'imagerie 3D et le scan optique commencent à estimer automatiquement le poids et la conformation, mais le tri physique et la maîtrise des bêtes restent manuels.",
+            "automatedTasks": [
+                "Lecture automatique des identifiants électroniques au passage sous portique",
+                "Enregistrement dématérialisé des déclarations de mouvements"
+            ],
+            "emergingSkills": [
+                "Utilisation des caméras d'analyse morphologique assistées par ordinateur"
+            ],
+            "humanEdge": "Le doigté et la compréhension du comportement grégaire des animaux pour les déplacer en douceur sans stress."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, les foirails de Dahra, Touba, Tambacounda et Dakar (Gouye Fatma) constituent des centres névralgiques où transitent chaque semaine des dizaines de milliers de bovins et moutons. L'organisation de parcs de stabulation modernes et le suivi sanitaire sont des priorités de l'État.",
+            "localSectors": [
+                "Grands foirails nationaux et régionaux",
+                "Centres d'appui à l'élevage pastoral (PRAPS)",
+                "Opérateurs d'importation de bétail mauritanien et malien"
+            ],
+            "remoteWork": "Strictement impossible sur le terrain.",
+            "entrepreneurship": "Création d'un centre privé d'allotement et d'embouche intermédiaire sécurisé pour le ravitaillement régulier des boucheries dakaroises."
+        },
+        "relatedJobSlugs": [
+            "eleveur",
+            "acheteur-estimateur-betail",
+            "responsable-elevage",
+            "inspecteur-sanitaire"
+        ],
+        "connectedFamilies": [
+            "transport-logistique",
+            "commerce-marketing",
+            "sante-biomedical"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Technicien centre d'allotement — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#technicien-centre-dallotement",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Guide des métiers ESA",
+            "Fédération Nationale du Cheval et du Bétail"
+        ],
+        "interests": [
+            "nature-environnement",
+            "negocier-convaincre"
+        ],
+        "documentaryNote": "Sur la page source du Groupe ESA, le paragraphe introductif rappelle la filiation avec l'élevage ('Un éleveur veille à la santé...'). La fiche intègre cette filiation tout en détaillant l'expertise propre au centre d'allotement (tri, pesée, constitution des lots et logistique bétaillère).",
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Dans un centre d'allotement moderne, plusieurs centaines de jeunes bovins sont triés en quelques heures pour composer des lots présentant moins de 15 kg d'écart de poids entre individus.",
+            "pourquoi": "L'homogénéité parfaite des lots est la condition essentielle pour que les animaux mangent à la même vitesse et terminent leur engraissement au même moment.",
+            "a_retenir": "Un maillon stratégique où l'œil de l'expert assure l'équilibre économique de toute la filière viande."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "1 900 - 2 900 € net/mois (Source : Groupe ESA / Coopératives de bétail)",
+                "range": "1 900 - 2 900 € net/mois (Source : Groupe ESA / Coopératives de bétail)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "220 000 - 800 000 FCFA / mois (Foirails et centres de regroupement pastoral, Dahra / Touba)",
+                "range": "220 000 - 800 000 FCFA / mois (Foirails et centres de regroupement pastoral, Dahra / Touba)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "responsable-collecte-laitiere",
+        "slug": "responsable-collecte-laitiere",
+        "title": "Responsable de la Collecte Laitière",
+        "aliases": [
+            "Chef du service collecte lait",
+            "Responsable approvisionnement laitier",
+            "Coordinateur collecte laiterie"
+        ],
+        "icon": "🥛",
+        "image": "https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Filière lait & collecte",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage (Productions Animales) ou Ingénieur agronome ESA",
+        "salary": "🇫🇷 France : 2 500 - 4 200 € net/mois (~35 000 - 55 000 € brut/an, Source : Groupe ESA / Industries Laitières) • 🇸🇳 Sénégal : 400 000 - 1 500 000 FCFA / mois (Laiteries industrielles, unités de pasteurisation, Richard-Toll / Dakar)",
+        "simpleDefinition": "Le responsable de la collecte laitière dirige le service qui collecte le lait cru dans les fermes et gère les relations de partenariat et de qualité avec les producteurs approvisionnant l'usine.",
+        "shortDescription": "Fiche officielle du Groupe ESA, il pilote la chaîne d'approvisionnement en lait : gestion des chauffeurs, relations producteurs, qualité sanitaire et optimisation des tournées.",
+        "longDescription": "Comme documenté précisément par le Groupe ESA, ce professionnel est responsable du service collectant la matière première (le lait) et des relations avec les producteurs de lait qui approvisionnent l'usine. Ses compétences clés reposent sur la négociation, la persuasion, le management d'équipe et la recherche constante de l'excellence en qualité. Il coordonne les flottes de camions-citernes isothermes, garantit le maintien de la chaîne du froid à 4°C et analyse les résultats de composition du lait (matière grasse, protéique, germes) pour accompagner les éleveurs vers les standards industriels.",
+        "mainObjective": "Assurer un approvisionnement continu, fluide et d'une qualité bactériologique irréprochable de l'usine laitière tout en maintenant des relations de confiance durable avec les éleveurs.",
+        "companyRole": "Pont stratégique entre les producteurs fermiers et l'outil industriel de transformation laitière.",
+        "species": [
+            "Bovins lait",
+            "Caprins lait",
+            "Ovins lait"
+        ],
+        "workEnvironment": [
+            "🏭 Usines laitières, beurreries, fromageries et coopératives de transformation",
+            "🚛 Flottes de camions-citernes de ramassage laitier et stations de dépotage",
+            "🐮 Visites régulières dans les fermes laitières du bassin de collecte"
+        ],
+        "missions": [
+            "Superviser et manager l'équipe des chauffeurs-ramasseurs de lait et organiser les plannings de tournées 24h/24",
+            "Entretenir et développer la relation de confiance avec le réseau des éleveurs livreurs de lait de la laiterie",
+            "Négocier et faire appliquer les contrats d'approvisionnement et les grilles de paiement du lait à la qualité",
+            "Contrôler scrupuleusement la matière première collectée (température, absence d'antibiotiques, cellules somatiques)",
+            "Optimiser les itinéraires de ramassage par géolocalisation pour réduire l'empreinte carbone du transport"
+        ],
+        "typicalDay": [
+            {
+                "time": "07:00",
+                "title": "Bilan des réceptions nocturnes et contrôle qualité",
+                "desc": "Vérification des volumes dépotés la nuit, analyse des alertes d'acidité ou d'inhibiteurs avec le laboratoire d'usine."
+            },
+            {
+                "time": "09:30",
+                "title": "Optimisation des tournées avec les chauffeurs",
+                "desc": "Ajustement des plans de ramassage en fonction des pics de lactation printaniers ou des intempéries."
+            },
+            {
+                "time": "14:00",
+                "title": "Visite d'un éleveur sociétaire",
+                "desc": "Rencontre avec un producteur pour analyser une dérive temporaire du taux cellulaire et proposer des pistes d'amélioration."
+            },
+            {
+                "time": "17:00",
+                "title": "Synthèse approvisionnement et réunion industrielle",
+                "desc": "Point avec le directeur d'usine sur les volumes hebdomadaires prévus pour les ateliers yaourt et fromage."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Technologies du lait et microbiologie laitière (chaîne du froid, germes, pasteurisation)",
+                "Logistique de collecte en flux tendu et optimisation de tournées sous contraintes horaires",
+                "Réglementation sur le paiement du lait à la qualité (taux protéique, matière grasse)",
+                "Normes d'hygiène HACCP applicables au transport des denrées périssables"
+            ],
+            "human": [
+                "Sens aigu de la négociation et de la persuasion (documenté explicitement par l'ESA)",
+                "Excellente capacité de management et de leadership auprès des équipes de collecte",
+                "Diplomatie et sens de l'écoute dans la gestion des litiges avec les agriculteurs",
+                "Calme et réactivité en situation de crise (blocage de route, cuve polluée)"
+            ],
+            "tools": [
+                "Logiciels de modélisation et d'optimisation de tournées de collecte (RouteFinder, PTV)",
+                "Systèmes d'échantillonnage automatisé embarqué sur camion-citerne",
+                "Outils de télérelève de niveau de tank à lait en ferme (IoT)",
+                "ERP de gestion des approvisionnements laitiers (SAP, AgroVisi)"
+            ],
+            "analytical": [
+                "Analyse des coûts de collecte au millier de litres et suivi des ratios gasoil/lait",
+                "Modélisation saisonnière des courbes de lactation à l'échelle du bassin laitier"
+            ]
+        },
+        "specializations": [
+            "Collecte de lait biologique ou AOP sous cahier des charges strict",
+            "Collecte multi-espèces (vache, chèvre, brebis)",
+            "Direction des approvisionnements d'un groupe fromager"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme Bac +2",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                    "desc": "Compréhension fine des systèmes laitiers et de la zootechnie bovine."
+                },
+                {
+                    "step": "Licence Pro",
+                    "title": "Licence Pro Métiers du Conseil en Élevage ou Logistique Agroalimentaire",
+                    "desc": "Maîtrise de la relation producteur et des flux de collecte."
+                },
+                {
+                    "step": "Diplôme Bac +5",
+                    "title": "Diplôme d'Ingénieur Agronome ESA — Majeure Productions Animales",
+                    "desc": "Accès direct aux postes de chef de service collecte et directeur d'approvisionnement."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Écoles nationales supérieures agronomiques (Institut Agro, VetAgro Sup) — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "École Inter-États des Sciences et Médecine Vétérinaires (EISMV Dakar) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                },
+                {
+                    "name": "École Supérieure Polytechnique (ESP Dakar) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Certification HACCP Lait",
+                "Auditeur Système Qualité ISO 22000"
+            ],
+            "schoolSubjects": [
+                "Microbiologie",
+                "Zootechnie laitière",
+                "Logistique",
+                "Négociation commerciale"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Grandes coopératives laitières (Sodiaal, Agrial, Eurial, Laïta)",
+                "Groupes laitiers industriels (Lactalis, Danone, Savencia)",
+                "Fromageries artisanales et laiteries régionales"
+            ],
+            "employerTypes": [
+                "Industries de transformation laitière",
+                "Coopératives de collecte"
+            ],
+            "evolution": "Responsable de tournée ➔ Responsable collecte laitière territoriale ➔ Directeur des relations producteurs ➔ Directeur des approvisionnements du groupe",
+            "pros": "Poste clé très valorisé au carrefour de l'amont agricole et de l'aval industriel, grande richesse des contacts humains.",
+            "cons": "Forte pression liée au caractère ultra-périssable du lait cru, astreintes possibles le week-end en cas de panne de citerne."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Accompagner un chauffeur ramasseur sur une tournée de 8 fermes pour observer la prise d'échantillons et le pompage.",
+            "intermediateProject": "Modéliser sur tableur l'impact d'une variation de 10% du prix du gazole sur le coût du litre de lait collecté.",
+            "advancedProject": "Concevoir un plan de sensibilisation des éleveurs d'un canton pour réduire les germes totaux dans le lait d'été.",
+            "portfolioIdeas": [
+                "Cartographie optimisée d'un circuit de collecte laitière",
+                "Guide des bonnes pratiques de lavage des tanks à lait"
+            ]
+        },
+        "aiImpact": {
+            "level": "Élevé",
+            "summary": "L'IA révolutionne la collecte grâce aux capteurs connectés sur les tanks qui prédisent l'heure exacte où la cuve sera pleine pour déclencher la tournée au moment parfait.",
+            "automatedTasks": [
+                "Calcul automatique des tournées dynamiques en temps réel",
+                "Traitement instantané des résultats d'analyses spectrales infrarouges"
+            ],
+            "emergingSkills": [
+                "Supervision de plateformes prédictives d'approvisionnement laitier"
+            ],
+            "humanEdge": "La négociation humaine et la diplomatie avec les producteurs lors des renégociations annuelles des contrats de prix."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la collecte laitière en milieu pastoral est une aventure humaine et industrielle remarquable, illustrée par la Laiterie du Berger à Richard-Toll qui collecte quotidiennement le lait auprès de milliers d'éleveurs peuls semi-nomades le long du fleuve Sénégal.",
+            "localSectors": [
+                "Unités de transformation laitière locale (Laiterie du Berger, Wayembam)",
+                "Centres de collecte ruraux de Dahra, Kolda et Saint-Louis",
+                "Mini-laiteries féminines artisanales"
+            ],
+            "remoteWork": "Partiellement hybride (bureau d'optimisation / visites sur le terrain).",
+            "entrepreneurship": "Mise en place d'un réseau de collecte laitière à motos équipées de bidons isothermes pour désenclaver les campements pastoraux isolés."
+        },
+        "relatedJobSlugs": [
+            "eleveur",
+            "responsable-elevage",
+            "coordinateur-qhse-agro",
+            "responsable-achat-approvisionnement-agri"
+        ],
+        "connectedFamilies": [
+            "transport-logistique",
+            "commerce-marketing",
+            "qualite-securite"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Responsable collecte laitière — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#responsable-collecte-laitiere",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Ingénieur agronome ESA",
+                "url": "https://www.groupe-esa.com/formation/ingenieur-agronome/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Fédération Nationale de l'Industrie Laitière (FNIL)",
+            "Cniel"
+        ],
+        "interests": [
+            "negocier-convaincre",
+            "nature-environnement",
+            "donnees-chiffres"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "En France, un responsable collecte laitière gère en moyenne le ramassage de 50 à 150 millions de litres de lait par an auprès de centaines d'exploitations réparties sur plusieurs départements.",
+            "pourquoi": "Le lait frais ne pouvant attendre plus de 48 heures avant transformation sous peine de cailler, la chaîne logistique doit fonctionner 365 jours par an sans aucune interruption.",
+            "a_retenir": "Un stratège du flux qui veille à ce que le lait de nos campagnes arrive chaque matin d'une fraîcheur absolue dans les usines."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 500 - 4 200 € net/mois (~35 000 - 55 000 € brut/an, Source : Groupe ESA / Industries Laitières)",
+                "range": "2 500 - 4 200 € net/mois (~35 000 - 55 000 € brut/an, Source : Groupe ESA / Industries Laitières)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "400 000 - 1 500 000 FCFA / mois (Laiteries industrielles, unités de pasteurisation, Richard-Toll / Dakar)",
+                "range": "400 000 - 1 500 000 FCFA / mois (Laiteries industrielles, unités de pasteurisation, Richard-Toll / Dakar)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "ingenieur-production-animale",
+        "slug": "ingenieur-production-animale",
+        "title": "Ingénieur Production en Élevage & Reproduction Animale",
+        "aliases": [
+            "Ingénieur en productions animales",
+            "Chef de projet production animale",
+            "Responsable d'unité expérimentale animale"
+        ],
+        "icon": "🧑‍🔬",
+        "image": "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Recherche & expérimentation animale",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Diplôme d'Ingénieur Agronome (Groupe ESA) ou Master Productions Animales",
+        "salary": "🇫🇷 France : 2 800 - 4 800 € net/mois (~38 000 - 65 000 € brut/an, Source : Groupe ESA / APEC) • 🇸🇳 Sénégal : 500 000 - 1 800 000 FCFA / mois (Instituts de recherche agronomique, ISRA, fermes modernes)",
+        "simpleDefinition": "L'ingénieur production conçoit et supervise la mise en œuvre de programmes expérimentaux de reproduction, dirige une équipe technique et participe à l'adaptation des normes d'élevage en matière d'hygiène, d'alimentation et de bien-être animal.",
+        "shortDescription": "Fiche officielle du Groupe ESA, il est la clé de voûte de la modernisation des techniques d'élevage, alliant recherche de rentabilité et mesure objective du bien-être animal.",
+        "longDescription": "Comme documenté par le Groupe ESA, l'ingénieur production conçoit et supervise la mise en œuvre de programmes expérimentaux de reproduction et dirige une équipe au sein d'une structure de recherche ou d'un élevage de pointe. À la tête d'une unité expérimentale, il est la clé de la modernisation des techniques, du renforcement des règles et de l'adaptation des normes en matière d'élevage : hygiène, alimentation, qualité, sécurité et rentabilité. La source souligne expressément l'importance de ses compétences dans la mesure objective du bien-être des animaux, sa maîtrise de l'anglais scientifique pour la veille bibliographique et ses facultés d'analyse et de synthèse.",
+        "mainObjective": "Piloter l'innovation zootechnique et les protocoles de reproduction pour concilier haute performance d'élevage, rentabilité économique et bien-être animal.",
+        "companyRole": "Leader scientifique et opérationnel de la modernisation des élevages.",
+        "species": [
+            "Bovins",
+            "Porcins",
+            "Ovins",
+            "Caprins",
+            "Volailles"
+        ],
+        "workEnvironment": [
+            "🔬 Unités expérimentales de recherche animale et stations zootechniques",
+            "🏢 Entreprises de sélection génétique et coopératives d'insémination",
+            "💻 Laboratoires d'analyse de données zootechniques et rédaction scientifique"
+        ],
+        "missions": [
+            "Concevoir, planifier et superviser des protocoles expérimentaux sur la reproduction et la nutrition animale",
+            "Manager les équipes de techniciens d'expérimentation et de soigneurs dans le respect strict de l'éthique animale",
+            "Mettre en place des indicateurs objectifs d'évaluation du bien-être animal (santé podale, niveau de cortisol, comportement)",
+            "Effectuer une veille scientifique internationale continue en anglais sur les innovations en physiologie animale",
+            "Adapter les cahiers des charges et les normes d'élevage en matière de sécurité sanitaire et de rentabilité pour les filières"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:00",
+                "title": "Point d'étape avec l'équipe de l'unité expérimentale",
+                "desc": "Contrôle des paramètres de l'essai en cours sur l'efficacité de nouveaux acides aminés chez les truies reproductrices."
+            },
+            {
+                "time": "10:30",
+                "title": "Évaluation du bien-être et mesures physiologiques",
+                "desc": "Supervision des prélèvements sanguins et analyse des capteurs comportementaux avec les vétérinaires."
+            },
+            {
+                "time": "14:00",
+                "title": "Analyse biométrique et modélisation des résultats",
+                "desc": "Traitement statistique des données d'insémination et calcul des taux de fertilité comparés."
+            },
+            {
+                "time": "16:30",
+                "title": "Veille scientifique et rédaction de rapport",
+                "desc": "Lecture d'articles scientifiques en anglais et rédaction d'une note de synthèse pour le comité d'éthique."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Physiologie de la reproduction et biotechnologies de la fécondation (IA, transfert d'embryons)",
+                "Méthodologie rigoureuse d'expérimentation animale et protocoles d'homologation",
+                "Mesure objective et scientifique du bien-être animal (indicateurs Welfare Quality)",
+                "Anglais scientifique courant pour lectures bibliographiques et publications (requis ESA)"
+            ],
+            "human": [
+                "Excellentes capacités d'analyse, de synthèse et de communication (soulignées par l'ESA)",
+                "Leadership et capacité à fédérer une équipe pluridisciplinaire (techniciens, vétérinaires)",
+                "Éthique irréprochable et respect profond des animaux d'expérimentation",
+                "Sens de l'innovation et esprit critique face aux résultats d'essais"
+            ],
+            "tools": [
+                "Logiciels de traitement statistique (R, SAS, Python Data)",
+                "Capteurs biométriques et caméras d'éthologie animale",
+                "Bases de données de généalogie et de performances animales",
+                "Systèmes automatisés de distribution d'aliment expérimental"
+            ],
+            "analytical": [
+                "Modélisation des cinétiques de croissance et de fertilité",
+                "Analyse technico-économique de rentabilité des protocoles innovants"
+            ]
+        },
+        "specializations": [
+            "Expérimentation en reproduction et sélection génétique",
+            "Bien-être et éthologie appliquée aux élevages",
+            "Nutrition animale de précision et réduction des rejets azotés"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme d'ingénieur",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA — Majeure Productions Animales",
+                    "desc": "Formation de référence combinant sciences du vivant, zootechnie et management de projets."
+                },
+                {
+                    "step": "Option Master / Doctorat",
+                    "title": "Master Recherche en Biologie Animale ou Doctorat en Zootechnie",
+                    "desc": "Approfondissement en génétique moléculaire ou physiologie appliquée."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Agro (Rennes-Angers, Montpellier) — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "EISMV (École Inter-États des Sciences et Médecine Vétérinaires) — Dakar, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                },
+                {
+                    "name": "ENSA (École Nationale Supérieure d'Agriculture) — Thiès, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Agrément d'expérimentateur de niveau 1 (concepteur de projets sur animaux)",
+                "Certification Bien-Être Animal"
+            ],
+            "schoolSubjects": [
+                "Génétique animale",
+                "Biostatistiques",
+                "Physiologie",
+                "Anglais scientifique"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Instituts techniques de recherche appliquée (INRAE, Institut de l'Élevage - Idele)",
+                "Entreprises de sélection génétique animale (Evolution, Innoval, Hendrix)",
+                "Firmes d'alimentation animale et laboratoires de santé animale"
+            ],
+            "employerTypes": [
+                "Centres de recherche agronomique",
+                "Firmes d'agrofourniture et de génétique",
+                "Grandes entreprises d'élevage intégrées"
+            ],
+            "evolution": "Ingénieur d'essais ➔ Ingénieur production expérimentale ➔ Responsable d'unité de recherche animale ➔ Directeur R&D productions animales",
+            "pros": "Poste de haute valeur intellectuelle, impact direct sur l'avenir durable des filières, environnement de recherche stimulant.",
+            "cons": "Lourdeur des démarches réglementaires et éthiques, responsabilités managériales exigeantes sur les résultats d'essais."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Analyser un article scientifique anglophone sur les indicateurs de bien-être animal et en faire une synthèse d'une page.",
+            "intermediateProject": "Construire un protocole d'essai comparatif simple sur l'ingestion d'aliment chez 2 lots de génisses sous tableur.",
+            "advancedProject": "Rédiger un dossier de saisine fictif pour un comité d'éthique décrivant les mesures d'évitement de la douleur lors d'un protocole d'insémination.",
+            "portfolioIdeas": [
+                "Rapport de synthèse bibliographique en anglais",
+                "Plan d'expérimentation statistique avec modèle ANOVA"
+            ]
+        },
+        "aiImpact": {
+            "level": "Très Élevé",
+            "summary": "L'IA et la vision par ordinateur permettent de mesurer en continu les comportements des animaux (sommeil, locomotion, interactions sociales) sans perturber leur environnement.",
+            "automatedTasks": [
+                "Détection vidéo automatisée des postures et comportements anormaux",
+                "Calcul automatique des corrélations génome-performance"
+            ],
+            "emergingSkills": [
+                "Supervision d'algorithmes de computer vision appliqués à l'éthologie"
+            ],
+            "humanEdge": "La créativité dans la conception des hypothèses scientifiques et le respect scrupuleux de l'éthique envers l'animal sensible."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, l'ISRA et le LNERV emploient des ingénieurs de recherche en production animale pour adapter les races laitières aux fortes chaleurs sahéliennes et développer des compléments alimentaires à base de tourteau d'arachide et de gousses de Faidherbia albida.",
+            "localSectors": [
+                "ISRA (Institut Sénégalais de Recherches Agricoles)",
+                "LNERV (Laboratoire National d'Élevage et de Recherches Vétérinaires)",
+                "Projets de développement agro-pastoral de la CEDEAO"
+            ],
+            "remoteWork": "Hybride (recherche de terrain / télétravail possible pour l'analyse de données et rédaction).",
+            "entrepreneurship": "Création d'un centre privé d'amélioration génétique et de production de semences animales certifiées pour les éleveurs de la sous-région."
+        },
+        "relatedJobSlugs": [
+            "geneticien",
+            "technicien-recherche-animale",
+            "responsable-experimentation-animale",
+            "ingenieur-conseil-productions-animales"
+        ],
+        "connectedFamilies": [
+            "sciences-biotech",
+            "sante-biomedical",
+            "direction-strategie"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Ingénieur production — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#ingenieur-production",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Formation Ingénieur agronome ESA",
+                "url": "https://www.groupe-esa.com/formation/ingenieur-agronome/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "INRAE",
+            "Institut de l'Élevage (Idele)"
+        ],
+        "interests": [
+            "explorer-decouvrir",
+            "nature-environnement",
+            "donnees-chiffres"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les publications scientifiques de l'ESA et de l'INRAE, la mesure objective du bien-être animal fait désormais appel à des thermographies infrarouges capables de détecter une inflammation sans toucher l'animal.",
+            "pourquoi": "L'acceptabilité sociétale de l'élevage moderne exige des preuves scientifiques tangibles garantissant l'absence de souffrance et le confort des animaux.",
+            "a_retenir": "Un profil scientifique d'élite qui invente les modèles d'élevage éthiques et performants de demain."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 800 - 4 800 € net/mois (~38 000 - 65 000 € brut/an, Source : Groupe ESA / APEC)",
+                "range": "2 800 - 4 800 € net/mois (~38 000 - 65 000 € brut/an, Source : Groupe ESA / APEC)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "500 000 - 1 800 000 FCFA / mois (Instituts de recherche agronomique, ISRA, fermes modernes)",
+                "range": "500 000 - 1 800 000 FCFA / mois (Instituts de recherche agronomique, ISRA, fermes modernes)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "technicien-recherche-animale",
+        "slug": "technicien-recherche-animale",
+        "title": "Technicien de Recherche en Productions Animales",
+        "aliases": [
+            "Technicienne de recherche animale",
+            "Technicien de laboratoire et d'élevage expérimental",
+            "Technicien de recherche et de formation"
+        ],
+        "icon": "🔬",
+        "image": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Recherche & expérimentation animale",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage (Productions Animales) ou BTS Bioanalyses / Biotechnologies",
+        "salary": "🇫🇷 France : 1 850 - 2 650 € net/mois (Source : Groupe ESA / Grille fonction publique recherche et instituts) • 🇸🇳 Sénégal : 250 000 - 800 000 FCFA / mois (Laboratoires ISRA, universités, EISMV Dakar)",
+        "simpleDefinition": "Le technicien de recherche met en œuvre l'ensemble des techniques, méthodes et prélèvements nécessaires à la réalisation des programmes de recherche et contribue aux travaux pratiques et d'enseignement.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, ce praticien rigoureux réalise les protocoles en laboratoire et en élevage expérimental au côté des chercheurs.",
+        "longDescription": "Comme l'indique la fiche officielle du Groupe ESA, les techniciens de recherche et de formation mettent en œuvre l'ensemble des techniques et des méthodes concourant à la réalisation des missions et des programmes d'activité des établissements où ils exercent, tout en contribuant aux missions d'enseignement. Les compétences indispensables citées sont une forte capacité d'adaptation et d'analyse. En productions animales, il assure les prélèvements biologiques (sang, lait, fèces), la manipulation des analyseurs de laboratoire, la pesée rigoureuse des aliments et la surveillance minutieuse des animaux sous protocole.",
+        "mainObjective": "Appliquer fidèlement les protocoles scientifiques, préparer les manipulations expérimentales et garantir la fiabilité absolue des données collectées.",
+        "companyRole": "Bras opérationnel et garant de la rigueur technique dans les laboratoires et fermes expérimentales.",
+        "species": [
+            "Bovins",
+            "Porcins",
+            "Ovins",
+            "Volailles",
+            "Rongeurs de laboratoire"
+        ],
+        "workEnvironment": [
+            "🧪 Laboratoires de biologie animale, biochimie et génomique",
+            "🐮 Animaleries expérimentales et étables d'essais agronomiques",
+            "🏫 Établissements d'enseignement supérieur agricole et universités"
+        ],
+        "missions": [
+            "Préparer les matériels d'analyse, réactifs de laboratoire et échantillons biologiques",
+            "Effectuer les mesures zootechniques et prélèvements réguliers selon les protocoles établis",
+            "Entretenir et étalonner les instruments scientifiques de mesure et d'analyse",
+            "Consigner méticuleusement les résultats dans les cahiers d'expérimentation électroniques",
+            "Participer à l'encadrement pratique des étudiants lors des travaux dirigés et ateliers de recherche (mission citée par l'ESA)"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:15",
+                "title": "Préparation des postes de prélèvement",
+                "desc": "Stérilisation du matériel, préparation des tubes sous vide et des anticoagulants pour l'échantillonnage de lait."
+            },
+            {
+                "time": "09:30",
+                "title": "Prélèvements et dosages analytiques",
+                "desc": "Réalisation des prises de sang sur un lot expérimental et centrifugation immédiate pour isoler le plasma."
+            },
+            {
+                "time": "13:30",
+                "title": "Analyses au spectrophotomètre",
+                "desc": "Dosage des métabolites sanguins et contrôle de la reproductibilité des courbes d'étalonnage."
+            },
+            {
+                "time": "16:00",
+                "title": "Assistance aux travaux pratiques étudiants",
+                "desc": "Aide à la mise en place d'un atelier pratique de dissection et physiologie animale pour les élèves de l'ESA."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Techniques de laboratoire en biologie, hématologie et biochimie animale",
+                "Bonnes pratiques de laboratoire (BPL) et traçabilité des échantillons",
+                "Gestes techniques de contention et de prélèvement sur animaux d'élevage",
+                "Maintenance de premier niveau des automates de mesure"
+            ],
+            "human": [
+                "Grande capacité d'adaptation aux protocoles changeants (requis ESA)",
+                "Esprit d'analyse et sens aigu de l'observation critique (requis ESA)",
+                "Rigueur méthodique absolue et honnêteté scientifique",
+                "Patience, minutie et goût du travail collaboratif"
+            ],
+            "tools": [
+                "Centrifugeuses, spectrophotomètres et compteurs cellulaires",
+                "Pipettes automatiques de haute précision et microscopes à contraste de phase",
+                "Cahiers de laboratoire électroniques (ELN)",
+                "Automates d'alimentation individuelle des animaux (Dac)"
+            ],
+            "analytical": [
+                "Contrôle de validité des séries analytiques et identification des biais de mesure",
+                "Mise en forme des données brutes pour les statisticiens"
+            ]
+        },
+        "specializations": [
+            "Technicien en analyse biochimique animale",
+            "Technicien animalier en unité de recherche",
+            "Technicien de plateforme génomique"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme Bac +2",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                    "desc": "Formation de base solide aux systèmes d'élevage et à l'expérimentation."
+                },
+                {
+                    "step": "Alternative Bac +2",
+                    "title": "BTS Biotechnologies ou Bioanalyses et Contrôles",
+                    "desc": "Formation axée sur la manipulation en laboratoire d'analyse biologique."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Lycées techniques et agricoles préparant aux BTS de biologie — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "École Inter-États des Sciences et Médecine Vétérinaires (EISMV) — Dakar, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                }
+            ],
+            "certifications": [
+                "Certification expérimentateur animal niveau 2 (applicateur)",
+                "Habilitation risque biologique niveau 2"
+            ],
+            "schoolSubjects": [
+                "Biologie cellulaire",
+                "Chimie analytique",
+                "Zootechnie",
+                "Statistiques appliquées"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Organismes publics de recherche (INRAE, CNRS, Cirad)",
+                "Établissements d'enseignement supérieur (Groupe ESA, universités)",
+                "Laboratoires de R&D des entreprises pharmaceutiques et agroalimentaires"
+            ],
+            "employerTypes": [
+                "Instituts de recherche agronomique",
+                "Grandes écoles et facultés",
+                "Laboratoires d'analyses vétérinaires"
+            ],
+            "evolution": "Technicien de recherche débutant ➔ Technicien principal ➔ Responsable technique de laboratoire ➔ Assistant ingénieur de recherche",
+            "pros": "Environnement intellectuellement stimulant, rigueur scientifique, utilité directe pour la découverte et la formation des jeunes.",
+            "cons": "Tâches répétitives de pipetage et dosage, respect de protocoles stricts sans grande marge d'improvisation."
+        },
+        "gettingStarted": {
+            "beginnerProject": "S'entraîner à la pesée de précision au milligramme et à l'utilisation correcte d'une pipette automatique.",
+            "intermediateProject": "Rédiger un mode opératoire standardisé (SOP) pour le nettoyage et l'étalonnage d'un pH-mètre.",
+            "advancedProject": "Réaliser une série de 50 dosages colorimétriques et calculer le coefficient de variation des résultats.",
+            "portfolioIdeas": [
+                "Exemple de fiche de protocole expérimental annotée",
+                "Rapport de contrôle qualité d'une chaîne d'échantillonnage"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré",
+            "summary": "L'automatisation robotisée prend en charge le pipetage à haut débit, tandis que l'IA assiste la reconnaissance d'images cellulaires au microscope.",
+            "automatedTasks": [
+                "Pipetage automatisé par robots multicanaux",
+                "Comptage automatique des cellules sur lames numériques"
+            ],
+            "emergingSkills": [
+                "Programmation et calibrage de robots d'analyse d'échantillons"
+            ],
+            "humanEdge": "La sensibilité manuelle lors des manipulations délicates sur les tissus vivants et la vigilance critique face aux artéfacts de mesure."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, les techniciens de recherche de l'ISRA LNERV et de l'EISMV Dakar réalisent les diagnostics sérologiques et les contrôles des vaccins vétérinaires distribués dans toute l'Afrique de l'Ouest (peste des petits ruminants, péripneumonie contagieuse bovine).",
+            "localSectors": [
+                "Laboratoire National de l'Élevage et de Recherches Vétérinaires (ISRA LNERV de Hann)",
+                "EISMV Dakar",
+                "Laboratoires régionaux vétérinaires de Saint-Louis et Louga"
+            ],
+            "remoteWork": "Strictement impossible, présence requise au laboratoire et auprès des animaux.",
+            "entrepreneurship": "Création d'un laboratoire privé d'analyses zootechniques rapides (parasitologie, qualité du lait) pour les éleveurs de la zone des Niayes."
+        },
+        "relatedJobSlugs": [
+            "ingenieur-production-animale",
+            "responsable-experimentation-animale",
+            "geneticien",
+            "controleur-qualite-produits-aquatiques"
+        ],
+        "connectedFamilies": [
+            "sciences-biotech",
+            "sante-biomedical",
+            "education-formation"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Technicien de recherche — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#technicien-de-recherche",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "INRAE",
+            "Ministère de l'Enseignement Supérieur et de la Recherche"
+        ],
+        "interests": [
+            "explorer-decouvrir",
+            "nature-environnement"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon le Groupe ESA, les techniciens de recherche jouent un double rôle unique : ils soutiennent les chercheurs dans leurs découvertes et transmettent les gestes professionnels aux étudiants lors des séances d'enseignement.",
+            "pourquoi": "Sans technicien rigoureux, aucune publication scientifique ne pourrait voir le jour, car la valeur d'une découverte repose entièrement sur l'exactitude des manipulations initiales.",
+            "a_retenir": "L'artisan méticuleux de la science agronomique et animale."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "1 850 - 2 650 € net/mois (Source : Groupe ESA / Grille fonction publique recherche et instituts)",
+                "range": "1 850 - 2 650 € net/mois (Source : Groupe ESA / Grille fonction publique recherche et instituts)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "250 000 - 800 000 FCFA / mois (Laboratoires ISRA, universités, EISMV Dakar)",
+                "range": "250 000 - 800 000 FCFA / mois (Laboratoires ISRA, universités, EISMV Dakar)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "responsable-experimentation-animale",
+        "slug": "responsable-experimentation-animale",
+        "title": "Responsable d'Expérimentation Animale & Terrain",
+        "aliases": [
+            "Chef de projet expérimentation agricole",
+            "Responsable d'essais zootechniques",
+            "Coordinateur d'expérimentations terrain"
+        ],
+        "icon": "🧪",
+        "image": "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Recherche & expérimentation animale",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage, Licence Pro ou Ingénieur agronome ESA",
+        "salary": "🇫🇷 France : 2 300 - 3 800 € net/mois (Source : Groupe ESA / Instituts techniques) • 🇸🇳 Sénégal : 350 000 - 1 300 000 FCFA / mois (Centres d'expérimentation ISRA, stations agropastorales)",
+        "simpleDefinition": "Le responsable d'expérimentation élabore des protocoles d'essais, consulte les éleveurs pour recenser leurs besoins concrets et collabore avec les chercheurs pour mener à bien des programmes expérimentaux sur le terrain.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, ce médiateur de terrain relie les besoins des agriculteurs à la recherche scientifique appliquée.",
+        "longDescription": "Comme documenté mot à mot par le Groupe ESA, le responsable d'expérimentation élabore des protocoles expérimentaux : il participe à la consultation des agriculteurs ou organise une concertation avec eux afin de recenser leurs besoins. Il met en œuvre une collaboration avec des chercheurs en vue de la réalisation d'un programme expérimental sur le terrain. La source insiste sur les compétences indispensables que sont les connaissances en agronomie/zootechnie, le sens de l'organisation, la rigueur et une grande patience. Il supervise le déploiement d'essais nutritionnels, sanitaires ou d'ambiance de bâtiment en conditions réelles d'élevage.",
+        "mainObjective": "Tester en conditions réelles de terrain les innovations agricoles pour vérifier leur faisabilité pratique et leur rentabilité avant diffusion massive.",
+        "companyRole": "Passerelle indispensable entre la recherche scientifique en laboratoire et la réalité quotidienne des exploitations.",
+        "species": [
+            "Bovins",
+            "Porcins",
+            "Ovins",
+            "Volailles"
+        ],
+        "workEnvironment": [
+            "🚜 Exploitations agricoles pilotes et réseaux de fermes d'essais",
+            "🔬 Stations expérimentales régionales et chambres d'agriculture",
+            "🚗 Déplacements très fréquents sur les parcelles et dans les élevages partenaires"
+        ],
+        "missions": [
+            "Concerter les éleveurs et organisations professionnelles pour identifier les verrous techniques prioritaires",
+            "Co-rédiger avec les chercheurs des protocoles expérimentaux robustes et transposables sur le terrain",
+            "Mettre en place les dispositifs d'essais chez les agriculteurs partenaires (lots témoins, lots traités)",
+            "Effectuer les mesures et observations régulières avec une rigueur et une patience scientifiques",
+            "Restituer les résultats sous forme de guides pratiques et d'articles vulgarisés lors de journées techniques"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:00",
+                "title": "Tournée de suivi d'un essai fourrager chez un éleveur",
+                "desc": "Pesée des refus d'ensilage et prélèvement d'échantillons sur un lot de 25 vaches testant une nouvelle luzerne."
+            },
+            {
+                "time": "11:00",
+                "title": "Concertation avec un groupe d'éleveurs porcins",
+                "desc": "Animation d'un atelier d'échange pour identifier les problèmes d'ambiance et de ventilation dans les maternités."
+            },
+            {
+                "time": "14:30",
+                "title": "Réunion de coordination avec les chercheurs de l'ESA / URSE",
+                "desc": "Point de validation sur les protocoles statistiques à appliquer lors de la prochaine campagne d'essais."
+            },
+            {
+                "time": "17:00",
+                "title": "Rédaction d'une fiche de vulgarisation technique",
+                "desc": "Synthèse des résultats d'un essai de 6 mois sur l'apport de plantes médicinales dans l'eau de boisson des volailles."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Solides connaissances en agronomie et zootechnie appliquée (requis ESA)",
+                "Conception et suivi de protocoles expérimentaux en milieu réel",
+                "Techniques d'animation de groupes d'agriculteurs et recueil de besoins",
+                "Statistiques appliquées et analyse de variance des résultats d'essais"
+            ],
+            "human": [
+                "Patience face aux temps longs des cycles biologiques et de la recherche (requis ESA)",
+                "Sens aigu de l'organisation et rigueur d'exécution méthodique (requis ESA)",
+                "Sens du contact humain et respect du savoir-faire des éleveurs",
+                "Qualités de pédagogue pour vulgariser des données scientifiques complexes"
+            ],
+            "tools": [
+                "Outils de mesure portables (pesons, analyseurs d'humidité, thermomètres de fosse)",
+                "Logiciels de traitement de données agronomiques et de cartographie d'essais",
+                "Appareils photos et carnets de notation visuelle standardisés",
+                "Plateformes collaboratives de partage de données scientifiques"
+            ],
+            "analytical": [
+                "Différenciation entre variabilité naturelle et effet réel d'un traitement expérimental",
+                "Calcul du retour sur investissement des innovations pour les agriculteurs"
+            ]
+        },
+        "specializations": [
+            "Expérimentation en alimentation et compléments naturels",
+            "Essais d'équipements et d'ambiance en bâtiment d'élevage",
+            "Expérimentation agroécologique et autonomie protéique"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Formation socle",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                    "desc": "Apprentissage des bases du diagnostic d'exploitation et du suivi d'élevage."
+                },
+                {
+                    "step": "Licence Pro",
+                    "title": "Licence Pro Expérimentation Végétale & Animale ou Conseil en Élevage",
+                    "desc": "Formation spécifique aux normes BPE (Bonnes Pratiques d'Expérimentation)."
+                },
+                {
+                    "step": "Ingénieur",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA",
+                    "desc": "Accès aux fonctions de chef de pôle expérimentation et coordination d'équipes d'essais."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Instituts de formation supérieure agronomique — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Supérieur de Formation Agricole et Rurale (ISFAR Bambey) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Agrément BPE (Bonnes Pratiques d'Expérimentation)",
+                "Certificat d'animateur de groupes de progrès agricole"
+            ],
+            "schoolSubjects": [
+                "Agronomie",
+                "Zootechnie",
+                "Biométrie",
+                "Communication rurale"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Instituts techniques de filières (Idele, ITAVI, IFIP)",
+                "Chambres régionales d'agriculture et stations expérimentales",
+                "Coopératives et firmes d'agrofourniture privées"
+            ],
+            "employerTypes": [
+                "Instituts techniques agricoles",
+                "Chambres d'agriculture",
+                "Firmes d'alimentation et de génétique"
+            ],
+            "evolution": "Technicien d'expérimentation ➔ Responsable expérimentation ➔ Chef du département recherche appliquée ➔ Directeur de station d'essais",
+            "pros": "Équilibre idéal entre le travail de terrain au contact des exploitants et la stimulation intellectuelle de la recherche.",
+            "cons": "Déplacements constants en toute saison, contrainte d'essais parfois anéantis par un aléa climatique ou sanitaire."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Participer à une journée portes ouvertes d'une station expérimentale agricole pour observer l'implantation des micro-parcelles.",
+            "intermediateProject": "Rédiger une grille d'entretien pour questionner 5 éleveurs sur leurs attentes face au réchauffement des bâtiments.",
+            "advancedProject": "Concevoir un protocole complet d'évaluation de la digestibilité d'un fourrage avec calendrier de mesures et plan de collecte des fèces.",
+            "portfolioIdeas": [
+                "Protocole d'essai terrain conforme aux règles BPE",
+                "Article de vulgarisation rédigé pour une revue agricole"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré",
+            "summary": "L'IA aide à planifier les matrices d'essais statistiques et à traiter les données massives de capteurs, mais la mise en place sur le terrain reste 100% humaine.",
+            "automatedTasks": [
+                "Génération de plans d'expérience optimisés",
+                "Nettoyage automatique des anomalies de données de pesée"
+            ],
+            "emergingSkills": [
+                "Utilisation d'outils de monitoring IoT à distance pour suivre les essais"
+            ],
+            "humanEdge": "La confiance relationnelle nouée avec les éleveurs pour qu'ils acceptent d'accueillir des essais risqués dans leurs fermes."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, les stations expérimentales de l'ISRA (Dahra, Kolda, Bambey) s'appuient sur des responsables d'expérimentation pour tester des rations à base de niébé, de tourteau de sésame et de mélasse afin de sécuriser l'alimentation du bétail pendant la longue saison sèche.",
+            "localSectors": [
+                "Stations expérimentales de l'ISRA",
+                "Projets d'expérimentation agroécologique de la FAO et de l'ENDA Pronat",
+                "Coopératives pastorales du Ferlo"
+            ],
+            "remoteWork": "Exclusivement terrain et bureau local.",
+            "entrepreneurship": "Création d'un cabinet privé d'expérimentation et d'homologation de compléments nutritionnels locaux pour animaux d'élevage."
+        },
+        "relatedJobSlugs": [
+            "ingenieur-production-animale",
+            "technicien-recherche-animale",
+            "technicien-conseil-elevage",
+            "ingenieur-agronome"
+        ],
+        "connectedFamilies": [
+            "sciences-biotech",
+            "conseil-audit",
+            "environnement-climat"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Responsable expérimentation — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#responsable-experimentation",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Productions animales à l'ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Institut de l'Élevage",
+            "Acta — Les instituts techniques agricoles"
+        ],
+        "interests": [
+            "nature-environnement",
+            "explorer-decouvrir"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon le Groupe ESA, la patience est l'une des qualités maîtresses de ce métier : tester l'impact d'un nouveau régime alimentaire sur la longévité de vaches laitières demande entre 3 et 5 années complètes d'observations rigoureuses.",
+            "pourquoi": "En biologie animale, les cycles ne peuvent pas être accélérés artificiellement sans fausser la vérité scientifique des résultats.",
+            "a_retenir": "Le pont vivant entre l'innovation scientifique et le progrès concret au cœur des fermes."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 300 - 3 800 € net/mois (Source : Groupe ESA / Instituts techniques)",
+                "range": "2 300 - 3 800 € net/mois (Source : Groupe ESA / Instituts techniques)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "350 000 - 1 300 000 FCFA / mois (Centres d'expérimentation ISRA, stations agropastorales)",
+                "range": "350 000 - 1 300 000 FCFA / mois (Centres d'expérimentation ISRA, stations agropastorales)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "geneticien",
+        "slug": "geneticien",
+        "title": "Généticien / Généticienne — Sciences & Production Animale",
+        "aliases": [
+            "Généticien quantitatif",
+            "Chercheur en génétique animale",
+            "Biologiste généticien",
+            "Généticien des populations"
+        ],
+        "icon": "🧬",
+        "image": "https://images.unsplash.com/photo-1530497610245-94d3c16cda28?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Génétique & reproduction animale",
+        "sourceESA": true,
+        "isEmerging": true,
+        "level": "Ingénieur Agronome ESA ou Master / Doctorat en Génétique et Génomique",
+        "salary": "🇫🇷 France : 3 000 - 5 500 € net/mois (~42 000 - 75 000 € brut/an, Source : Groupe ESA / APEC Recherche) • 🇸🇳 Sénégal : 600 000 - 2 000 000 FCFA / mois (Centres de recherche génétique, ISRA, universités, EISMV)",
+        "simpleDefinition": "Le généticien étudie et analyse les caractères héréditaires des êtres vivants à travers leur génome et leur ADN afin de comprendre la transmission des traits biologiques et d'améliorer la santé, la résilience et les qualités des lignées.",
+        "shortDescription": "Fiche transversale documentée par le Groupe ESA, ce chercheur décode le génome pour sélectionner des animaux plus résistants aux maladies et adaptés au changement climatique.",
+        "longDescription": "Comme formulé dans le référentiel du Groupe ESA, le généticien étudie et analyse les caractères héréditaires des êtres vivants (micro-organismes, animaux, végétaux, êtres humains) à travers leur génome (ensemble du matériel génétique codé dans leur ADN). Les compétences indispensables mises en avant par l'ESA sont de solides connaissances en biologie et biochimie, une grande rigueur et un remarquable esprit d'analyse et de synthèse. Dans les filières animales, il ne se contente pas d'accroître la productivité : il sélectionne aujourd'hui les gènes de rusticité, de résistance aux chaleurs extrêmes, de longévité et de réduction des émissions de méthane.",
+        "mainObjective": "Découvrir les bases génétiques des traits d'intérêt et guider les schémas de sélection pour préserver la diversité biologique et adapter les espèces aux défis futurs.",
+        "companyRole": "Architecte du patrimoine héréditaire et pionnier de la biologie moléculaire appliquée.",
+        "species": [
+            "Bovins",
+            "Porcins",
+            "Ovins",
+            "Caprins",
+            "Volailles",
+            "Micro-organismes"
+        ],
+        "workEnvironment": [
+            "🧬 Laboratoires de biologie moléculaire et de séquençage ADN haute résolution",
+            "💻 Centres de bio-informatique et grappes de serveurs de calcul intensif",
+            "🏢 Entreprises internationales de sélection génétique et coopératives d'élevage"
+        ],
+        "missions": [
+            "Extraire, séquencer et analyser l'ADN d'animaux pour identifier des marqueurs génétiques d'intérêt (SNP)",
+            "Évaluer les valeurs génétiques des reproducteurs par sélection génomique à haut débit",
+            "Modéliser l'évolution génétique des populations pour éviter la consanguinité et préserver la biodiversité",
+            "Collaborer avec les vétérinaires pour éradiquer les tares génétiques héréditaires dans les cheptels",
+            "Publier des articles scientifiques dans des revues internationales à comité de lecture"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:30",
+                "title": "Analyse de données de séquençage génomique",
+                "desc": "Exploitation sur terminal Linux de fichiers FASTQ issus des séquenceurs NGS pour cartographier un allèle de thermotolérance."
+            },
+            {
+                "time": "11:00",
+                "title": "Réunion du schéma de sélection avec les éleveurs",
+                "desc": "Présentation des index génomiques des futurs taureaux d'insémination à une coopérative partenaire."
+            },
+            {
+                "time": "14:00",
+                "title": "Validation des tests de dépistage génétique",
+                "desc": "Vérification des résultats de PCR en temps réel pour exclure un gène de susceptibilité aux anomalies cardiaques."
+            },
+            {
+                "time": "16:30",
+                "title": "Veille scientifique internationale et modélisation",
+                "desc": "Revue des publications récentes sur l'épigénétique et mise à jour d'un modèle bayésien de prédiction."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Génétique moléculaire, biochimie et génomique quantitative (requis ESA)",
+                "Bio-informatique et programmation (Python, R, Bioconductor, commandes Bash)",
+                "Méthodologie de sélection génomique (BLUP, modèles mixtes, GWAS)",
+                "Technologies de séquençage NGS et génotypage sur puces haute densité"
+            ],
+            "human": [
+                "Rigueur scientifique absolue et esprit d'analyse critique (requis ESA)",
+                "Grand esprit de synthèse pour dégager le sens de milliards de paires de bases (requis ESA)",
+                "Patience, persévérance et curiosité intellectuelle insatiable",
+                "Sens de l'éthique face aux manipulations génétiques et aux biotechnologies"
+            ],
+            "tools": [
+                "Logiciels de bio-informatique et génétique des populations (PLINK, GCTA, BLUPF90)",
+                "Séquenceurs d'ADN (Illumina, Oxford Nanopore)",
+                "Automates de PCR en temps réel et stations de manipulation robotisée",
+                "Serveurs de calcul haute performance (HPC)"
+            ],
+            "analytical": [
+                "Interprétation des déséquilibres de liaison et des architectures génétiques polygéniques",
+                "Calcul de consanguinité et d'héritabilité des caractères complexes"
+            ]
+        },
+        "specializations": [
+            "Sélection génomique appliquée aux ruminants",
+            "Génétique de la rusticité et adaptation climatique",
+            "Bio-informatique et annotation des génomes animaux"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme d'ingénieur",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA — Majeure Productions Animales / Sciences du Vivant",
+                    "desc": "Bases solides en agronomie, biologie animale et mathématiques statistiques."
+                },
+                {
+                    "step": "Master spécialisé",
+                    "title": "Master Génétique Quantitative et Génomique Animale",
+                    "desc": "Perfectionnement en modélisation statistique et bio-informatique."
+                },
+                {
+                    "step": "Doctorat (PhD)",
+                    "title": "Doctorat en Génétique / Sciences Biologiques (Bac +8)",
+                    "desc": "Recherche fondamentale ou appliquée indispensable pour diriger des programmes d'envergure."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Agro / Université Paris-Saclay — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Université Cheikh Anta Diop (UCAD) / FST & EISMV — Dakar, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                }
+            ],
+            "certifications": [
+                "Certification en Bio-informatique Génomique",
+                "Agrément Éthique et Génétique Animale"
+            ],
+            "schoolSubjects": [
+                "Biologie moléculaire",
+                "Génétique quantitative",
+                "Biochimie",
+                "Mathématiques & Algorithmique"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Entreprises de sélection génétique animale (Evolution, Innoval, Hendrix Genetics, Choice)",
+                "Instituts publics de recherche (INRAE, CNRS, Cirad)",
+                "Industries de santé animale et biotechnologies médicales"
+            ],
+            "employerTypes": [
+                "Entreprises de sélection animale",
+                "Organismes nationaux de recherche",
+                "Laboratoires universitaires"
+            ],
+            "evolution": "Bio-informaticien / Généticien junior ➔ Généticien senior ➔ Responsable d'un programme de sélection ➔ Directeur scientifique de la génétique",
+            "pros": "Métier passionnant au cœur des plus grandes découvertes contemporaines de la biologie, forte demande d'expertise au niveau mondial.",
+            "cons": "Très longue formation académique (Bac +5 à Bac +8), temps important passé devant les écrans et serveurs informatiques."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Explorer la base de données Ensembl Genome Browser pour visualiser le génome du bovin (Bos taurus).",
+            "intermediateProject": "Écrire un script Python pour calculer les fréquences alléliques d'un jeu de données de génotypage de 100 taureaux.",
+            "advancedProject": "Réaliser une étude d'association pangénomique (GWAS) simplifiée sous R avec le logiciel PLINK sur un caractère qualitatif.",
+            "portfolioIdeas": [
+                "Notebook Jupyter d'analyse génomique commentée",
+                "Revue critique d'un article scientifique récent sur la sélection génomique"
+            ]
+        },
+        "aiImpact": {
+            "level": "Révolutionnaire",
+            "summary": "L'IA et le Deep Learning révolutionnent la génétique en prédisant le repliement 3D des protéines (AlphaFold) et en décryptant les zones non codantes du génome.",
+            "automatedTasks": [
+                "Alignement et filtrage automatique des séquences d'ADN",
+                "Détection automatique des mutations délétères par réseaux de neurones"
+            ],
+            "emergingSkills": [
+                "Entraînement de modèles de fondation génomiques pour prédire les phénotypes"
+            ],
+            "humanEdge": "Le discernement éthique sur les limites des manipulations génétiques et la vision stratégique de préservation des races rustiques."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, les généticiens de l'EISMV et de l'ISRA travaillent sur la préservation et la valorisation génétique des races locales tolérantes à la trypanosomiase (comme la race bovine N'Dama) et des métissages avec la Guzerat et la Montbéliarde pour le pôle laitier.",
+            "localSectors": [
+                "ISRA LNERV de Hann",
+                "EISMV Dakar (Département des Sciences Biologiques)",
+                "Direction des Haras Nationaux et de l'Amélioration Génétique"
+            ],
+            "remoteWork": "Hautement compatible en télétravail pour toute la partie bio-informatique et modélisation.",
+            "entrepreneurship": "Création d'une plateforme d'analyse bio-informatique de données génomiques pour les schémas de sélection d'Afrique subsaharienne."
+        },
+        "relatedJobSlugs": [
+            "ingenieur-production-animale",
+            "directeur-rd-agri-animal",
+            "technicien-recherche-animale",
+            "biologiste-marin"
+        ],
+        "connectedFamilies": [
+            "sciences-biotech",
+            "sante-biomedical",
+            "numerique-ia"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Fiche Généticien — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#geneticien",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Ingénieur agronome ESA",
+                "url": "https://www.groupe-esa.com/formation/ingenieur-agronome/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "INRAE",
+            "Société Française de Génétique"
+        ],
+        "interests": [
+            "explorer-decouvrir",
+            "nature-environnement",
+            "donnees-chiffres"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "En élevage bovin laitier, la sélection génomique introduite ces dix dernières années permet d'évaluer le potentiel d'un veau dès sa naissance à partir d'un simple échantillon de cartilage d'oreille, gagnant plus de 5 ans sur les anciens schémas de descendance.",
+            "pourquoi": "L'analyse directe de l'ADN évite d'attendre que les filles du taureau grandissent et produisent du lait pour connaître sa valeur reproductrice.",
+            "a_retenir": "Un métier transversal de pointe au confluent de la biologie moléculaire, du Big Data et de la sauvegarde du vivant."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "3 000 - 5 500 € net/mois (~42 000 - 75 000 € brut/an, Source : Groupe ESA / APEC Recherche)",
+                "range": "3 000 - 5 500 € net/mois (~42 000 - 75 000 € brut/an, Source : Groupe ESA / APEC Recherche)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "600 000 - 2 000 000 FCFA / mois (Centres de recherche génétique, ISRA, universités, EISMV)",
+                "range": "600 000 - 2 000 000 FCFA / mois (Centres de recherche génétique, ISRA, universités, EISMV)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "directeur-rd-agri-animal",
+        "slug": "directeur-rd-agri-animal",
+        "title": "Directeur / Directrice Recherche et Développement (R&D) en Filières Animales",
+        "aliases": [
+            "Directeur R&D agroalimentaire et nutrition animale",
+            "Chief Scientific Officer Agri",
+            "Responsable scientifique R&D"
+        ],
+        "icon": "🚀",
+        "image": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Recherche & expérimentation animale",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Diplôme d'Ingénieur Agronome ESA ou Doctorat (PhD) + 10 ans d'expérience",
+        "salary": "🇫🇷 France : 4 500 - 8 500 € net/mois (~65 000 - 120 000 € brut/an, Source : Groupe ESA / APEC) • 🇸🇳 Sénégal : 1 200 000 - 3 500 000 FCFA / mois (Filiales multinationales agroalimentaires, santé animale)",
+        "simpleDefinition": "Le directeur R&D définit, organise et valide les activités de recherche et développement de l'entreprise et participe activement à la stratégie globale concernant le lancement de nouveaux produits ou services innovants.",
+        "shortDescription": "Fiche officielle du Groupe ESA, ce dirigeant allie expertise scientifique de pointe, vision stratégique d'entreprise et management d'équipes de chercheurs.",
+        "longDescription": "Comme l'indique la fiche officielle du Groupe ESA, le directeur recherche et développement a pour mission de définir, d'organiser et de valider les activités de l'entreprise en R&D. Il est partie prenante de la définition de la stratégie dans son ensemble de la société en ce qui concerne le développement des nouveaux produits ou services. Les compétences documentées par l'ESA sont de solides connaissances en biologie et biochimie, une rigueur absolue et des capacités exceptionnelles d'analyse et de synthèse. Il pilote les budgets d'innovation, supervise les dépôts de brevets et oriente les partenariats académiques vers les attentes sociétales et environnementales.",
+        "mainObjective": "Traduire la vision stratégique de l'entreprise en innovations concrètes, brevetables et rentables, anticipant les transitions agroécologiques et nutritionnelles.",
+        "companyRole": "Membre du comité de direction, éclaireur scientifique et moteur de la compétitivité future.",
+        "species": [
+            "Toutes filières animales et végétales confondues"
+        ],
+        "workEnvironment": [
+            "🏢 Sièges sociaux de groupes agroalimentaires, firmes de nutrition animale et biotechnologies",
+            "🔬 Centres de recherche privés et plateformes d'innovation partenariale",
+            "🌐 Congrès scientifiques internationaux et comités de direction stratégique"
+        ],
+        "missions": [
+            "Définir et faire valider par la direction générale la feuille de route pluriannuelle d'innovation scientifique",
+            "Piloter et arbitrer le portefeuille de projets R&D (nutraceutique animale, alternatives protéiques, santé préventive)",
+            "Manager les équipes de chercheurs, ingénieurs et techniciens de recherche dans un esprit d'émulation collective",
+            "Gérer la propriété intellectuelle (dépôt et défense des brevets, veille technologique et concurrentielle)",
+            "Développer des alliances stratégiques avec les grands organismes publics de recherche (INRAE, Cirad, universités)"
+        ],
+        "typicalDay": [
+            {
+                "time": "09:00",
+                "title": "Comité de direction stratégique",
+                "desc": "Présentation des avancées d'un nouvel additif réduisant de 30% les émissions de méthane des bovins et arbitrage budgétaire."
+            },
+            {
+                "time": "11:30",
+                "title": "Revue de projet avec l'équipe de chercheurs",
+                "desc": "Évaluation des résultats d'un essai clinique sur la santé intestinale des porcelets avec les ingénieurs d'essais."
+            },
+            {
+                "time": "14:30",
+                "title": "Négociation d'un partenariat académique",
+                "desc": "Échange avec les directeurs d'unités de recherche de l'ESA et de l'INRAE pour monter un projet financé par l'ANR."
+            },
+            {
+                "time": "17:00",
+                "title": "Point avec le cabinet de propriété intellectuelle",
+                "desc": "Revue des revendications d'un brevet international avant soumission à l'Office Européen des Brevets."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Biologie, biochimie et physiologie appliquée de haut niveau (requis ESA)",
+                "Management de portefeuilles de projets R&D complexes et gestion des risques d'échec",
+                "Droit de la propriété intellectuelle et stratégie de brevets technologiques",
+                "Réglementation européenne sur les nouveaux aliments (Novel Food, additifs EFSA)"
+            ],
+            "human": [
+                "Esprit de synthèse stratégique et rigueur analytique exceptionnelle (requis ESA)",
+                "Leadership charismatique et capacité à inspirer des équipes scientifiques de haut niveau",
+                "Vision prospective et courage managérial dans les arbitrages d'arrêts de projets",
+                "Excellente aisance relationnelle pour dialoguer avec les investisseurs et la direction"
+            ],
+            "tools": [
+                "Logiciels de gestion de portefeuille de projets (Stage-Gate, Jira Align, Planisware)",
+                "Bases de données de brevets mondiaux (Orbit, Derwent)",
+                "Outils de modélisation économique du retour sur investissement R&D",
+                "Outils de veille scientifique automatisée"
+            ],
+            "analytical": [
+                "Évaluation de la faisabilité technico-économique des concepts d'innovation",
+                "Analyse prévisionnelle de marché et anticipation des ruptures technologiques"
+            ]
+        },
+        "specializations": [
+            "R&D en nutrition et additifs pour l'alimentation animale",
+            "R&D en biotechnologies et génétique animale",
+            "R&D en transition bas carbone et agroécologie"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme d'excellence",
+                    "title": "Ingénieur Agronome ESA ou Grande École Scientifique",
+                    "desc": "Formation de base d'ingénieur combinant agronomie et management."
+                },
+                {
+                    "step": "Doctorat ou MBA",
+                    "title": "Doctorat en Sciences du Vivant (PhD) ou Executive MBA",
+                    "desc": "Reconnaissance de l'autorité scientifique ou perfectionnement en stratégie d'entreprise."
+                },
+                {
+                    "step": "Expérience confirmée",
+                    "title": "10 à 15 ans d'expérience en gestion de projets R&D innovants",
+                    "desc": "Parcours indispensable prouvant la capacité à transformer une idée en succès commercial."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Grandes écoles agronomiques et universités d'excellence — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Instituts de recherche et écoles vétérinaires internationales",
+                    "country": "International",
+                    "scope": "International"
+                }
+            ],
+            "certifications": [
+                "Certification PMP (Project Management Professional)",
+                "Auditeur Propriété Industrielle"
+            ],
+            "schoolSubjects": [
+                "Biologie avancée",
+                "Management stratégique",
+                "Finance d'entreprise",
+                "Biochimie"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Groupes coopératifs et industriels de nutrition animale (CCPA, Wisium, Neovia, Cargill)",
+                "Laboratoires vétérinaires et de santé animale (Ceva, Virbac, Boehringer)",
+                "Groupes agroalimentaires mondiaux"
+            ],
+            "employerTypes": [
+                "Grandes entreprises agroalimentaires",
+                "Firmes d'agrofourniture internationale",
+                "Startups AgriTech en phase d'industrialisation"
+            ],
+            "evolution": "Chef de projet R&D ➔ Directeur de laboratoire R&D ➔ Directeur R&D groupe ➔ Vice-Président Innovation / Directeur Général Adjoint",
+            "pros": "Influence directe sur les grandes orientations d'une multinationale, salaire attractif, prestige scientifique et managérial.",
+            "cons": "Forte pression sur les délais et la rentabilité financière des innovations, responsabilités juridiques élevées."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Analyser le rapport annuel d'un grand groupe semencier ou de nutrition animale pour comprendre sa stratégie d'investissement R&D.",
+            "intermediateProject": "Construire une matrice d'évaluation des risques pour un projet fictif de développement d'un nouvel aliment d'allaitement pour veaux.",
+            "advancedProject": "Rédiger une synthèse de brevet en identifiant la nouveauté, l'activité inventive et le champ des revendications.",
+            "portfolioIdeas": [
+                "Dossier de candidature à un appel à projets collaboratif européen",
+                "Matrice de scoring de portefeuille de projets d'innovation"
+            ]
+        },
+        "aiImpact": {
+            "level": "Révolutionnaire",
+            "summary": "L'IA générative et prédictive accélère la découverte de nouvelles molécules bioactives et simule les interactions nutritionnelles in silico avant les premiers essais in vivo.",
+            "automatedTasks": [
+                "Criblage virtuel de bibliothèques de molécules par Deep Learning",
+                "Veille concurrentielle et brevet automatisée"
+            ],
+            "emergingSkills": [
+                "Intégration des plateformes d'IA scientifique dans les pipelines de développement"
+            ],
+            "humanEdge": "L'intuition stratégique, l'éthique de la recherche et la capacité à fédérer des collectifs humains autour d'une vision de rupture."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal et en Afrique de l'Ouest, les directeurs R&D dans le secteur animal pilotent la formulation d'aliments locaux valorisant les coproduits disponibles (sons de céréales, drêches de brasserie, farine d'insectes) pour réduire la dépendance aux importations de maïs et de soja.",
+            "localSectors": [
+                "Grands groupes meuniers et avicoles (Sedima, NMA Sanders, FKS)",
+                "Centres régionaux de recherche appliquée (CORAF, CERAAS)",
+                "Multinationales de santé animale implantées à Dakar"
+            ],
+            "remoteWork": "Hybride (stratégie et réunions à distance / présence sur sites d'essais).",
+            "entrepreneurship": "Création d'une entreprise innovante de R&D contractuelle pour tester des formulations d'aliments locaux en conditions sahéliennes."
+        },
+        "relatedJobSlugs": [
+            "geneticien",
+            "ingenieur-production-animale",
+            "responsable-usine-aliment-betail",
+            "directeur-marketing-filiere-animale"
+        ],
+        "connectedFamilies": [
+            "direction-strategie",
+            "sciences-biotech",
+            "gestion-finance"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Directeur recherche et développement — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#directeur-recherche-et-developpement",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Ingénieur agronome ESA",
+                "url": "https://www.groupe-esa.com/formation/ingenieur-agronome/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Association Nationale de la Recherche et de la Technologie (ANRT)",
+            "Apec"
+        ],
+        "interests": [
+            "explorer-decouvrir",
+            "direction-strategie",
+            "negocier-convaincre"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon le Groupe ESA, un directeur R&D en agro-industrie consacre en moyenne entre 5% et 10% du chiffre d'affaires de son entreprise à la recherche, et coordonne des projets dont l'aboutissement sur le marché s'étend souvent sur plus de 7 ans.",
+            "pourquoi": "Entre la découverte en laboratoire, les tests de toxicité, les essais d'efficacité en élevage et l'homologation réglementaire par les autorités européennes (EFSA), le temps de l'innovation reste rigoureux et sécurisé.",
+            "a_retenir": "Le visionnaire qui transforme les découvertes de la science en progrès durables pour nos assiettes et la planète."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "4 500 - 8 500 € net/mois (~65 000 - 120 000 € brut/an, Source : Groupe ESA / APEC)",
+                "range": "4 500 - 8 500 € net/mois (~65 000 - 120 000 € brut/an, Source : Groupe ESA / APEC)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "1 200 000 - 3 500 000 FCFA / mois (Filiales multinationales agroalimentaires, santé animale)",
+                "range": "1 200 000 - 3 500 000 FCFA / mois (Filiales multinationales agroalimentaires, santé animale)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "responsable-usine-aliment-betail",
+        "slug": "responsable-usine-aliment-betail",
+        "title": "Responsable d'Usine d'Aliment du Bétail (Nutrition Animale)",
+        "aliases": [
+            "Directeur d'usine de nutrition animale",
+            "Responsable de site industriel aliment bétail",
+            "Chef d'usine agro-industrielle animale"
+        ],
+        "icon": "🏭",
+        "image": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Alimentation animale & agrofourniture",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage, BTS Agroalimentaire ou Ingénieur agronome ESA",
+        "salary": "🇫🇷 France : 3 000 - 5 200 € net/mois (~45 000 - 75 000 € brut/an, Source : Groupe ESA / Agroalimentaire) • 🇸🇳 Sénégal : 600 000 - 2 200 000 FCFA / mois (Usines d'aliment avicole et bétail, Sedima, NMA, FKS Dakar)",
+        "simpleDefinition": "Le responsable d'usine d'aliment du bétail assure le pilotage, l'organisation et la planification de la production d'aliments composés pour animaux, de l'arrivée des matières premières jusqu'à l'expédition et au chargement des camions de produits finis.",
+        "shortDescription": "Fiche officielle du Groupe ESA, il dirige un site industriel de haute précision fabricant granulés, farines et mélanges nutritifs pour les élevages.",
+        "longDescription": "Comme formulé dans le référentiel officiel du Groupe ESA, le responsable d'usine d'aliment du bétail assure le pilotage, l'organisation et la planification de la production dans le sens des objectifs fixés dans le respect des normes établies, de l'arrivée des matières premières jusqu'aux expéditions et chargements camions des produits finis. Ses qualités et compétences documentées par l'ESA sont l'humilité, le sens de l'organisation et de l'à-propos, une rigueur exemplaire et une conscience aiguë des enjeux sanitaires et économiques. Il gère les équipes de fabrication, la maintenance des broyeurs et presses à granuler, la traçabilité des lots et la prévention des contaminations croisées.",
+        "mainObjective": "Produire dans les délais et au moindre coût des aliments composés de haute valeur nutritionnelle dans le respect strict des normes de sécurité sanitaire.",
+        "companyRole": "Patron de site, garant de la performance industrielle et de la sécurité des personnes et des aliments.",
+        "species": [
+            "Bovins",
+            "Porcins",
+            "Volailles",
+            "Lapins",
+            "Ovins / Caprins"
+        ],
+        "workEnvironment": [
+            "🏭 Usines d'aliments du bétail (tours de dosage, silos de stockage, presses de granulation)",
+            "🖥️ Salles de contrôle automatisées et postes de supervision industrielle",
+            "🚚 Quais de réception des céréales en vrac et d'expédition des camions-citernes"
+        ],
+        "missions": [
+            "Planifier et ordonnancer les campagnes de fabrication selon les commandes des éleveurs et des technico-commerciaux",
+            "Superviser la réception des matières premières (céréales, tourteaux, prémix de vitamines) et contrôler leur qualité",
+            "Manager les équipes de production, maintenance et logistique (opérateurs, caristes, chauffeurs)",
+            "Veiller au respect scrupuleux des protocoles de traçabilité, de nettoyage des lignes et de prévention des contaminations croisées",
+            "Piloter le budget du site, optimiser la consommation énergétique (vapeur pour la granulation) et réduire les pertes matières"
+        ],
+        "typicalDay": [
+            {
+                "time": "06:30",
+                "title": "Tournée sécurité et passage en salle de contrôle",
+                "desc": "Contrôle des volumes fabriqués par l'équipe de nuit, vérification des indicateurs d'usure des presses de granulation."
+            },
+            {
+                "time": "09:00",
+                "title": "Point logistique et ordonnancement",
+                "desc": "Coordination avec le service approvisionnement pour planifier le déchargement de 4 camions de tourteau de colza."
+            },
+            {
+                "time": "14:00",
+                "title": "Audit qualité interne d'une ligne de fabrication",
+                "desc": "Vérification des procédures de purge entre un aliment porcelet médicamenteux et un aliment bovin standard."
+            },
+            {
+                "time": "16:30",
+                "title": "Réunion sécurité et performance avec les chefs d'équipe",
+                "desc": "Analyse d'un incident mécanique sur un élévateur à godets et validation du plan d'amélioration continue."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Technologies meunières et procédés de nutrition animale (broyage, mélange, granulation sous vapeur)",
+                "Gestion industrielle de production (ordonnancement, lean manufacturing, TRS)",
+                "Normes sanitaires drastiques de la nutrition animale (Oqualim, GMP+, FAMI-QS)",
+                "Maintenance industrielle des équipements électromécaniques lourds"
+            ],
+            "human": [
+                "Humilité et grande conscience des enjeux sanitaires pour la santé animale et humaine (souligné par l'ESA)",
+                "Sens aigu de l'organisation et de l'à-propos face aux pannes imprévues (requis ESA)",
+                "Rigueur managériale et écoute active de ses opérateurs de terrain",
+                "Fermeté absolue sur l'application des règles de sécurité au travail"
+            ],
+            "tools": [
+                "Superviseurs industriels et SCADA de dosage d'aliments",
+                "ERP de production et d'ordonnancement (SAP, Wonderware)",
+                "Presses à granuler haute pression et broyeurs à marteaux",
+                "Équipements de nettoyage en place et détecteurs de métaux"
+            ],
+            "analytical": [
+                "Calcul et suivi du Taux de Rendement Synthétique (TRS) des lignes",
+                "Optimisation du bilan énergétique au kilowatt par tonne produite"
+            ]
+        },
+        "specializations": [
+            "Fabrication d'aliments biologiques certifiés",
+            "Nutrition spécifique des jeunes animaux (aliments porcelets et poussins)",
+            "Gestion de multi-sites industriels d'agrofourniture"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme Bac +2",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) ou BTS Agroalimentaire",
+                    "desc": "Compréhension des besoins nutritionnels des animaux et des technologies industrielles."
+                },
+                {
+                    "step": "Licence Pro",
+                    "title": "Licence Pro Management de la Production Industrielle Agroalimentaire",
+                    "desc": "Perfectionnement en gestion d'atelier et management d'équipe."
+                },
+                {
+                    "step": "Diplôme d'Ingénieur",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA",
+                    "desc": "Formation de référence pour la direction d'usines de grande capacité."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Écoles nationales supérieures agronomiques et agroalimentaires (AgroParisTech, Oniris) — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "École Supérieure Polytechnique (ESP Dakar) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Certification Oqualim / Guide des Bonnes Pratiques de la Nutrition Animale",
+                "Habilitation Sauveteur Secouriste du Travail"
+            ],
+            "schoolSubjects": [
+                "Génie industriel",
+                "Nutrition animale",
+                "Qualité & Hygiène",
+                "Management d'équipe"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Coopératives agricoles fabricants d'aliments (Terrena, Agrial, Eureden)",
+                "Groupes industriels privés de nutrition animale (Sanders / Avril, De Heus, CCPA)",
+                "Fabricants spécialisés d'aliments pour chevaux et animaux de compagnie"
+            ],
+            "employerTypes": [
+                "Coopératives polyvalentes",
+                "Entreprises multinationales d'agrofourniture"
+            ],
+            "evolution": "Responsable d'équipe fabrication ➔ Responsable d'usine d'aliment du bétail ➔ Directeur industriel multi-usines ➔ Directeur des opérations d'un groupe agro-industriel",
+            "pros": "Poste à haute responsabilité managériale et industrielle, métier dynamique où aucune journée ne se ressemble, rémunération attractive.",
+            "cons": "Environnement poussiéreux et bruyant par moments, astreintes industrielles 24h/24, responsabilité directe en cas d'erreur de dosage."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Visiter une minoterie ou une usine d'aliment pour comprendre le fonctionnement d'une tour de dosage gravitaire.",
+            "intermediateProject": "Élaborer une fiche de contrôle qualité pour la réception d'un lot de 30 tonnes de maïs grain (humidité, impuretés, mycotoxines).",
+            "advancedProject": "Modéliser sous tableur l'ordonnancement de fabrication d'une journée en minimisant les temps de nettoyage entre 4 recettes d'aliments différentes.",
+            "portfolioIdeas": [
+                "Schéma de flux matière d'une usine d'aliment du bétail",
+                "Plan de prévention des poussières et risques ATEX"
+            ]
+        },
+        "aiImpact": {
+            "level": "Élevé",
+            "summary": "L'IA pilote les automates de dosage au gramme près en temps réel selon les analyses spectrométriques des matières premières et anticipe les pannes de presses par maintenance prédictive.",
+            "automatedTasks": [
+                "Ajustement automatique du temps de mélange et de vapeur selon l'humidité du grain",
+                "Optimisation automatique de la consommation électrique lors des heures creuses"
+            ],
+            "emergingSkills": [
+                "Supervision d'usines 4.0 interconnectées aux commandes automatiques des fermes"
+            ],
+            "humanEdge": "Le leadership pour souder des équipes de fabrication, l'humilité et le sens de l'à-propos face aux crises imprévues."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la filière avicole a explosé avec une production de plusieurs centaines de milliers de tonnes d'aliments par an. Des usines ultramodernes comme Sedima, NMA Sanders et FKS à Dakar emploient des responsables d'usine pour garantir la fourniture quotidienne des fermes des Niayes.",
+            "localSectors": [
+                "Industries d'aliments avicoles et bétail de la région dakaroise et de Thiès",
+                "Unités de transformation de tourteau d'arachide (Sonacos)",
+                "Projets de valorisation des résidus de canne à sucre de la CSS à Richard-Toll"
+            ],
+            "remoteWork": "Strictement impossible, présence physique quotidienne impérative sur le site industriel.",
+            "entrepreneurship": "Création d'une micro-usine régionale d'aliment du bétail valorisant les céréales locales (mil, sorgho, maïs) et les sous-produits de décorticage pour approvisionner les éleveurs ruraux."
+        },
+        "relatedJobSlugs": [
+            "manager-agrofourniture",
+            "technico-commercial-nutrition-animale",
+            "coordinateur-qhse-agro",
+            "responsable-achat-approvisionnement-agri"
+        ],
+        "connectedFamilies": [
+            "industrie-mecanique",
+            "gestion-finance",
+            "transport-logistique"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Responsable d'usine d'aliment du bétail — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#responsable-dusine-daliment-du-betail",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "SNIA (Syndicat National de l'Industrie de la Nutrition Animale)",
+            "Coop de France Nutrition Animale"
+        ],
+        "interests": [
+            "construire-fabriquer",
+            "nature-environnement",
+            "donnees-chiffres"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Une grande usine d'aliment du bétail peut fabriquer plus de 200 000 tonnes d'aliments par an avec plus de 80 recettes différentes adaptées aux vaches laitières, taurillons, poulets de chair, pondeuses ou porcelets.",
+            "pourquoi": "Chaque espèce et chaque stade de croissance exige un équilibre précis au pourcent près en protéines, acides aminés, cellulose et minéraux pour garantir la santé des animaux sans gaspillage.",
+            "a_retenir": "Le chef d'orchestre industriel qui transforme les récoltes de la terre en nourriture équilibrée pour les animaux d'élevage."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "3 000 - 5 200 € net/mois (~45 000 - 75 000 € brut/an, Source : Groupe ESA / Agroalimentaire)",
+                "range": "3 000 - 5 200 € net/mois (~45 000 - 75 000 € brut/an, Source : Groupe ESA / Agroalimentaire)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "600 000 - 2 200 000 FCFA / mois (Usines d'aliment avicole et bétail, Sedima, NMA, FKS Dakar)",
+                "range": "600 000 - 2 200 000 FCFA / mois (Usines d'aliment avicole et bétail, Sedima, NMA, FKS Dakar)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "manager-agrofourniture",
+        "slug": "manager-agrofourniture",
+        "title": "Manager dans l'Agrofourniture",
+        "aliases": [
+            "Responsable d'agence agrofourniture",
+            "Chef des ventes agrofourniture",
+            "Responsable commercial élevage et intrants"
+        ],
+        "icon": "📈",
+        "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Alimentation animale & agrofourniture",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage, Licence Pro ou Ingénieur agronome ESA",
+        "salary": "🇫🇷 France : 2 800 - 5 000 € net/mois + primes sur objectifs (~40 000 - 70 000 € brut/an, Source : Groupe ESA / Apecita) • 🇸🇳 Sénégal : 450 000 - 1 600 000 FCFA / mois (Entreprises de distribution d'intrants et provendes)",
+        "simpleDefinition": "Le manager dans l'agrofourniture met en œuvre la politique commerciale définie par la direction dans le domaine des intrants agricoles (semences, alimentation animale, minéraux, matériel d'élevage) et pilote une équipe de technico-commerciaux sur le terrain.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, ce manager commercial allie connaissance pointue des besoins d'élevage, négociation sur le terrain et animation d'équipe.",
+        "longDescription": "Comme l'énonce précisément la page officielle du Groupe ESA, le manager dans l'agrofourniture met en œuvre la politique commerciale définie par la direction dans le domaine de l'agrofourniture (semences, engrais, phytosanitaires, alimentation animale, matériel agricole). Il est responsable de la réalisation des objectifs quantitatifs et qualitatifs. Ses compétences clés documentées par l'ESA sont la négociation, la persuasion, la présence active sur le terrain, le management, le commerce, l'animation d'équipe et l'analyse continue des résultats.",
+        "mainObjective": "Développer le chiffre d'affaires et les parts de marché d'une gamme de produits d'agrofourniture tout en garantissant un conseil technique de qualité aux éleveurs.",
+        "companyRole": "Moteur commercial et pilote opérationnel de la relation client avec le monde agricole.",
+        "species": [
+            "Toutes espèces d'élevage et productions végétales associées"
+        ],
+        "workEnvironment": [
+            "🏢 Négoces agricoles, coopératives et firmes d'agrofourniture",
+            "🚗 Présence fréquente sur le terrain auprès des agriculteurs et des équipes commerciales",
+            "💻 Bureau de gestion commerciale, réunions régionales et salons professionnels"
+        ],
+        "missions": [
+            "Décliner la stratégie commerciale de la marque sur son territoire et fixer les objectifs de son équipe",
+            "Animer, coacher et former au quotidien les technico-commerciaux lors de visites en duo chez les éleveurs",
+            "Négocier directement les contrats importants avec les grands comptes, coopératives et groupements d'éleveurs",
+            "Analyser les résultats de vente, les marges et les parts de marché pour ajuster les actions promotionnelles",
+            "Assurer une veille concurrentielle sur les nouveaux produits de nutrition et de santé animale"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:00",
+                "title": "Briefing matinal de l'équipe commerciale",
+                "desc": "Revue des commandes d'aliments du bétail de la semaine et point sur les cibles de prospection d'éleveurs laitiers."
+            },
+            {
+                "time": "10:30",
+                "title": "Visite commerciale conjointe sur le terrain",
+                "desc": "Accompagnement d'un jeune technico-commercial chez un éleveur porcin pour négocier un contrat annuel de prémix."
+            },
+            {
+                "time": "14:30",
+                "title": "Analyse des tableaux de bord de vente",
+                "desc": "Suivi des réalisations du mois par secteur géographique et calcul des marges brutes générées."
+            },
+            {
+                "time": "17:00",
+                "title": "Échange avec les formulateurs de l'usine d'aliment",
+                "desc": "Remontée des retours clients sur l'appétence d'un nouvel aliment granulé pour veaux et ajustement de l'offre."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Excellente maîtrise des gammes d'agrofourniture (nutrition animale, minéraux, semences fourragères)",
+                "Techniques de vente complexe B2B appliquées au secteur agricole",
+                "Management de la performance commerciale et animation de réseau",
+                "Gestion financière de centre de profit (chiffre d'affaires, marges, encours clients)"
+            ],
+            "human": [
+                "Négociation et persuasion d'excellence (souligné par le Groupe ESA)",
+                "Sens aigu du management, écoute et capacité à motiver ses équipes (requis ESA)",
+                "Goût affirmé pour le terrain et le contact authentique avec le monde rural (requis ESA)",
+                "Rigueur d'analyse des résultats et réactivité face à la concurrence"
+            ],
+            "tools": [
+                "Logiciels de CRM agricole et suivi de clientèle (Salesforce, E-Cow, Agreo)",
+                "Tableaux de bord de Business Intelligence (Power BI, Excel avancé)",
+                "Outils de calcul de rations et simulations technico-économiques",
+                "Outils de visioconférence et présentations commerciales"
+            ],
+            "analytical": [
+                "Analyse du retour sur investissement des actions de promotion commerciale",
+                "Segmentation du portefeuille clients et identification des potentiels de croissance"
+            ]
+        },
+        "specializations": [
+            "Management de filière nutrition animale",
+            "Management en agrofourniture végétale et semences",
+            "Direction de réseau de distribution agricole régional"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme Bac +2",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) ou BTS Technico-Commercial",
+                    "desc": "Double compétence technique agricole et relation commerciale."
+                },
+                {
+                    "step": "Licence Pro / Bachelor",
+                    "title": "Licence Pro Technico-Commercial en Agrofourniture ou Bachelor ESA",
+                    "desc": "Approfondissement de la négociation et du management des ventes."
+                },
+                {
+                    "step": "Bac +5 / Ingénieur",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA ou Master Commerce Agricole",
+                    "desc": "Accès direct aux postes de chef des ventes national et direction commerciale."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Lycées agricoles et écoles de commerce agricole spécialisées — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Supérieur de Management (ISM Dakar) / Agro-business — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Certificat de Management Commercial",
+                "Certiphyto Décideur"
+            ],
+            "schoolSubjects": [
+                "Techniques de vente",
+                "Zootechnie",
+                "Comptabilité de gestion",
+                "Négociation"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Grandes firmes internationales de nutrition animale et d'agrofourniture (Avril, Cargill, Lhoist, Trouw Nutrition)",
+                "Coopératives d'approvisionnement agricole régionales",
+                "Négoces agricoles indépendants"
+            ],
+            "employerTypes": [
+                "Entreprises de distribution agricole",
+                "Firmes d'alimentation animale",
+                "Coopératives d'élevage"
+            ],
+            "evolution": "Technico-commercial de terrain ➔ Manager d'équipe agrofourniture ➔ Directeur régional des ventes ➔ Directeur commercial de groupe",
+            "pros": "Métier stimulant à fort contact humain, rémunération valorisante avec primes, autonomie d'action sur son territoire.",
+            "cons": "Pression sur l'atteinte des objectifs de chiffre d'affaires, déplacements fréquents en voiture, gestion des impayés délicate."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Accompagner un délégué commercial d'agrofourniture pendant une journée de tournée pour observer les techniques d'argumentation.",
+            "intermediateProject": "Bâtir un argumentaire commercial comparatif entre deux formules de compléments minéraux pour vaches taries.",
+            "advancedProject": "Élaborer un plan d'action commercial complet pour lancer une nouvelle gamme de protéagineux auprès de 50 éleveurs locaux.",
+            "portfolioIdeas": [
+                "Plan de prospection commerciale territorialisé",
+                "Tableau de bord de suivi du taux de transformation devis-ventes"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré à Élevé",
+            "summary": "L'IA analyse l'historique d'achats des exploitations et les données météo pour suggérer aux commerciaux le produit idéal à proposer au moment opportun.",
+            "automatedTasks": [
+                "Scoring prédictif des besoins de réapprovisionnement des élevages",
+                "Génération automatique de propositions tarifaires personnalisées"
+            ],
+            "emergingSkills": [
+                "Utilisation des CRM prédictifs et de la vente assistée par intelligence artificielle"
+            ],
+            "humanEdge": "La confiance personnelle et l'écoute sincère qui lient durablement un éleveur à son conseiller commercial."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la distribution d'aliments du bétail, de poussins d'un jour, de vaccins et de semences fourragères connaît un essor spectaculaire. Les managers d'agrofourniture coordonnent les réseaux de boutiques et de distributeurs dans des pôles comme Thiès, Mbour, Kaolack et Saint-Louis.",
+            "localSectors": [
+                "Réseaux de distribution d'intrants avicoles et bovins",
+                "Comptoirs d'agrofourniture ruraux",
+                "Coopératives maraîchères et pastorales"
+            ],
+            "remoteWork": "Faible (métier de contact direct et d'animation de terrain).",
+            "entrepreneurship": "Création d'un réseau franchisé de distribution d'intrants d'élevage et de conseil de proximité dans les zones rurales de l'intérieur du pays."
+        },
+        "relatedJobSlugs": [
+            "technico-commercial-nutrition-animale",
+            "responsable-usine-aliment-betail",
+            "directeur-marketing-filiere-animale",
+            "responsable-achat-approvisionnement-agri"
+        ],
+        "connectedFamilies": [
+            "commerce-marketing",
+            "gestion-finance",
+            "direction-strategie"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Manager dans l'agrofourniture — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#manager-dans-lagrofourniture",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Formations commerce et management — Groupe ESA",
+                "url": "https://www.groupe-esa.com/commerce-distribution-marketing/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Apecita",
+            "Fédération du Négoce Agricole (FNA)"
+        ],
+        "interests": [
+            "negocier-convaincre",
+            "nature-environnement",
+            "donnees-chiffres"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les statistiques d'insertion de l'enseignement supérieur agricole et du Groupe ESA, les fonctions managériales en agrofourniture recrutent massivement avec des taux de placement proches de 100% dans les six mois suivant l'obtention du diplôme.",
+            "pourquoi": "L'évolution des réglementations environnementales et la complexification des rations animales exigent des managers capables d'apporter un conseil technique irréprochable au-delà de la simple vente.",
+            "a_retenir": "Le pont commercial qui apporte aux éleveurs les solutions technologiques et nutritionnelles pour réussir."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 800 - 5 000 € net/mois + primes sur objectifs (~40 000 - 70 000 € brut/an, Source : Groupe ESA / Apecita)",
+                "range": "2 800 - 5 000 € net/mois + primes sur objectifs (~40 000 - 70 000 € brut/an, Source : Groupe ESA / Apecita)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "450 000 - 1 600 000 FCFA / mois (Entreprises de distribution d'intrants et provendes)",
+                "range": "450 000 - 1 600 000 FCFA / mois (Entreprises de distribution d'intrants et provendes)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "technico-commercial-nutrition-animale",
+        "slug": "technico-commercial-nutrition-animale",
+        "title": "Technico-Commercial en Nutrition Animale & Élevage",
+        "aliases": [
+            "Conseiller technico-commercial aliment du bétail",
+            "Attaché commercial nutrition animale",
+            "Conseiller en nutrition ruminants / monogastriques"
+        ],
+        "icon": "🌽",
+        "image": "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Alimentation animale & agrofourniture",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage (Productions Animales) du Groupe ESA, Licence Pro PA ou Ingénieur ESA",
+        "salary": "🇫🇷 France : 2 200 - 3 800 € net/mois + primes d'objectifs (~32 000 - 55 000 € brut/an, Source : Groupe ESA / Apecita) • 🇸🇳 Sénégal : 350 000 - 1 200 000 FCFA / mois (Provenderies industrielles Sedima, NMA, fermes)",
+        "simpleDefinition": "Le technico-commercial en nutrition animale conseille les éleveurs sur l'équilibre alimentaire de leur troupeau, formule des préconisations de rationnement et commercialise des aliments complets, minéraux et compléments nutritionnels adaptés.",
+        "shortDescription": "Fiche documentée par les filières du Groupe ESA, ce conseiller de terrain allie expertise zootechnique de la digestion animale et talent de négociation commerciale.",
+        "longDescription": "Issu des filières de formation emblématiques du Groupe ESA (BTS Métiers de l'élevage et Licence Pro PA), le technico-commercial en nutrition animale est le partenaire quotidien de l'éleveur. Il analyse la valeur nutritive des fourrages récoltés sur l'exploitation (ensilage de maïs, foin, herbe pâturée) à l'aide de logiciels de rationnement (INRAE) pour calculer avec précision les apports en énergie, protéines et minéraux nécessaires à chaque stade physiologique (lactation, tarissement, engraissement). Il propose et vend les aliments composés et additifs nutritionnels fabriqués par son entreprise, tout en suivant l'état corporel (note d'état corporel NEC) et les performances zootechniques des troupeaux.",
+        "mainObjective": "Optimiser le coût alimentaire et l'efficacité nutritionnelle des élevages tout en développant les ventes d'aliments et de minéraux de son entreprise.",
+        "companyRole": "Ambassadeur commercial et zootechnicien de référence auprès des éleveurs sur son secteur.",
+        "species": [
+            "Bovins lait et viande",
+            "Porcins",
+            "Volailles",
+            "Ovins",
+            "Caprins"
+        ],
+        "workEnvironment": [
+            "🚜 Visites quotidiennes en élevages et étables de son secteur géographique",
+            "🏢 Firmes d'aliments du bétail, coopératives agricoles et négoces privés",
+            "🚗 Véhicule de fonction et bureau mobile pour les simulations de rationnement"
+        ],
+        "missions": [
+            "Évaluer sur le terrain les stocks et la qualité des fourrages produits sur l'exploitation",
+            "Calculer et optimiser les rations alimentaires à l'aide des tables de référence zootechniques (INRAE)",
+            "Commercialiser la gamme d'aliments complets, correcteurs azotés et compléments minéraux vitaminés",
+            "Suivre les indicateurs de santé du troupeau (acidose ruminale, consistance des bouses, taux butyreux et protéique du lait)",
+            "Négocier les conditions tarifaires, planifier les livraisons en vrac ou en sacs et fidéliser son portefeuille d'éleveurs"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:30",
+                "title": "Première visite chez un éleveur laitier",
+                "desc": "Audit de la ration des vaches en pic de lactation, vérification du hachage de l'ensilage et ajustement de l'apport en tourteau de colza."
+            },
+            {
+                "time": "11:00",
+                "title": "Visite d'un élevage de taurillons",
+                "desc": "Pesée d'un échantillon d'animaux pour calculer le Gain Moyen Quotidien (GMQ) et proposition d'un aliment de finition."
+            },
+            {
+                "time": "14:30",
+                "title": "Calcul de rationnement au bureau",
+                "desc": "Simulation informatique de plusieurs scénarios de coût de ration sous logiciel spécialisé pour un jeune installé."
+            },
+            {
+                "time": "16:30",
+                "title": "Appels commerciaux et suivi logistique",
+                "desc": "Passation des commandes urgentes auprès de l'usine d'aliments et confirmation des livraisons en silo pour le lendemain."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Physiologie digestive comparée (ruminants, monogastriques) et métabolisme énergétique",
+                "Formulation et calcul de rations alimentaires selon les systèmes d'unités INRAE (UFL, UFV, PDI)",
+                "Diagnostic clinique visuel de l'état des animaux (note d'état corporel, aplombs, bouses)",
+                "Techniques de négociation commerciale B2B en milieu agricole"
+            ],
+            "human": [
+                "Sens du contact humain, authenticité et écoute active du monde paysan",
+                "Force de persuasion et capacité à justifier le retour sur investissement d'un aliment",
+                "Rigueur zootechnique et honnêteté dans les préconisations techniques",
+                "Autonomie et excellente gestion de ses tournées en milieu rural"
+            ],
+            "tools": [
+                "Logiciels professionnels de rationnement (INRAtion, Systali, Rumix)",
+                "Tamis séparateur de particules de fourrages (Penn State Separator)",
+                "Outils de CRM agricole sur tablette tactile connectée",
+                "Testeurs d'humidité et d'échauffement des silos"
+            ],
+            "analytical": [
+                "Calcul de la marge sur coût alimentaire par litre de lait ou kilo de carcasse",
+                "Interprétation des analyses de laboratoire sur la valeur nutritive des fourrages"
+            ]
+        },
+        "specializations": [
+            "Nutrition des vaches laitières de haute production",
+            "Alimentation des porcins et sevrage sans antibiotiques",
+            "Nutrition avicole de précision (pondeuses et poulets standard/label)"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme clé Bac +2",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                    "desc": "La voie royale pour maîtriser les bases zootechniques, l'alimentation et la gestion de troupeau."
+                },
+                {
+                    "step": "Bac +3 spécialisé",
+                    "title": "Licence Professionnelle PA — Métiers du Conseil en Élevage (Groupe ESA)",
+                    "desc": "Perfectionnement en techniques de diagnostic d'exploitation et relation clientèle."
+                },
+                {
+                    "step": "Bac +5 / Ingénieur",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA",
+                    "desc": "Accès aux postes d'ingénieur formulation ou directeur technique nutrition."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Lycées agricoles partenaires de l'ESA proposant le BTS PA — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Supérieur de Formation Agricole et Rurale (ISFAR Bambey) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                },
+                {
+                    "name": "EISMV (École Vétérinaire de Dakar) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                }
+            ],
+            "certifications": [
+                "Certificat de Conseiller en Nutrition Animale",
+                "Habilitation d'expert en rationnement informatisé"
+            ],
+            "schoolSubjects": [
+                "Biochimie & zootechnie",
+                "Physiologie animale",
+                "Techniques commerciales",
+                "Agronomie fourragère"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Coopératives agricoles régionales d'approvisionnement",
+                "Firmes d'aliments du bétail privées et prémixeurs (Sanders, Terrena, Agrial, Provimi, De Heus)",
+                "Négoces agricoles indépendants"
+            ],
+            "employerTypes": [
+                "Entreprises de nutrition animale",
+                "Coopératives polyvalentes",
+                "Distributeurs d'agrofourniture"
+            ],
+            "evolution": "Technico-commercial junior ➔ Responsable de secteur ➔ Chef de marché nutrition animale ➔ Directeur commercial élevage",
+            "pros": "Grande liberté d'organisation quotidienne, métier alliant rigueur scientifique et fibre commerciale, relation de confiance durable avec les éleveurs.",
+            "cons": "Déplacements constants par tous les temps, forte concurrence commerciale entre firmes, astreinte téléphonique lors des incidents de livraison."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Visiter une exploitation d'élevage et noter l'ensemble des composants d'une ration distribuée (fourrages, céréales, minéraux).",
+            "intermediateProject": "Utiliser un simulateur en ligne gratuit pour calculer les besoins en énergie (UFL) et en protéines (PDI) d'une vache de 650 kg produisant 30 L de lait.",
+            "advancedProject": "Réaliser un comparatif économique complet entre deux rations hivernales intégrant l'achat d'un correcteur azoté du commerce.",
+            "portfolioIdeas": [
+                "Audit zootechnique d'une ration laitière réelle",
+                "Argumentaire de vente d'un aliment minéral enrichi en oligo-éléments chélatés"
+            ]
+        },
+        "aiImpact": {
+            "level": "Élevé",
+            "summary": "L'IA analyse les données en temps réel des colliers connectés et des robots de traite pour proposer automatiquement des ajustements de concentrés par animal.",
+            "automatedTasks": [
+                "Détection précoce des chutes d'ingestion ou de rumination",
+                "Calcul instantané de rations à moindre coût par programmation linéaire"
+            ],
+            "emergingSkills": [
+                "Interprétation des flux de données IoT issus des auges connectées"
+            ],
+            "humanEdge": "Le coup d'œil de terrain sur la santé globale des bêtes et la pédagogie bienveillante pour convaincre l'éleveur de modifier ses habitudes."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la rentabilité des élevages de volailles de chair et de vaches laitières améliorées dépend à 70% de la maîtrise du coût alimentaire. Les technico-commerciaux de sociétés comme Sedima, NMA Sanders et Grands Moulins de Dakar apportent un appui conseil décisif aux aviculteurs des Niayes et aux fermes laitières de la région de Thiès.",
+            "localSectors": [
+                "Industries d'aliments avicoles et bétail de Rufisque et Thiès",
+                "Réseaux de boutiques d'intrants vétérinaires et d'aliments concentrés",
+                "Coopératives d'éleveurs de bétail métissé de la zone sylvopastorale"
+            ],
+            "remoteWork": "Strictement impossible (métier 100% terrain et contact éleveur).",
+            "entrepreneurship": "Création d'un service mobile de pesée et de formulation de rations à base d'ingrédients locaux (tourteau de coton, son de blé, mélasse, niébé)."
+        },
+        "relatedJobSlugs": [
+            "manager-agrofourniture",
+            "responsable-usine-aliment-betail",
+            "ingenieur-conseil-productions-animales",
+            "eleveur"
+        ],
+        "connectedFamilies": [
+            "commerce-marketing",
+            "chimie-biologie",
+            "conseil-audit"
+        ],
+        "resources": [
+            {
+                "type": "formation",
+                "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                "url": "https://www.groupe-esa.com/formation/bts-production-animales/",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Licence Pro PA Métiers du conseil en élevage — Groupe ESA",
+                "url": "https://www.groupe-esa.com/formation/licence-pro-pa-productions-animales-metiers-du-conseil-en-elevage/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "SNIA",
+            "Idele"
+        ],
+        "interests": [
+            "nature-environnement",
+            "negocier-convaincre",
+            "conseiller-accompagner"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les statistiques d'insertion du Groupe ESA, les jeunes diplômés de BTS Métiers de l'élevage et Licence Pro PA accédant aux postes de technico-commerciaux en nutrition trouvent un emploi en moins de deux mois, avec de fortes perspectives d'évolution.",
+            "pourquoi": "L'alimentation représente jusqu'à 65% du coût de production d'un élevage : un conseiller capable de faire gagner 5 centimes d'euro par kilo produit sécurise la survie financière de l'exploitation.",
+            "a_retenir": "L'allié zootechnique et économique incontournable qui nourrit les cheptels avec rigueur."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 200 - 3 800 € net/mois + primes d'objectifs (~32 000 - 55 000 € brut/an, Source : Groupe ESA / Apecita)",
+                "range": "2 200 - 3 800 € net/mois + primes d'objectifs (~32 000 - 55 000 € brut/an, Source : Groupe ESA / Apecita)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "350 000 - 1 200 000 FCFA / mois (Provenderies industrielles Sedima, NMA, fermes)",
+                "range": "350 000 - 1 200 000 FCFA / mois (Provenderies industrielles Sedima, NMA, fermes)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "ingenieur-conseil-productions-animales",
+        "slug": "ingenieur-conseil-productions-animales",
+        "title": "Ingénieur-Conseil en Productions Animales",
+        "aliases": [
+            "Ingénieur zootechnicien conseil",
+            "Consultant expert en élevage",
+            "Conseiller d'élevage territorial"
+        ],
+        "icon": "📋",
+        "image": "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Conseil & accompagnement des élevages",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Diplôme d'Ingénieur Agronome du Groupe ESA — Majeure Productions Animales",
+        "salary": "🇫🇷 France : 2 700 - 4 600 € net/mois (~38 000 - 64 000 € brut/an, Source : Groupe ESA / APEC) • 🇸🇳 Sénégal : 500 000 - 1 700 000 FCFA / mois (Bureaux d'études agricoles, projets Banque Mondiale, FAO)",
+        "simpleDefinition": "L'ingénieur-conseil en productions animales apporte une expertise stratégique et technique globale aux élevages pour moderniser leurs pratiques, améliorer leur rentabilité et concevoir des programmes d'innovation zootechnique.",
+        "shortDescription": "Fiche officielle du Groupe ESA, cet innovateur en matière d'élevage bovin, ovin, porcin ou avicole guide la transformation technologique et durable des cheptels.",
+        "longDescription": "Selon la définition officielle fournie par le Groupe ESA : 'Innovateur en matière d’élevage bovin, ovin, porcin, caprin ou avicole, l’ingénieur en productions animales conçoit et supervise la mise en œuvre de programmes expérimentaux de reproduction. Il dirige une équipe au sein d’une structure de recherche ou d'un organisme de conseil.' Les compétences indispensables spécifiées par l'ESA sont l'organisation, le relationnel et le conseil. Au-delà des protocoles d'essais, il accompagne les chefs d'exploitation dans des diagnostics globaux à 360° : autonomie fourragère, transition carbone, réduction des émissions gazeuses, bien-être animal et rentabilité financière.",
+        "mainObjective": "Conseiller les éleveurs et les filières dans leurs choix stratégiques de modernisation, de conduite zootechnique et de transition agroécologique.",
+        "companyRole": "Conseiller stratégique de haut niveau pour l'avenir et la durabilité des exploitations.",
+        "species": [
+            "Bovins lait et viande",
+            "Porcins",
+            "Ovins",
+            "Caprins",
+            "Volailles"
+        ],
+        "workEnvironment": [
+            "🏢 Chambres d'agriculture régionales et organismes de conseil en élevage",
+            "🚜 Exploitations agricoles pour les audits et diagnostics approfondis",
+            "💻 Bureaux d'études zootechniques et rédaction de rapports stratégiques"
+        ],
+        "missions": [
+            "Réaliser des diagnostics technico-économiques complets d'exploitations d'élevage",
+            "Concevoir des plans d'amélioration génétique, sanitaire et nutritionnelle adaptés à chaque contexte",
+            "Accompagner les éleveurs dans les démarches de décarbonation et d'évaluation environnementale (CAP'2ER)",
+            "Animer des groupes d'éleveurs pour favoriser le partage de pratiques innovantes et la formation continue",
+            "Superviser des projets pilotes d'expérimentation zootechnique en partenariat avec les instituts de recherche"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:30",
+                "title": "Diagnostic global chez un éleveur en transition",
+                "desc": "Analyse du bilan carbone, de la trésorerie et de l'efficacité de la reproduction sur 5 années d'historique."
+            },
+            {
+                "time": "11:30",
+                "title": "Élaboration de préconisations stratégiques",
+                "desc": "Modélisation de l'impact de l'implantation de légumineuses prairiales pour diminuer les achats d'engrais et de soja."
+            },
+            {
+                "time": "14:30",
+                "title": "Animation d'un groupe d'échange technique",
+                "desc": "Atelier sur la réduction de la mortalité des jeunes animaux avec 12 éleveurs caprins du territoire."
+            },
+            {
+                "time": "17:00",
+                "title": "Rédaction d'une note d'expertise pour la Chambre d'Agriculture",
+                "desc": "Synthèse des impacts économiques de la nouvelle réglementation sur le bien-être des volailles."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Zootechnie avancée multiespèces (reproduction, alimentation, génétique)",
+                "Diagnostic technico-économique d'exploitation et gestion prévisionnelle",
+                "Méthodologie de bilan carbone et d'évaluation environnementale en élevage",
+                "Réglementations européennes et nationales sur l'environnement et le bien-être animal"
+            ],
+            "human": [
+                "Excellente aisance relationnelle et sens de l'écoute bienveillante (requis ESA)",
+                "Pédagogie et capacité à conseiller sans imposer (requis ESA)",
+                "Rigueur d'organisation et gestion de projets complexes (requis ESA)",
+                "Vision systémique et neutralité d'analyse technique"
+            ],
+            "tools": [
+                "Outils de diagnostic carbone et durabilité (CAP'2ER, IDEA)",
+                "Logiciels de gestion technico-économique d'élevage (GTE, GTL, Bovi-Clic)",
+                "Outils de modélisation prospective d'exploitations agricoles",
+                "Plateformes collaboratives et SIG agricoles"
+            ],
+            "analytical": [
+                "Corrélation entre indicateurs zootechniques et santé financière de la ferme",
+                "Analyse critique des scénarios d'investissement (bâtiments, robotique, méthanisation)"
+            ]
+        },
+        "specializations": [
+            "Conseil en transition bas carbone et agroécologie de l'élevage",
+            "Expertise en robotique de traite et précision zootechnique",
+            "Conseil stratégique en transmission et restructuration d'exploitations"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme d'excellence",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA — Majeure Productions Animales",
+                    "desc": "Formation d'ingénieur habilitée CTI offrant une triple compétence agronomique, économique et managériale."
+                },
+                {
+                    "step": "Double diplôme possible",
+                    "title": "Master Management des Entreprises Agricoles ou MSc International Livestock",
+                    "desc": "Ouverture sur le conseil de gestion de haut niveau."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Agro (Rennes-Angers, Dijon, Montpellier) — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "ENSA (École Nationale Supérieure d'Agriculture) — Thiès, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                },
+                {
+                    "name": "EISMV Dakar — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                }
+            ],
+            "certifications": [
+                "Certification Conseiller Carbone Élevage (Idele)",
+                "Agrément de formateur d'adultes en milieu rural"
+            ],
+            "schoolSubjects": [
+                "Zootechnie générale",
+                "Économie rurale",
+                "Agronomie",
+                "Sociologie du monde agricole"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Organismes de conseil en élevage (Seenergi, Seenorest, Eilyps, Conseil Élevage)",
+                "Chambres d'agriculture régionales et départementales",
+                "Bureaux d'études d'ingénierie agronomique et cabinets de conseil"
+            ],
+            "employerTypes": [
+                "Chambres consulaires",
+                "Entreprises de conseil en élevage",
+                "Cabinets d'audit agricole"
+            ],
+            "evolution": "Ingénieur-conseil junior ➔ Ingénieur-conseil expert ➔ Responsable de pôle conseil élevage ➔ Directeur d'organisme de développement agricole",
+            "pros": "Diversité intellectuelle passionnante, grande autonomie, rôle moteur dans l'adaptation de l'agriculture aux enjeux du siècle.",
+            "cons": "Forte exigence de polyvalence (de la biologie au droit fiscal), confrontation à des situations de détresse économique chez certains agriculteurs."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Réaliser un schéma systémique représentant les flux de matières (herbe, lait, déjections, aliments achetés) d'une étable de 60 vaches.",
+            "intermediateProject": "Élaborer une grille d'audit pour évaluer l'autonomie fourragère d'une ferme ovine sur 3 années de sécheresse.",
+            "advancedProject": "Rédiger un plan de réduction d'émissions de méthane entérique pour un cheptel laitier en combinant rationnement et génétique.",
+            "portfolioIdeas": [
+                "Rapport de diagnostic technico-économique anonymisé",
+                "Guide méthodologique de gestion du stress thermique en été"
+            ]
+        },
+        "aiImpact": {
+            "level": "Élevé",
+            "summary": "L'IA aide l'ingénieur en agrégeant instantanément les historiques de centaines d'élevages pour détecter des trajectoires optimales de rentabilité.",
+            "automatedTasks": [
+                "Compilation automatique des données comptables et zootechniques",
+                "Benchmarking automatisé des fermes par rapport aux moyennes régionales"
+            ],
+            "emergingSkills": [
+                "Pilotage de jumeaux numériques d'exploitations agricoles pour simuler des investissements"
+            ],
+            "humanEdge": "L'empathie humaine et la psychologie nécessaires pour convaincre une famille d'éleveurs d'engager la transmission ou la restructuration de leur outil de travail."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, le Programme National de Développement de l'Élevage (PNDE) et les projets de zones pastorales s'appuient sur des ingénieurs-conseils pour structurer la filière laitière locale, réduire la dépendance à la poudre de lait importée et sécuriser l'hydratation des troupeaux dans le Ferlo.",
+            "localSectors": [
+                "Ministère de l'Élevage et des Productions Animales (MEPA)",
+                "Projets PRAPS (Banque Mondiale / CILSS)",
+                "Bureaux d'études de développement rural sénégalais"
+            ],
+            "remoteWork": "Hybride (visites sur le terrain / travail de bureau et visioconférences).",
+            "entrepreneurship": "Création d'un cabinet d'ingénierie zootechnique et d'audit de fermes modernes pour les investisseurs urbains se lançant dans l'agrobusiness."
+        },
+        "relatedJobSlugs": [
+            "ingenieur-production-animale",
+            "technico-commercial-nutrition-animale",
+            "responsable-experimentation-animale",
+            "conseiller-batiment-elevage"
+        ],
+        "connectedFamilies": [
+            "conseil-audit",
+            "environnement-climat",
+            "direction-strategie"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Ingénieur-conseil en productions animales — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#ingenieur-conseil-en-productions-animales",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Ingénieur agronome — Groupe ESA",
+                "url": "https://www.groupe-esa.com/formation/ingenieur-agronome/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "France Conseil Élevage",
+            "Chambres d'Agriculture France"
+        ],
+        "interests": [
+            "conseiller-accompagner",
+            "nature-environnement",
+            "donnees-chiffres"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon le Groupe ESA, la dimension relationnelle et l'écoute sont tout aussi décisives que les connaissances scientifiques pour réussir dans ce métier.",
+            "pourquoi": "Un plan technique parfait sur le papier échoue s'il ne prend pas en compte le rythme de vie de l'éleveur, ses aspirations personnelles et son bien-être au travail.",
+            "a_retenir": "L'architecte conseil qui sécurise la pérennité économique et humaine des éleveurs."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 700 - 4 600 € net/mois (~38 000 - 64 000 € brut/an, Source : Groupe ESA / APEC)",
+                "range": "2 700 - 4 600 € net/mois (~38 000 - 64 000 € brut/an, Source : Groupe ESA / APEC)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "500 000 - 1 700 000 FCFA / mois (Bureaux d'études agricoles, projets Banque Mondiale, FAO)",
+                "range": "500 000 - 1 700 000 FCFA / mois (Bureaux d'études agricoles, projets Banque Mondiale, FAO)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "conseiller-batiment-elevage",
+        "slug": "conseiller-batiment-elevage",
+        "title": "Conseiller en Bâtiment d'Élevage & Ambiance",
+        "aliases": [
+            "Conseillère bâtiment agricole",
+            "Expert en conception de bâtiments d'élevage",
+            "Chargé d'études aménagement et ventilation d'étables"
+        ],
+        "icon": "🏗️",
+        "image": "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Bâtiments & infrastructures d'élevage",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage ESA, Licence Pro Bâtiment Agricole ou Ingénieur agronome",
+        "salary": "🇫🇷 France : 2 200 - 3 600 € net/mois (~32 000 - 50 000 € brut/an, Source : Groupe ESA / Chambres d'agriculture) • 🇸🇳 Sénégal : 350 000 - 1 200 000 FCFA / mois (Bureaux d'études génie civil rural, constructeurs métalliques)",
+        "simpleDefinition": "Le conseiller en bâtiment d'élevage accompagne les éleveurs de la conception architecturale à la réalisation de leurs infrastructures, en combinant règles de construction, bien-être animal, ventilation et démarches de permis de construire.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, cet expert conçoit des étables, porcheries et poulaillers alliant confort des animaux, ergonomie de travail et respect réglementaire.",
+        "longDescription": "Comme l'énonce mot pour mot la fiche officielle du Groupe ESA : 'Il propose un ensemble de prestations allant du conseil ponctuel jusqu’au permis de construire. Le conseil bâtiment inclut à la fois des notions constructives, réglementaires et zootechniques. Compétences indispensables : Réactif et bien organisé.' Le bâtiment d'élevage n'est pas un simple hangar : c'est l'outil de production central qui conditionne la santé pulmonaire des animaux par sa ventilation (naturelle ou dynamique), la qualité de la litière, la luminosité, l'absence de courants d'air et l'ergonomie de l'éleveur pour réduire les troubles musculosquelettiques.",
+        "mainObjective": "Concevoir des bâtiments d'élevage performants, ventilés et ergonomiques garantissant la biosécurité, le confort animal et la rentabilité de l'investissement.",
+        "companyRole": "Concepteur et coordinateur technique des projets d'infrastructures d'élevage.",
+        "species": [
+            "Bovins",
+            "Porcins",
+            "Volailles",
+            "Caprins",
+            "Ovins",
+            "Équins"
+        ],
+        "workEnvironment": [
+            "🚜 Exploitations agricoles et chantiers de construction",
+            "🏢 Chambres d'agriculture, coopératives et constructeurs de hangars agricoles",
+            "💻 Bureau d'études équipé de logiciels de CAO/DAO (AutoCAD, SketchUp)"
+        ],
+        "missions": [
+            "Analyser les besoins d'agrandissement, de modernisation ou de robotisation de l'élevage",
+            "Réaliser des diagnostics d'ambiance en étable (fumigènes de flux d'air, anémomètres, hygrométrie)",
+            "Dessiner les plans de masse, plans intérieurs (cornadis, logettes, couloirs) et coupes de ventilation",
+            "Constituer les dossiers de demande de permis de construire et déclarations ICPE environnementales",
+            "Assister l'éleveur dans la consultation des entreprises de maçonnerie, charpente et équipements tubulaires"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:30",
+                "title": "Diagnostic d'ambiance avec test fumigène",
+                "desc": "Déclenchement d'un fumigène dans une bergerie pour visualiser le renouvellement d'air et détecter les zones d'air vicié."
+            },
+            {
+                "time": "11:00",
+                "title": "Réunion sur chantier avec le charpentier",
+                "desc": "Vérification des hauteurs de sablières et de la pose des filets brise-vent pour éviter les courants d'air sur les veaux."
+            },
+            {
+                "time": "14:30",
+                "title": "Conception de plan sous logiciel CAO",
+                "desc": "Dessin de l'implantation d'un robot de traite et d'un couloir de tri automatisé dans un bâtiment rénové."
+            },
+            {
+                "time": "16:45",
+                "title": "Finalisation d'un dossier de permis de construire",
+                "desc": "Vérification des pièces graphiques et des distances d'éloignement par rapport aux tiers (règles d'urbanisme)."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Zootechnie d'ambiance (aéraulique des bâtiments, hygrométrie, thermorégulation animale)",
+                "Dessin technique assisté par ordinateur (CAO/DAO) et calcul de surfaces agricoles",
+                "Réglementation de l'urbanisme rural, permis de construire et dossiers ICPE",
+                "Connaissance des matériaux de construction (bois, métal, béton) et équipements tubulaires"
+            ],
+            "human": [
+                "Forte réactivité pour tenir les plannings de permis et de chantiers (requis ESA)",
+                "Excellente organisation et rigueur méthodologique (requis ESA)",
+                "Écoute attentive des souhaits de l'éleveur et vision ergonomique du travail",
+                "Pédagogie pour expliquer les contraintes techniques aux artisans et aux éleveurs"
+            ],
+            "tools": [
+                "Logiciels de CAO/DAO (AutoCAD, SketchUp Architecture, Revit)",
+                "Appareils de mesure d'ambiance (fumigènes, anémomètres à fil chaud, luxmètres, thermohygrographes)",
+                "Télémètres laser et niveaux de chantier numériques",
+                "Bases de données de prix de référence de la construction agricole"
+            ],
+            "analytical": [
+                "Dimensionnement précis des ouvertures de ventilation statique (entrées d'air et faîtages)",
+                "Optimisation du coût du bâtiment par place d'animal logé"
+            ]
+        },
+        "specializations": [
+            "Bâtiments d'élevage bas carbone et toitures photovoltaïques",
+            "Ambiance, ventilation et réduction du stress thermique",
+            "Conception d'aménagements pour robots de traite et bien-être animal"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Formation de base",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                    "desc": "Compréhension fine des exigences physiologiques et du comportement des animaux logés."
+                },
+                {
+                    "step": "Licence Pro spécialisée",
+                    "title": "Licence Pro Bâtiments d'Élevage et Énergies Renouvelables",
+                    "desc": "Acquisition des compétences de dessin, calcul de structures et dossiers réglementaires."
+                },
+                {
+                    "step": "Ingénieur",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA",
+                    "desc": "Accès aux fonctions de chef de pôle aménagement rural et expert en génie de l'élevage."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Lycées agricoles spécialisés en génie rural et agroéquipement — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "École Polytechnique de Thiès (EPT) / Génie Rural — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                },
+                {
+                    "name": "ISFAR Bambey — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Habilitation Conseiller Bâtiment Agréé (Idele / Chambres d'agriculture)",
+                "Certification Diagnostic Ambiance et Ventilation"
+            ],
+            "schoolSubjects": [
+                "Dessin technique",
+                "Aéraulique et thermodynamique",
+                "Zootechnie",
+                "Droit de l'urbanisme"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Chambres d'agriculture régionales (services aménagement et bâtiment)",
+                "Entreprises et constructeurs de bâtiments agricoles métalliques ou bois",
+                "Bureaux d'études spécialisés en élevage et coopératives"
+            ],
+            "employerTypes": [
+                "Chambres consulaires",
+                "Constructeurs de bâtiments d'élevage",
+                "Coopératives agricoles"
+            ],
+            "evolution": "Dessinateur projeteur bâtiment ➔ Conseiller bâtiment d'élevage ➔ Responsable de pôle bâtiment ➔ Expert national en génie de l'élevage",
+            "pros": "Satisfaction concrète de voir sortir de terre des bâtiments modernes, contact humain enrichissant, métier technique très recherché.",
+            "cons": "Déplacements fréquents sur les chantiers, gestion des aléas d'entreprises du bâtiment, délais stricts d'instruction de permis."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Dessiner le plan simplifié de l'intérieur d'une stabulation libre en respectant les aires d'exercice, de couchage et d'alimentation.",
+            "intermediateProject": "Calculer la surface d'ouverture nécessaire au faîtage d'un bâtiment accueillant 80 vaches pour assurer une vitesse d'air optimale.",
+            "advancedProject": "Monter un dossier complet de permis de construire pour un bâtiment d'engraissement avec notice d'impact paysager et gestion des effluents.",
+            "portfolioIdeas": [
+                "Plan de bâtiment sous SketchUp ou AutoCAD",
+                "Rapport de diagnostic d'ambiance avec mesures de flux d'air"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré à Élevé",
+            "summary": "L'IA générative et le BIM génèrent des maquettes 3D optimisées en simulant automatiquement la dynamique des fluides et le flux d'air intérieur.",
+            "automatedTasks": [
+                "Simulation numérique CFD de ventilation des étables",
+                "Génération automatique des bordereaux de pièces administratives"
+            ],
+            "emergingSkills": [
+                "Maîtrise du BIM agricole (Building Information Modeling)"
+            ],
+            "humanEdge": "La perception physique des courants d'air sur place et la négociation diplomatique avec les services instructeurs d'urbanisme."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la protection des troupeaux contre les chaleurs extrêmes (> 40°C en période sèche) est vitale. Les conseillers en bâtiment conçoivent des poulaillers semi-fermés avec rideaux de brumisation (cooling pads) et des étables sahéliennes ventilées à toit double pour les vaches métisses de la zone des Niayes.",
+            "localSectors": [
+                "Constructeurs métalliques et hangars de Dakar et Thiès",
+                "Fermes avicoles industrielles de Pout et Sébikotane",
+                "Centres d'insémination et fermes laitières pilotes"
+            ],
+            "remoteWork": "Hybride (visites de chantiers / dessin CAO en bureau).",
+            "entrepreneurship": "Création d'une entreprise de conception et montage de bâtiments d'élevage biosécurisés adaptés au climat tropical chaud et sec."
+        },
+        "relatedJobSlugs": [
+            "ingenieur-conseil-productions-animales",
+            "coordinateur-formation-securite",
+            "eleveur",
+            "coordinateur-qhse-agro"
+        ],
+        "connectedFamilies": [
+            "btp-immobilier",
+            "architecture-urbanisme",
+            "energie-environnement"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Conseiller en bâtiment d'élevage — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#conseiller-en-batiment-delevage",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "guide",
+                "title": "Guide des bâtiments d'élevage — Idele",
+                "url": "https://idele.fr/batiments-delevage",
+                "source": "Institut de l'Élevage"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Institut de l'Élevage (Idele)",
+            "Chambres d'Agriculture"
+        ],
+        "interests": [
+            "construire-fabriquer",
+            "nature-environnement",
+            "donnees-chiffres"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon le Groupe ESA et l'Institut de l'Élevage, une bonne conception de la ventilation dans un bâtiment d'élevage réduit jusqu'à 40% les pathologies respiratoires des jeunes animaux et diminue fortement l'usage des antibiotiques.",
+            "pourquoi": "L'ammoniac et l'humidité s'accumulent au niveau du sol si le renouvellement d'air est insuffisant : le conseiller bâtiment protège les poumons des bêtes par la simple mécanique des fluides.",
+            "a_retenir": "L'architecte du bien-être et de la santé animale sous les toits de la ferme."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 200 - 3 600 € net/mois (~32 000 - 50 000 € brut/an, Source : Groupe ESA / Chambres d'agriculture)",
+                "range": "2 200 - 3 600 € net/mois (~32 000 - 50 000 € brut/an, Source : Groupe ESA / Chambres d'agriculture)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "350 000 - 1 200 000 FCFA / mois (Bureaux d'études génie civil rural, constructeurs métalliques)",
+                "range": "350 000 - 1 200 000 FCFA / mois (Bureaux d'études génie civil rural, constructeurs métalliques)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "coordinateur-qhse-agro",
+        "slug": "coordinateur-qhse-agro",
+        "title": "Coordinateur QHSE Agroalimentaire & Filières Animales",
+        "aliases": [
+            "Responsable Qualité Hygiène Sécurité Environnement",
+            "Animateur QHSE élevage et abattage",
+            "Responsable sécurité et environnement agro"
+        ],
+        "icon": "🛡️",
+        "image": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Qualité, hygiène, sécurité & environnement (QHSE)",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Licence Pro Qualité ou Ingénieur ESA / Master QHSE",
+        "salary": "🇫🇷 France : 2 600 - 4 400 € net/mois (~36 000 - 62 000 € brut/an, Source : Groupe ESA / APEC) • 🇸🇳 Sénégal : 450 000 - 1 600 000 FCFA / mois (Industries agroalimentaires, abattoirs modernes, laiteries)",
+        "simpleDefinition": "Le coordinateur QHSE élabore, met en œuvre et contrôle les politiques de qualité, d'hygiène, de sécurité du personnel et de respect de l'environnement au sein des exploitations d'élevage, usines d'aliment et abattoirs.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, ce garant de la conformité veille à la sécurité des salariés, à la pureté des produits et à l'impact environnemental des sites agroalimentaires.",
+        "longDescription": "Comme documenté mot à mot par le Groupe ESA : 'Le coordinateur qualité hygiène sécurité environnement (ou responsable QHSE) est chargé d’élaborer et de contrôler l’application des politiques de qualité, d’hygiène, de sécurité et d’environnement. Bon communiquant, il est en relation constante avec ses supérieurs, des clients et des prestataires. Compétences indispensables : Bonnes connaissances en droit, en gestion de budget, en management environnemental et en risques industriels.' Dans les filières animales (laiteries, usines d'aliments du bétail, centres d'allotement, abattoirs), il traque les contaminations microbiologiques, prévient les accidents de travail et gère les rejets aqueux et odorants.",
+        "mainObjective": "Garantir zéro accident du travail, zéro non-conformité sanitaire et une empreinte écologique minimale pour l'ensemble des installations industrielles ou d'élevage.",
+        "companyRole": "Garde-fou réglementaire, protecteur des salariés et garant de la sécurité sanitaire des consommateurs.",
+        "species": [
+            "Toutes filières animales (bovins, porcins, volailles, ovins, caprins)"
+        ],
+        "workEnvironment": [
+            "🏭 Usines d'aliments du bétail, abattoirs, ateliers de découpe et laiteries",
+            "🏢 Bureau de management de la qualité et gestion documentaire",
+            "🚜 Sites d'élevage pour les audits de biosécurité et gestion des effluents"
+        ],
+        "missions": [
+            "Concevoir et actualiser le Document Unique d'Évaluation des Risques Professionnels (DUERP)",
+            "Déployer les plans de maîtrise sanitaire (HACCP), d'hygiène des ateliers et de nettoyage-désinfection",
+            "Former les opérateurs aux gestes de sécurité, aux règles d'hygiène stricte et au port des EPI",
+            "Piloter les audits de certification (ISO 9001, ISO 14001, ISO 45001, IFS Food, BRC)",
+            "Gérer les plans de traitement des rejets industriels (stations d'épuration de laiteries, filtres à poussières)"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:15",
+                "title": "Tournée terrain hygiène et sécurité en usine",
+                "desc": "Contrôle visuel des lignes d'ensachage d'aliments, vérification du port des protections auditives et propreté des sols."
+            },
+            {
+                "time": "10:30",
+                "title": "Gestion d'un incident de non-conformité",
+                "desc": "Analyse 5 Pourquoi (root cause) suite au blocage d'une palette d'aliments présentant une anomalie de fermeture de sac."
+            },
+            {
+                "time": "14:00",
+                "title": "Session de sensibilisation sécurité pour les nouveaux arrivants",
+                "desc": "Formation interactive sur la circulation des chariots élévateurs et la manipulation des produits de nettoyage."
+            },
+            {
+                "time": "16:30",
+                "title": "Suivi des indicateurs environnementaux",
+                "desc": "Vérification des relevés de DCO de la station de traitement des eaux usées et déclaration mensuelle en préfecture."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Droit du travail, réglementations ICPE et droit environnemental (requis ESA)",
+                "Normes internationales de management (ISO 9001, 14001, 45001) et sécurité alimentaire (HACCP, IFS)",
+                "Gestion des risques industriels et analyse des accidents de travail (arbre des causes)",
+                "Gestion de budget de mise en conformité et sécurité (requis ESA)"
+            ],
+            "human": [
+                "Excellente communication et pédagogie fédératrice (souligné par l'ESA)",
+                "Fermeté bienveillante et autorité morale sur le respect des règles de sécurité",
+                "Sens de l'écoute et gestion du dialogue social avec les représentants du personnel",
+                "Réactivité et sang-froid en cas d'alerte sanitaire ou accidentelle"
+            ],
+            "tools": [
+                "Logiciels de gestion intégrée QHSE et gestion électronique de documents (GED)",
+                "Outils de mesure de bruit (sonomètres), luxmètres et détecteurs de gaz",
+                "Matrices de risques professionnels et grilles d'audit standardisées",
+                "Tableaux de bord d'indicateurs de fréquence et gravité des accidents"
+            ],
+            "analytical": [
+                "Analyse statistique des presqu'accidents pour prévenir les accidents graves",
+                "Évaluation technico-financière des investissements de réduction des impacts écologiques"
+            ]
+        },
+        "specializations": [
+            "Biosécurité en élevage et filières avicoles/porcines",
+            "Sécurité alimentaire et HACCP en industrie laitière et carnée",
+            "Management environnemental et économie circulaire en agroalimentaire"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme Bac +2/+3",
+                    "title": "BTS Métiers de l'élevage ESA ou Licence Pro Qualité / HSE",
+                    "desc": "Acquisition des compétences de base en hygiène, sécurité et réglementation agroalimentaire."
+                },
+                {
+                    "step": "Diplôme Bac +5",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA — Majeure Agroalimentaire / QHSE",
+                    "desc": "Accès direct aux fonctions de direction QHSE de sites industriels majeurs."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Universités et IUT proposant les filières HSE et Qualité — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "École Supérieure Polytechnique (ESP Dakar) / Génie Chimique et Qualité — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                },
+                {
+                    "name": "Institut de Technologie Alimentaire (ITA) — Dakar, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Certification Auditeur Interne Qualité / HSE (IRCA / Afnor)",
+                "Habilitation Sauveteur Secouriste du Travail (SST)"
+            ],
+            "schoolSubjects": [
+                "Droit de l'environnement",
+                "Microbiologie alimentaire",
+                "Toxicologie industrielle",
+                "Communication"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Industries de transformation laitière (Lactalis, Danone, Savencia, Sodiaal)",
+                "Industries de la viande et abattoirs (Bigard, LDC, Cooperl)",
+                "Grandes usines de fabrication d'aliments pour bétail"
+            ],
+            "employerTypes": [
+                "Groupes agroalimentaires",
+                "Coopératives de transformation",
+                "Organismes d'audit et de contrôle"
+            ],
+            "evolution": "Animateur QHSE ➔ Coordinateur QHSE ➔ Responsable QHSE de site industriel ➔ Directeur QHSE groupe",
+            "pros": "Poste au cœur de la protection de la vie des hommes et de la sécurité des aliments, rôle transverse en lien avec tous les métiers.",
+            "cons": "Position parfois inconfortable entre impératifs de cadence de production et respect strict des règles de sécurité."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Réaliser une fiche de sécurité simplifiée pour l'utilisation d'un produit acide de nettoyage de tank à lait.",
+            "intermediateProject": "Construire un arbre des causes pour analyser un accident fictif de glissade sur un sol humide d'atelier.",
+            "advancedProject": "Rédiger un plan complet de maîtrise sanitaire (HACCP) pour une ligne de conditionnement de yaourts artisanaux.",
+            "portfolioIdeas": [
+                "Exemple de procédure de gestion de crise sanitaire",
+                "Tableau de bord d'indicateurs QHSE sous Excel/Power BI"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré à Élevé",
+            "summary": "L'IA analyse les flux vidéo en usine pour détecter instantanément l'absence de port d'EPI et prédit les pannes d'épuration avant dépassement des seuils.",
+            "automatedTasks": [
+                "Détection automatique de non-port de gants ou de charlotte par vision IA",
+                "Automatisation de la veille juridique et réglementaire"
+            ],
+            "emergingSkills": [
+                "Supervision des systèmes de surveillance vidéo intelligents pour la sécurité"
+            ],
+            "humanEdge": "La culture sécurité ne se décrète pas par algorithme : elle repose sur la capacité humaine du coordinateur à convaincre et inspirer les équipes."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la conformité aux normes d'hygiène et de sécurité alimentaire (HACCP, Codex Alimentarius) est une priorité stratégique pour les laiteries (Kirène, Wayembam) et les grands abattoirs industriels pour conquérir les marchés sous-régionaux et garantir la santé publique.",
+            "localSectors": [
+                "Industries laitières et de boissons de la région dakaroise",
+                "Abattoirs frigorifiques de Dakar et de Saint-Louis",
+                "Direction de la Protection des Végétaux et Direction des Services Vétérinaires"
+            ],
+            "remoteWork": "Strictement impossible (présence terrain quotidienne requise sur les lignes de fabrication).",
+            "entrepreneurship": "Création d'un cabinet de conseil et de formation pratique aux normes HACCP et d'hygiène pour les petites laiteries et fermes avicoles locales."
+        },
+        "relatedJobSlugs": [
+            "auditeur-interne-charte-qualite",
+            "inspecteur-sanitaire",
+            "coordinateur-formation-securite",
+            "responsable-usine-aliment-betail"
+        ],
+        "connectedFamilies": [
+            "sante-biomedical",
+            "industrie-mecanique",
+            "droit-justice"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Coordinateur QHSE — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#coordinateur-qhse",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Formations Qualité et Agroalimentaire — Groupe ESA",
+                "url": "https://www.groupe-esa.com/transformation-agroalimentaire/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Ania (Association Nationale des Industries Alimentaires)",
+            "INRS"
+        ],
+        "interests": [
+            "gerer-organiser",
+            "nature-environnement",
+            "conseiller-accompagner"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les données de l'industrie agroalimentaire, la présence d'un coordinateur QHSE actif divise en moyenne par trois le taux de fréquence des accidents du travail sur les lignes de production.",
+            "pourquoi": "La prévention active et la prise en compte ergonomique des postes de travail éliminent les situations dangereuses avant qu'elles ne se transforment en drames humains.",
+            "a_retenir": "Le bouclier quotidien qui préserve la santé des salariés et l'intégrité de nos assiettes."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 600 - 4 400 € net/mois (~36 000 - 62 000 € brut/an, Source : Groupe ESA / APEC)",
+                "range": "2 600 - 4 400 € net/mois (~36 000 - 62 000 € brut/an, Source : Groupe ESA / APEC)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "450 000 - 1 600 000 FCFA / mois (Industries agroalimentaires, abattoirs modernes, laiteries)",
+                "range": "450 000 - 1 600 000 FCFA / mois (Industries agroalimentaires, abattoirs modernes, laiteries)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "auditeur-interne-charte-qualite",
+        "slug": "auditeur-interne-charte-qualite",
+        "title": "Auditeur Interne de la Charte Qualité & Filières Animales",
+        "aliases": [
+            "Auditrice qualité élevage",
+            "Auditeur filières animales et abattoirs",
+            "Évaluateur cahiers des charges Label Rouge / Bio / AOP"
+        ],
+        "icon": "📝",
+        "image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Qualité, hygiène, sécurité & environnement (QHSE)",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage, Licence Pro Qualité ou Ingénieur Agronome ESA",
+        "salary": "🇫🇷 France : 2 400 - 3 900 € net/mois (~34 000 - 55 000 € brut/an, Source : Groupe ESA / Organismes certificateurs) • 🇸🇳 Sénégal : 400 000 - 1 400 000 FCFA / mois (Organismes de contrôle qualité, coopératives agroexportatrices)",
+        "simpleDefinition": "L'auditeur interne qualité évalue la conformité des pratiques d'élevage, d'abattage et de transformation par rapport aux chartes professionnelles, aux cahiers des charges sous signe de qualité et aux normes de management, pour stimuler l'amélioration continue.",
+        "shortDescription": "Fiche officielle documentée par le Groupe ESA, cet observateur rigoureux garantit la crédibilité des labels de qualité et le respect des chartes d'élevage.",
+        "longDescription": "Comme formulé sur le site officiel du Groupe ESA : 'La compétitivité d’une organisation est étroitement liée à son système de management de la qualité. L’Auditeur interne qualité est en charge de la réalisation des audits internes prévus par les normes qui traitent de systèmes de management, et il contribue ainsi, par son action, à l’amélioration continue de la qualité. Compétences indispensables : Un esprit de synthèse, de la rigueur et un bon sens de l’organisation sont requis pour assurer les différentes missions, notamment les évaluations effectuées, l’interaction avec les parties impliquées et la gestion du processus d’audit.' Dans le domaine de l'élevage (Charte des Bonnes Pratiques d'Élevage CBPE, filières Label Rouge, Bleu-Blanc-Cœur, agriculture biologique), il audite les exploitations et les ateliers pour valider le respect scrupuleux des engagements.",
+        "mainObjective": "Vérifier la stricte conformité des pratiques aux référentiels de qualité, identifier les écarts et accompagner les équipes vers l'excellence opérationnelle.",
+        "companyRole": "Garant indépendant de la véracité des engagements qualité et moteur du progrès continu.",
+        "species": [
+            "Bovins",
+            "Porcins",
+            "Volailles",
+            "Ovins",
+            "Caprins"
+        ],
+        "workEnvironment": [
+            "🚜 Visites d'élevages et d'ateliers de transformation sur le terrain",
+            "🏢 Sièges de coopératives agricoles, groupements de producteurs et organismes de certification",
+            "💻 Bureau pour la rédaction des rapports d'audit et le suivi des plans d'actions correctives"
+        ],
+        "missions": [
+            "Élaborer le calendrier annuel des audits internes en accord avec la politique qualité de l'organisation",
+            "Préparer les grilles d'évaluation et questionnaires d'audit adaptés aux cahiers des charges visés",
+            "Mener les entretiens d'audit sur place, examiner les registres d'élevage (ordonnances vétérinaires, traçabilité)",
+            "Identifier les écarts, non-conformités majeures et mineures, et les pistes de progrès",
+            "Rédiger des rapports d'audit synthétiques et animer les réunions de clôture avec les exploitants ou chefs d'atelier"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:30",
+                "title": "Audit d'une exploitation laitière sous charte qualité",
+                "desc": "Réunion d'ouverture avec l'éleveur, présentation des objectifs de l'audit et vérification du carnet sanitaire."
+            },
+            {
+                "time": "10:30",
+                "title": "Inspection des installations et des animaux",
+                "desc": "Vérification de la propreté de la salle de traite, du stockage des produits vétérinaires sous clé et de l'état des logettes."
+            },
+            {
+                "time": "14:00",
+                "title": "Réunion de clôture et restitution des constats",
+                "desc": "Échange constructif avec l'éleveur sur un point d'amélioration concernant le stockage des aliments minéraux."
+            },
+            {
+                "time": "16:30",
+                "title": "Rédaction du rapport d'audit au bureau",
+                "desc": "Formalisation des fiches d'écarts et enregistrement sur la plateforme qualité de la coopérative."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Méthodologie d'audit selon la norme ISO 19011 (lignes directrices pour l'audit des systèmes)",
+                "Maîtrise des cahiers des charges agricoles (CBPE, Label Rouge, AOP/AOC, Bio, HVE)",
+                "Connaissance approfondie de la réglementation zootechnique, sanitaire et de bien-être animal",
+                "Gestion des processus et formulation de plans d'actions correctives (CAPA)"
+            ],
+            "human": [
+                "Grand esprit de synthèse et rigueur impartiale (requis ESA)",
+                "Sens aigu de l'organisation et ponctualité méthodique (requis ESA)",
+                "Pédagogie, diplomatie et capacité d'interaction constructive sans être inquisiteur",
+                "Sens de l'écoute et neutralité émotionnelle face aux contestations"
+            ],
+            "tools": [
+                "Tablettes tactiles d'audit avec formulaires numériques déconnectés",
+                "Logiciels de gestion de la qualité (Q-Pulse, Qualios, BlueKango)",
+                "Appareils photos pour constitution des preuves visuelles d'audit",
+                "Registres officiels de traçabilité animale (BDNI, carnets d'agnelage/vêlage)"
+            ],
+            "analytical": [
+                "Distinction nette entre un écart ponctuel et une défaillance systémique de gestion",
+                "Analyse des tendances des non-conformités à l'échelle d'un groupement de 200 éleveurs"
+            ]
+        },
+        "specializations": [
+            "Auditeur filières avicoles Label Rouge et plein air",
+            "Auditeur bien-être animal et transport d'animaux vivants",
+            "Auditeur de systèmes de management de la sécurité des denrées (ISO 22000)"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Formation socle",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                    "desc": "Bases solides pour comprendre les réalités de terrain et dialoguer d'égal à égal avec les éleveurs."
+                },
+                {
+                    "step": "Licence Pro",
+                    "title": "Licence Pro Management de la Qualité dans les Filières Agricoles",
+                    "desc": "Formation spécialisée aux techniques d'audit et aux normes qualité."
+                },
+                {
+                    "step": "Bac +5",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA",
+                    "desc": "Accès aux fonctions de responsable qualité de coopérative ou auditeur tierce partie pour des certificateurs internationaux."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Instituts de formation en agroalimentaire et qualité — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut de Technologie Alimentaire (ITA) — Dakar, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                },
+                {
+                    "name": "EISMV Dakar (Master Qualité des Aliments d'Origine Animale) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                }
+            ],
+            "certifications": [
+                "Certificat d'Auditeur Interne IRCA / ICA",
+                "Habilitation d'auditeur de la Charte des Bonnes Pratiques d'Élevage"
+            ],
+            "schoolSubjects": [
+                "Gestion de la qualité",
+                "Droit agroalimentaire",
+                "Zootechnie",
+                "Communication & négociation"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Coopératives et groupements d'éleveurs (organisations de producteurs OP)",
+                "Organismes certificateurs indépendants (Certipaq, Bureau Veritas, Ecocert)",
+                "Grandes entreprises de découpe de viande et transformation laitière"
+            ],
+            "employerTypes": [
+                "Groupements d'éleveurs",
+                "Organismes de certification",
+                "Industries agroalimentaires"
+            ],
+            "evolution": "Auditeur interne junior ➔ Auditeur qualité senior ➔ Responsable management de la qualité filières ➔ Directeur certification",
+            "pros": "Métier très formateur qui permet de visiter une grande diversité d'élevages, utilité publique pour préserver la confiance du consommateur.",
+            "cons": "Déplacements quotidiens en voiture, résistance psychologique parfois rencontrée chez des professionnels réticents au contrôle."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Télécharger la grille de la Charte des Bonnes Pratiques d'Élevage (CBPE) et en faire la lecture critique point par point.",
+            "intermediateProject": "Réaliser un audit à blanc de la pharmacie vétérinaire d'un élevage pédagogique et rédiger 3 fiches de non-conformité fictives.",
+            "advancedProject": "Construire un plan d'audit complet de 3 jours pour une coopérative bovine préparant une certification Label Rouge.",
+            "portfolioIdeas": [
+                "Grille d'évaluation d'audit personnalisée",
+                "Rapport d'audit qualité blanc rédigé selon les règles ISO 19011"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré",
+            "summary": "L'IA transcrit automatiquement les notes vocales d'audit et analyse les documents administratifs scannés pour repérer les incohérences de dates de traitement.",
+            "automatedTasks": [
+                "Génération assistée des rapports d'audit à partir de notes brutes",
+                "Détection automatique d'incohérences de traçabilité dans les bases de données"
+            ],
+            "emergingSkills": [
+                "Utilisation d'outils d'audit assistés par IA générative"
+            ],
+            "humanEdge": "Le discernement éthique sur place pour évaluer si une non-conformité résulte d'une négligence délibérée ou d'un aléa exceptionnel."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la certification qualité des denrées animales (lait pasteurisé, poulet de chair sain, œufs de consommation) est indispensable pour lutter contre les circuits informels à risque sanitaire et accéder aux supermarchés de Dakar et aux marchés de la sous-région.",
+            "localSectors": [
+                "Association Sénégalaise de Normalisation (ASN)",
+                "Groupements interprofessionnels avicoles (IPAS)",
+                "Laiteries modernes et industriels de la volaille"
+            ],
+            "remoteWork": "Faible (audits physiques en élevages et abattoirs indispensables).",
+            "entrepreneurship": "Création d'un cabinet d'audit qualité et d'accompagnement à la certification bio/équitable pour les producteurs de miel, de lait local et de volailles fermières."
+        },
+        "relatedJobSlugs": [
+            "coordinateur-qhse-agro",
+            "inspecteur-sanitaire",
+            "responsable-collecte-laitiere",
+            "technicien-centre-allotement"
+        ],
+        "connectedFamilies": [
+            "conseil-audit",
+            "droit-justice",
+            "gestion-finance"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Auditeur interne de la charte qualité — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#auditeur-interne-de-la-charte-qualite",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "charte",
+                "title": "Charte des Bonnes Pratiques d'Élevage — France",
+                "url": "https://www.cbpe.fr/",
+                "source": "Filières Élevage"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Afnor Certification",
+            "Institut de l'Élevage"
+        ],
+        "interests": [
+            "gerer-organiser",
+            "nature-environnement",
+            "conseiller-accompagner"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon le Groupe ESA, la réussite d'un auditeur repose sur sa capacité à ne pas se positionner en censeur ou en inspecteur de police, mais en allié du progrès de l'éleveur.",
+            "pourquoi": "Un audit bien conduit donne envie à l'éleveur d'améliorer ses méthodes, alors qu'un audit autoritaire conduit à la dissimulation des problèmes réels.",
+            "a_retenir": "L'évaluateur bienveillant qui transforme chaque contrôle en opportunité de progrès."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 400 - 3 900 € net/mois (~34 000 - 55 000 € brut/an, Source : Groupe ESA / Organismes certificateurs)",
+                "range": "2 400 - 3 900 € net/mois (~34 000 - 55 000 € brut/an, Source : Groupe ESA / Organismes certificateurs)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "400 000 - 1 400 000 FCFA / mois (Organismes de contrôle qualité, coopératives agroexportatrices)",
+                "range": "400 000 - 1 400 000 FCFA / mois (Organismes de contrôle qualité, coopératives agroexportatrices)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "inspecteur-sanitaire",
+        "slug": "inspecteur-sanitaire",
+        "title": "Inspecteur Sanitaire & Vétérinaire des Filières Animales",
+        "aliases": [
+            "Inspectrice vétérinaire de santé publique",
+            "Technicien supérieur des services du ministère de l'agriculture (DDPP)",
+            "Contrôleur sanitaire en abattoir"
+        ],
+        "icon": "🩺",
+        "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Santé, bien-être & suivi des animaux",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Concours de la fonction publique (Inspecteur de santé publique vétérinaire ou Technicien supérieur du Ministère de l'Agriculture)",
+        "salary": "🇫🇷 France : 2 100 - 4 200 € net/mois selon grade et ancienneté (Source : Grille fonction publique d'État - DGAL / DDPP) • 🇸🇳 Sénégal : 300 000 - 1 200 000 FCFA / mois (Direction des Services Vétérinaires DSV)",
+        "simpleDefinition": "L'inspecteur sanitaire veille à la stricte application des politiques sanitaires, de la santé animale, de la protection des animaux et de la sécurité sanitaire des aliments définies par l'État dans les élevages, les transports et les abattoirs.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, cet agent assermenté garantit la sécurité alimentaire de la population et veille au bien-être des animaux.",
+        "longDescription": "Comme formulé sur la fiche officielle du Groupe ESA : 'Il veille à la bonne application des politiques sanitaires, médicosociales et sociales de l’État. Compétences indispensables : Connaître l’environnement institutionnel et administratif des ministères sociaux, avoir des notions de politiques sanitaires et sociales. Conduite de projet, traitement de l’information et compétences en management.' Dans le secteur agricole et animal, il intervient sous l'autorité du Ministère de l'Agriculture (DGAL / DDPP). Il contrôle la santé des bêtes vivantes (inspection ante-mortem), la salubrité des carcasses en abattoir (inspection post-mortem), le respect des règles de bien-être animal lors du transport et la traçabilité des médicaments vétérinaires.",
+        "mainObjective": "Protéger la santé publique en éliminant les risques de zoonoses (tuberculose, grippe aviaire, salmonellose) et garantir le respect des lois sur le bien-être animal.",
+        "companyRole": "Représentant régalien assermenté veillant à la santé publique et à la conformité légale des filières.",
+        "species": [
+            "Bovins",
+            "Porcins",
+            "Ovins",
+            "Caprins",
+            "Volailles",
+            "Gibier d'élevage"
+        ],
+        "workEnvironment": [
+            "🥩 Abattoirs publics et privés pour le contrôle sanitaire quotidien des carcasses",
+            "🚜 Exploitations d'élevage pour les contrôles inopinés de santé et de bien-être",
+            "🏢 Services vétérinaires départementaux (DDPP en France, DSV au Sénégal)"
+        ],
+        "missions": [
+            "Réaliser l'inspection sanitaire ante-mortem des animaux à leur arrivée à l'abattoir",
+            "Inspecter minutieusement chaque carcasse et viscère (inspection post-mortem) pour prononcer la saisie en cas de pathologie",
+            "Contrôler le respect des normes d'étourdissement et de protection animale lors de la mise à mort",
+            "Mener des enquêtes épidémiologiques et gérer les foyers de maladies animales à déclaration obligatoire",
+            "Délivrer les certificats sanitaires officiels pour l'exportation d'animaux vivants ou de produits carnés"
+        ],
+        "typicalDay": [
+            {
+                "time": "05:00",
+                "title": "Prise de poste en abattoir industriel",
+                "desc": "Inspection ante-mortem sur le quai de déchargement des bétaillères pour vérifier l'absence d'animaux blessés ou fiévreux."
+            },
+            {
+                "time": "07:30",
+                "title": "Inspection des carcasses sur la chaîne d'abattage",
+                "desc": "Palpation des poumons, incision des ganglions lymphatiques et détection d'éventuelles lésions de cysticercose."
+            },
+            {
+                "time": "11:00",
+                "title": "Décision de saisie vétérinaire et rédaction du certificat",
+                "desc": "Retrait officiel de la consommation humaine d'un lot de viande présentant des abcès multiples et information de l'éleveur."
+            },
+            {
+                "time": "14:30",
+                "title": "Contrôle inopiné de biosécurité en élevage de volailles",
+                "desc": "Vérification des sas sanitaires, de l'étanchéité aux oiseaux sauvages et tenue du registre d'utilisation des antibiotiques."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Anatomie, sémiologie et pathologie vétérinaire des animaux de boucherie",
+                "Réglementation sanitaire européenne ('Paquet Hygiène') et droit administratif français",
+                "Gestes techniques d'inspection post-mortem (incisions ganglionnaires, palpations d'organes)",
+                "Gestion de crise sanitaire épidémique (isolement, abattage préventif, désinfection)"
+            ],
+            "human": [
+                "Connaissance approfondie de l'environnement institutionnel de l'État (requis ESA)",
+                "Sens de l'autorité régalienne, impartialité et intégrité morale irréprochable",
+                "Capacité de traitement de l'information et compétences en management (requis ESA)",
+                "Pédagogie et fermeté pour expliquer les décisions de saisie ou de sanction"
+            ],
+            "tools": [
+                "Couteaux d'inspection sanitaire professionnels et fusils d'affûtage",
+                "Tampons d'estampille sanitaire officielle et scellés vétérinaires",
+                "Systèmes d'information sanitaires de l'État (SIGAL, TRACES pour l'Union Européenne)",
+                "Thermomètres à sonde étalonnés et pH-mètres de viande"
+            ],
+            "analytical": [
+                "Diagnostic différentiel rapide entre lésion physiologique bénigne et pathologie zoonotique",
+                "Évaluation du risque épidémiologique à l'échelle d'un bassin d'élevage"
+            ]
+        },
+        "specializations": [
+            "Inspection sanitaire en abattoirs de grands ruminants et porcs",
+            "Police sanitaire et veille épidémiologique (influenza aviaire, peste porcine)",
+            "Contrôle vétérinaire aux frontières et douanes (postes frontaliers SIVEP)"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme de base",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA ou DUT Biologie",
+                    "desc": "Connaissances solides en anatomie animale et systèmes d'élevage."
+                },
+                {
+                    "step": "Concours de catégorie B",
+                    "title": "Technicien Supérieur du Ministère de l'Agriculture (TSMA) — Spécialité Vétérinaire",
+                    "desc": "Formation rémunérée d'un an à l'INFOMA après réussite du concours public."
+                },
+                {
+                    "step": "Corps de catégorie A+",
+                    "title": "Docteur Vétérinaire ou Ingénieur Agronome ESA ➔ Concours ISPV",
+                    "desc": "Inspecteur de Santé Publique Vétérinaire après l'ENSV-VetAgro Sup."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "INFOMA (Institut National de Formation des Personnels du Ministère de l'Agriculture) — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "EISMV (École Inter-États des Sciences et Médecine Vétérinaires) — Dakar, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                }
+            ],
+            "certifications": [
+                "Prestation de serment d'agent public assermenté",
+                "Habilitation officielle d'inspection sanitaire en abattoir"
+            ],
+            "schoolSubjects": [
+                "Pathologie animale",
+                "Droit administratif",
+                "Microbiologie",
+                "Hygiène publique"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Ministère de l'Agriculture et de la Souveraineté Alimentaire (DGAL, DDPP, DRAAF)",
+                "Postes d'inspection frontaliers des aéroports et ports de commerce",
+                "Organismes internationaux de santé animale (WOAH / OIE, FAO, OMS)"
+            ],
+            "employerTypes": [
+                "État et ministères",
+                "Directions départementales de la protection des populations",
+                "Services sanitaires frontaliers"
+            ],
+            "evolution": "Technicien supérieur inspecteur ➔ Chef d'équipe d'abattoir ➔ Chef de service de santé et protection animale en DDPP ➔ Inspecteur général",
+            "pros": "Mission d'intérêt public fondamentale protégeant des millions de concitoyens, stabilité de l'emploi public, respect de la déontologie.",
+            "cons": "Horaires très matinaux en abattoir (dès 4h ou 5h du matin), environnement froid et humide, confrontation parfois tendue avec les professionnels contrôlés."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Consulter le site officiel du Ministère de l'Agriculture pour comprendre les missions des DDPP dans la chaîne alimentaire.",
+            "intermediateProject": "Étudier les 10 principales causes de saisie de carcasses de bovins en abattoir et rédiger une fiche synthétique illustrée.",
+            "advancedProject": "Simuler une procédure d'alerte épidémiologique suite à la suspicion d'un cas de fièvre aphteuse dans une commune rurale.",
+            "portfolioIdeas": [
+                "Fiche de synthèse réglementaire sur le Paquet Hygiène",
+                "Grille de contrôle de la protection animale en abattoir"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré",
+            "summary": "Des systèmes de caméras intelligentes installés sur les chaînes de volailles détectent automatiquement les hématomes ou anomalies cutanées pour guider l'inspecteur.",
+            "automatedTasks": [
+                "Pré-tri optique automatisé des anomalies sur les carcasses de volailles",
+                "Enregistrement vocal automatique des motifs de saisie"
+            ],
+            "emergingSkills": [
+                "Utilisation des outils d'aide à la décision par imagerie hyperspectrale"
+            ],
+            "humanEdge": "La décision légale de saisie et la responsabilité morale de bloquer un lot pour protéger des vies humaines ne peuvent jamais être déléguées à une machine."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la Direction des Services Vétérinaires (DSV) et les docteurs et inspecteurs vétérinaires diplômés de l'EISMV Dakar exercent une veille cruciale aux abattoirs de Dakar (Sogas) et aux frontières contre les épizooties comme la péripneumonie contagieuse bovine et la peste porcine africaine.",
+            "localSectors": [
+                "Direction des Services Vétérinaires (Ministère de l'Élevage)",
+                "Société de Gestion des Abattoirs du Sénégal (SOGAS)",
+                "Postes vétérinaires de contrôle aux frontières (Rosso, Kidira, aéroport AIBD)"
+            ],
+            "remoteWork": "Strictement impossible (présence physique quotidienne sur les postes d'abattage et de contrôle).",
+            "entrepreneurship": "Non applicable (corps régalien d'État assermenté)."
+        },
+        "relatedJobSlugs": [
+            "coordinateur-qhse-agro",
+            "auditeur-interne-charte-qualite",
+            "technicien-centre-allotement",
+            "acheteur-estimateur-betail"
+        ],
+        "connectedFamilies": [
+            "droit-justice",
+            "sante-biomedical",
+            "securite-defense"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Inspecteur sanitaire — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#inspecteur-sanitaire",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "officiel",
+                "title": "Devenir inspecteur de santé publique vétérinaire — Ministère Agriculture",
+                "url": "https://agriculture.gouv.fr/devenir-inspecteur-de-sante-publique-veterinaire",
+                "source": "Ministère de l'Agriculture"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Ministère de l'Agriculture et de la Souveraineté Alimentaire",
+            "DGAL"
+        ],
+        "interests": [
+            "gerer-organiser",
+            "nature-environnement",
+            "conseiller-accompagner"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les rapports du Ministère de l'Agriculture, en France, 100% des carcasses de grands animaux abattus dans les filières commerciales font l'objet d'une inspection sanitaire vétérinaire individuelle avant de pouvoir recevoir la marque de salubrité.",
+            "pourquoi": "Ce contrôle permanent garantit que la viande arrivant chez le boucher ou au supermarché est totalement exempte de parasites ou d'infections transmissibles à l'homme.",
+            "a_retenir": "La sentinelle régalienne de la santé publique au cœur des filières animales."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 100 - 4 200 € net/mois selon grade et ancienneté (Source : Grille fonction publique d'État - DGAL / DDPP)",
+                "range": "2 100 - 4 200 € net/mois selon grade et ancienneté (Source : Grille fonction publique d'État - DGAL / DDPP)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "300 000 - 1 200 000 FCFA / mois (Direction des Services Vétérinaires DSV)",
+                "range": "300 000 - 1 200 000 FCFA / mois (Direction des Services Vétérinaires DSV)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "coordinateur-formation-securite",
+        "slug": "coordinateur-formation-securite",
+        "title": "Coordinateur Formation & Sécurité au Travail en Milieu Agricole",
+        "aliases": [
+            "Responsable prévention des risques professionnels agricoles",
+            "Formateur sécurité élevage et machinisme",
+            "Coordinateur sécurité chantier d'élevage"
+        ],
+        "icon": "⛑️",
+        "image": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Bâtiments & infrastructures d'élevage",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage, Licence Pro Sécurité au travail ou Master HSE",
+        "salary": "🇫🇷 France : 2 300 - 3 700 € net/mois (~32 000 - 52 000 € brut/an, Source : Groupe ESA / MSA) • 🇸🇳 Sénégal : 350 000 - 1 200 000 FCFA / mois (Organismes de formation rurale, sécurité au travail)",
+        "simpleDefinition": "Le coordinateur formation sécurité coordonne l'ensemble des actions réglementaires, de prévention des risques et de formation pratique aux gestes de sécurité sur les chantiers de construction d'élevage et au sein des exploitations agricoles.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, ce formateur prévient les accidents graves liés aux animaux lourds, au machinisme et aux chantiers d'élevage.",
+        "longDescription": "Comme indiqué sur la fiche officielle du Groupe ESA : 'Il est responsable de la coordination de toutes les actions réglementaires et de prévention dans ce domaine. Il est en lien direct avec le maître d’ouvrage en charge du chantier sur lequel il intervient. Compétences indispensables : Coordination et communication.' L'agriculture et l'élevage comptent parmi les secteurs d'activité les plus accidentogènes (écrasement par des taureaux, accidents d'arbres de transmission de prise de force, chutes de toiture, asphyxie par les gaz de lisier, poussières d'ensilage). Il anime des formations pratiques, audite les chantiers et met en place des protocoles de sécurité adaptés à la réalité rurale.",
+        "mainObjective": "Coordonner les démarches réglementaires et former les agriculteurs, salariés et bâtisseurs aux comportements sûrs pour éliminer les accidents mortels et invalidants.",
+        "companyRole": "Pilote de la prévention des risques professionnels et de la formation des acteurs du monde rural.",
+        "species": [
+            "Toutes espèces d'élevage"
+        ],
+        "workEnvironment": [
+            "🚜 Exploitations agricoles pour les sessions de formation en situation réelle",
+            "🏗️ Chantiers de construction et de modernisation de bâtiments d'élevage",
+            "🏫 Centres de formation professionnelle agricole et caisses de protection sociale (MSA)"
+        ],
+        "missions": [
+            "Coordonner les mesures de sécurité et de protection de la santé (SPS) lors des chantiers de bâtiments d'élevage",
+            "Concevoir et animer des sessions de formation pratique (contention des animaux, conduite de tracteurs, gestes de secours)",
+            "Auditer les exploitations agricoles et rédiger des préconisations d'amélioration des postes de travail",
+            "Assurer la veille réglementaire sur les normes d'hygiène, de sécurité et d'équipements de travail",
+            "Sensibiliser les jeunes en formation agricole (élèves de BTS PA, apprentis) à la culture de la prévention"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:30",
+                "title": "Visite de coordination SPS sur chantier de stabulation",
+                "desc": "Point avec le maître d'ouvrage et les artisans charpentiers sur les filets antichute et l'échafaudage de toiture."
+            },
+            {
+                "time": "10:30",
+                "title": "Animation d'un atelier pratique sur la contention bovine",
+                "desc": "Formation de 10 jeunes éleveurs aux réflexes d'approche des animaux et à l'utilisation sécurisée d'une cage de contention."
+            },
+            {
+                "time": "14:00",
+                "title": "Analyse d'un accident du travail en élevage porcin",
+                "desc": "Enquête sur les causes d'un écrasement au pied et proposition d'aménagement d'une barrière de séparation automatique."
+            },
+            {
+                "time": "16:30",
+                "title": "Mise à jour des supports pédagogiques de sécurité",
+                "desc": "Création d'un module vidéo court sur les risques d'intoxication au sulfure d'hydrogène (H2S) lors du brassage de lisier."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Réglementation de la sécurité au travail et coordination SPS (Sécurité et Protection de la Santé)",
+                "Connaissance approfondie des risques spécifiques en élevage (comportement animal, gaz toxiques, prise de force)",
+                "Ingénierie de formation et techniques d'animation pédagogique pour adultes",
+                "Ergonomie des postes de travail et analyse des gestes professionnels"
+            ],
+            "human": [
+                "Qualités exceptionnelles de coordination et de diplomatie (souligné par l'ESA)",
+                "Aisance de communication et écoute empathique des réalités de travail (requis ESA)",
+                "Pédagogie bienveillante sans ton infantilisant envers les agriculteurs expérimentés",
+                "Capacité d'adaptation face à des publics variés (artisans, exploitants, jeunes apprentis)"
+            ],
+            "tools": [
+                "Équipements de protection individuelle (EPI) pédagogiques et mannequins de simulation",
+                "Appareils de mesure des gaz toxiques (détecteurs 4 gaz pour lisier : H2S, CH4, CO, O2)",
+                "Supports multimédias de formation et plateformes e-learning",
+                "Grilles d'audit de sécurité des chantiers et registres SPS"
+            ],
+            "analytical": [
+                "Évaluation de la hiérarchie des risques entre urgence vitale et confort de travail",
+                "Mesure de l'impact des formations sur la baisse réelle de la sinistralité"
+            ]
+        },
+        "specializations": [
+            "Coordination SPS sur chantiers de bâtiments d'élevage",
+            "Formation à la manipulation sécurisée et éthologie des animaux lourds",
+            "Prévention des risques chimiques et respiratoires en élevage confiné"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Formation agricole socle",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                    "desc": "Connaissance intime des gestes professionnels et de la conduite des animaux."
+                },
+                {
+                    "step": "Licence Pro / Titre pro",
+                    "title": "Licence Pro Hygiène et Sécurité au Travail ou Titre de Coordinateur SPS",
+                    "desc": "Acquisition de la qualification légale de coordination de chantier et de formateur d'adultes."
+                },
+                {
+                    "step": "Perfectionnement",
+                    "title": "Master Management des Risques Professionnels",
+                    "desc": "Accès aux fonctions de responsable régional de la prévention à la MSA ou dans de grands groupes coopératifs."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Organismes de formation certifiés pour la coordination SPS — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Supérieur de Formation Agricole et Rurale (ISFAR Bambey) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Attestation de compétence de Coordonnateur SPS de niveau 2 ou 3",
+                "Certification de Formateur PRAP (Prévention des Risques liés à l'Activité Physique)"
+            ],
+            "schoolSubjects": [
+                "Droit du travail",
+                "Ergonomie",
+                "Pédagogie",
+                "Zootechnie & machinisme"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Mutualité Sociale Agricole (MSA) — services prévention des risques",
+                "Bureaux de contrôle et cabinets de coordination SPS",
+                "Grandes coopératives d'élevage et groupements d'employeurs agricoles"
+            ],
+            "employerTypes": [
+                "Caisses de sécurité sociale agricole (MSA)",
+                "Bureaux d'études SPS",
+                "Centres de formation agricole (CFA/CFPPA)"
+            ],
+            "evolution": "Formateur sécurité junior ➔ Coordinateur formation sécurité ➔ Responsable régional prévention ➔ Directeur santé-sécurité au travail",
+            "pros": "Métier qui sauve concrètement des vies et évite des handicaps à vie, forte reconnaissance humaine, utilité sociale majeure.",
+            "cons": "Résistance culturelle parfois tenace au changement dans certaines exploitations ('on a toujours fait comme ça')."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Relever les 5 principaux risques d'accidents dans une étable laitière et proposer des solutions simples à faible coût.",
+            "intermediateProject": "Concevoir un guide illustré d'une page sur l'approche sécurisée d'un taureau ou d'un bélier reproducteur.",
+            "advancedProject": "Bâtir un scénario pédagogique complet de 2 heures pour former des saisonniers aux risques de la faucheuse et de la pailleuse.",
+            "portfolioIdeas": [
+                "Plan Général de Coordination (PGC) simplifié pour étable",
+                "Kit pédagogique illustré sur la manipulation d'animaux"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré",
+            "summary": "La réalité virtuelle (casques VR) permet de former les futurs éleveurs aux réactions imprévisibles d'animaux en situation simulée sans risque corporel.",
+            "automatedTasks": [
+                "Suivi automatique des échéances de recyclage des habilitations sécurité",
+                "Simulations immersives d'accidents en environnement 3D"
+            ],
+            "emergingSkills": [
+                "Animation de formations en réalité virtuelle immersive"
+            ],
+            "humanEdge": "La conviction humaine et l'art de faire prendre conscience du danger à un exploitant chevronné sans braquer son amour-propre."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la modernisation des fermes avicoles et l'essor de la motorisation pastorale rendent indispensable la formation aux risques du matériel agricole, aux piqûres/morsures et à la manipulation des désinfectants et vaccins par les ouvriers agricoles.",
+            "localSectors": [
+                "Caisse de Sécurité Sociale du Sénégal (Direction de la Prévention des Risques)",
+                "Centres de Formation Professionnelle Agricole (CFPA)",
+                "Grandes exploitations agro-industrielles"
+            ],
+            "remoteWork": "Strictement impossible (formations physiques et visites de chantiers).",
+            "entrepreneurship": "Création d'un cabinet privé de formation mobile aux premiers secours et à la sécurité au travail pour les fermes et PME agricoles rurales."
+        },
+        "relatedJobSlugs": [
+            "coordinateur-qhse-agro",
+            "conseiller-batiment-elevage",
+            "eleveur",
+            "technicien-centre-allotement"
+        ],
+        "connectedFamilies": [
+            "education-formation",
+            "btp-immobilier",
+            "sante-biomedical"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Coordinateur formation sécurité — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#coordinateur-formation-securite",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "guide",
+                "title": "Santé et sécurité au travail en agriculture — MSA",
+                "url": "https://www.msa.fr/sante-securite-au-travail",
+                "source": "MSA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "MSA (Mutualité Sociale Agricole)",
+            "INRS"
+        ],
+        "interests": [
+            "conseiller-accompagner",
+            "nature-environnement",
+            "gerer-organiser"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les statistiques de la MSA, la mise en place d'un quai d'embarquement aux normes et d'un couloir de contention sécurisé réduit de plus de 80% les accidents corporels lors du chargement des bovins dans les bétaillères.",
+            "pourquoi": "Un animal effrayé développe une force musculaire de plusieurs tonnes : seule une infrastructure bien pensée protège l'éleveur sans violence.",
+            "a_retenir": "L'ange gardien qui protège les vies humaines sur les fermes et les chantiers ruraux."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 300 - 3 700 € net/mois (~32 000 - 52 000 € brut/an, Source : Groupe ESA / MSA)",
+                "range": "2 300 - 3 700 € net/mois (~32 000 - 52 000 € brut/an, Source : Groupe ESA / MSA)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "350 000 - 1 200 000 FCFA / mois (Organismes de formation rurale, sécurité au travail)",
+                "range": "350 000 - 1 200 000 FCFA / mois (Organismes de formation rurale, sécurité au travail)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "acheteur-estimateur-betail",
+        "slug": "acheteur-estimateur-betail",
+        "title": "Acheteur-Estimateur de Bétail",
+        "aliases": [
+            "Acheteur de bétail vif",
+            "Estimateur d'animaux de boucherie",
+            "Négociant en bestiaux"
+        ],
+        "icon": "🐂",
+        "image": "https://images.unsplash.com/photo-1546445317-29f4545e9d53?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Achats, approvisionnement & commerce du bétail",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "BTS Métiers de l'élevage (Productions Animales) ESA ou Licence Pro Commerce de Bétail",
+        "salary": "🇫🇷 France : 2 400 - 4 500 € net/mois + commissions (~35 000 - 65 000 € brut/an, Source : Groupe ESA / FNB) • 🇸🇳 Sénégal : 350 000 - 1 500 000 FCFA / mois (Marchés aux bestiaux de Dahra, Touba, Tambacounda)",
+        "simpleDefinition": "L'acheteur-estimateur de bétail parcourt les exploitations pour évaluer le poids, la conformation bouchère et l'état d'engraissement des animaux vivants, puis négocie leur achat au juste prix pour approvisionner abattoirs et centres d'allotement.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, ce négociateur de terrain possède un coup d'œil exceptionnel pour estimer la valeur marchande d'un animal vivant.",
+        "longDescription": "Comme indiqué mot à mot sur le site officiel du Groupe ESA : 'Il est chargé d’approvisionner l’entreprise en animaux de boucherie et/ou en animaux d’élevage. L’acheteur-estimateur s’appuie sur sa bonne connaissance du marché et des productions animales pour conduire des négociations commerciales avec les vendeurs ou les acheteurs de bétail. Compétences indispensables : Sens commercial, connaissances du marché du bétail, vente et négociation.' Véritable figure centrale du commerce de bestiaux, il maîtrise la grille européenne EUROP de classement des carcasses (conformation musculaire de E à P, état d'engraissement de 1 à 5) et sait prédire avec précision le rendement en viande d'un animal simplement en l'observant et en le palpant.",
+        "mainObjective": "Approvisionner son entreprise en cheptel de qualité conforme aux attentes des abattoirs et des distributeurs tout en négociant des tarifs équilibrés avec les éleveurs.",
+        "companyRole": "Négociateur commercial clé et expert de l'estimation de la valeur marchande des animaux.",
+        "species": [
+            "Bovins viande et lait",
+            "Veaux de boucherie",
+            "Ovins",
+            "Porcins",
+            "Caprins"
+        ],
+        "workEnvironment": [
+            "🚜 Tournées quotidiennes dans les fermes et élevages de sa région",
+            "🏢 Marchés aux bestiaux au cadran et centres de rassemblement / allotement",
+            "🚗 Voiture professionnelle et smartphone connecté pour suivre les cours du bétail"
+        ],
+        "missions": [
+            "Visiter les élevages partenaires pour estimer visuellement et par palpation la conformation et le poids des animaux",
+            "Évaluer le rendement en carcasse et la classe d'engraissement selon la grille officielle EUROP",
+            "Négocier le prix d'achat au kilo vif ou au kilo carcasse en tenant compte des cotations du marché national et européen",
+            "Organiser le ramassage des animaux et planifier la logistique des bétaillères avec les transporteurs",
+            "Garantir la conformité documentaire et sanitaire des animaux achetés (passeports bovins, attestations sanitaires)"
+        ],
+        "typicalDay": [
+            {
+                "time": "06:30",
+                "title": "Présence au marché aux bestiaux au cadran",
+                "desc": "Observation des lots de broutards et génisses présentés sous la halle et participation aux enchères électroniques."
+            },
+            {
+                "time": "09:30",
+                "title": "Tournée chez 4 éleveurs de taurillons",
+                "desc": "Examen minutieux de 25 jeunes bovins en étable, palpation du dos et de la culotte, estimation du rendement à 62%."
+            },
+            {
+                "time": "13:00",
+                "title": "Négociation commerciale et conclusion des bons d'achat",
+                "desc": "Discussion franche et équitable autour d'une table avec l'exploitant, signature du contrat d'achat."
+            },
+            {
+                "time": "16:00",
+                "title": "Organisation logistique avec le centre d'allotement",
+                "desc": "Transmission des ordres d'enlèvement aux chauffeurs de bétaillères pour la livraison à l'abattoir le lendemain."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Coup d'œil zootechnique d'estimation du poids vif et du rendement en viande carcasse",
+                "Maîtrise parfaite de la grille officielle européenne EUROP (conformation et engraissement)",
+                "Connaissance intime des cotations nationales et internationales du bétail vif et de la viande",
+                "Réglementation de l'identification, du bien-être animal et de la traçabilité sanitaire"
+            ],
+            "human": [
+                "Remarquable sens commercial, négociation et force de persuasion (requis ESA)",
+                "Excellente aisance relationnelle et respect scrupuleux de la parole donnée",
+                "Résistance au stress et rapidité de prise de décision lors des enchères",
+                "Passion authentique pour le bétail et le contact avec les éleveurs"
+            ],
+            "tools": [
+                "Ruban de barymétrie et pesons électroniques portables",
+                "Applications professionnelles de cotation du bétail en temps réel (FranceAgriMer, Idele)",
+                "Outils mobiles de saisie de bons de vente et vérification des passeports par code-barres",
+                "Bâtons de guidage d'animaux homologués bien-être animal"
+            ],
+            "analytical": [
+                "Calcul instantané de marge brute par tête en intégrant les coûts de transport et d'abattage",
+                "Anticipation des fluctuations de cours en fonction des saisons et de la demande de la distribution"
+            ]
+        },
+        "specializations": [
+            "Acheteur de broutards et d'animaux d'engraissement pour l'exportation",
+            "Estimateur de gros bovins de boucherie de races à viande (Charolaise, Limousine, Blonde d'Aquitaine)",
+            "Acheteur d'agneaux de boucherie et ovins"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme de référence",
+                    "title": "BTS Métiers de l'élevage (Productions Animales) — Groupe ESA",
+                    "desc": "Acquisition des bases de la zootechnie, de l'anatomie musculaire et de l'alimentation animale."
+                },
+                {
+                    "step": "Licence Pro / Spécialisation",
+                    "title": "Licence Pro Commercialisation du Bétail et Viandes ou Titre de Négociant en Bestiaux",
+                    "desc": "Formation spécifique aux techniques d'estimation, au droit commercial et à la négociation."
+                },
+                {
+                    "step": "Ingénieur",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA",
+                    "desc": "Accès aux postes de directeur des approvisionnements bétail de grands groupes industriels."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Écoles et centres de formation aux métiers de la viande et du bétail — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Supérieur de Formation Agricole et Rurale (ISFAR Bambey) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Certificat de Négociant en Bestiaux Agréé (FNB)",
+                "Certificat d'Aptitude Professionnelle au Transport d'Animaux Vivants (CAPTAV)"
+            ],
+            "schoolSubjects": [
+                "Zootechnie des races à viande",
+                "Techniques de négociation",
+                "Droit commercial",
+                "Économie des filières"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Entreprises de négoce de bestiaux privées et coopératives agricoles de commercialisation",
+                "Grands groupes d'abattage et de transformation de viande (Bigard, Elivia, SVA Jean Rozé)",
+                "Organisations de producteurs (OP) bovines et ovines"
+            ],
+            "employerTypes": [
+                "Négoces de bestiaux",
+                "Abattoirs industriels",
+                "Coopératives d'éleveurs"
+            ],
+            "evolution": "Acheteur junior ➔ Acheteur-estimateur confirmé ➔ Responsable des achats bétail régional ➔ Directeur des approvisionnements vifs",
+            "pros": "Grande liberté de travail sur le terrain, adrénaline de la négociation, métier où la réputation et le talent de l'individu font toute la différence.",
+            "cons": "Déplacements constants en voiture, horaires matinaux, pression financière lors des fluctuations brutales des cours de la viande."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Assister à une matinée d'enchères dans un marché aux bestiaux pour observer le rythme des transactions et le vocabulaire des négociants.",
+            "intermediateProject": "S'entraîner à estimer le poids vif et la classe de conformation EUROP de 10 animaux à partir de photos ou vidéos commentées.",
+            "advancedProject": "Calculer la marge prévisionnelle d'un lot de 20 taurillons en intégrant le coût d'achat vif, la perte de transport, le coût d'abattage et le prix carcasse.",
+            "portfolioIdeas": [
+                "Grille d'estimation visuelle de conformation bouchère",
+                "Simulation d'achat-revente d'un lot d'animaux avec calcul de rentabilité"
+            ]
+        },
+        "aiImpact": {
+            "level": "Modéré",
+            "summary": "Des portiques de vision 3D à l'entrée des abattoirs scannent les animaux vivants pour prédire automatiquement leur poids et rendement en carcasse.",
+            "automatedTasks": [
+                "Scan 3D volumétrique de la masse musculaire des animaux",
+                "Comparaison automatisée des cours des marchés régionaux"
+            ],
+            "emergingSkills": [
+                "Utilisation d'outils d'estimation morphologique 3D assistés par ordinateur"
+            ],
+            "humanEdge": "La négociation en tête-à-tête avec l'éleveur au milieu de l'étable : aucune IA ne peut remplacer la poignée de main et le lien de confiance qui scellent une vente."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, les marchés aux bestiaux hebdomadaires (loumas) de Dahra Djoloff, Touba, Missirah et Tambacounda brassent des dizaines de milliers de têtes de bovins et de moutons (notamment pour la fête de la Tabaski). Les acheteurs et courtiers traditionnels (téfankés) jouent un rôle économique colossal dans l'approvisionnement des villes.",
+            "localSectors": [
+                "Marchés à bétail traditionnels et modernes du Ferlo et du bassin arachidier",
+                "Commerçants et chevillards des abattoirs de Dakar (Sogas)",
+                "Filières d'importation de bétail du Mali et de Mauritanie"
+            ],
+            "remoteWork": "Strictement impossible (métier 100% physique sur les marchés et dans les parcs de bétail).",
+            "entrepreneurship": "Création d'une entreprise structurée d'achat, d'embouche et de revente de bétail vif calibré et garanti sain pour les boucheries de Dakar."
+        },
+        "relatedJobSlugs": [
+            "technicien-centre-allotement",
+            "responsable-achat-approvisionnement-agri",
+            "inspecteur-sanitaire",
+            "eleveur"
+        ],
+        "connectedFamilies": [
+            "commerce-marketing",
+            "transport-logistique",
+            "gestion-finance"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Acheteur-estimateur de bétail — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#acheteur-estimateur-de-betail",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "filiere",
+                "title": "Fédération Nationale du Bétail (FNB)",
+                "url": "https://www.fnb.asso.fr/",
+                "source": "FNB"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Fédération Française des Commerçants en Bestiaux (FFCB)",
+            "Institut de l'Élevage"
+        ],
+        "interests": [
+            "negocier-convaincre",
+            "nature-environnement",
+            "donnees-chiffres"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les négociants chevronnés et les formateurs du Groupe ESA, un bon estimateur de bétail est capable de deviner le poids d'un taureau de 800 kg à 10 kilos près, simplement en le regardant marcher et en posant une main sur ses reins.",
+            "pourquoi": "Ce coup d'œil unique s'acquiert par la pratique intensive de milliers d'observations reliant la morphologie de l'animal vivant au ticket de pesée final de l'abattoir.",
+            "a_retenir": "L'expert du coup d'œil et de la négociation qui valorise le travail d'élevage."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 400 - 4 500 € net/mois + commissions (~35 000 - 65 000 € brut/an, Source : Groupe ESA / FNB)",
+                "range": "2 400 - 4 500 € net/mois + commissions (~35 000 - 65 000 € brut/an, Source : Groupe ESA / FNB)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "350 000 - 1 500 000 FCFA / mois (Marchés aux bestiaux de Dahra, Touba, Tambacounda)",
+                "range": "350 000 - 1 500 000 FCFA / mois (Marchés aux bestiaux de Dahra, Touba, Tambacounda)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "responsable-achat-approvisionnement-agri",
+        "slug": "responsable-achat-approvisionnement-agri",
+        "title": "Responsable Achat & Approvisionnement en Matières Premières Agricoles",
+        "aliases": [
+            "Acheteur matières premières agricoles",
+            "Responsable approvisionnement usine d'aliment",
+            "Trader céréales et oléoprotéagineux"
+        ],
+        "icon": "📦",
+        "image": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Achats, approvisionnement & commerce du bétail",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Bac +5 / Ingénieur Agronome ESA ou Master Achats Internationaux",
+        "salary": "🇫🇷 France : 3 000 - 5 200 € net/mois (~42 000 - 72 000 € brut/an, Source : Groupe ESA / APEC) • 🇸🇳 Sénégal : 500 000 - 1 800 000 FCFA / mois (Grandes industries agroalimentaires, Grands Moulins, provenderies)",
+        "simpleDefinition": "Le responsable achat approvisionnement assure toutes les opérations d'achats de matières premières agricoles (céréales, tourteaux, prémix, ingrédients laitiers) et définit la politique d'achats stratégique de l'entreprise pour sécuriser les usines au meilleur coût.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, ce stratège des achats gère des millions d'euros de matières premières sur les marchés mondiaux et locaux.",
+        "longDescription": "Comme l'énonce mot pour mot la fiche officielle du Groupe ESA : 'Il est chargé d’assurer toutes les opérations d’achats de matières premières et de leurs approvisionnements. À cet effet, il est amené à mettre en place une politique d’achats selon le domaine d’activités de l’entreprise pour laquelle il travaille. Compétences indispensables : Parfaite maîtrise des outils de gestion de projet, solides connaissances en vente et en négociation, excellentes connaissances dans la gestion d’entreprise. Réactif et déterminé, bien organisé, esprit fin et habile.' Dans l'industrie des productions animales et de l'alimentation du bétail, il achète les céréales (blé, maïs, orge), les tourteaux de soja et colza, les acides aminés et minéraux, en anticipant les cours mondiaux et les risques de rupture logistique.",
+        "mainObjective": "Garantir un approvisionnement continu, sûr et au meilleur coût des usines de transformation tout en appliquant des critères de traçabilité et de durabilité.",
+        "companyRole": "Négociateur stratégique de premier plan protégeant les marges financières et la continuité industrielle de l'entreprise.",
+        "species": [
+            "Toutes filières animales et végétales associées"
+        ],
+        "workEnvironment": [
+            "🏢 Sièges de grands groupes agroalimentaires, coopératives et usines d'alimentation animale",
+            "💻 Salle de marchés matières premières et écrans de cotation Euronext/CBOT",
+            "✈️ Déplacements ponctuels chez les fournisseurs et ports de commerce"
+        ],
+        "missions": [
+            "Élaborer et mettre en œuvre la politique d'achats de matières premières de l'entreprise",
+            "Négocier les contrats d'approvisionnement à terme (prix, volumes, qualité, délais de livraison)",
+            "Suivre au quotidien les marchés financiers agricoles (cotations Euronext, Chicago Board of Trade)",
+            "Auditer et référencer les fournisseurs de matières premières selon des critères de qualité et durabilité (soja non déforesté)",
+            "Superviser la chaîne logistique d'approvisionnement des silos usines (bateaux, trains, camions)"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:00",
+                "title": "Revue des cours des marchés agricoles mondiaux",
+                "desc": "Analyse de la clôture du CBOT de Chicago et des cours Euronext du blé et du colza après les rapports USDA."
+            },
+            {
+                "time": "10:00",
+                "title": "Négociation d'un contrat de tourteau de colza",
+                "desc": "Discussion avec un grand triturateur d'oléagineux pour verrouiller un approvisionnement de 15 000 tonnes pour l'hiver."
+            },
+            {
+                "time": "14:00",
+                "title": "Point de crise logistique avec l'usine d'aliment",
+                "desc": "Résolution d'un retard de livraison de phosphate minéral par réacheminement d'un camion depuis un port secondaire."
+            },
+            {
+                "time": "16:30",
+                "title": "Élaboration de la stratégie d'achats durables",
+                "desc": "Sélection d'une nouvelle filière d'approvisionnement en protéines végétales locales garanties 100% françaises."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Marchés à terme agricoles (Euronext, CBOT), instruments de couverture (hedging, options)",
+                "Gestion des contrats commerciaux internationaux (Incoterms, droit des contrats d'achats)",
+                "Gestion de projet complexe et supply chain agro-industrielle (requis ESA)",
+                "Connaissance des propriétés technologiques et nutritionnelles des matières premières animales et végétales"
+            ],
+            "human": [
+                "Esprit fin, habile, réactif et déterminé (souligné mot pour mot par l'ESA)",
+                "Excellente organisation méthodique et gestion de stress de marché (requis ESA)",
+                "Talent de négociateur de haut niveau et solidité relationnelle (requis ESA)",
+                "Vision stratégique et capacité d'anticipation géopolitique et climatique"
+            ],
+            "tools": [
+                "Terminaux de marchés financiers et d'informations agricoles (Bloomberg, Reuters, Tallage/Stratégie Grains)",
+                "ERP de gestion d'entreprise et modules achats (SAP, Microsoft Dynamics)",
+                "Outils d'optimisation logistique et de suivi des cargaisons de navires (maritime tracking)",
+                "Tableaux de bord d'analyse des coûts de revient matière"
+            ],
+            "analytical": [
+                "Analyse des bilans mondiaux offre-demande pour anticiper les retournements de cycles de prix",
+                "Calcul de rentabilité comparative entre ingrédients de substitution formulés par l'usine"
+            ]
+        },
+        "specializations": [
+            "Achat de céréales et matières premières pour l'alimentation animale",
+            "Trading d'ingrédients laitiers (poudres de lait, lactosérum, beurres industriels)",
+            "Approvisionnements durables et filières décarbonées"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme d'excellence",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA — Majeure Agroalimentaire / Économie",
+                    "desc": "La combinaison parfaite entre expertise technique du vivant et compétences de gestion."
+                },
+                {
+                    "step": "Spécialisation Bac +5",
+                    "title": "Master Achats Internationaux / Supply Chain (IAE ou École de Commerce)",
+                    "desc": "Maîtrise des techniques de négociation avancée et des marchés financiers."
+                },
+                {
+                    "step": "Double diplôme",
+                    "title": "Double diplôme Ingénieur ESA + Master en Commerce International",
+                    "desc": "Tremplin vers les postes de directeur des achats internationaux."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Grandes écoles d'agronomie et de commerce — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Supérieur de Management (ISM Dakar) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                },
+                {
+                    "name": "BEM Dakar (Bordeaux Ecole de Management) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                }
+            ],
+            "certifications": [
+                "Certification CIPS (Chartered Institute of Procurement and Supply)",
+                "Certification de Négociation sur Marchés à Terme"
+            ],
+            "schoolSubjects": [
+                "Économie internationale",
+                "Gestion financière",
+                "Agronomie",
+                "Droit commercial"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Grandes firmes internationales de nutrition animale (Sanders/Avril, Cargill, InVivo, Neovia)",
+                "Industries laitières et carnées majeures (Lactalis, Danone, Bigard)",
+                "Négoces internationaux de grains et matières premières agricoles"
+            ],
+            "employerTypes": [
+                "Groupes agroalimentaires",
+                "Coopératives céréalières et d'élevage",
+                "Négoces internationaux"
+            ],
+            "evolution": "Acheteur junior ➔ Responsable achats matières premières ➔ Directeur des achats groupe ➔ Directeur général adjoint des opérations",
+            "pros": "Poste à très forte responsabilité stratégique, dimension internationale passionnante, rémunérations élevées.",
+            "cons": "Forte pression liée à la volatilité quotidienne des cours, impact financier immédiat des erreurs de timing d'achat."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Suivre l'évolution du cours du blé meunier sur Euronext pendant 1 mois et identifier les facteurs météo ayant fait bouger les cours.",
+            "intermediateProject": "Construire une matrice d'évaluation multicritères pour choisir entre 3 fournisseurs de tourteau de soja.",
+            "advancedProject": "Rédiger une stratégie de couverture à terme pour sécuriser 50 000 tonnes de maïs face au risque de sécheresse estivale.",
+            "portfolioIdeas": [
+                "Stratégie d'achats de matières premières agricoles",
+                "Simulation d'un appel d'offres d'ingrédients nutritionnels"
+            ]
+        },
+        "aiImpact": {
+            "level": "Très Élevé",
+            "summary": "L'IA et le machine learning analysent les images satellites de récoltes mondiales pour prédire les rendements et guider les achats optimaux à terme.",
+            "automatedTasks": [
+                "Veille continue et analyse prédictive des cours de matières premières",
+                "Automatisation des passations de commandes récurrentes sur seuils de réapprovisionnement"
+            ],
+            "emergingSkills": [
+                "Utilisation de modèles d'IA prédictifs sur les cours agricoles"
+            ],
+            "humanEdge": "Le flair relationnel et la négociation diplomatique avec les fournisseurs clés lors des crises majeures de pénurie mondiale."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, les responsables d'achats des grands groupes meuniers et provendiers (Grands Moulins de Dakar, Sedima, NMA) gèrent des importations vitales de centaines de milliers de tonnes de blé et de maïs tout en développant l'achat local de brisures de riz, de tourteau d'arachide et de maïs cultivé dans la vallée du fleuve Sénégal.",
+            "localSectors": [
+                "Grands Moulins de Dakar (GMD) et minoteries industrielles",
+                "Provenderies et fabricants d'aliments avicoles",
+                "Sociétés d'huileries et de transformation (Sonacos)"
+            ],
+            "remoteWork": "Hybride (bureau de trading / télétravail possible pour l'analyse des marchés).",
+            "entrepreneurship": "Création d'une centrale d'achats groupés d'intrants agricoles et de tourteaux pour les coopératives maraîchères et d'élevage de l'intérieur du pays."
+        },
+        "relatedJobSlugs": [
+            "responsable-usine-aliment-betail",
+            "acheteur-estimateur-betail",
+            "controleur-gestion-usine-agri",
+            "manager-agrofourniture"
+        ],
+        "connectedFamilies": [
+            "commerce-marketing",
+            "gestion-finance",
+            "transport-logistique"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Responsable achat approvisionnement — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#responsable-achat-approvisionnement",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Formations commerce et gestion — Groupe ESA",
+                "url": "https://www.groupe-esa.com/commerce-distribution-marketing/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "APEC",
+            "CNA (Conseil National des Achats)"
+        ],
+        "interests": [
+            "negocier-convaincre",
+            "donnees-chiffres",
+            "gerer-organiser"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les experts en gestion de l'ESA, pour une usine d'aliments du bétail, une baisse de seulement 1,5% obtenue sur les prix d'achat des matières premières génère souvent plus de profit net qu'une augmentation de 10% du chiffre d'affaires des ventes.",
+            "pourquoi": "Les matières premières représentent jusqu'à 75% du coût total de fabrication d'un aliment : la performance de l'acheteur est le premier moteur de la rentabilité de l'usine.",
+            "a_retenir": "Le stratège financier qui négocie les récoltes du monde pour faire tourner nos usines."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "3 000 - 5 200 € net/mois (~42 000 - 72 000 € brut/an, Source : Groupe ESA / APEC)",
+                "range": "3 000 - 5 200 € net/mois (~42 000 - 72 000 € brut/an, Source : Groupe ESA / APEC)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "500 000 - 1 800 000 FCFA / mois (Grandes industries agroalimentaires, Grands Moulins, provenderies)",
+                "range": "500 000 - 1 800 000 FCFA / mois (Grandes industries agroalimentaires, Grands Moulins, provenderies)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "controleur-gestion-usine-agri",
+        "slug": "controleur-gestion-usine-agri",
+        "title": "Contrôleur de Gestion Usine Agroalimentaire & Filières Animales",
+        "aliases": [
+            "Contrôleur de gestion industrielle usine d'aliment",
+            "Responsable du contrôle économique de production animale",
+            "Contrôleur financier de site agroalimentaire"
+        ],
+        "icon": "📊",
+        "image": "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Alimentation animale & agrofourniture",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Master Contrôle de Gestion ou Ingénieur Agronome ESA avec spécialisation gestion / finance",
+        "salary": "🇫🇷 France : 2 800 - 4 800 € net/mois (~40 000 - 68 000 € brut/an, Source : Groupe ESA / APEC Finance) • 🇸🇳 Sénégal : 500 000 - 1 700 000 FCFA / mois (Sites industriels laitiers, provenderies, abattoirs)",
+        "simpleDefinition": "Le contrôleur de gestion usine pilote la performance économique et industrielle d'un site de production (usine d'aliments, laiterie, abattoir), calcule les coûts de revient, analyse les écarts budgétaires et évalue la rentabilité des nouveaux produits ou gammes.",
+        "shortDescription": "Fiche officielle documentée par le Groupe ESA, ce copilote économique guide les décisions industrielles et le lancement de nouveaux produits.",
+        "longDescription": "Comme indiqué sur la fiche officielle du Groupe ESA : 'Il définit le développement ou le lancement d’un produit ou d’une gamme de produit. Il commande des études de marché au service commercial pour connaître les besoins et les données relatives aux produits concurrents ou comparables. Compétences indispensables : Très bonne connaissance de son marché, capacités de synthèse et d’analyse, aisance relationnelle.' Cette fiche intègre ces missions clés d'analyse de marché et de rentabilité de lancement, combinées au cœur de métier du contrôleur de gestion industrielle : calcul des coûts de revient par tonne d'aliment fabriquée ou par litre de lait transformé, suivi des rendements matières, analyse des consommations énergétiques et élaboration des budgets de fonctionnement de l'usine.",
+        "documentaryNote": "Note documentaire méthodologique : La fiche officielle du Groupe ESA décrit ce métier à travers la mission suivante : 'Il définit le développement ou le lancement d’un produit ou d’une gamme de produit. Il commande des études de marché au service commercial pour connaître les besoins et les données relatives aux produits concurrents ou comparables. Compétences : Très bonne connaissance de son marché, capacités de synthèse et d’analyse, aisance relationnelle.' Notre référentiel conserve scrupuleusement ces éléments d'études de rentabilité et d'analyse concurrentielle de lancement, tout en assurant le pilotage financier rigoureux des coûts de revient industriels dans les usines d'aliments et abattoirs.",
+        "mainObjective": "Mesurer et optimiser la rentabilité des processus industriels, garantir la maîtrise des coûts de fabrication et valider la viabilité financière des innovations produits.",
+        "companyRole": "Copilote économique et conseiller stratégique du directeur d'usine.",
+        "species": [
+            "Toutes filières animales et de transformation agroalimentaire"
+        ],
+        "workEnvironment": [
+            "🏭 Usines d'aliments du bétail, laiteries industrielles et abattoirs",
+            "🏢 Bureau de direction industrielle et services financiers",
+            "💻 Travail quotidien sur systèmes ERP, tableurs avancés et logiciels de Business Intelligence"
+        ],
+        "missions": [
+            "Calculer les coûts de revient industriels (matières premières, main d'œuvre directe, énergie, amortissements)",
+            "Analyser mensuellement les écarts entre les prévisions budgétaires et les réalisations en production",
+            "Réaliser les études de rentabilité prévisionnelle (business cases) pour le lancement de nouveaux produits ou gammes",
+            "Construire et animer les tableaux de bord d'indicateurs de performance industrielle (KPI) pour les chefs d'ateliers",
+            "Participer à l'élaboration du budget annuel de fonctionnement et d'investissements du site de production"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:15",
+                "title": "Tournée en atelier et collecte des données de production",
+                "desc": "Échange avec les chefs d'équipe sur les volumes ensachés la veille et le taux de rebuts matières."
+            },
+            {
+                "time": "10:00",
+                "title": "Calcul du coût de revient d'une nouvelle formule d'aliment",
+                "desc": "Intégration du nouveau prix du tourteau et simulation du prix de vente minimum pour préserver la marge brute."
+            },
+            {
+                "time": "14:00",
+                "title": "Point budgétaire mensuel avec le directeur d'usine",
+                "desc": "Présentation des dérives constatées sur la facture d'électricité et proposition de modulation des heures de broyage."
+            },
+            {
+                "time": "16:30",
+                "title": "Étude de rentabilité pour un investissement robotique",
+                "desc": "Calcul du retour sur investissement (ROI) et de la VAN pour l'installation d'une banderoleuse automatique de palettes."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Comptabilité analytique de gestion et calcul des coûts complets / coûts variables",
+                "Gestion budgétaire, analyse financière et calcul du retour sur investissement (ROI, VAN)",
+                "Connaissance intime des flux de production agro-industriels et pertes matières",
+                "Très bonne connaissance de son marché et études de rentabilité de produits (requis ESA)"
+            ],
+            "human": [
+                "Remarquables capacités de synthèse et d'analyse rigoureuse (souligné par l'ESA)",
+                "Excellente aisance relationnelle et diplomatie avec les équipes de production (requis ESA)",
+                "Pédagogie pour faire comprendre les enjeux financiers aux opérationnels de terrain",
+                "Force de proposition pour identifier les sources d'économies d'énergie et de matières"
+            ],
+            "tools": [
+                "ERP industriels (SAP FI-CO, Microsoft Dynamics 365, Sage X3)",
+                "Outils avancés de Business Intelligence (Power BI, Tableau Software)",
+                "Tableurs de modélisation financière avancée (Excel expert : Power Query, macros VBA)",
+                "Logiciels de suivi de production d'usine (MES - Manufacturing Execution Systems)"
+            ],
+            "analytical": [
+                "Décomposition fine des écarts de coût : effet volume, effet prix et effet mix produits",
+                "Modélisation de scénarios de rentabilité en cas de flambée des cours de l'électricité ou du gaz"
+            ]
+        },
+        "specializations": [
+            "Contrôle de gestion en usine d'alimentation animale",
+            "Contrôle financier en abattoir et valorisation de la carcasse",
+            "Pilotage économique des lancements de produits agroalimentaires innovants"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme d'excellence",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA — Majeure Économie / Gestion",
+                    "desc": "La double compétence rare et très prisée : compréhension technique de l'usine et maîtrise financière."
+                },
+                {
+                    "step": "Master Universitaire",
+                    "title": "Master Contrôle de Gestion et Audit Organisationnel (IAE / Université)",
+                    "desc": "Formation de référence en comptabilité de gestion et systèmes de pilotage."
+                },
+                {
+                    "step": "École de Management",
+                    "title": "Diplôme de Grande École de Commerce — Spécialisation Finance d'entreprise",
+                    "desc": "Accès aux postes de contrôleur financier de groupe agroalimentaire."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Instituts d'Administration des Entreprises (IAE) et écoles de commerce — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Institut Supérieur de Management (ISM Dakar) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                },
+                {
+                    "name": "CESAG (Centre Africain d'Études Supérieures en Gestion) — Dakar, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Afrique"
+                }
+            ],
+            "certifications": [
+                "Certification CMA (Certified Management Accountant)",
+                "Certification Power BI Data Analyst"
+            ],
+            "schoolSubjects": [
+                "Contrôle de gestion",
+                "Comptabilité financière",
+                "Économie industrielle",
+                "Statistiques"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Grandes usines de fabrication d'aliments du bétail",
+                "Groupes coopératifs agroalimentaires régionaux et nationaux",
+                "Industries laitières, fromagères et abattoirs industriels"
+            ],
+            "employerTypes": [
+                "Sites industriels agroalimentaires",
+                "Groupes coopératifs agricoles",
+                "Sociétés agro-industrielles multinationales"
+            ],
+            "evolution": "Contrôleur de gestion junior ➔ Contrôleur de gestion usine ➔ Responsable contrôle de gestion industriel ➔ Directeur administratif et financier (DAF)",
+            "pros": "Poste au cœur de toutes les décisions de l'usine, proximité concrète avec les ateliers de fabrication, fortes perspectives d'évolution vers la direction.",
+            "cons": "Périodes de clôture mensuelle et budgétaire intenses, rôle parfois perçu comme inquisiteur par des chefs d'équipe s'il manque de pédagogie."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Créer un tableur simple calculant le coût de revient d'un gâteau en additionnant ingrédients, énergie et temps passé.",
+            "intermediateProject": "Construire un tableau de bord mensuel de suivi des pertes matières pour une petite unité de transformation.",
+            "advancedProject": "Réaliser une étude complète de rentabilité prévisionnelle (seuil de rentabilité, VAN, TRI) pour le lancement d'une nouvelle gamme d'aliments bio.",
+            "portfolioIdeas": [
+                "Tableau de bord de performance industrielle sous Power BI",
+                "Modèle financier de calcul de coût de revient d'usine"
+            ]
+        },
+        "aiImpact": {
+            "level": "Élevé",
+            "summary": "L'IA automatise le rapprochement comptable et détecte en temps réel les dérives anormales de consommation d'énergie sur les broyeurs d'usine.",
+            "automatedTasks": [
+                "Rapprochement automatique des bons de pesée et des factures d'achat",
+                "Détection automatisée des anomalies de coûts de fabrication"
+            ],
+            "emergingSkills": [
+                "Utilisation de l'IA pour l'analyse prédictive des coûts industriels"
+            ],
+            "humanEdge": "Le dialogue de confiance avec les chefs d'atelier pour comprendre la réalité humaine derrière les chiffres d'une dérive budgétaire."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la rentabilité des provenderies industrielles et des laiteries modernes dépend d'une maîtrise au centime près des coûts de broyage, de granulation et de transport. Le contrôleur de gestion usine éclaire les investissements majeurs dans les zones industrielles de Diamniadio et Thiès.",
+            "localSectors": [
+                "Industries agroalimentaires de la zone industrielle de Dakar et Diamniadio",
+                "Compagnies sucrières et meunières (CSS à Richard-Toll, GMD)",
+                "Laiteries industrielles et unités d'aviculture intégrée"
+            ],
+            "remoteWork": "Hybride (présence requise à l'usine / télétravail possible pour l'analyse de données financières).",
+            "entrepreneurship": "Création d'un cabinet d'audit de gestion des coûts de revient pour les PME agroalimentaires locales en cours de formalisation."
+        },
+        "relatedJobSlugs": [
+            "responsable-usine-aliment-betail",
+            "responsable-achat-approvisionnement-agri",
+            "manager-agrofourniture",
+            "directeur-marketing-filiere-animale"
+        ],
+        "connectedFamilies": [
+            "gestion-finance",
+            "direction-strategie",
+            "industrie-mecanique"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Contrôleur de gestion usine — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#controleur-de-gestion-usine",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Ingénieur agronome et gestion — Groupe ESA",
+                "url": "https://www.groupe-esa.com/formation/ingenieur-agronome/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "DFCG (Association des Directeurs Financiers et de Contrôle de Gestion)",
+            "APEC"
+        ],
+        "interests": [
+            "donnees-chiffres",
+            "gerer-organiser",
+            "construire-fabriquer"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les recruteurs de l'industrie agroalimentaire et le Groupe ESA, les profils combinant un diplôme d'ingénieur agronome et une compétence poussée en contrôle de gestion sont parmi les plus courtisés du marché avec des salaires de départ très attractifs.",
+            "pourquoi": "Un financier classique ne comprend pas les contraintes biologiques des matières vivantes, tandis qu'un agronome gestionnaire parle à la fois le langage des meuniers et celui des banquiers.",
+            "a_retenir": "Le copilote financier qui transforme les contraintes d'usine en rentabilité durable."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "2 800 - 4 800 € net/mois (~40 000 - 68 000 € brut/an, Source : Groupe ESA / APEC Finance)",
+                "range": "2 800 - 4 800 € net/mois (~40 000 - 68 000 € brut/an, Source : Groupe ESA / APEC Finance)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "500 000 - 1 700 000 FCFA / mois (Sites industriels laitiers, provenderies, abattoirs)",
+                "range": "500 000 - 1 700 000 FCFA / mois (Sites industriels laitiers, provenderies, abattoirs)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "directeur-marketing-filiere-animale",
+        "slug": "directeur-marketing-filiere-animale",
+        "title": "Directeur Marketing Filières Animales & Agroalimentaires",
+        "aliases": [
+            "Directrice marketing nutrition animale",
+            "Responsable marketing produits laitiers et carnés",
+            "Chef de groupe marketing élevage"
+        ],
+        "icon": "🎯",
+        "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Filière viande & allotement",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Bac +5 / Ingénieur Agronome ESA ou Master Marketing Agroalimentaire",
+        "salary": "🇫🇷 France : 3 800 - 7 000 € net/mois (~55 000 - 100 000 € brut/an, Source : Groupe ESA / APEC) • 🇸🇳 Sénégal : 700 000 - 2 500 000 FCFA / mois (Grandes marques agroalimentaires, laiteries, volailles)",
+        "simpleDefinition": "Le directeur marketing élabore et met en place les plans, stratégies et actions marketing pour développer la vente de produits, aliments pour animaux ou denrées agroalimentaires, en répondant aux attentes sociétales et aux tendances de consommation.",
+        "shortDescription": "Fiche officielle documentée par le Groupe ESA, ce stratège créatif valorise les produits des filières animales et conçoit les marques de demain.",
+        "longDescription": "Comme indiqué mot à mot sur le site officiel du Groupe ESA : 'Le directeur du marketing élabore et met en place des plans et actions marketing pour développer la vente de biens ou services d’une entreprise. Compétences indispensables : Gestion, finances, management du personnel, techniques commerciales, créativité et communication.' Dans le secteur des productions animales et de l'agroalimentaire, il pilote l'image des marques (produits laitiers, œufs, charcuteries, viandes sous label, gammes d'alimentation animale écoresponsables). Il analyse les études de marché, anticipe les attentes citoyennes en matière de bien-être animal et d'origine locale, et coordonne le lancement des nouveaux packagings et campagnes médiatiques.",
+        "mainObjective": "Définir l'identité de marque, maximiser la part de marché des produits de la filière et valoriser économiquement le travail des éleveurs auprès des distributeurs et consommateurs.",
+        "companyRole": "Stratège de l'image de marque et chef d'orchestre de la croissance commerciale de l'entreprise.",
+        "species": [
+            "Toutes filières animales et de transformation"
+        ],
+        "workEnvironment": [
+            "🏢 Sièges de grandes entreprises agroalimentaires, coopératives et firmes de nutrition",
+            "💻 Réunions avec agences de communication, instituts de sondage et distributeurs",
+            "🛒 Visites en grandes surfaces et salons professionnels (SIA Paris, SPACE Rennes)"
+        ],
+        "missions": [
+            "Définir la stratégie marketing globale (mix-marketing : produit, prix, distribution, communication)",
+            "Commander et analyser les panels consommateurs (Kantar, Nielsen) et études d'attentes sociétales",
+            "Piloter le développement des nouveaux produits en lien étroit avec la R&D et les usines",
+            "Concevoir les campagnes de communication digitales, publicitaires et de relations presse",
+            "Manager l'équipe de chefs de produits, chargés de communication et graphistes"
+        ],
+        "typicalDay": [
+            {
+                "time": "09:00",
+                "title": "Comité de direction marketing et innovation",
+                "desc": "Revue des parts de marché du dernier yaourt fermier enrichi en oméga-3 issu de vaches nourries au lin."
+            },
+            {
+                "time": "11:00",
+                "title": "Briefing créatif avec l'agence de communication",
+                "desc": "Validation du nouveau packaging valorisant le portrait d'éleveurs partenaires et l'engagement bien-être animal."
+            },
+            {
+                "time": "14:30",
+                "title": "Analyse financière des marges par circuit de distribution",
+                "desc": "Étude de rentabilité comparée entre vente en grande distribution et réseaux de magasins spécialisés bio."
+            },
+            {
+                "time": "16:45",
+                "title": "Préparation du lancement d'une nouvelle gamme d'aliment pour veaux",
+                "desc": "Coordination avec le responsable R&D et le manager de l'agrofourniture pour caler l'argumentaire technique."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Marketing stratégique et opérationnel B2B et B2C en secteur agricole et alimentaire",
+                "Gestion financière de gamme (compte d'exploitation produit, ROI des campagnes, budgets)",
+                "Techniques d'études de marché et analyse de panels consommateurs (Nielsen, Kantar)",
+                "Management d'équipes pluridisciplinaires et techniques commerciales (requis ESA)"
+            ],
+            "human": [
+                "Créativité foisonnante et sensibilité aux tendances sociétales (requis ESA)",
+                "Excellentes qualités de communication et leadership inspirant (requis ESA)",
+                "Rigueur de gestion et vision financière solide (requis ESA)",
+                "Aisance dans la prise de parole publique et capacité de conviction"
+            ],
+            "tools": [
+                "Bases de données d'études de marché et panels (Kantar Worldpanel, IRI, Nielsen)",
+                "Outils de veille concurrentielle et social listening",
+                "Logiciels de gestion de projets marketing (Asana, Monday)",
+                "Outils d'analyse de trafic web et de marketing digital"
+            ],
+            "analytical": [
+                "Détection des signaux faibles de consommation (consommation locale, bien-être animal, sans additifs)",
+                "Évaluation de l'élasticité-prix de la demande face à l'inflation alimentaire"
+            ]
+        },
+        "specializations": [
+            "Marketing B2B de l'alimentation animale et agrofourniture",
+            "Marketing des signes officiels de qualité (Label Rouge, AOP, Bio)",
+            "Brand management et communication d'engagement sociétal des filières"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Diplôme de base",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA — Majeure Marketing & Commerce",
+                    "desc": "La légitimité technique du monde agricole combinée aux outils modernes du marketing."
+                },
+                {
+                    "step": "Bac +5 Grande École",
+                    "title": "Master Marketing Agroalimentaire ou Diplôme d'École Supérieure de Commerce",
+                    "desc": "Approfondissement de la stratégie de marque et du marketing digital."
+                },
+                {
+                    "step": "Double diplôme",
+                    "title": "Double diplôme Ingénieur ESA + Master Spécialisé Marketing",
+                    "desc": "Parcours d'excellence ouvrant directement la direction marketing de grands groupes."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Grandes écoles de commerce et d'agronomie — France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "BEM Dakar (Bordeaux Management School) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                },
+                {
+                    "name": "Institut Supérieur de Management (ISM Dakar) — Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Certification en Stratégie de Marque (Brand Strategy)",
+                "Certification Marketing Digital Avancé"
+            ],
+            "schoolSubjects": [
+                "Marketing stratégique",
+                "Gestion de marque",
+                "Finances & comptabilité",
+                "Psychologie du consommateur"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Grandes marques nationales et internationales de produits laitiers et carnés",
+                "Firmes d'alimentation animale et laboratoires vétérinaires",
+                "Interprofessions des filières d'élevage (Cniel, Interbev, Inaporc)"
+            ],
+            "employerTypes": [
+                "Groupes agroalimentaires",
+                "Coopératives polyvalentes",
+                "Interprofessions agricoles"
+            ],
+            "evolution": "Chef de produit junior ➔ Chef de groupe ➔ Directeur marketing ➔ Directeur général de division",
+            "pros": "Métier stimulant à haute créativité, rôle central dans l'adaptation des filières aux attentes des citoyens, forte reconnaissance professionnelle.",
+            "cons": "Pression permanente sur les parts de marché, exposition médiatique lors des débats sociétaux sur l'élevage."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Analyser le rayon produits laitiers d'un supermarché et relever comment 3 marques différentes valorisent le bien-être animal.",
+            "intermediateProject": "Construire un plan de mix-marketing (4P) pour lancer un fromage fermier au lait cru auprès d'une clientèle urbaine jeune.",
+            "advancedProject": "Élaborer une campagne marketing 360° pour une coopérative voulant lancer une gamme de poulets élevés sans antibiotiques.",
+            "portfolioIdeas": [
+                "Dossier de lancement de nouveau produit agroalimentaire",
+                "Analyse critique de positionnement de marque laitière"
+            ]
+        },
+        "aiImpact": {
+            "level": "Révolutionnaire",
+            "summary": "L'IA générative conçoit des concepts de packaging en quelques secondes et analyse en temps réel des millions de posts sur les réseaux sociaux pour cerner l'opinion.",
+            "automatedTasks": [
+                "Génération de maquettes de visuels et prototypes de packagings",
+                "Analyse de sentiment sur les marques alimentaires sur les réseaux sociaux"
+            ],
+            "emergingSkills": [
+                "Pilotage de campagnes marketing automatisées par algorithmes d'IA"
+            ],
+            "humanEdge": "La créativité émotionnelle, l'authenticité de l'histoire racontée et le respect sincère du labeur des agriculteurs."
+        },
+        "africaContext": {
+            "senegalInsight": "Au Sénégal, la valorisation du lait local pasteurisé (face au lait en poudre importé) et de la volaille locale (face aux découpes congelées) a été portée par des stratégies marketing puissantes créant des marques nationales fières (Kirène, Dolima, Sedima). Le directeur marketing y joue un rôle clé dans la souveraineté alimentaire.",
+            "localSectors": [
+                "Grandes marques laitières locales (Dolima, Laiterie du Berger, Kirène)",
+                "Filière avicole nationale (Sedima, NMA)",
+                "Industries de boissons et produits transformés sénégalais"
+            ],
+            "remoteWork": "Hybride (stratégie en bureau / télétravail possible).",
+            "entrepreneurship": "Création d'une agence de communication et de marketing spécialisée dans la valorisation des terroirs et des produits agro-pastoraux africains."
+        },
+        "relatedJobSlugs": [
+            "manager-agrofourniture",
+            "directeur-rd-agri-animal",
+            "controleur-gestion-usine-agri",
+            "responsable-achat-approvisionnement-agri"
+        ],
+        "connectedFamilies": [
+            "commerce-marketing",
+            "communication-medias",
+            "direction-strategie"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Directeur marketing — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#directeur-marketing",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "formation",
+                "title": "Formations marketing et commerce — Groupe ESA",
+                "url": "https://www.groupe-esa.com/commerce-distribution-marketing/",
+                "source": "Groupe ESA"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Adetem (Association Nationale des Professionnels du Marketing)",
+            "APEC"
+        ],
+        "interests": [
+            "creer-innover",
+            "negocier-convaincre",
+            "gerer-organiser"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les analyses de marché, les marques agroalimentaires qui valorisent de manière transparente et vérifiée le bien-être animal et la juste rémunération des éleveurs connaissent une croissance trois fois plus rapide que les marques standard.",
+            "pourquoi": "Le consommateur moderne ne veut plus simplement se nourrir : il veut voter avec sa fourchette pour soutenir une agriculture respectueuse des bêtes et des hommes.",
+            "a_retenir": "Le porte-voix créatif qui donne du sens et de la valeur aux produits de la terre."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "3 800 - 7 000 € net/mois (~55 000 - 100 000 € brut/an, Source : Groupe ESA / APEC)",
+                "range": "3 800 - 7 000 € net/mois (~55 000 - 100 000 € brut/an, Source : Groupe ESA / APEC)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "700 000 - 2 500 000 FCFA / mois (Grandes marques agroalimentaires, laiteries, volailles)",
+                "range": "700 000 - 2 500 000 FCFA / mois (Grandes marques agroalimentaires, laiteries, volailles)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
+            }
+        }
+    },
+    {
+        "id": "conseiller-affaires-europeennes-agri",
+        "slug": "conseiller-affaires-europeennes-agri",
+        "title": "Conseiller en Affaires Européennes & Politiques Agricoles (PAC)",
+        "aliases": [
+            "Chargé d'affaires européennes filières animales",
+            "Lobbyiste agricole européen",
+            "Expert politiques agricoles et internationales"
+        ],
+        "icon": "🇪🇺",
+        "image": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=800&auto=format&fit=crop&q=80",
+        "familyId": "agriculture-agritech",
+        "familyName": "Agriculture, Élevage & Agroalimentaire",
+        "domain": "Production Animale, Élevage & Filières",
+        "domainId": "elevage-productions-animales",
+        "subdomain": "Conseil & accompagnement des élevages",
+        "sourceESA": true,
+        "isEmerging": false,
+        "level": "Bac +5 / Master Affaires Européennes, Sciences Po ou Ingénieur Agronome ESA",
+        "salary": "🇫🇷 France / Bruxelles : 3 200 - 6 000 € net/mois (~45 000 - 85 000 € brut/an, Source : Groupe ESA / institutions européennes) • 🇸🇳 Sénégal : 600 000 - 2 200 000 FCFA / mois (CEDEAO, UEMOA, Ministère de l'Élevage)",
+        "simpleDefinition": "Le conseiller en affaires européennes analyse les législations de l'Union européenne relatives à l'agriculture et à l'élevage (PAC, Green Deal, bien-être animal), informe son organisme des évolutions réglementaires et défend les intérêts de son secteur auprès des décideurs européens.",
+        "shortDescription": "Fiche documentée par le Groupe ESA, ce diplomate agronomique relie la réalité du terrain agricole aux décisions politiques de Bruxelles.",
+        "longDescription": "Comme formulé mot à mot sur le site officiel du Groupe ESA : 'Il fait des recherches sur les actualités européennes, effectue une veille sur les sujets liés à l’Union européenne, informe son établissement sur l’ensemble du fonctionnement des institutions, ou le processus législatif, et fait remonter les opinions et sujets de son établissement aux institutions européennes. Compétences indispensables : Diplomatie, organisation, relationnel.' Acteur clé de la défense des filières d'élevage, il décrypte la Politique Agricole Commune (PAC), les accords commerciaux internationaux (Mercosur, CETA), les directives sur le bien-être animal et le pacte vert (Green Deal) pour permettre aux éleveurs et coopératives d'anticiper les mutations et de faire entendre leur voix à Bruxelles et Strasbourg.",
+        "mainObjective": "Assurer une veille stratégique sur le droit communautaire et représenter avec diplomatie les intérêts des filières agricoles auprès de la Commission, du Parlement et du Conseil européen.",
+        "companyRole": "Ambassadeur diplomatique et éclaireur politique et réglementaire de l'organisation.",
+        "species": [
+            "Toutes filières animales et agricoles"
+        ],
+        "workEnvironment": [
+            "🇪🇺 Bruxelles (Quartier européen), Strasbourg et capitales européennes",
+            "🏢 Sièges de syndicats agricoles (FNSEA, Copa-Cogeca), coopératives et chambres d'agriculture",
+            "💻 Travail continu de veille juridique, rédaction de notes de position et plaidoyer"
+        ],
+        "missions": [
+            "Assurer une veille quotidienne sur les projets de règlements et directives européennes agricoles et environnementales",
+            "Décrypter les mécanismes financiers et aides de la Politique Agricole Commune (PAC - 1er et 2nd piliers)",
+            "Rédiger des notes de cadrage, amendements législatifs et positions officielles pour les parlementaires européens",
+            "Organiser des rencontres d'influence et auditions auprès des commissaires européens et députés",
+            "Informer et former les dirigeants agricoles de son pays sur les opportunités et contraintes européennes"
+        ],
+        "typicalDay": [
+            {
+                "time": "08:30",
+                "title": "Revue des parutions officielles du Parlement et de la Commission",
+                "desc": "Lecture analytique d'un projet de révision des normes sur le transport des animaux vivants en Europe."
+            },
+            {
+                "time": "10:30",
+                "title": "Réunion de travail au Copa-Cogeca à Bruxelles",
+                "desc": "Coordination avec les représentants des éleveurs italiens, espagnols et allemands pour bâtir une position commune."
+            },
+            {
+                "time": "14:00",
+                "title": "Rendez-vous avec un eurodéputé de la commission AGRI",
+                "desc": "Présentation d'amendements techniques argumentés pour préserver le pastoralisme et les aides couplées."
+            },
+            {
+                "time": "16:30",
+                "title": "Rédaction d'un bulletin d'alerte pour les coopératives",
+                "desc": "Synthèse vulgarisée des nouvelles règles d'étiquetage d'origine pour les éleveurs de volailles et bovins."
+            }
+        ],
+        "skills": {
+            "technical": [
+                "Fonctionnement détaillé des institutions européennes et du processus de codécision (trilogues)",
+                "Droit agricole communautaire, architecture de la Politique Agricole Commune (PAC)",
+                "Économie agricole internationale, règles de l'OMC et accords de libre-échange",
+                "Anglais professionnel bilingue indispensable (langue de travail des institutions à Bruxelles)"
+            ],
+            "human": [
+                "Sens aigu de la diplomatie et tact relationnel (souligné expressément par l'ESA)",
+                "Organisation rigoureuse et suivi méthodique des calendriers législatifs (requis ESA)",
+                "Capacités relationnelles d'exception et art du réseau d'influence (requis ESA)",
+                "Pédagogie pour vulgariser des textes de lois arides auprès des éleveurs de base"
+            ],
+            "tools": [
+                "Bases de données documentaires de l'Union européenne (Eur-Lex, registre de transparence)",
+                "Plateformes de veille parlementaire et législative (EU Monitor, Politico Pro)",
+                "Outils de cartographie des parties prenantes et d'analyse des votes parlementaires",
+                "Réseaux sociaux professionnels et communication d'influence (LinkedIn, X/Twitter)"
+            ],
+            "analytical": [
+                "Anticipation des impacts économiques concrets d'un article de loi européen sur une étable familiale",
+                "Capacité de négociation de compromis entre intérêts nationaux divergents"
+            ]
+        },
+        "specializations": [
+            "Politique Agricole Commune (PAC) et aides directes aux élevages",
+            "Bien-être animal, santé vétérinaire et sécurité alimentaire à l'échelle européenne",
+            "Commerce international, accords bilatéraux et négociations à l'OMC"
+        ],
+        "studies": {
+            "pathway": [
+                {
+                    "step": "Double profil d'élite",
+                    "title": "Diplôme d'Ingénieur Agronome du Groupe ESA — Majeure Économie & Politiques Publiques",
+                    "desc": "Compréhension fine des réalités du monde paysan que peu de juristes possèdent à Bruxelles."
+                },
+                {
+                    "step": "Sciences Po / Droit",
+                    "title": "Master Affaires Européennes ou Master Droit Européen (Sciences Po, Collège d'Europe de Bruges)",
+                    "desc": "Formation de référence pour maîtriser les rouages des institutions communautaires."
+                },
+                {
+                    "step": "Diplôme combiné",
+                    "title": "Ingénieur Agronome ESA + Master Affaires Européennes",
+                    "desc": "Le profil le plus recherché par les délégations agricoles et les cabinets d'affaires publiques."
+                }
+            ],
+            "schools": [
+                {
+                    "name": "Groupe ESA — Angers, France",
+                    "country": "France",
+                    "scope": "France"
+                },
+                {
+                    "name": "Collège d'Europe (Bruges / Natolin) & Instituts d'Études Politiques (Sciences Po) — Europe",
+                    "country": "Europe",
+                    "scope": "Europe"
+                },
+                {
+                    "name": "Université Cheikh Anta Diop (UCAD) / Faculté des Sciences Juridiques et Politiques — Dakar, Sénégal",
+                    "country": "Sénégal",
+                    "scope": "Sénégal"
+                }
+            ],
+            "certifications": [
+                "Enregistrement officiel sur le Registre de transparence de l'UE",
+                "Certification en Affaires Publiques et Plaidoyer"
+            ],
+            "schoolSubjects": [
+                "Droit de l'Union européenne",
+                "Économie agricole",
+                "Relations internationales",
+                "Anglais de négociation"
+            ]
+        },
+        "career": {
+            "sectors": [
+                "Organisations professionnelles agricoles européennes (Copa-Cogeca à Bruxelles)",
+                "Chambres d'agriculture France (bureau de Bruxelles) et syndicats agricoles (FNSEA)",
+                "Institutions européennes (Commission européenne - DG AGRI, Parlement européen, Conseil)"
+            ],
+            "employerTypes": [
+                "Représentations agricoles à Bruxelles",
+                "Institutions européennes",
+                "Cabinets de conseil en affaires publiques"
+            ],
+            "evolution": "Chargé de mission affaires européennes junior ➔ Conseiller affaires européennes senior ➔ Directeur du bureau bruxellois ➔ Député européen ou haut fonctionnaire européen",
+            "pros": "Métier intellectuellement passionnant au cœur des décisions politiques qui façonnent le continent, dimension multiculturelle et multilingue.",
+            "cons": "Lenteur des processus législatifs européens (plusieurs années de négociations), éloignement parfois ressenti entre Bruxelles et le quotidien des fermes."
+        },
+        "gettingStarted": {
+            "beginnerProject": "Consulter le portail Eur-Lex pour lire les grands objectifs de la PAC 2023-2027.",
+            "intermediateProject": "Rédiger une note de position de 2 pages argumentant les conséquences de la suppression des cages en élevage de poules pondeuses.",
+            "advancedProject": "Simuler une négociation en trilogue (Commission, Conseil, Parlement) sur la définition de l'agriculteur actif.",
+            "portfolioIdeas": [
+                "Note de plaidoyer européen sur le bien-être animal",
+                "Fiche de synthèse vulgarisée de la PAC pour les éleveurs"
+            ]
+        },
+        "aiImpact": {
+            "level": "Élevé",
+            "summary": "L'IA analyse en quelques secondes des rapports législatifs européens de 500 pages pour extraire tous les amendements impactant l'élevage.",
+            "automatedTasks": [
+                "Synthèse automatique des débats parlementaires et des propositions de loi",
+                "Traduction instantanée multilingue des textes d'amendements"
+            ],
+            "emergingSkills": [
+                "Utilisation de l'IA pour la veille textuelle réglementaire européenne"
+            ],
+            "humanEdge": "La diplomatie de couloir, la poignée de main et l'art de bâtir des compromis politiques entre des pays aux traditions d'élevage opposées."
+        },
+        "africaContext": {
+            "senegalInsight": "En Afrique de l'Ouest, les politiques régionales de la CEDEAO (ECOWAP) et de l'UEMOA régissent le commerce transfrontalier du bétail et la fiscalité sur les importations de produits animaux. Des conseillers en politiques régionales agricoles défendent les intérêts des pasteurs sahéliens et du Sénégal dans ces instances.",
+            "localSectors": [
+                "CEDEAO (Département Agriculture et Développement Rural)",
+                "UEMOA (Direction de l'Élevage et de la Pêche)",
+                "Réseau des Organisations Paysannes et de Producteurs Agricoles d'Afrique de l'Ouest (ROPPA)"
+            ],
+            "remoteWork": "Hybride (déplacements institutionnels / travail de rédaction en bureau).",
+            "entrepreneurship": "Création d'un cabinet de conseil en politiques agricoles régionales et plaidoyer pour les organisations paysannes ouest-africaines."
+        },
+        "relatedJobSlugs": [
+            "ingenieur-conseil-productions-animales",
+            "directeur-rd-agri-animal",
+            "responsable-achat-approvisionnement-agri",
+            "inspecteur-sanitaire"
+        ],
+        "connectedFamilies": [
+            "droit-justice",
+            "direction-strategie",
+            "communication-medias"
+        ],
+        "resources": [
+            {
+                "type": "article",
+                "title": "Conseiller en Affaires Européennes — Groupe ESA",
+                "url": "https://www.groupe-esa.com/productions-animales/les-metiers-de-la-production-animale/#conseiller-en-affaires-europeennes",
+                "source": "Groupe ESA"
+            },
+            {
+                "type": "institution",
+                "title": "Direction Générale Agriculture (DG AGRI) — Commission Européenne",
+                "url": "https://agriculture.ec.europa.eu/index_fr",
+                "source": "Commission Européenne"
+            }
+        ],
+        "sources": [
+            "Groupe ESA",
+            "Commission Européenne",
+            "Copa-Cogeca"
+        ],
+        "interests": [
+            "conseiller-accompagner",
+            "negocier-convaincre",
+            "gerer-organiser"
+        ],
+        "saviezVous": {
+            "statut": "metier_en_tension",
+            "fait": "Selon les experts des affaires publiques agricoles, plus de 80% des réglementations encadrant l'élevage et l'agriculture en France trouvent leur origine directe dans les textes votés à Bruxelles.",
+            "pourquoi": "Dans un marché unique européen, les normes sanitaires, environnementales et de concurrence doivent être harmonisées pour tous les pays membres.",
+            "a_retenir": "L'ambassadeur de terrain qui fait entendre la voix des agriculteurs au cœur de l'Europe."
+        },
+        "salaryRanges": {
+            "france": {
+                "raw": "🇫🇷 France / Bruxelles : 3 200 - 6 000 € net/mois (~45 000 - 85 000 € brut/an, Source : Groupe ESA / institutions européennes)",
+                "range": "🇫🇷 France / Bruxelles : 3 200 - 6 000 € net/mois (~45 000 - 85 000 € brut/an, Source : Groupe ESA / institutions européennes)",
+                "source": "Groupe ESA / APEC / Référentiel Élevage"
+            },
+            "senegal": {
+                "raw": "600 000 - 2 200 000 FCFA / mois (CEDEAO, UEMOA, Ministère de l'Élevage)",
+                "range": "600 000 - 2 200 000 FCFA / mois (CEDEAO, UEMOA, Ministère de l'Élevage)",
+                "source": "Filières animales & élevage (Sénégal / UEMOA)"
             }
         }
     }
