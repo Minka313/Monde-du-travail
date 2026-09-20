@@ -105,18 +105,20 @@
     {
       id: 'agriculture-agritech',
       order: 6,
-      name: 'Agriculture, Agronomie & AgriTech',
+      name: 'Agriculture, Élevage & Agroalimentaire',
       slug: 'agriculture-agritech',
-      icon: '🌾',
-      color: '#84cc16', // Vert lime
-      image: 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=800&auto=format&fit=crop&q=80',
-      description: 'Moderniser les cultures, optimiser les rendements grâce aux biotechnologies et aux capteurs IoT, et assurer la sécurité alimentaire durable.',
-      stats: { jobsEstimate: '40+ métiers', subdomainsCount: 11 },
-      representativeJobs: ['Ingénieur Agronome', 'Spécialiste AgriTech', 'Responsable d’Exploitation', 'Ingénieur Irrigation', 'Agroéconomiste'],
+      icon: '🌱',
+      color: '#16a34a', // Vert émeraude / agriculture
+      image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&auto=format&fit=crop&q=80',
+      description: 'Explorer toutes les facettes du vivant : des sciences agronomiques et de la production végétale à l’élevage, l’agroécologie, l’agroéquipement, la pêche/aquaculture, la forêt, l’agroalimentaire, l’économie rurale et l’AgriTech.',
+      stats: { jobsEstimate: '70+ métiers', subdomainsCount: 28 },
+      representativeJobs: ['Ingénieur Agronome', 'Ingénieur Agroécologue', 'Responsable d’Élevage', 'Œnologue', 'Ingénieur AgriTech', 'Chef d’Exploitation'],
       subdomains: [
-        'Agronomie', 'Production végétale', 'Irrigation', 'Agriculture durable',
-        'Agriculture de précision', 'Agroéconomie', 'Transformation agroalimentaire',
-        'AgriTech', 'Agriculture numérique', 'Conseil agricole', 'Gestion des exploitations'
+        'Agronomie & sciences agricoles', 'Grandes cultures & céréales', 'Maraîchage & horticulture',
+        'Élevage & productions animales', 'Agroécologie & sols vivants', 'Hydraulique agricole & eau',
+        'Agroéquipement & robotique', 'Aquaculture & pêche', 'Forêt & sylviculture', 'Paysage & espaces verts',
+        'Transformation agroalimentaire & qualité', 'Conseil & gestion rurale', 'Financement agricole',
+        'AgriTech & agriculture numérique', 'Drones & télédétection', 'Entrepreneuriat & coopératives'
       ]
     },
     {
@@ -1461,6 +1463,39 @@
         });
       }
 
+      // 1.c Intégration du catalogue Agriculture, Élevage & Agroalimentaire enrichi (OrientationAgriData)
+      const agriData = (typeof window !== 'undefined' && window.OrientationAgriData)
+        ? window.OrientationAgriData
+        : (typeof global !== 'undefined' && global.OrientationAgriData ? global.OrientationAgriData : null);
+
+      if (agriData && typeof agriData.getJobs === 'function') {
+        const agriJobs = agriData.getJobs();
+        agriJobs.forEach(aJob => {
+          const existingIdx = combined.findIndex(j => j.slug === aJob.slug || j.id === aJob.id);
+          if (existingIdx >= 0) {
+            // Enrichissement préservant les données existantes (ex: contexte local Sénégal d'ingénieur agronome)
+            combined[existingIdx] = Object.assign({}, aJob, combined[existingIdx], {
+              aliases: [...new Set([...(aJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              specializations: [...new Set([...(aJob.specializations || []), ...(combined[existingIdx].specializations || [])])],
+              domain: aJob.domain || combined[existingIdx].domain,
+              domainId: aJob.domainId || combined[existingIdx].domainId,
+              subdomain: aJob.subdomain || combined[existingIdx].subdomain,
+              gettingStarted: aJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: aJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || aJob.africaContext,
+              salaryRanges: aJob.salaryRanges || combined[existingIdx].salaryRanges,
+              salary: aJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || aJob.saviezVous || null,
+              sourceOnisep: aJob.sourceOnisep,
+              sourceStudyrama: aJob.sourceStudyrama,
+              isEmerging: aJob.isEmerging !== undefined ? aJob.isEmerging : combined[existingIdx].isEmerging
+            });
+          } else {
+            combined.push(aJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -1730,12 +1765,27 @@
       return [];
     },
 
+    getAgriDomains: function () {
+      const agriData = (typeof window !== 'undefined' && window.OrientationAgriData)
+        ? window.OrientationAgriData
+        : (typeof global !== 'undefined' && global.OrientationAgriData
+          ? global.OrientationAgriData
+          : (typeof OrientationAgriData !== 'undefined' ? OrientationAgriData : null));
+      if (agriData && agriData.DOMAINS) {
+        return agriData.DOMAINS;
+      }
+      return [];
+    },
+
     getFamilyDomains: function (familyId) {
       if (familyId === 'numerique-ia') {
         return this.getDigitalDomains();
       }
       if (familyId === 'finance-fintech') {
         return this.getFinanceDomains();
+      }
+      if (familyId === 'agriculture-agritech') {
+        return this.getAgriDomains();
       }
       return [];
     },
