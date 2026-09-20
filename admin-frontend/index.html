@@ -6,7 +6,7 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Administration — Le Monde du Travail</title>
     <link rel="icon" type="image/png" href="../frontend/logo.png">
-    <link rel="stylesheet" href="css/admin.css?v=2.3.0">
+    <link rel="stylesheet" href="css/admin.css?v=2.3.1">
 </head>
 <body>
     <div id="admin-root" class="hidden">
@@ -21,6 +21,9 @@
             </div>
             <nav class="sidebar-nav" id="admin-nav"></nav>
             <div class="sidebar-footer">
+                <button class="nav-item nav-theme-item" id="admin-sidebar-theme-toggle" type="button" title="Basculer Mode Sombre / Clair">
+                    <span id="sidebar-theme-toggle-icon">🌙</span> <span id="sidebar-theme-toggle-text">Mode Sombre</span>
+                </button>
                 <button class="nav-item nav-logout-item" id="admin-logout-btn">
                     <span>🚪</span> Déconnexion
                 </button>
@@ -79,10 +82,10 @@
         </div>
     </div>
 
-    <script src="js/admin-auth.js?v=2.3.0"></script>
-    <script src="js/admin-app.js?v=2.3.0"></script>
-    <script src="js/admin-pages.js?v=2.3.0"></script>
-    <script src="js/admin-router.js?v=2.3.0"></script>
+    <script src="js/admin-auth.js?v=2.3.1"></script>
+    <script src="js/admin-app.js?v=2.3.1"></script>
+    <script src="js/admin-pages.js?v=2.3.1"></script>
+    <script src="js/admin-router.js?v=2.3.1"></script>
     <script>
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => window.AdminRouter.init());

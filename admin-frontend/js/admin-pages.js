@@ -84,20 +84,31 @@
   // ===== GESTION DU THÈME SOMBRE (DARK MODE) =====
   function initAdminTheme() {
     const savedTheme = localStorage.getItem('lmt_admin_theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
     document.body.setAttribute('data-theme', savedTheme);
     updateThemeIcon(savedTheme);
 
     const toggleBtn = document.getElementById('admin-theme-toggle');
+    const sidebarToggleBtn = document.getElementById('admin-sidebar-theme-toggle');
+
+    const handleThemeToggle = () => {
+      const current = document.body.getAttribute('data-theme') || 'light';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      document.body.setAttribute('data-theme', next);
+      localStorage.setItem('lmt_admin_theme', next);
+      updateThemeIcon(next);
+      showToast(next === 'dark' ? 'Mode sombre activé' : 'Mode clair activé', 'info');
+    };
+
     if (toggleBtn && !toggleBtn.dataset.bound) {
       toggleBtn.dataset.bound = 'true';
-      toggleBtn.addEventListener('click', () => {
-        const current = document.body.getAttribute('data-theme') || 'light';
-        const next = current === 'dark' ? 'light' : 'dark';
-        document.body.setAttribute('data-theme', next);
-        localStorage.setItem('lmt_admin_theme', next);
-        updateThemeIcon(next);
-        showToast(next === 'dark' ? 'Mode sombre activé' : 'Mode clair activé', 'info');
-      });
+      toggleBtn.addEventListener('click', handleThemeToggle);
+    }
+
+    if (sidebarToggleBtn && !sidebarToggleBtn.dataset.bound) {
+      sidebarToggleBtn.dataset.bound = 'true';
+      sidebarToggleBtn.addEventListener('click', handleThemeToggle);
     }
   }
 
@@ -106,6 +117,21 @@
     if (icon) {
       icon.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
+    const sidebarIcon = document.getElementById('sidebar-theme-toggle-icon');
+    if (sidebarIcon) {
+      sidebarIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+    const sidebarText = document.getElementById('sidebar-theme-toggle-text');
+    if (sidebarText) {
+      sidebarText.textContent = theme === 'dark' ? 'Mode Clair' : 'Mode Sombre';
+    }
+  }
+
+  // Initialisation immédiate du thème
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAdminTheme);
+  } else {
+    initAdminTheme();
   }
 
   // ===== COMMAND PALETTE (CTRL + K / CMD + K) =====
@@ -139,9 +165,9 @@
         { label: 'Tableau de bord', icon: '📊', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('dashboard') },
         { label: 'Vitrine & Éditorial (À la Une / Jalons)', icon: '🎨', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('vitrine') },
         { label: 'Métiers & Fiches', icon: '💼', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('metiers') },
-        { label: 'Créer une nouvelle fiche Métier', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('metiers'); setTimeout(() => openContentFormModal('jobs'), 300); } },
+        { label: 'Créer une nouvelle fiche Métier', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('metiers'); setTimeout(() => openContentModal('jobs'), 300); } },
         { label: 'Formations & Programmes', icon: '📚', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('formations') },
-        { label: 'Créer une nouvelle Formation', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('formations'); setTimeout(() => openContentFormModal('formations'), 300); } },
+        { label: 'Créer une nouvelle Formation', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('formations'); setTimeout(() => openContentModal('formations'), 300); } },
         { label: 'Blog & Articles', icon: '📝', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('blog') },
         { label: 'Rédiger un article de blog', icon: '✍️', shortcut: 'Action', action: () => { window.AdminRouter.navigate('blog'); setTimeout(() => openBlogPostModal(), 300); } },
         { label: 'Approbations & Validations', icon: '✅', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('approvals') },
@@ -151,7 +177,7 @@
         { label: 'Notifications Push', icon: '🔔', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('notifications') },
         { label: 'Journal d\'activité (Logs)', icon: '📋', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('logs') },
         { label: 'Paramètres système & 2FA', icon: '⚙️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('settings') },
-        { label: 'Basculer Mode Sombre / Clair', icon: '🌓', shortcut: 'Thème', action: () => document.getElementById('admin-theme-toggle')?.click() },
+        { label: 'Basculer Mode Sombre / Clair', icon: '🌓', shortcut: 'Thème', action: () => (document.getElementById('admin-theme-toggle') || document.getElementById('admin-sidebar-theme-toggle'))?.click() },
         { label: 'Voir le site public', icon: '🌐', shortcut: 'Lien', action: () => window.open('../frontend/index.html', '_blank') },
         { label: 'Déconnexion', icon: '🚪', shortcut: 'Compte', action: () => window.AdminApp?.logout() },
       ];
@@ -865,6 +891,7 @@
                     <th>Statut en Direct</th>
                     <th>Dernière Présence</th>
                     <th>Contributions</th>
+                    <th style="text-align: right;">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -908,6 +935,11 @@
                             <span title="Sujets créés">💬 ${u.forumTopics}</span>
                             <span title="Réponses postées">✍️ ${u.forumReplies}</span>
                           </div>
+                        </td>
+                        <td style="text-align: right;">
+                          <button class="btn btn-ghost btn-sm" data-view-dossier="${escapeHtml(u.id)}" title="Consulter le dossier membre">
+                            📁 Dossier
+                          </button>
                         </td>
                       </tr>
                     `;
@@ -1063,13 +1095,18 @@
                       </div>
                     </div>
 
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; font-size: 0.8rem; color: var(--color-muted);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; font-size: 0.8rem; color: var(--color-muted); gap: 0.5rem; flex-wrap: wrap;">
                       <span>Nommé le ${assignedDate}</span>
-                      ${(isUltraAdmin || canApproveMemberships) ? `
-                        <button class="btn btn-sm btn-outline-danger" data-mentor-revoke="${u.id}" data-mentor-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
-                          Révoquer
+                      <div style="display: flex; gap: 0.4rem; align-items: center;">
+                        <button class="btn btn-sm btn-ghost" data-view-dossier="${u.id}" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;" title="Consulter le dossier du mentor">
+                          📁 Dossier
                         </button>
-                      ` : ''}
+                        ${(isUltraAdmin || canApproveMemberships) ? `
+                          <button class="btn btn-sm btn-outline-danger" data-mentor-revoke="${u.id}" data-mentor-name="${escapeHtml((u.firstName || '') + ' ' + (u.lastName || ''))}" style="padding: 0.25rem 0.55rem; font-size: 0.75rem;">
+                            Révoquer
+                          </button>
+                        ` : ''}
+                      </div>
                     </div>
                   </div>
                 `;
@@ -1138,6 +1175,11 @@
               <span title="Sujets de forum créés">💬 <strong>${u.forumTopics || 0}</strong></span>
               <span title="Réponses postées sur le forum">✍️ <strong>${u.forumReplies || 0}</strong></span>
             </div>
+          </td>
+          <td style="text-align: right;">
+            <button class="btn btn-ghost btn-sm" data-view-dossier="${escapeHtml(u.id)}" title="Consulter le dossier membre">
+              📁 Dossier
+            </button>
           </td>
         </tr>
       `;
@@ -1448,6 +1490,7 @@
                   <th>Dernière Connexion</th>
                   <th>Score d'Activité</th>
                   <th>Contributions</th>
+                  <th style="text-align: right;">Action</th>
                 </tr>
               </thead>
               <tbody id="presence-table-tbody">
@@ -1555,13 +1598,13 @@
         </div>
         <div class="table-wrapper">
           <table>
-            <thead><tr>${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? '<th></th>' : ''}<th>Titre</th><th>Dossier / Catégorie</th><th>Statut</th><th>Auteur</th><th>Mise à jour</th><th>Actions</th></tr></thead>
+            <thead><tr>${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? '<th style="width:40px;text-align:center;"><input type="checkbox" id="content-select-all" title="Tout sélectionner" style="cursor:pointer;"></th>' : ''}<th>Titre</th><th>Dossier / Catégorie</th><th>Statut</th><th>Auteur</th><th>Mise à jour</th><th>Actions</th></tr></thead>
             <tbody>
               ${items.length === 0
         ? `<tr><td colspan="7"><div class="empty-state">Aucun contenu</div></td></tr>`
         : items.map(item => `
                   <tr>
-                    ${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? `<td><input type="checkbox" class="content-select" value="${item.id}"></td>` : ''}
+                    ${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? `<td style="text-align:center;"><input type="checkbox" class="content-select" value="${item.id}" style="cursor:pointer;"></td>` : ''}
                     <td>${escapeHtml(item.title)}</td>
                     <td>${categoryCell(item)}</td>
                     <td>${contentStatusBadge(item.status)}</td>
@@ -2491,13 +2534,21 @@
   }
 
   // ===== Utilisateurs =====
-  const userFilters = { search: '', role: '', status: '' };
+  const userFilters = { search: '', role: '', status: '', page: 1, limit: 20 };
   let lastUsersItems = [];
+  let lastUsersPagination = null;
 
   async function loadUsers() {
     const response = await window.AdminApi.users.getAll(userFilters);
     const items = response.data || [];
     lastUsersItems = items;
+    const pagination = response.pagination || {
+      page: userFilters.page || 1,
+      limit: userFilters.limit || 20,
+      total: items.length,
+      totalPages: Math.max(1, Math.ceil(items.length / (userFilters.limit || 20)))
+    };
+    lastUsersPagination = pagination;
     const user = window.AdminApp.currentUser;
     const can = permission => window.AdminApp.hasPermission(user, permission);
 
@@ -2506,7 +2557,7 @@
         <div class="card-header">
           <div>
             <h2>Utilisateurs</h2>
-            <span class="badge badge-primary">${response.pagination?.total ?? items.length} comptes</span>
+            <span class="badge badge-primary">${pagination.total ?? items.length} comptes</span>
           </div>
           <button class="btn btn-secondary" id="btn-export-users-csv" style="display:inline-flex;align-items:center;gap:0.4rem;">
             <span>📥</span> <span>Exporter CSV</span>
@@ -2571,6 +2622,15 @@
               `).join('')}
             </tbody>
           </table>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;flex-wrap:wrap;gap:0.75rem;">
+          <div style="font-size:0.88rem;color:var(--color-muted);">
+            Page <strong>${pagination.page || 1}</strong> sur <strong>${pagination.totalPages || 1}</strong> (${pagination.total ?? items.length} utilisateurs au total)
+          </div>
+          <div style="display:flex;gap:0.5rem;">
+            <button type="button" class="btn btn-sm" id="user-prev-page" ${(pagination.page || 1) <= 1 ? 'disabled' : ''}>← Précédent</button>
+            <button type="button" class="btn btn-sm" id="user-next-page" ${(pagination.page || 1) >= (pagination.totalPages || 1) ? 'disabled' : ''}>Suivant →</button>
+          </div>
         </div>
       </div>
     `;
@@ -2896,7 +2956,10 @@
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;';
     overlay.innerHTML = `
       <div class="card" style="max-width:560px;width:90%;padding:1.5rem;max-height:90vh;overflow:auto;">
-        <div class="card-header"><h2>Rôles de ${escapeHtml(userName)}</h2></div>
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <h2>Rôles de ${escapeHtml(userName)}</h2>
+          <button type="button" class="btn btn-ghost btn-sm" id="user-roles-header-close" style="font-size:1.25rem;line-height:1;padding:0.25rem 0.5rem;" title="Fermer">&times;</button>
+        </div>
         <div style="display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.2rem;">
           ${assignments.length === 0 ? '<div class="empty-state">Aucun rôle admin</div>' : assignments.map(a => `
             <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
@@ -2922,6 +2985,7 @@
     `;
     document.body.appendChild(overlay);
 
+    overlay.querySelector('#user-roles-header-close')?.addEventListener('click', () => overlay.remove());
     overlay.querySelector('#user-roles-close').addEventListener('click', () => overlay.remove());
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
 
@@ -2964,8 +3028,9 @@
       overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(3px);';
       overlay.innerHTML = `
         <div class="card" style="max-width:540px;width:92%;padding:1.5rem;max-height:90vh;overflow:auto;border-top:4px solid #f59e0b;">
-          <div class="card-header" style="margin-bottom:1rem;">
+          <div class="card-header" style="margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
             <h2>🎓 Nommer un Mentor & Expert</h2>
+            <button type="button" class="btn btn-ghost btn-sm" id="nominate-header-close" style="font-size:1.25rem;line-height:1;padding:0.25rem 0.5rem;" title="Fermer">&times;</button>
           </div>
           <p style="color:var(--color-muted);font-size:0.88rem;margin-bottom:1.25rem;">
             Sélectionnez un membre ou un administrateur pour l'élever au rang officiel de <strong>Mentor & Expert d'Industrie</strong>. Ce statut confère des droits d'animation pédagogique et met en valeur son expertise sur la plateforme.
@@ -2994,6 +3059,7 @@
       `;
       document.body.appendChild(overlay);
 
+      overlay.querySelector('#nominate-header-close')?.addEventListener('click', () => overlay.remove());
       overlay.querySelector('#nominate-close-btn').addEventListener('click', () => overlay.remove());
       overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
 
@@ -3516,7 +3582,7 @@
               <h3 style="margin:0 0 0.35rem;font-size:1.05rem;color:#0f172a;">Espace Formations</h3>
               <p style="font-size:0.84rem;color:#64748b;margin:0 0 1rem;line-height:1.45;">Sessions, dates, durées, objectifs et programmes pédagogiques.</p>
             </div>
-            <a href="#formations" class="btn btn-primary btn-sm btn-full" style="text-align:center;font-weight:600;">Ouvrir cet espace &rarr;</a>
+            <button type="button" class="btn btn-primary btn-sm btn-full" data-dash-navigate="formations" style="text-align:center;font-weight:600;cursor:pointer;">Ouvrir cet espace &rarr;</button>
           </div>
 
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1.1rem;display:flex;flex-direction:column;justify-content:space-between;">
@@ -3528,7 +3594,7 @@
               <h3 style="margin:0 0 0.35rem;font-size:1.05rem;color:#0f172a;">Espace Métiers</h3>
               <p style="font-size:0.84rem;color:#64748b;margin:0 0 1rem;line-height:1.45;">Fiches métiers, salaires indicatifs, compétences et débouchés.</p>
             </div>
-            <a href="#metiers" class="btn btn-primary btn-sm btn-full" style="text-align:center;font-weight:600;">Ouvrir cet espace &rarr;</a>
+            <button type="button" class="btn btn-primary btn-sm btn-full" data-dash-navigate="metiers" style="text-align:center;font-weight:600;cursor:pointer;">Ouvrir cet espace &rarr;</button>
           </div>
 
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1.1rem;display:flex;flex-direction:column;justify-content:space-between;">
@@ -3540,7 +3606,7 @@
               <h3 style="margin:0 0 0.35rem;font-size:1.05rem;color:#0f172a;">Espace Blog</h3>
               <p style="font-size:0.84rem;color:#64748b;margin:0 0 1rem;line-height:1.45;">Rédaction d'articles, catégories, publication et validation.</p>
             </div>
-            <a href="#blog" class="btn btn-primary btn-sm btn-full" style="text-align:center;font-weight:600;">Ouvrir cet espace &rarr;</a>
+            <button type="button" class="btn btn-primary btn-sm btn-full" data-dash-navigate="blog" style="text-align:center;font-weight:600;cursor:pointer;">Ouvrir cet espace &rarr;</button>
           </div>
 
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1.1rem;display:flex;flex-direction:column;justify-content:space-between;">
@@ -3552,7 +3618,7 @@
               <h3 style="margin:0 0 0.35rem;font-size:1.05rem;color:#0f172a;">Espace Forum</h3>
               <p style="font-size:0.84rem;color:#64748b;margin:0 0 1rem;line-height:1.45;">Modération des sujets, réponses, épinglage et résolution.</p>
             </div>
-            <a href="#forum" class="btn btn-primary btn-sm btn-full" style="text-align:center;font-weight:600;">Ouvrir cet espace &rarr;</a>
+            <button type="button" class="btn btn-primary btn-sm btn-full" data-dash-navigate="forum" style="text-align:center;font-weight:600;cursor:pointer;">Ouvrir cet espace &rarr;</button>
           </div>
 
         </div>
@@ -3641,8 +3707,9 @@
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;';
     overlay.innerHTML = `
       <div class="card" style="max-width:540px;width:92%;padding:1.5rem;max-height:90vh;overflow:auto;">
-        <div class="card-header" style="margin-bottom:1rem;">
+        <div class="card-header" style="margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center;">
           <h2>Ajouter un administrateur</h2>
+          <button type="button" class="btn btn-ghost btn-sm" id="admin-create-header-close" style="font-size:1.25rem;line-height:1;padding:0.25rem 0.5rem;" title="Fermer">&times;</button>
         </div>
         <form id="admin-create-form" style="display:flex;flex-direction:column;gap:0.85rem;">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
@@ -3679,6 +3746,7 @@
     `;
     document.body.appendChild(overlay);
 
+    overlay.querySelector('#admin-create-header-close')?.addEventListener('click', () => overlay.remove());
     overlay.querySelector('#admin-create-cancel').addEventListener('click', () => overlay.remove());
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
 
@@ -3781,7 +3849,10 @@
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;';
     overlay.innerHTML = `
       <div class="card" style="max-width:640px;width:92%;padding:1.5rem;max-height:90vh;overflow:auto;">
-        <div class="card-header"><h2>${role ? 'Modifier' : 'Nouveau'} rôle</h2></div>
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;">
+          <h2>${role ? 'Modifier' : 'Nouveau'} rôle</h2>
+          <button type="button" class="btn btn-ghost btn-sm" id="role-header-close" style="font-size:1.25rem;line-height:1;padding:0.25rem 0.5rem;" title="Fermer">&times;</button>
+        </div>
         <form id="role-form" style="display:flex;flex-direction:column;gap:0.8rem;">
           <label>Nom *<input type="text" name="name" required minlength="3" value="${escapeHtml(role?.name || '')}" ${role?.isSystem && role?.name === 'ULTRA_ADMIN' ? 'readonly' : ''}></label>
           <label>Description<input type="text" name="description" value="${escapeHtml(role?.description || '')}"></label>
@@ -3810,6 +3881,7 @@
     `;
     document.body.appendChild(overlay);
 
+    overlay.querySelector('#role-header-close')?.addEventListener('click', () => overlay.remove());
     overlay.querySelector('#role-cancel').addEventListener('click', () => overlay.remove());
     overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
 
@@ -4085,7 +4157,7 @@
 
             ${isUltraAdmin ? `
               <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.75rem;">
-                <button class="btn btn-sm btn-outline btn-full" data-org-assign="${pos.id}" style="font-size:0.82rem;font-weight:600;">
+                <button class="btn btn-sm btn-outline btn-full" data-org-change-post="${pos.id}" data-user-id="${holder.userId || ''}" style="font-size:0.82rem;font-weight:600;">
                   🔄 Changer le titulaire
                 </button>
                 <button class="btn btn-sm btn-danger" data-org-free="${holder.assignmentId}" data-pos-title="${escapeHtml(pos.title)}" style="font-size:0.82rem;white-space:nowrap;">
@@ -4823,11 +4895,13 @@
 
   // ===== Journal d'audit =====
   const logFilters = { module: '', action: '', email: '', from: '', to: '', page: 1 };
+  let lastLogsPagination = null;
 
   async function loadLogs() {
     const response = await window.AdminApi.rbac.getAuditLogs({ ...logFilters, limit: 50 });
     const items = response.data || [];
     const pagination = response.pagination || { page: 1, totalPages: 1, total: items.length };
+    lastLogsPagination = pagination;
 
     return `
       <div class="card">
@@ -5479,26 +5553,46 @@
       // Suppression massive : les cases cochées alimentent le bouton d'action
       const bulkButton = document.getElementById('btn-bulk-delete');
       const bulkCount = document.getElementById('bulk-count');
+      const selectAll = document.getElementById('content-select-all');
+
       const updateBulkButton = () => {
+        const all = document.querySelectorAll('.content-select');
         const checked = document.querySelectorAll('.content-select:checked');
+        if (selectAll && all.length > 0) {
+          selectAll.checked = checked.length === all.length;
+          selectAll.indeterminate = checked.length > 0 && checked.length < all.length;
+        }
         if (bulkButton) bulkButton.style.display = checked.length > 0 ? '' : 'none';
         if (bulkCount) bulkCount.textContent = checked.length;
       };
+
+      if (selectAll) {
+        selectAll.addEventListener('change', () => {
+          document.querySelectorAll('.content-select').forEach(cb => {
+            cb.checked = selectAll.checked;
+          });
+          updateBulkButton();
+        });
+      }
+
       document.querySelectorAll('.content-select').forEach(cb => {
         cb.addEventListener('change', updateBulkButton);
       });
 
       if (bulkButton) {
         bulkButton.addEventListener('click', async () => {
+          if (bulkButton.disabled) return;
           const ids = Array.from(document.querySelectorAll('.content-select:checked')).map(cb => cb.value);
           if (ids.length === 0) return;
           if (!confirm(`Supprimer définitivement ${ids.length} élément(s) ? Cette action demande votre mot de passe.`)) return;
+          bulkButton.disabled = true;
           try {
             const res = await client.removeBulk(ids);
             showToast(res.message, 'warning');
             loadPage(reloadPage);
           } catch (error) {
             showToast(error.message, 'error');
+            bulkButton.disabled = false;
           }
         });
       }
@@ -5562,6 +5656,7 @@
 
       document.querySelectorAll('[data-content-action]').forEach(btn => {
         btn.addEventListener('click', async () => {
+          if (btn.disabled) return;
           const actionModule = btn.getAttribute('data-content-module');
           const action = btn.getAttribute('data-content-action');
           const id = btn.getAttribute('data-content-id');
@@ -5573,6 +5668,7 @@
           }
           if (action === 'delete' && !confirm('Supprimer définitivement ce contenu ?')) return;
 
+          btn.disabled = true;
           const method = action === 'delete' ? 'remove' : action;
           const messages = {
             publish: 'Contenu publié',
@@ -5587,6 +5683,7 @@
             loadPage(actionModule === 'jobs' ? 'metiers' : actionModule);
           } catch (error) {
             showToast(error.message, 'error');
+            btn.disabled = false;
           }
         });
       });
@@ -5638,6 +5735,7 @@
       // Actions sur chaque article
       document.querySelectorAll('.btn-blog-action').forEach(btn => {
         btn.addEventListener('click', async () => {
+          if (btn.disabled) return;
           const action = btn.getAttribute('data-action');
           const id = btn.getAttribute('data-id');
           const post = blogCache[id];
@@ -5649,56 +5747,66 @@
 
           if (action === 'delete') {
             if (!confirm(`Supprimer définitivement l'article « ${post?.title || ''} » ?`)) return;
+            btn.disabled = true;
             try {
               await window.AdminApi.blog.remove(id);
               showToast('Article supprimé avec succès', 'warning');
               loadPage('blog');
             } catch (error) {
               showToast(error.message, 'error');
+              btn.disabled = false;
             }
             return;
           }
 
           if (action === 'submit') {
+            btn.disabled = true;
             try {
               await window.AdminApi.blog.submit(id);
               showToast('Article soumis à validation', 'success');
               loadPage('blog');
             } catch (error) {
               showToast(error.message, 'error');
+              btn.disabled = false;
             }
             return;
           }
 
           if (action === 'publish') {
+            btn.disabled = true;
             try {
               await window.AdminApi.blog.publish(id);
               showToast('Article publié avec succès', 'success');
               loadPage('blog');
             } catch (error) {
               showToast(error.message, 'error');
+              btn.disabled = false;
             }
             return;
           }
 
           if (action === 'unpublish') {
+            btn.disabled = true;
             try {
               await window.AdminApi.blog.unpublish(id);
               showToast('Article dépublié (retour brouillon)', 'info');
               loadPage('blog');
             } catch (error) {
               showToast(error.message, 'error');
+              btn.disabled = false;
             }
             return;
           }
 
           if (action === 'archive') {
+            btn.disabled = true;
             try {
               await window.AdminApi.blog.archive(id);
               showToast('Article archivé', 'info');
               loadPage('blog');
             } catch (error) {
               showToast(error.message, 'error');
+              btn.disabled = false;
             }
             return;
           }
@@ -5794,6 +5902,7 @@
           clearTimeout(debounce);
           debounce = setTimeout(() => {
             userFilters.search = searchInput.value;
+            userFilters.page = 1;
             loadPage('users');
           }, 400);
         });
@@ -5803,6 +5912,7 @@
       if (roleFilter) {
         roleFilter.addEventListener('change', () => {
           userFilters.role = roleFilter.value;
+          userFilters.page = 1;
           loadPage('users');
         });
       }
@@ -5811,9 +5921,25 @@
       if (statusFilter) {
         statusFilter.addEventListener('change', () => {
           userFilters.status = statusFilter.value;
+          userFilters.page = 1;
           loadPage('users');
         });
       }
+
+      document.getElementById('user-prev-page')?.addEventListener('click', () => {
+        if ((userFilters.page || 1) > 1) {
+          userFilters.page = (userFilters.page || 1) - 1;
+          loadPage('users');
+        }
+      });
+
+      document.getElementById('user-next-page')?.addEventListener('click', () => {
+        const totalPages = lastUsersPagination?.totalPages || 1;
+        if ((userFilters.page || 1) < totalPages) {
+          userFilters.page = (userFilters.page || 1) + 1;
+          loadPage('users');
+        }
+      });
 
       document.getElementById('btn-export-users-csv')?.addEventListener('click', () => {
         if (!lastUsersItems || lastUsersItems.length === 0) {
@@ -5837,6 +5963,7 @@
 
       document.querySelectorAll('[data-user-action]').forEach(btn => {
         btn.addEventListener('click', async () => {
+          if (btn.disabled) return;
           const action = btn.getAttribute('data-user-action');
           const userId = btn.getAttribute('data-user-id');
           const userName = btn.getAttribute('data-user-name') || 'cet utilisateur';
@@ -5853,24 +5980,28 @@
 
           if (action === 'nominate-mentor') {
             if (!confirm(`Nommer ${userName} au rang officiel de Mentor & Expert d'Industrie ?`)) return;
+            btn.disabled = true;
             try {
               const res = await window.AdminApi.rbac.nominateMentor(userId);
               showToast(res.message || 'Mentor nommé avec succès !', 'success');
               loadPage('users');
             } catch (error) {
               showToast(error.message, 'error');
+              btn.disabled = false;
             }
             return;
           }
 
           if (action === 'revoke-mentor') {
             if (!confirm(`Révoquer le statut de Mentor & Expert de ${userName} ?`)) return;
+            btn.disabled = true;
             try {
               const res = await window.AdminApi.rbac.revokeMentor(userId);
               showToast(res.message || 'Statut de Mentor révoqué', 'warning');
               loadPage('users');
             } catch (error) {
               showToast(error.message, 'error');
+              btn.disabled = false;
             }
             return;
           }
@@ -5884,12 +6015,14 @@
             delete: 'Utilisateur supprimé',
           };
           const method = action === 'delete' ? 'remove' : action;
+          btn.disabled = true;
           try {
             await window.AdminApi.users[method](userId);
             showToast(messages[action] || 'Action effectuée', action === 'delete' ? 'warning' : 'success');
             loadPage('users');
           } catch (error) {
             showToast(error.message, 'error');
+            btn.disabled = false;
           }
         });
       });
@@ -6027,8 +6160,11 @@
       });
 
       document.getElementById('log-next-page')?.addEventListener('click', () => {
-        logFilters.page += 1;
-        loadPage('logs');
+        const totalPages = lastLogsPagination?.totalPages || 1;
+        if (logFilters.page < totalPages) {
+          logFilters.page += 1;
+          loadPage('logs');
+        }
       });
     }
 
@@ -6278,6 +6414,17 @@
         if (userId) openUserDossierModal(userId);
       });
     });
+
+    // Écouteur global pour la navigation inter-modules depuis n'importe quel module
+    document.querySelectorAll('[data-dash-navigate]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = el.getAttribute('data-dash-navigate');
+        if (target && window.AdminRouter) {
+          window.AdminRouter.navigate(target);
+        }
+      });
+    });
   }
 
   function bindVitrineEvents() {
@@ -6345,7 +6492,12 @@
     });
     document.querySelectorAll('.feat-perk-input').forEach(el => el.addEventListener('input', updateFeaturedPreview));
 
-    // Sauvegarde de la section Accueil
+    // Soumission du formulaire Accueil (clic bouton ou touche Entrée)
+    document.getElementById('form-vitrine-featured')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      document.getElementById('btn-save-featured')?.click();
+    });
+
     document.getElementById('btn-save-featured')?.addEventListener('click', async () => {
       const btn = document.getElementById('btn-save-featured');
       const tag = document.getElementById('feat-tag')?.value.trim() || '🔥 À la Une ce mois-ci';
