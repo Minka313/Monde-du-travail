@@ -304,13 +304,16 @@
           const overlay = document.createElement('div');
           overlay.id = 'formation-dossier-overlay';
           overlay.className = 'dossier-overlay';
+          overlay.setAttribute('data-lenis-prevent', 'true');
+          overlay.setAttribute('data-lenis-prevent-wheel', 'true');
+          overlay.setAttribute('data-lenis-prevent-touch', 'true');
 
           const dateStr = (f.startDate || f.endDate)
             ? `🗓️ ${f.startDate ? 'Dès le ' + new Date(f.startDate).toLocaleDateString('fr-FR') : ''} ${f.endDate ? 'au ' + new Date(f.endDate).toLocaleDateString('fr-FR') : ''}`
             : null;
 
           overlay.innerHTML = `
-            <div class="dossier-modal" role="dialog" aria-modal="true" aria-labelledby="formation-dossier-title">
+            <div class="dossier-modal" role="dialog" aria-modal="true" aria-labelledby="formation-dossier-title" data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true">
               <!-- Hero -->
               <div class="dossier-hero" style="background-image: url('${escapeHtml(img)}');">
                 <div class="dossier-hero-overlay"></div>
@@ -340,7 +343,7 @@
               </div>
 
               <!-- Body -->
-              <div class="dossier-body">
+              <div class="dossier-body" data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true" tabindex="-1">
                 <!-- Tab 1: Objectifs -->
                 <div class="dossier-tab-content active" id="tab-f-overview">
                   <div class="dossier-section">
@@ -500,6 +503,15 @@
 
           // Force reflow
           setTimeout(() => overlay.classList.add('active'), 10);
+
+          const fBody = overlay.querySelector('.dossier-body');
+          if (fBody) {
+            setTimeout(() => { try { fBody.focus({ preventScroll: true }); } catch (_) {} }, 60);
+          }
+          overlay.addEventListener('wheel', (e) => {
+            if (!fBody || e.target.closest('.dossier-body')) return;
+            fBody.scrollTop += e.deltaY;
+          }, { passive: true });
 
           // Tabs
           overlay.querySelectorAll('.dossier-tab').forEach(tabBtn => {

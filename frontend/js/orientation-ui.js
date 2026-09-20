@@ -1116,10 +1116,13 @@
     const overlay = document.createElement('div');
     overlay.id = 'job-dossier-overlay';
     overlay.className = 'dossier-overlay';
+    overlay.setAttribute('data-lenis-prevent', 'true');
+    overlay.setAttribute('data-lenis-prevent-wheel', 'true');
+    overlay.setAttribute('data-lenis-prevent-touch', 'true');
 
     // Rendu du HTML complet de la modal
     overlay.innerHTML = `
-      <div class="dossier-modal" role="dialog" aria-modal="true" aria-labelledby="dossierJobTitle">
+      <div class="dossier-modal" role="dialog" aria-modal="true" aria-labelledby="dossierJobTitle" data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true">
         <!-- Barre de progression de lecture dynamique -->
         <div class="dossier-progress-track" aria-hidden="true">
           <div class="dossier-progress-bar" id="dossierReadingProgress"></div>
@@ -1205,7 +1208,7 @@
         </div>
 
         <!-- Corps du dossier -->
-        <div class="dossier-body">
+        <div class="dossier-body" data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true" tabindex="-1">
           
           <!-- ONGLET 1 : DÉCOUVRIR -->
           <div class="dossier-tab-content active" id="tab-discover">
@@ -1816,6 +1819,47 @@
     const readingProgressBar = overlay.querySelector('#dossierReadingProgress');
     const floatingBar = overlay.querySelector('#dossierFloatingActions');
 
+    // Focus immédiat pour permettre le défilement au clavier (Flèches, PageDown/Up, Espace)
+    if (dossierBody) {
+      setTimeout(() => {
+        try { dossierBody.focus({ preventScroll: true }); } catch (_) {}
+      }, 60);
+    }
+
+    // Défilement universel : si l'utilisateur scrolle sur l'en-tête (hero), les onglets ou les bordures,
+    // transférer immédiatement le défilement au corps du dossier
+    overlay.addEventListener('wheel', (e) => {
+      if (!dossierBody) return;
+      if (e.target.closest('.dossier-body')) {
+        // Le curseur est déjà dans le corps, le scroll natif s'exécute
+        return;
+      }
+      dossierBody.scrollTop += e.deltaY;
+    }, { passive: true });
+
+    // Relai tactile pour écrans mobiles/tactiles quand le swipe démarre sur l'image ou le header
+    let modalTouchStartY = null;
+    overlay.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches[0]) {
+        modalTouchStartY = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    overlay.addEventListener('touchmove', (e) => {
+      if (!dossierBody || modalTouchStartY === null) return;
+      if (e.target.closest('.dossier-body')) return;
+      if (e.touches && e.touches[0]) {
+        const currentY = e.touches[0].clientY;
+        const deltaY = modalTouchStartY - currentY;
+        modalTouchStartY = currentY;
+        dossierBody.scrollTop += deltaY;
+      }
+    }, { passive: true });
+
+    overlay.addEventListener('touchend', () => {
+      modalTouchStartY = null;
+    }, { passive: true });
+
     if (dossierBody && readingProgressBar) {
       dossierBody.addEventListener('scroll', () => {
         const scrollTop = dossierBody.scrollTop;
@@ -1884,6 +1928,11 @@
         const targetId = tabBtn.getAttribute('data-tab');
         const targetContent = overlay.querySelector(`#${targetId}`);
         if (targetContent) targetContent.classList.add('active');
+
+        // Réinitialiser la position de défilement au sommet du nouvel onglet
+        if (dossierBody) {
+          dossierBody.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         window.AnalyticsTracker?.track('tab_switch', 'job', jobKey, { tab: targetId });
       });
@@ -1969,7 +2018,15 @@
     }
 
     // Fermeture de la modal
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
     const closeModal = () => {
+      window.removeEventListener('keydown', handleKeyDown);
       overlay.classList.remove('active');
       document.body.classList.remove('modal-open');
       setTimeout(() => overlay.remove(), 320);
@@ -1979,6 +2036,13 @@
     const closeBtn = overlay.querySelector('#dossierCloseBtn');
     if (closeX) closeX.addEventListener('click', closeModal);
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+    // Clic sur l'arrière-plan sombre hors de la modale pour fermer
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        closeModal();
+      }
+    });
 
     // Print handler
     const btnPrint = overlay.querySelector('#btnPrintJobSheet');
