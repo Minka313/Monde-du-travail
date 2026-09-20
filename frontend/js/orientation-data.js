@@ -165,17 +165,19 @@
     {
       id: 'energie-renouvelable',
       order: 9,
-      name: 'Énergie, Électricité & Énergies Renouvelables',
+      name: 'Énergie, Électricité & Transition Énergétique',
       slug: 'energie-renouvelable',
       icon: '⚡',
       color: '#eab308', // Or électrique
       image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&auto=format&fit=crop&q=80',
-      description: 'Bâtir la transition énergétique : solaire photovoltaïque, parcs éoliens, réseaux intelligents (Smart Grids) et stockage batterie.',
-      stats: { jobsEstimate: '45+ métiers', subdomainsCount: 9 },
-      representativeJobs: ['Ingénieur Solaire', 'Chef de Projet Énergies Renouvelables', 'Auditeur Énergétique', 'Ingénieur Réseaux Électriques'],
+      description: 'De l’exploration aux réseaux intelligents : solaire photovoltaïque & thermique, parcs éoliens, hydroélectricité, biomasse, nucléaire, génie climatique CVC, audit MEER et marchés de l’énergie.',
+      stats: { jobsEstimate: '50+ métiers', subdomainsCount: 14 },
+      representativeJobs: ['Ingénieur R&D Énergie', 'Chef de Projet Solaire', 'Technicien Éolien', 'Ingénieur Smart Grids', 'Energy Manager MEER', 'Trader Énergie'],
       subdomains: [
-        'Électricité', 'Énergie solaire', 'Énergie éolienne', 'Réseaux électriques',
-        'Stockage', 'Batteries', 'Efficacité énergétique', 'Smart Grid', 'Maintenance énergétique'
+        'R&D & Ingénierie énergétique', 'Solaire photovoltaïque & thermique', 'Éolien onshore & offshore',
+        'Hydroélectricité & barrages', 'Géothermie', 'Biomasse & Biogaz', 'Réseaux & Dispatching électrique',
+        'Smart Grids', 'Nucléaire & Sûreté', 'Génie climatique & CVC', 'Maîtrise de l\'énergie MEER',
+        'Marchés & Trading de l\'électricité', 'Commerce B2B solutions énergétiques', 'HSE & Sécurité sites énergétiques', 'Exploration & Géosciences sous-sol'
       ]
     },
     {
@@ -1513,6 +1515,40 @@
         });
       }
 
+      // 1.d Intégration du catalogue Énergie, Électricité & Transition Énergétique enrichi (OrientationEnergyData)
+      const energyData = (typeof window !== 'undefined' && window.OrientationEnergyData)
+        ? window.OrientationEnergyData
+        : (typeof global !== 'undefined' && global.OrientationEnergyData ? global.OrientationEnergyData : null);
+
+      if (energyData && typeof energyData.getJobs === 'function') {
+        const energyJobs = energyData.getJobs();
+        energyJobs.forEach(eJob => {
+          const existingIdx = combined.findIndex(j => j.slug === eJob.slug || j.id === eJob.id);
+          if (existingIdx >= 0) {
+            // Enrichissement préservant les données existantes (ex: contexte local Sénégal d'ingénieur solaire)
+            combined[existingIdx] = Object.assign({}, eJob, combined[existingIdx], {
+              aliases: [...new Set([...(eJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              specializations: [...new Set([...(eJob.specializations || []), ...(combined[existingIdx].specializations || [])])],
+              domain: eJob.domain || combined[existingIdx].domain,
+              domainId: eJob.domainId || combined[existingIdx].domainId,
+              subdomain: eJob.subdomain || combined[existingIdx].subdomain,
+              energyTechnology: eJob.energyTechnology || combined[existingIdx].energyTechnology,
+              energySector: eJob.energySector || combined[existingIdx].energySector,
+              gettingStarted: eJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: eJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || eJob.africaContext,
+              salaryRanges: eJob.salaryRanges || combined[existingIdx].salaryRanges,
+              salary: eJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || eJob.saviezVous || null,
+              sourceEnergierecrute: eJob.sourceEnergierecrute,
+              isEmerging: eJob.isEmerging !== undefined ? eJob.isEmerging : combined[existingIdx].isEmerging
+            });
+          } else {
+            combined.push(eJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -1742,6 +1778,35 @@
         if (job.sources && Array.isArray(job.sources) && job.sources.some(src => src.toLowerCase().includes(q))) return true;
         if (job.documentaryNote && job.documentaryNote.toLowerCase().includes(q)) return true;
 
+        // Technologies énergétiques & Secteurs de l'énergie (Energierecrute)
+        if (job.energyTechnology && Array.isArray(job.energyTechnology) && job.energyTechnology.some(t => t.toLowerCase().includes(q))) return true;
+        if (job.energySector && job.energySector.toLowerCase().includes(q)) return true;
+        if (job.studies) {
+          if (Array.isArray(job.studies.france) && job.studies.france.some(f => f.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.studies.senegal) && job.studies.senegal.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.studies.pathway) && job.studies.pathway.some(p => (p.title && p.title.toLowerCase().includes(q)) || (p.desc && p.desc.toLowerCase().includes(q)))) return true;
+        }
+
+        // Contexte Afrique / Sénégal, Journée type & Saviez-vous
+        if (job.africaContext) {
+          if (typeof job.africaContext === 'string' && job.africaContext.toLowerCase().includes(q)) return true;
+          if (typeof job.africaContext === 'object') {
+            if (job.africaContext.senegalInsight && job.africaContext.senegalInsight.toLowerCase().includes(q)) return true;
+            if (Array.isArray(job.africaContext.localSectors) && job.africaContext.localSectors.some(s => s.toLowerCase().includes(q))) return true;
+            if (job.africaContext.entrepreneurship && job.africaContext.entrepreneurship.toLowerCase().includes(q)) return true;
+          }
+        }
+        if (job.typicalDay && Array.isArray(job.typicalDay)) {
+          if (job.typicalDay.some(t => (t.title && t.title.toLowerCase().includes(q)) || (t.desc && t.desc.toLowerCase().includes(q)))) return true;
+        }
+        if (job.saviezVous) {
+          if (typeof job.saviezVous === 'string' && job.saviezVous.toLowerCase().includes(q)) return true;
+          if (typeof job.saviezVous === 'object') {
+            if (job.saviezVous.fait && job.saviezVous.fait.toLowerCase().includes(q)) return true;
+            if (job.saviezVous.pourquoi && job.saviezVous.pourquoi.toLowerCase().includes(q)) return true;
+          }
+        }
+
         return false;
       });
     },
@@ -1811,6 +1876,18 @@
       return [];
     },
 
+    getEnergyDomains: function () {
+      const energyData = (typeof window !== 'undefined' && window.OrientationEnergyData)
+        ? window.OrientationEnergyData
+        : (typeof global !== 'undefined' && global.OrientationEnergyData
+          ? global.OrientationEnergyData
+          : (typeof OrientationEnergyData !== 'undefined' ? OrientationEnergyData : null));
+      if (energyData && energyData.DOMAINS) {
+        return energyData.DOMAINS;
+      }
+      return [];
+    },
+
     getFamilyDomains: function (familyId) {
       if (familyId === 'numerique-ia') {
         return this.getDigitalDomains();
@@ -1818,11 +1895,14 @@
       if (familyId === 'finance-fintech') {
         return this.getFinanceDomains();
       }
-      if (familyId === 'agriculture-agritech') {
+      if (familyId === 'agriculture-agritech' || familyId === 'agriculture-agroalimentaire') {
         return this.getAgriDomains();
       }
       if (familyId === 'peche-maritime') {
         return (this.getAgriDomains() || []).filter(d => d.id === 'peche-aquaculture');
+      }
+      if (familyId === 'energie-renouvelable') {
+        return this.getEnergyDomains();
       }
       return [];
     },
