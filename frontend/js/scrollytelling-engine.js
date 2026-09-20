@@ -440,7 +440,29 @@
   window.scrollytelling = {
     config: CONFIG,
     getLenis: () => lenisInstance,
+    resize: () => {
+      if (lenisInstance && typeof lenisInstance.resize === 'function') {
+        lenisInstance.resize();
+      }
+      if (typeof window.ScrollTrigger !== 'undefined') {
+        window.ScrollTrigger.refresh();
+      }
+    },
+    scrollTo: (target, options = {}) => {
+      if (lenisInstance && typeof lenisInstance.scrollTo === 'function') {
+        lenisInstance.scrollTo(target, options);
+      } else if (typeof target === 'number') {
+        window.scrollTo({ top: target, behavior: options.immediate ? 'auto' : 'smooth' });
+      } else if (target && typeof target.getBoundingClientRect === 'function') {
+        const offset = options.offset || 0;
+        const top = target.getBoundingClientRect().top + window.scrollY + offset;
+        window.scrollTo({ top: Math.max(0, top), behavior: options.immediate ? 'auto' : 'smooth' });
+      }
+    },
     refresh: () => {
+      if (lenisInstance && typeof lenisInstance.resize === 'function') {
+        lenisInstance.resize();
+      }
       if (typeof window.ScrollTrigger !== 'undefined') {
         window.ScrollTrigger.refresh();
       }

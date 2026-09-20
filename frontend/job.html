@@ -169,9 +169,47 @@
                 </div>
             </div>
 
+            <!-- BARRE D'OUTILS COLLANTE EN COURS DE SCROLL -->
+            <div id="stickyOrientationToolbar" class="sticky-orientation-toolbar" style="display:none;">
+                <div class="sticky-toolbar-inner">
+                    <div class="sticky-toolbar-left">
+                        <button type="button" id="stickyBtnBackFamilies" class="sticky-btn-back" title="Revenir aux 21 familles">
+                            <span>&larr;</span>
+                            <span class="sticky-back-label">21 Familles</span>
+                        </button>
+                        <div class="sticky-context-info">
+                            <span class="sticky-family-icon" id="stickyFamilyIcon">💼</span>
+                            <span class="sticky-family-name" id="stickyFamilyName">Métiers</span>
+                            <span class="sticky-sep" id="stickySep" style="display:none;">&rsaquo;</span>
+                            <span class="sticky-pôle-name" id="stickyPôleName" style="display:none;"></span>
+                        </div>
+                    </div>
+                    <div class="sticky-toolbar-right">
+                        <div class="sticky-domain-dropdown-wrap" id="stickyDomainDropdownWrap" style="display:none;">
+                            <select id="stickyDomainSelect" class="sticky-domain-select" aria-label="Changer de pôle"></select>
+                        </div>
+                        <span class="sticky-count-badge" id="stickyCountBadge">0 métiers</span>
+                        <button type="button" id="stickyBtnScrollTop" class="sticky-btn-top" title="Remonter en haut de la liste">
+                            <span>&uarr;</span>
+                            <span class="sticky-top-label">Haut</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- PORTE B (NIVEAU 1) : GRILLE DES 21 GRANDES FAMILLES -->
             <div class="families-cards-grid stagger-group" id="familiesGridContainer">
                 <!-- 21 cartes de familles générées dynamiquement -->
+            </div>
+
+            <!-- FILTRE RAPIDE LOCAL AU NIVEAU DES MÉTIERS -->
+            <div id="localJobsFilterBar" class="local-jobs-filter-bar" style="display:none;">
+                <div class="local-filter-input-wrap">
+                    <span class="local-filter-icon">🔍</span>
+                    <input type="text" id="localJobsFilterInput" class="local-filter-input" placeholder="Filtrer rapidement parmi ces fiches métiers (ex: Python, IA, Cloud, Dakar...)" autocomplete="off">
+                    <button type="button" id="localJobsFilterClear" class="local-filter-clear" aria-label="Effacer le filtre">&times;</button>
+                </div>
+                <span id="localJobsFilterCount" class="local-filter-count">0 métiers</span>
             </div>
 
             <!-- GRILLE DES CARTES DE MÉTIERS (NIVEAU 3) -->
@@ -179,8 +217,19 @@
                 <!-- Cartes métiers générées dynamiquement -->
             </div>
 
+            <!-- BARRE DE PAGINATION / CHARGEMENT PROGRESSIF -->
+            <div id="orientationPaginationWrap" class="orientation-pagination-wrap" style="display:none;">
+                <!-- Rendu dynamiquement -->
+            </div>
+
         </div>
     </section>
+
+    <!-- Bouton Flottant Remonter en Haut -->
+    <button type="button" id="btnFloatingScrollTop" class="floating-scroll-top-btn" aria-label="Remonter en haut de page">
+        <span>&uarr;</span>
+        <span>Haut de page</span>
+    </button>
 
     <!-- SECTION D'ACCOMPAGNEMENT & MENTORAT -->
     <section class="section section-alt">

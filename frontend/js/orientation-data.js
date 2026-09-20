@@ -1488,9 +1488,13 @@
 
         // Filtrage optionnel par domaine numérique (par ID ou par Nom)
         if (domain && domain !== 'all') {
-          const domObj = (typeof OrientationDigitalData !== 'undefined' && OrientationDigitalData.DOMAINS)
-            ? OrientationDigitalData.DOMAINS.find(d => d.id.toLowerCase() === domain.toLowerCase() || d.name.toLowerCase() === domain.toLowerCase())
-            : null;
+          const digitalData = (typeof window !== 'undefined' && window.OrientationDigitalData)
+            ? window.OrientationDigitalData
+            : (typeof global !== 'undefined' && global.OrientationDigitalData
+              ? global.OrientationDigitalData
+              : (typeof OrientationDigitalData !== 'undefined' ? OrientationDigitalData : null));
+          const digitalDomains = (digitalData && digitalData.DOMAINS) ? digitalData.DOMAINS : [];
+          const domObj = digitalDomains.find(d => d.id.toLowerCase() === domain.toLowerCase() || d.name.toLowerCase() === domain.toLowerCase()) || null;
           const targetName = domObj ? domObj.name.toLowerCase() : domain.toLowerCase();
           const targetId = domObj ? domObj.id.toLowerCase() : domain.toLowerCase();
 
@@ -1633,8 +1637,13 @@
     },
 
     getDigitalDomains: function () {
-      if (typeof OrientationDigitalData !== 'undefined' && OrientationDigitalData.DOMAINS) {
-        return OrientationDigitalData.DOMAINS;
+      const digitalData = (typeof window !== 'undefined' && window.OrientationDigitalData)
+        ? window.OrientationDigitalData
+        : (typeof global !== 'undefined' && global.OrientationDigitalData
+          ? global.OrientationDigitalData
+          : (typeof OrientationDigitalData !== 'undefined' ? OrientationDigitalData : null));
+      if (digitalData && digitalData.DOMAINS) {
+        return digitalData.DOMAINS;
       }
       return [];
     },
