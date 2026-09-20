@@ -547,7 +547,9 @@
                 ? "Cartographie d'Excellence Énergie, Électricité & Transition Énergétique"
                 : (family.id === 'btp-architecture'
                   ? "Cartographie d'Excellence BTP, Architecture & Construction"
-                  : `Cartographie d'Excellence — ${family.name}`))))));
+                  : (family.id === 'lettres-langues-sciences-humaines'
+                    ? "Cartographie d'Excellence Lettres, Langues & Sciences Humaines"
+                    : `Cartographie d'Excellence — ${family.name}`)))))));
 
       const cartographyBadge = (family.id === 'numerique-ia')
         ? "13 Pôles • 100+ Métiers"
@@ -561,7 +563,9 @@
                 ? "14 Domaines • 26 Fiches Métiers"
                 : (family.id === 'btp-architecture'
                   ? "15 Domaines • 37 Fiches Métiers"
-                  : `${familyDomains.length} Domaines d'expertise`))))));
+                  : (family.id === 'lettres-langues-sciences-humaines'
+                    ? "20 Domaines • 32 Fiches Métiers"
+                    : `${familyDomains.length} Domaines d'expertise`)))))));
 
       const allDomainsLabel = (family.id === 'numerique-ia')
         ? `Tous les pôles (${familyDomains.length})`
@@ -875,6 +879,7 @@
               <span class="job-card-level-badge">🎓 ${escapeHtml(job.level || 'Bac +3 / +5')}</span>
               ${isEmerging ? '<span class="job-badge-emerging" style="background:#fef3c7;color:#92400e;border:1px solid #fde68a;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Métier d’avenir émergent">✨ Émergent</span>' : ''}
               ${isESD ? '<span class="job-badge-esd" style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : École Supérieure du Digital">🎓 ESD</span>' : ''}
+              ${job.sourceImagineTonFutur ? '<span class="job-badge-itf" style="background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : Imagine ton Futur">📚 Imagine ton Futur</span>' : ''}
             </div>
 
             <h3 class="job-card-title">${escapeHtml(job.title)}</h3>
@@ -1271,6 +1276,11 @@
                     🎓 Référence L'Étudiant
                   </span>
                 ` : ''}
+                ${job.sourceImagineTonFutur ? `
+                  <span class="dossier-meta-tag" style="background:rgba(124,58,237,0.25);border-color:rgba(167,139,250,0.5);color:#ede9fe;" title="Fiche documentée d'après le référentiel Imagine ton Futur (Lettres, Langues & Sciences Humaines)">
+                    📚 Référence Imagine ton Futur
+                  </span>
+                ` : ''}
               </div>
               <button type="button" class="btn-dossier-fav" id="btnToggleJobFav" title="Sauvegarder dans mes favoris">
                 <span class="fav-icon">☆</span>
@@ -1394,27 +1404,35 @@
               </div>
             ` : ''}
 
-            ${job.missions && (job.missions.primary || job.missions.secondary) ? `
+            ${(job.missions && (Array.isArray(job.missions) || job.missions.primary || job.missions.secondary)) ? `
               <div class="dossier-section" style="margin-top:1.25rem;">
                 <h4 style="color:#0f172a;font-size:0.96rem;margin-bottom:0.75rem;">⚡ Responsabilités & Missions concrètes</h4>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;">
-                  ${job.missions.primary && job.missions.primary.length > 0 ? `
-                    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;">
-                      <strong style="color:#0284c7;font-size:0.86rem;display:block;margin-bottom:0.5rem;">Missions principales (Cœur de métier)</strong>
-                      <ul style="margin:0;padding-left:1.2rem;font-size:0.86rem;color:#334155;line-height:1.6;">
-                        ${job.missions.primary.map(m => `<li>${escapeHtml(m)}</li>`).join('')}
-                      </ul>
-                    </div>
-                  ` : ''}
-                  ${job.missions.secondary && job.missions.secondary.length > 0 ? `
-                    <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;">
-                      <strong style="color:#64748b;font-size:0.86rem;display:block;margin-bottom:0.5rem;">Missions secondaires & Transverses</strong>
-                      <ul style="margin:0;padding-left:1.2rem;font-size:0.86rem;color:#334155;line-height:1.6;">
-                        ${job.missions.secondary.map(m => `<li>${escapeHtml(m)}</li>`).join('')}
-                      </ul>
-                    </div>
-                  ` : ''}
-                </div>
+                ${Array.isArray(job.missions) ? `
+                  <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;">
+                    <ul style="margin:0;padding-left:1.2rem;font-size:0.86rem;color:#334155;line-height:1.6;">
+                      ${job.missions.map(m => `<li>${escapeHtml(m)}</li>`).join('')}
+                    </ul>
+                  </div>
+                ` : `
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;">
+                    ${job.missions.primary && job.missions.primary.length > 0 ? `
+                      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;">
+                        <strong style="color:#0284c7;font-size:0.86rem;display:block;margin-bottom:0.5rem;">Missions principales (Cœur de métier)</strong>
+                        <ul style="margin:0;padding-left:1.2rem;font-size:0.86rem;color:#334155;line-height:1.6;">
+                          ${job.missions.primary.map(m => `<li>${escapeHtml(m)}</li>`).join('')}
+                        </ul>
+                      </div>
+                    ` : ''}
+                    ${job.missions.secondary && job.missions.secondary.length > 0 ? `
+                      <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem;">
+                        <strong style="color:#64748b;font-size:0.86rem;display:block;margin-bottom:0.5rem;">Missions secondaires & Transverses</strong>
+                        <ul style="margin:0;padding-left:1.2rem;font-size:0.86rem;color:#334155;line-height:1.6;">
+                          ${job.missions.secondary.map(m => `<li>${escapeHtml(m)}</li>`).join('')}
+                        </ul>
+                      </div>
+                    ` : ''}
+                  </div>
+                `}
               </div>
             ` : ''}
 
@@ -1584,6 +1602,42 @@
               </div>
             ` : ''}
 
+            <!-- Piliers Disciplinaires, Méthodes & Enjeux Éthiques (Lettres & Sciences Humaines) -->
+            ${(job.disciplinaryPillars || job.methodsAndTools || job.ethicalIssues) ? `
+              <div class="dossier-section" style="margin-top:1.5rem;background:#faf5ff;border:1.5px solid #d8b4fe;padding:1.25rem;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.75rem;">
+                  <span style="font-size:1.25rem;">📚</span>
+                  <h4 style="margin:0;color:#6b21a8;font-size:0.96rem;font-weight:750;">Socle Disciplinaire, Méthodologies & Éthique des Humanités</h4>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:0.9rem;">
+                  ${job.disciplinaryPillars && job.disciplinaryPillars.length > 0 ? `
+                    <div style="background:#ffffff;border:1px solid #e9d5ff;padding:0.85rem;border-radius:8px;">
+                      <strong style="display:block;color:#7e22ce;font-size:0.84rem;margin-bottom:0.35rem;">🏛️ Piliers Fondamentaux</strong>
+                      <ul style="margin:0;padding-left:1.1rem;font-size:0.82rem;color:#475569;line-height:1.5;">
+                        ${job.disciplinaryPillars.map(p => `<li>${escapeHtml(p)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                  ${job.methodsAndTools && job.methodsAndTools.length > 0 ? `
+                    <div style="background:#ffffff;border:1px solid #e9d5ff;padding:0.85rem;border-radius:8px;">
+                      <strong style="display:block;color:#7e22ce;font-size:0.84rem;margin-bottom:0.35rem;">🔬 Méthodes & Démarches</strong>
+                      <ul style="margin:0;padding-left:1.1rem;font-size:0.82rem;color:#475569;line-height:1.5;">
+                        ${job.methodsAndTools.map(m => `<li>${escapeHtml(m)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                  ${job.ethicalIssues && job.ethicalIssues.length > 0 ? `
+                    <div style="background:#ffffff;border:1px solid #e9d5ff;padding:0.85rem;border-radius:8px;">
+                      <strong style="display:block;color:#7e22ce;font-size:0.84rem;margin-bottom:0.35rem;">⚖️ Déontologie & Enjeux Éthiques</strong>
+                      <ul style="margin:0;padding-left:1.1rem;font-size:0.82rem;color:#475569;line-height:1.5;">
+                        ${job.ethicalIssues.map(e => `<li>${escapeHtml(e)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            ` : ''}
+
             <!-- Voies de spécialisation -->
             ${job.specializations && job.specializations.length > 0 ? `
               <div class="dossier-section" style="margin-top:1.5rem;background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:10px;">
@@ -1663,6 +1717,35 @@
                 <p style="color:#334155;line-height:1.6;">Accessible par un cursus universitaire spécialisé (Licence / Master) ou filière professionnelle technique.</p>
               `}
             </div>
+
+            <!-- Cursus & Diplômes clés par zone géographique (France & Sénégal) -->
+            ${(job.studies && ((job.studies.france && job.studies.france.length > 0) || (job.studies.senegal && job.studies.senegal.length > 0))) ? `
+              <div class="dossier-section" style="margin-top:1.25rem;">
+                <h4 style="color:#0f172a;font-size:0.95rem;margin-bottom:0.75rem;">🌍 Filières, Diplômes & Concours par zone géographique</h4>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;">
+                  ${(job.studies.france && job.studies.france.length > 0) ? `
+                    <div style="background:#f8fafc;border:1px solid #cbd5e1;padding:1rem;border-radius:10px;">
+                      <div style="font-weight:700;color:#1e293b;font-size:0.88rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.4rem;">
+                        <span>🇫🇷</span> <span>France & International</span>
+                      </div>
+                      <ul style="margin:0;padding-left:1.2rem;font-size:0.83rem;color:#475569;line-height:1.6;">
+                        ${job.studies.france.map(f => `<li>${escapeHtml(f)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                  ${(job.studies.senegal && job.studies.senegal.length > 0) ? `
+                    <div style="background:#f0fdf4;border:1px solid #bbf7d0;padding:1rem;border-radius:10px;">
+                      <div style="font-weight:700;color:#166534;font-size:0.88rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:0.4rem;">
+                        <span>🇸🇳</span> <span>Sénégal & Afrique de l’Ouest</span>
+                      </div>
+                      <ul style="margin:0;padding-left:1.2rem;font-size:0.83rem;color:#166534;line-height:1.6;">
+                        ${job.studies.senegal.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                      </ul>
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            ` : ''}
 
             <!-- Certifications reconnues si disponibles -->
             ${job.studies && job.studies.certifications && job.studies.certifications.length > 0 ? `
@@ -1921,8 +2004,22 @@
               </div>
 
               ${job.sources && job.sources.length > 0 ? `
-                <div class="sources-footnote" style="margin-top:1.5rem;padding-top:1rem;border-top:1px dashed #e2e8f0;font-size:0.8rem;color:#94a3b8;">
-                  <strong>Sources & Références observatoires :</strong> ${job.sources.map(s => escapeHtml(s)).join(', ')}
+                <div class="sources-footnote" style="margin-top:1.5rem;padding-top:1rem;border-top:1px dashed #e2e8f0;font-size:0.82rem;color:#64748b;line-height:1.6;">
+                  <strong style="color:#334155;">📚 Sources & Références observatoires :</strong>
+                  <div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.4rem;">
+                    ${job.sources.map(s => {
+                      if (typeof s === 'string') return `<span style="background:#f1f5f9;border:1px solid #cbd5e1;padding:0.25rem 0.6rem;border-radius:6px;font-size:0.78rem;">${escapeHtml(s)}</span>`;
+                      if (s && typeof s === 'object') {
+                        const org = s.organization ? `<strong>${escapeHtml(s.organization)}</strong>: ` : '';
+                        const title = escapeHtml(s.title || 'Référence');
+                        const inner = `${org}${title}`;
+                        return s.url
+                          ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener noreferrer" style="background:#f5f3ff;border:1px solid #ddd6fe;color:#6d28d9;padding:0.25rem 0.6rem;border-radius:6px;font-size:0.78rem;text-decoration:none;display:inline-flex;align-items:center;gap:0.3rem;"><span>🔗</span> ${inner}</a>`
+                          : `<span style="background:#f8fafc;border:1px solid #cbd5e1;padding:0.25rem 0.6rem;border-radius:6px;font-size:0.78rem;">${inner}</span>`;
+                      }
+                      return '';
+                    }).filter(Boolean).join('')}
+                  </div>
                 </div>
               ` : ''}
             </div>

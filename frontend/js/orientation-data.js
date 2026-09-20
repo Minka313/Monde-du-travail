@@ -1,13 +1,13 @@
 /**
  * ORIENTATION & MÉTIERS — SOURCE DE VÉRITÉ DATA-DRIVEN
- * Le Monde du Travail — 21 Grandes Familles, Sous-domaines, Métiers & Affinités
+ * Le Monde du Travail — 22 Grandes Familles, Sous-domaines, Métiers & Affinités
  */
 
 (function () {
   'use strict';
 
   // =========================================================================
-  // 1. LES 21 GRANDES FAMILLES PROFESSIONNELLES
+  // 1. LES 22 GRANDES FAMILLES PROFESSIONNELLES
   // =========================================================================
   const FAMILIES = [
     {
@@ -376,6 +376,28 @@
         'AgriTech', 'HealthTech', 'FinTech', 'ClimateTech', 'GreenTech',
         'MobilityTech', 'Robotics', 'Autonomous Systems', 'Digital Transformation'
       ]
+    },
+    {
+      id: 'lettres-langues-sciences-humaines',
+      order: 22,
+      name: 'Lettres, Langues & Sciences Humaines',
+      slug: 'lettres-langues-sciences-humaines',
+      icon: '📚',
+      color: '#7c3aed', // Pourpre académique d'excellence
+      image: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&auto=format&fit=crop&q=80',
+      description: 'L’exploration féconde des humanités, des langues vivantes, de l’histoire, de la psychologie, de la philosophie, du patrimoine et des dynamiques sociales pour éclairer et façonner le monde contemporain.',
+      stats: { jobsEstimate: '32+ métiers', subdomainsCount: 20 },
+      representativeJobs: ['Linguiste-informaticien / Ingénieur TAL', 'Archiviste-Paléographe / Gestionnaire de données patrimoniales', 'Psychologue clinicien', 'Interprète de conférence & Traducteur', 'Conservateur du patrimoine & de musée', 'Sociologue des organisations'],
+      subdomains: [
+        'Lettres classiques et modernes', 'Sciences du langage & Linguistique', 'Linguistique computationnelle & TAL',
+        'Traduction & Interprétariat', 'Langues étrangères appliquées (LEA)', 'Histoire & Civilisations',
+        'Archéologie & Paléontologie', 'Histoire de l’art & Muséologie', 'Philosophie & Éthique appliquée',
+        'Sociologie & Dynamiques sociales', 'Anthropologie & Ethnologie', 'Psychologie clinique & Santé mentale',
+        'Psychologie du travail & Ergonomie', 'Psychologie du développement & Orientation', 'Géographie & Géomatique',
+        'Science politique & Relations internationales', 'Sciences de l’information & Documentation',
+        'Édition, Rédaction & Métiers du livre', 'Médiation culturelle & Valorisation du patrimoine',
+        'Économie sociale, Développement & SHS appliquées'
+      ]
     }
   ];
 
@@ -395,7 +417,7 @@
       icon: '🎨',
       label: 'Créer, dessiner, imaginer & designer',
       description: 'Tu as une sensibilité visuelle, tu aimes inventer de nouveaux concepts, assembler des formes et des couleurs.',
-      familyIds: ['culture-medias', 'numerique-ia', 'btp-architecture', 'commerce-marketing']
+      familyIds: ['culture-medias', 'numerique-ia', 'btp-architecture', 'commerce-marketing', 'lettres-langues-sciences-humaines']
     },
     {
       id: 'donnees-chiffres',
@@ -416,7 +438,7 @@
       icon: '❤️',
       label: 'Aider, soigner & accompagner les gens',
       description: 'Tu souhaites avoir un impact direct sur la vie des personnes, leur bien-être, leur santé ou leur éducation.',
-      familyIds: ['sante-biomedical', 'education-formation', 'elevage-veterinaire']
+      familyIds: ['sante-biomedical', 'education-formation', 'elevage-veterinaire', 'lettres-langues-sciences-humaines']
     },
     {
       id: 'nature-environnement',
@@ -444,14 +466,42 @@
       icon: '🛡️',
       label: 'Protéger, faire respecter les règles & défendre',
       description: 'Tu as un sens aigu de la justice, de l’éthique, de la protection des biens, des données ou des citoyens.',
-      familyIds: ['cybersecurite-reseaux', 'finance-fintech', 'droit-management', 'metiers-emergents']
+      familyIds: ['cybersecurite-reseaux', 'finance-fintech', 'droit-management', 'metiers-emergents', 'lettres-langues-sciences-humaines']
     },
     {
       id: 'explorer-decouvrir',
       icon: '🧭',
       label: 'Rechercher en labo & explorer de nouvelles frontières',
       description: 'Tu as une insatiable curiosité scientifique, tu aimes tester des hypothèses et manipuler des microscopes ou télescopes.',
-      familyIds: ['sciences-biotech', 'mines-geosciences', 'environnement-climat', 'sante-biomedical']
+      familyIds: ['sciences-biotech', 'mines-geosciences', 'environnement-climat', 'sante-biomedical', 'lettres-langues-sciences-humaines']
+    },
+    {
+      id: 'lire-ecrire-litterature',
+      icon: '✍️',
+      label: 'Lire, écrire, rédiger & analyser les textes',
+      description: 'Tu as la passion des mots, du style, de la nuance littéraire, de la correction éditoriale et de l’argumentation écrite.',
+      familyIds: ['lettres-langues-sciences-humaines', 'culture-medias', 'education-formation', 'droit-management']
+    },
+    {
+      id: 'langues-traduire',
+      icon: '🌍',
+      label: 'Pratiquer les langues étrangères & traduire',
+      description: 'Tu aimes passer d’une langue à une autre, explorer la grammaire comparée, la terminologie et faciliter le dialogue multilingue.',
+      familyIds: ['lettres-langues-sciences-humaines', 'tourisme-hotellerie', 'commerce-marketing', 'culture-medias']
+    },
+    {
+      id: 'comprendre-humain-societe',
+      icon: '🧠',
+      label: 'Comprendre l’humain, son esprit & la société',
+      description: 'Tu t’intéresses à la psychologie humaine, aux comportements collectifs, à l’histoire des civilisations et à la philosophie.',
+      familyIds: ['lettres-langues-sciences-humaines', 'sante-biomedical', 'education-formation', 'droit-management']
+    },
+    {
+      id: 'transmettre-animer-culture',
+      icon: '🏛️',
+      label: 'Transmettre le savoir, valoriser le patrimoine & animer la culture',
+      description: 'Tu es passionné par les musées, les archives, la vulgarisation scientifique, l’enseignement et l’action culturelle citoyenne.',
+      familyIds: ['lettres-langues-sciences-humaines', 'education-formation', 'culture-medias', 'tourisme-hotellerie']
     }
   ];
 
@@ -1582,6 +1632,35 @@
         });
       }
 
+      // 1.f Intégration du catalogue Lettres, Langues & Sciences Humaines (OrientationLlshData)
+      const llshData = (typeof window !== 'undefined' && window.OrientationLlshData)
+        ? window.OrientationLlshData
+        : (typeof global !== 'undefined' && global.OrientationLlshData ? global.OrientationLlshData : null);
+
+      if (llshData && typeof llshData.getJobs === 'function') {
+        const llshJobs = llshData.getJobs();
+        llshJobs.forEach(lJob => {
+          const existingIdx = combined.findIndex(j => j.slug === lJob.slug || j.id === lJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, lJob, combined[existingIdx], {
+              aliases: [...new Set([...(lJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              domain: lJob.domain || combined[existingIdx].domain,
+              domainId: lJob.domainId || combined[existingIdx].domainId,
+              subdomain: lJob.subdomain || combined[existingIdx].subdomain,
+              gettingStarted: lJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: lJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || lJob.africaContext,
+              salary: lJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || lJob.saviezVous || null,
+              sourceImagineTonFutur: lJob.sourceImagineTonFutur !== undefined ? lJob.sourceImagineTonFutur : combined[existingIdx].sourceImagineTonFutur,
+              sources: lJob.sources || combined[existingIdx].sources
+            });
+          } else {
+            combined.push(lJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -1811,8 +1890,21 @@
         // Filières animales, Espèces, Missions, Sources & Notes documentaires
         if (job.species && Array.isArray(job.species) && job.species.some(sp => sp.toLowerCase().includes(q))) return true;
         if (job.missions && Array.isArray(job.missions) && job.missions.some(m => m.toLowerCase().includes(q))) return true;
-        if (job.sources && Array.isArray(job.sources) && job.sources.some(src => src.toLowerCase().includes(q))) return true;
+        if (job.sources && Array.isArray(job.sources) && job.sources.some(src => {
+          if (typeof src === 'string') return src.toLowerCase().includes(q);
+          if (src && typeof src === 'object') {
+            return (src.title && src.title.toLowerCase().includes(q)) ||
+                   (src.organization && src.organization.toLowerCase().includes(q)) ||
+                   (src.type && src.type.toLowerCase().includes(q));
+          }
+          return false;
+        })) return true;
         if (job.documentaryNote && job.documentaryNote.toLowerCase().includes(q)) return true;
+
+        // Lettres, Langues & Sciences Humaines (Piliers disciplinaires, Outils, Éthique)
+        if (job.disciplinaryPillars && Array.isArray(job.disciplinaryPillars) && job.disciplinaryPillars.some(p => p.toLowerCase().includes(q))) return true;
+        if (job.methodsAndTools && Array.isArray(job.methodsAndTools) && job.methodsAndTools.some(t => t.toLowerCase().includes(q))) return true;
+        if (job.ethicalIssues && Array.isArray(job.ethicalIssues) && job.ethicalIssues.some(e => e.toLowerCase().includes(q))) return true;
 
         // Technologies énergétiques & Secteurs de l'énergie (Energierecrute)
         if (job.energyTechnology && Array.isArray(job.energyTechnology) && job.energyTechnology.some(t => t.toLowerCase().includes(q))) return true;
@@ -1936,6 +2028,18 @@
       return [];
     },
 
+    getLlshDomains: function () {
+      const llshData = (typeof window !== 'undefined' && window.OrientationLlshData)
+        ? window.OrientationLlshData
+        : (typeof global !== 'undefined' && global.OrientationLlshData
+          ? global.OrientationLlshData
+          : (typeof OrientationLlshData !== 'undefined' ? OrientationLlshData : null));
+      if (llshData && typeof llshData.getDomains === 'function') {
+        return llshData.getDomains();
+      }
+      return [];
+    },
+
     getFamilyDomains: function (familyId) {
       if (familyId === 'numerique-ia') {
         return this.getDigitalDomains();
@@ -1955,10 +2059,13 @@
       if (familyId === 'btp-architecture') {
         return this.getBtpDomains();
       }
+      if (familyId === 'lettres-langues-sciences-humaines') {
+        return this.getLlshDomains();
+      }
       return [];
     },
 
-    // Aide pour mapper les catégories d'anciennes versions vers les nouvelles 21 familles
+    // Aide pour mapper les catégories d'anciennes versions vers les nouvelles 22 familles
     _mapCategoryToFamily: function (category) {
       if (!category) return 'numerique-ia';
       const c = category.toUpperCase();
@@ -1977,6 +2084,9 @@
   // Exposer sur l'objet global window et module.exports
   if (typeof window !== 'undefined') {
     window.OrientationData = OrientationData;
+  }
+  if (typeof global !== 'undefined') {
+    global.OrientationData = OrientationData;
   }
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = OrientationData;
