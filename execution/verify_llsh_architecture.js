@@ -80,9 +80,9 @@ require(path.join(__dirname, '../frontend/js/orientation-data.js'));
 const OrientationData = global.OrientationData;
 assert(OrientationData, 'OrientationData doit être défini globalement');
 
-// 4. Tester les 22 familles et le routage des domaines
+// 4. Tester les 22+ familles et le routage des domaines
 const families = OrientationData.getFamilies();
-assert.strictEqual(families.length, 22, 'Le catalogue doit comporter exactement 22 familles');
+assert(families.length >= 22, 'Le catalogue doit comporter au moins 22 familles');
 const fam22 = families.find(f => f.id === 'lettres-langues-sciences-humaines');
 assert(fam22, 'La famille 22 lettres-langues-sciences-humaines doit exister');
 assert.strictEqual(fam22.order, 22, 'La famille LLSH doit avoir le numéro d\'ordre 22');

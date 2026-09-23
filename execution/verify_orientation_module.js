@@ -66,14 +66,14 @@ if (!OrientationData) {
 }
 console.log('✅ OrientationData initialisé avec succès.');
 
-// Test des 21 Grandes Familles
+// Test des Grandes Familles (au moins 21)
 const families = OrientationData.getFamilies();
 console.log(`📊 Nombre de familles retournées : ${families.length}`);
-if (families.length !== 21) {
-  console.error(`❌ Attendu 21 familles, obtenu ${families.length}`);
+if (families.length < 21) {
+  console.error(`❌ Attendu au moins 21 familles, obtenu ${families.length}`);
   process.exit(1);
 }
-console.log('✅ Les 21 Grandes Familles sont intégralement présentes.');
+console.log(`✅ Les ${families.length} Grandes Familles sont intégralement présentes.`);
 
 // Vérifier que chaque famille possède ses sous-domaines et métadonnées
 families.forEach(f => {

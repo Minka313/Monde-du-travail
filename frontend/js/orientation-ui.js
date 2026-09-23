@@ -551,7 +551,9 @@
                     ? "Cartographie d'Excellence Lettres, Langues & Sciences Humaines"
                     : (family.id === 'industrie-mecanique' || family.id === 'industrie-technologies-ingenierie'
                       ? "Cartographie d'Excellence Industrie, Technologies & Ingénierie"
-                      : `Cartographie d'Excellence — ${family.name}`))))))));
+                      : (family.id === 'sciences-terre-geosciences' || family.id === 'mines-geosciences'
+                        ? "Cartographie d'Excellence Sciences de la Terre, Géosciences & Ressources Naturelles"
+                        : `Cartographie d'Excellence — ${family.name}`)))))))));
 
       const cartographyBadge = (family.id === 'numerique-ia')
         ? "13 Pôles • 100+ Métiers"
@@ -569,7 +571,9 @@
                     ? "20 Domaines • 32 Fiches Métiers"
                     : (family.id === 'industrie-mecanique' || family.id === 'industrie-technologies-ingenierie'
                       ? "30 Domaines • 36 Fiches Métiers"
-                      : `${familyDomains.length} Domaines d'expertise`))))))));
+                      : (family.id === 'sciences-terre-geosciences' || family.id === 'mines-geosciences'
+                        ? "17 Domaines • 22 Fiches Métiers"
+                        : `${familyDomains.length} Domaines d'expertise`)))))))));
 
       const allDomainsLabel = (family.id === 'numerique-ia')
         ? `Tous les pôles (${familyDomains.length})`
@@ -886,6 +890,8 @@
               ${job.sourceImagineTonFutur ? '<span class="job-badge-itf" style="background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : Imagine ton Futur">📚 Imagine ton Futur</span>' : ''}
               ${job.sourceLetudiant ? '<span class="job-badge-letudiant" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : L\'Étudiant">🎓 L\'Étudiant</span>' : ''}
               ${job.sourceOnisep ? '<span class="job-badge-onisep" style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : Onisep Mécanique">⚙️ Onisep</span>' : ''}
+              ${job.sourcePoitiers ? '<span class="job-badge-poitiers" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence académique : Univ. Poitiers Géosciences">🌍 Univ. Poitiers</span>' : ''}
+              ${job.sourceBRGM ? '<span class="job-badge-brgm" style="background:#f0fdfa;color:#0f766e;border:1px solid #99f6e4;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Référence scientifique : BRGM / Société Géologique de France">⛏️ BRGM / SGF</span>' : ''}
             </div>
 
             <h3 class="job-card-title">${escapeHtml(job.title)}</h3>
@@ -1297,6 +1303,16 @@
                     ⚙️ Référence Onisep
                   </span>
                 ` : ''}
+                ${job.sourcePoitiers ? `
+                  <span class="dossier-meta-tag" style="background:rgba(21,128,61,0.25);border-color:rgba(74,222,128,0.5);color:#dcfce7;" title="Fiche documentée d'après le référentiel Université de Poitiers Géosciences">
+                    🌍 Référence Univ. Poitiers
+                  </span>
+                ` : ''}
+                ${job.sourceBRGM ? `
+                  <span class="dossier-meta-tag" style="background:rgba(15,118,110,0.25);border-color:rgba(45,212,191,0.5);color:#ccfbf1;" title="Fiche documentée d'après le BRGM & la Société Géologique de France">
+                    ⛏️ Référence BRGM / SGF
+                  </span>
+                ` : ''}
               </div>
               <button type="button" class="btn-dossier-fav" id="btnToggleJobFav" title="Sauvegarder dans mes favoris">
                 <span class="fav-icon">☆</span>
@@ -1372,6 +1388,19 @@
                 </div>
                 <p style="margin:0;color:#713f12;font-size:0.92rem;line-height:1.6;font-weight:500;">
                   ${escapeHtml(job.documentaryNote)}
+                </p>
+              </div>
+            ` : ''}
+
+            <!-- Pédagogie Sciences de la Terre & Géosciences si présente -->
+            ${job.geosciencesPedagogy ? `
+              <div class="dossier-geosciences-pedagogy-box" style="background:linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);border:1.5px solid #86efac;border-radius:12px;padding:1.15rem 1.35rem;margin-bottom:1.5rem;">
+                <div style="display:flex;align-items:center;gap:0.45rem;font-weight:750;color:#166534;font-size:0.92rem;margin-bottom:0.4rem;">
+                  <span>🌍</span>
+                  <span>Clé de lecture Géosciences & Impact Planétaire :</span>
+                </div>
+                <p style="margin:0;color:#14532d;font-size:0.92rem;line-height:1.6;font-weight:500;">
+                  ${escapeHtml(job.geosciencesPedagogy)}
                 </p>
               </div>
             ` : ''}
