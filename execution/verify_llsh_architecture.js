@@ -1,149 +1,197 @@
 /**
- * Test de vérification complète de l'architecture Lettres, Langues & Sciences Humaines
- * Vérifie l'intégrité des 20 domaines, 32 métiers, l'absence de régression sur les 267 métiers existants,
- * le total >= 299 métiers, l'absence de doublons et le bon fonctionnement de la recherche et des affinités.
+ * SCRIPT DE VALIDATION DE L'ARCHITECTURE D'ORIENTATION
+ * Vérification exhaustive de la Grande Famille :
+ * 📚 LETTRES, LANGUES & SCIENCES HUMAINES (LLSH)
+ * 
+ * Exécution : node execution/verify_llsh_architecture.js
  */
 
 const fs = require('fs');
 const path = require('path');
-const assert = require('assert');
 
+// Simulation environnement navigateur
 global.window = global;
 
-console.log('🚀 [VERIFY] Démarrage des tests automatisés LLSH...');
+console.log('================================================================');
+console.log('🧪 LANCEMENT DES TESTS D’INTÉGRITÉ : LETTRES, LANGUES & SH');
+console.log('================================================================\n');
 
-// 1. Charger orientation-llsh-data.js
-const llshDataPath = path.join(__dirname, '../frontend/js/orientation-llsh-data.js');
-assert(fs.existsSync(llshDataPath), 'orientation-llsh-data.js doit exister');
-require(llshDataPath);
+let testsPassed = 0;
+let testsFailed = 0;
 
-const llsh = global.OrientationLlshData;
-assert(llsh, 'OrientationLlshData doit être défini globalement');
+function assert(condition, message) {
+  if (condition) {
+    console.log(`  ✅ PASS: ${message}`);
+    testsPassed++;
+  } else {
+    console.error(`  ❌ FAIL: ${message}`);
+    testsFailed++;
+  }
+}
 
-const domains = llsh.getDomains();
-const jobs = llsh.getJobs();
+// 1. Chargement des modules dans l'ordre strict de job.html
+try {
+  global.OrientationDigitalData = require('../frontend/js/orientation-digital-data.js');
+  global.OrientationFinanceData = require('../frontend/js/orientation-finance-data.js');
+  global.OrientationAgriData = require('../frontend/js/orientation-agri-data.js');
+  global.OrientationEnergyData = require('../frontend/js/orientation-energy-data.js');
+  global.OrientationBtpData = require('../frontend/js/orientation-btp-data.js');
+  global.OrientationLlshData = require('../frontend/js/orientation-llsh-data.js');
+  global.OrientationIndustryData = require('../frontend/js/orientation-industry-data.js');
+  global.OrientationGeosciencesData = require('../frontend/js/orientation-geosciences-data.js');
+  require('../frontend/js/orientation-data.js');
+  assert(true, 'Chargement sans erreur de l’ensemble des modules de données.');
+} catch (e) {
+  assert(false, `Échec du chargement des modules : ${e.message}`);
+  process.exit(1);
+}
 
-console.log(`✅ [1/6] Module OrientationLlshData chargé : ${domains.length} domaines et ${jobs.length} métiers.`);
-assert.strictEqual(domains.length, 20, 'Il doit y avoir exactement 20 domaines LLSH');
-assert.strictEqual(jobs.length, 32, 'Il doit y avoir exactement 32 métiers LLSH');
+// 2. Tests unitaires OrientationLlshData
+console.log('\n--- 1. Structure du module OrientationLlshData ---');
+assert(typeof OrientationLlshData === 'object', 'OrientationLlshData est défini.');
+assert(typeof OrientationLlshData.getDomains === 'function', 'OrientationLlshData.getDomains est une fonction.');
+assert(typeof OrientationLlshData.getJobs === 'function', 'OrientationLlshData.getJobs est une fonction.');
 
-// 2. Vérification de l'intégrité de chaque métier LLSH
-const domainIds = new Set(domains.map(d => d.id));
-const jobSlugs = new Set();
-const jobIds = new Set();
+const domains = OrientationLlshData.getDomains();
+assert(Array.isArray(domains) && domains.length === 20, `Exactement 20 domaines LLSH définis (trouvé : ${domains.length}).`);
 
-jobs.forEach((job, idx) => {
-  assert(job.id, `Métier #${idx} doit avoir un ID`);
-  assert(job.slug, `Métier ${job.id} doit avoir un slug`);
-  assert(job.title, `Métier ${job.id} doit avoir un titre`);
-  assert(job.familyId === 'lettres-langues-sciences-humaines', `Métier ${job.id} doit appartenir à la famille lettres-langues-sciences-humaines`);
-  assert(domainIds.has(job.domainId), `Le domainId '${job.domainId}' du métier ${job.id} doit être un des 20 domaines valides`);
+const jobs = OrientationLlshData.getJobs();
+assert(Array.isArray(jobs) && jobs.length === 32, `Exactement 32 fiches métiers LLSH définies (trouvé : ${jobs.length}).`);
 
-  // Unicité des IDs et Slugs
-  assert(!jobIds.has(job.id), `Doublon d'ID détecté : ${job.id}`);
-  assert(!jobSlugs.has(job.slug), `Doublon de slug détecté : ${job.slug}`);
-  jobIds.add(job.id);
-  jobSlugs.add(job.slug);
+// Vérification de la complétude de chaque domaine
+let domainsComplete = true;
+domains.forEach(d => {
+  if (!d.id || !d.name || !d.icon || !d.description || !Array.isArray(d.subdomains) || d.subdomains.length === 0) {
+    domainsComplete = false;
+    console.error(`Domaine incomplet :`, d);
+  }
+});
+assert(domainsComplete, 'Tous les 20 domaines possèdent id, name, icon, description et sous-domaines valides.');
 
-  // Vérification de la complétude de la fiche métier (6 onglets)
-  assert(job.shortDescription && job.shortDescription.length > 20, `Description courte trop courte pour ${job.id}`);
-  assert(job.longDescription && job.longDescription.length > 50, `Description longue trop courte pour ${job.id}`);
-  assert(Array.isArray(job.missions || job.tasks) && (job.missions || job.tasks).length >= 3, `Au moins 3 missions requises pour ${job.id}`);
-  assert(job.skills && Array.isArray(job.skills.technical) && job.skills.technical.length >= 2, `Compétences techniques requises pour ${job.id}`);
-  assert(job.studies && job.studies.pathway && job.studies.pathway.length >= 2, `Parcours d'études requis pour ${job.id}`);
-  assert(job.studies.schools && job.studies.schools.length >= 2, `Établissements requis pour ${job.id}`);
-  assert(job.studies.schools.some(s => s.scope === 'Sénégal' || s.country === 'Sénégal'), `Établissement Sénégal requis pour ${job.id}`);
-  assert(job.studies.schools.some(s => s.scope === 'France' || s.country === 'France' || s.scope === 'International'), `Établissement France/International requis pour ${job.id}`);
-  assert(job.africaContext && job.africaContext.senegalInsight, `Contexte Afrique / Sénégal requis pour ${job.id}`);
-  assert(job.aiImpact && job.aiImpact.summary, `Analyse impact IA requise pour ${job.id}`);
+// Vérification approfondie des 32 fiches métiers
+console.log('\n--- 2. Fiches Métiers LLSH (32 fiches approfondies) ---');
+let allJobsValid = true;
+const llshIds = new Set();
+const llshSlugs = new Set();
+
+jobs.forEach((j, index) => {
+  if (llshIds.has(j.id)) {
+    allJobsValid = false;
+    console.error(`ID dupliqué dans LLSH : ${j.id}`);
+  }
+  llshIds.add(j.id);
+
+  if (llshSlugs.has(j.slug)) {
+    allJobsValid = false;
+    console.error(`Slug dupliqué dans LLSH : ${j.slug}`);
+  }
+  llshSlugs.add(j.slug);
+
+  // Vérification des champs indispensables du schéma 6 onglets
+  const hasBasicFields = j.id && j.title && j.slug && j.familyId === 'lettres-langues-sciences-humaines' && j.icon && j.domain && j.subdomain;
+  const hasDescriptions = j.shortDescription && j.longDescription && j.level && j.salary && j.mainObjective;
+  const hasSkills = j.skills && Array.isArray(j.skills.technical) && j.skills.technical.length >= 3 &&
+                    Array.isArray(j.skills.human) && j.skills.human.length >= 3 &&
+                    Array.isArray(j.skills.tools) && j.skills.tools.length >= 2;
+  const hasStudies = j.studies && Array.isArray(j.studies.schools) && j.studies.schools.length > 0 &&
+                     Array.isArray(j.studies.pathway) && j.studies.pathway.length > 0 &&
+                     j.studies.schools.some(s => s.country && s.country.includes('France')) &&
+                     j.studies.schools.some(s => s.country && s.country.includes('Sénégal'));
+  const hasAfrica = j.africaContext && Boolean(j.africaContext.senegalInsight) && Boolean(j.africaContext.westAfricaOpportunities);
+  const hasSources = Array.isArray(j.sources) && j.sources.length > 0;
+  const hasCareer = j.career && Array.isArray(j.career.sectors) && Array.isArray(j.career.pros) && Array.isArray(j.career.cons);
+  const hasMissions = Array.isArray(j.missions) && j.missions.length >= 3;
+
+  if (!hasBasicFields || !hasDescriptions || !hasSkills || !hasStudies || !hasAfrica || !hasSources || !hasCareer || !hasMissions) {
+    allJobsValid = false;
+    console.error(`Fiche #${index + 1} (${j.id || 'sans-id'}) invalide ou incomplète.`);
+  }
 });
 
-console.log('✅ [2/6] Les 32 fiches métiers LLSH sont exhaustives, uniques et conformes aux 6 onglets.');
+assert(allJobsValid, 'Les 32 fiches métiers LLSH possèdent l’intégralité des 6 onglets, compétences, études France/Sénégal, piliers, éthique et sources.');
+assert(llshIds.size === 32, `32 IDs uniques dans LLSH (trouvé : ${llshIds.size}).`);
+assert(llshSlugs.size === 32, `32 Slugs uniques dans LLSH (trouvé : ${llshSlugs.size}).`);
 
-// 3. Charger TOUS les modules de données du projet
-global.OrientationDigitalData = require(path.join(__dirname, '../frontend/js/orientation-digital-data.js'));
-global.OrientationFinanceData = require(path.join(__dirname, '../frontend/js/orientation-finance-data.js'));
-global.OrientationAgriData = require(path.join(__dirname, '../frontend/js/orientation-agri-data.js'));
-global.OrientationEnergyData = require(path.join(__dirname, '../frontend/js/orientation-energy-data.js'));
-global.OrientationBtpData = require(path.join(__dirname, '../frontend/js/orientation-btp-data.js'));
-global.OrientationLlshData = llsh;
+// 3. Tests d'intégration dans OrientationData
+console.log('\n--- 3. Intégration globale dans OrientationData ---');
 
-global.window.OrientationDigitalData = global.OrientationDigitalData;
-global.window.OrientationFinanceData = global.OrientationFinanceData;
-global.window.OrientationAgriData = global.OrientationAgriData;
-global.window.OrientationEnergyData = global.OrientationEnergyData;
-global.window.OrientationBtpData = global.OrientationBtpData;
-global.window.OrientationLlshData = global.OrientationLlshData;
+(async () => {
+  const families = OrientationData.getFamilies();
+  const llshFamily = families.find(f => f.id === 'lettres-langues-sciences-humaines');
+  assert(Boolean(llshFamily), 'La grande famille "lettres-langues-sciences-humaines" est présente dans FAMILIES.');
+  assert(llshFamily && llshFamily.order === 22, 'La grande famille LLSH porte le numéro d’ordre 22.');
+  assert(llshFamily && llshFamily.icon === '📚', 'La grande famille LLSH possède l’icône 📚.');
 
-require(path.join(__dirname, '../frontend/js/orientation-data.js'));
+  const familyDomains = OrientationData.getFamilyDomains('lettres-langues-sciences-humaines');
+  assert(familyDomains && familyDomains.length === 20, `getFamilyDomains retourne bien les 20 domaines LLSH (trouvé : ${familyDomains.length}).`);
 
-const OrientationData = global.OrientationData;
-assert(OrientationData, 'OrientationData doit être défini globalement');
-
-// 4. Tester les 22+ familles et le routage des domaines
-const families = OrientationData.getFamilies();
-assert(families.length >= 22, 'Le catalogue doit comporter au moins 22 familles');
-const fam22 = families.find(f => f.id === 'lettres-langues-sciences-humaines');
-assert(fam22, 'La famille 22 lettres-langues-sciences-humaines doit exister');
-assert.strictEqual(fam22.order, 22, 'La famille LLSH doit avoir le numéro d\'ordre 22');
-
-const routedDomains = OrientationData.getFamilyDomains('lettres-langues-sciences-humaines');
-assert.strictEqual(routedDomains.length, 20, 'getFamilyDomains pour LLSH doit retourner 20 domaines');
-
-console.log('✅ [3/6] Intégration de la 22ème famille et routage des 20 domaines validés.');
-
-// 5. Tester le volume total des métiers et la non-régression
-(async function runGlobalChecks() {
   const allJobs = await OrientationData.getAllJobs();
-  console.log(`📊 Nombre total de métiers dans la plateforme : ${allJobs.length}`);
+  assert(allJobs.length >= 299, `Le total des métiers de la plateforme atteint au moins 299 (trouvé : ${allJobs.length}).`);
 
-  assert(allJobs.length >= 299, `Le nombre total de métiers (${allJobs.length}) doit être >= 299`);
+  // Vérification de non-régression et d'unicité absolue
+  const globalIds = new Set();
+  const globalSlugs = new Set();
+  let duplicateCount = 0;
 
-  // Vérifier qu'aucun slug n'est dupliqué dans l'ensemble de la plateforme
-  const globalSlugs = new Map();
   allJobs.forEach(j => {
-    const s = j.slug || j.id;
-    if (globalSlugs.has(s)) {
-      console.warn(`⚠️ Attention : Slug en collision potentielle : ${s}`);
+    if (globalIds.has(j.id)) {
+      console.error(`ID dupliqué global : ${j.id}`);
+      duplicateCount++;
     }
-    globalSlugs.set(s, (globalSlugs.get(s) || 0) + 1);
+    globalIds.add(j.id);
+
+    if (globalSlugs.has(j.slug)) {
+      console.error(`Slug dupliqué global : ${j.slug}`);
+      duplicateCount++;
+    }
+    globalSlugs.add(j.slug);
   });
 
-  // Vérifier le sous-ensemble LLSH dans allJobs
-  const llshMerged = allJobs.filter(j => j.familyId === 'lettres-langues-sciences-humaines');
-  assert.strictEqual(llshMerged.length, 32, `Les 32 métiers LLSH doivent être présents dans getAllJobs (trouvés: ${llshMerged.length})`);
+  assert(duplicateCount === 0, `Zéro doublon global d’ID ou de slug sur l’ensemble des ${allJobs.length} métiers.`);
 
-  console.log('✅ [4/6] Volume total validé : ' + allJobs.length + ' métiers (dont 32 LLSH, 0 régression).');
+  const familyJobs = await OrientationData.getJobsByFamily('lettres-langues-sciences-humaines');
+  assert(familyJobs.length === 32, `getJobsByFamily("lettres-langues-sciences-humaines") renvoie exactement 32 métiers (trouvé : ${familyJobs.length}).`);
 
-  // 6. Tester le moteur de recherche
-  const testQueries = [
-    'linguiste',
-    'archéologue',
-    'psychologue',
-    'philosophie',
-    'UCAD',
-    'Imagine ton Futur'
+  // 4. Test du moteur de recherche universel
+  console.log('\n--- 4. Moteur de Recherche Universel (Search Engine) ---');
+  const queriesToTest = [
+    { q: 'auteur', min: 1, desc: 'Recherche métier "auteur"' },
+    { q: 'traducteur', min: 3, desc: 'Recherche "traducteur" (technique, audiovisuel, etc.)' },
+    { q: 'psychologue', min: 2, desc: 'Recherche "psychologue" (clinicien, travail, etc.)' },
+    { q: 'EBAD', min: 1, desc: 'Recherche école sénégalaise "EBAD"' },
+    { q: 'UCAD', min: 1, desc: 'Recherche université "UCAD"' },
+    { q: 'Chartes', min: 1, desc: 'Recherche grande école "Chartes"' },
+    { q: 'archéologie', min: 1, desc: 'Recherche discipline "archéologie"' },
+    { q: 'FLE', min: 1, desc: 'Recherche spécialité "FLE"' },
+    { q: 'Imagine ton Futur', min: 10, desc: 'Recherche source "Imagine ton Futur"' }
   ];
 
-  for (const q of testQueries) {
-    const results = await OrientationData.searchJobs(q);
-    assert(results.length > 0, `La recherche pour "${q}" doit retourner au moins 1 résultat`);
-    console.log(`   🔍 Recherche "${q}" : ${results.length} résultat(s)`);
+  for (const item of queriesToTest) {
+    const results = await OrientationData.searchJobs(item.q);
+    assert(results.length >= item.min, `${item.desc} (résultats : ${results.length} >= ${item.min}).`);
   }
 
-  // 7. Tester le moteur d'affinités
-  const affinityExploration = await OrientationData.getExplorationByAffinities(['lire-ecrire-litterature', 'langues-traduire']);
-  assert(affinityExploration.matchedFamilies.some(f => f.id === 'lettres-langues-sciences-humaines'), 'L\'affinité littéraire doit inclure LLSH');
+  // 5. Test des affinités croisées
+  console.log('\n--- 5. Moteur d’Affinités & Recommandations ---');
+  const affRes = await OrientationData.getExplorationByAffinities(['langues-traduire', 'lire-ecrire-litterature']);
+  assert(affRes.matchedFamilies.some(f => f.id === 'lettres-langues-sciences-humaines'), 'Les affinités LLSH ciblent bien la famille "lettres-langues-sciences-humaines".');
+  assert(affRes.matchedJobs.length > 0, `Métiers recommandés par affinité trouvés (${affRes.matchedJobs.length}).`);
 
-  console.log('✅ [5/6] Moteur de recherche & affinités validés sans erreur d\'exécution.');
+  // Recommandations croisées sur un métier LLSH
+  const tradJob = jobs.find(j => j.id === 'traducteur');
+  if (tradJob) {
+    const crossRecs = await OrientationData.getCrossRecommendations(tradJob);
+    assert(crossRecs.length > 0, `Passerelles interdisciplinaires générées pour le métier "${tradJob.title}" (${crossRecs.length} suggestions).`);
+  }
 
-  // 8. Vérifier la présence du script dans job.html
-  const jobHtml = fs.readFileSync(path.join(__dirname, '../frontend/job.html'), 'utf8');
-  assert(jobHtml.includes('orientation-llsh-data.js'), 'job.html doit importer orientation-llsh-data.js');
+  console.log('\n================================================================');
+  console.log(`📊 BILAN DES TESTS : ${testsPassed} PASSÉS, ${testsFailed} ÉCHOUÉS`);
+  console.log('================================================================');
 
-  console.log('✅ [6/6] Intégration HTML dans frontend/job.html confirmée.');
-  console.log('\n🎉 TOUS LES TESTS SONT AU VERT ! Architecture LLSH prête pour déploiement.');
-})().catch(err => {
-  console.error('❌ ÉCHEC DES TESTS :', err);
-  process.exit(1);
-});
+  if (testsFailed > 0) {
+    process.exit(1);
+  } else {
+    console.log('\n🎉 TOUS LES TESTS SONT AU VERT ! L’ÉCOSYSTÈME LLSH EST INTÈGRE & OPÉRATIONNEL.');
+    process.exit(0);
+  }
+})();

@@ -1124,10 +1124,10 @@
           <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem;">🔍</span>
           <h4 style="font-size:1.15rem;color:#0f172a;margin-bottom:0.5rem;">Aucun métier ne correspond exactement à "${escapeHtml(q)}"</h4>
           <p style="color:#64748b;max-width:500px;margin:0 auto 1.25rem auto;font-size:0.92rem;line-height:1.6;">
-            Essaie avec d’autres mots-clés (ex: "code", "sécurité", "finance", "terre", "santé", "design") ou explore nos 21 grandes familles.
+            Essaie avec d’autres mots-clés (ex: "code", "langues", "lettres", "histoire", "psychologie", "finance") ou explore nos 23 grandes familles.
           </p>
           <button type="button" class="btn btn-primary btn-sm" id="btnEmptyResetSearch">
-            Voir les 21 familles professionnelles
+            Voir les 23 familles professionnelles
           </button>
         </div>
       `;
