@@ -535,53 +535,47 @@
         ? (activeDomObj.subdomains || [])
         : (family.subdomains || []);
 
-      const cartographyTitle = (family.id === 'numerique-ia')
-        ? "Cartographie d'Excellence du Numérique"
-        : (family.id === 'finance-fintech'
-          ? "Cartographie d'Excellence Finance, Banque & Assurance"
-          : (family.id === 'agriculture-agritech'
-            ? "Cartographie d'Excellence Agriculture, Élevage & Agroalimentaire"
-            : (family.id === 'peche-maritime'
-              ? "Cartographie d'Excellence Pêche, Aquaculture & Ressources Marines"
-              : (family.id === 'energie-renouvelable'
-                ? "Cartographie d'Excellence Énergie, Électricité & Transition Énergétique"
-                : (family.id === 'btp-architecture'
-                  ? "Cartographie d'Excellence BTP, Architecture & Construction"
-                  : (family.id === 'lettres-langues-sciences-humaines'
-                    ? "Cartographie d'Excellence Lettres, Langues & Sciences Humaines"
-                    : (family.id === 'industrie-mecanique' || family.id === 'industrie-technologies-ingenierie'
-                      ? "Cartographie d'Excellence Industrie, Technologies & Ingénierie"
-                      : (family.id === 'sciences-terre-geosciences' || family.id === 'mines-geosciences'
-                        ? "Cartographie d'Excellence Sciences de la Terre, Géosciences & Ressources Naturelles"
-                        : (family.id === 'sante-soins-paramedical' || family.id === 'sante-biomedical'
-                          ? "Cartographie d'Excellence Santé, Soins & Paramédical"
-                          : (family.id === 'biologie-chimie' || family.id === 'sciences-biotech'
-                            ? "Cartographie d'Excellence Biologie & Chimie"
-                            : `Cartographie d'Excellence — ${family.name}`)))))))))));
+      const cartographyTitles = {
+        'numerique-ia': "Cartographie d'Excellence du Numérique",
+        'finance-fintech': "Cartographie d'Excellence Finance, Banque & Assurance",
+        'agriculture-agritech': "Cartographie d'Excellence Agriculture, Élevage & Agroalimentaire",
+        'peche-maritime': "Cartographie d'Excellence Pêche, Aquaculture & Ressources Marines",
+        'energie-renouvelable': "Cartographie d'Excellence Énergie, Électricité & Transition Énergétique",
+        'btp-architecture': "Cartographie d'Excellence BTP, Architecture & Construction",
+        'lettres-langues-sciences-humaines': "Cartographie d'Excellence Lettres, Langues & Sciences Humaines",
+        'industrie-mecanique': "Cartographie d'Excellence Industrie, Technologies & Ingénierie",
+        'industrie-technologies-ingenierie': "Cartographie d'Excellence Industrie, Technologies & Ingénierie",
+        'sciences-terre-geosciences': "Cartographie d'Excellence Sciences de la Terre, Géosciences & Ressources Naturelles",
+        'mines-geosciences': "Cartographie d'Excellence Sciences de la Terre, Géosciences & Ressources Naturelles",
+        'sante-soins-paramedical': "Cartographie d'Excellence Santé, Soins & Paramédical",
+        'sante-biomedical': "Cartographie d'Excellence Santé, Soins & Paramédical",
+        'biologie-chimie': "Cartographie d'Excellence Biologie & Chimie",
+        'sciences-biotech': "Cartographie d'Excellence Biologie & Chimie",
+        'education-formation': "Cartographie d'Excellence Enseignement, Éducation & Formation",
+        'enseignement-education-formation': "Cartographie d'Excellence Enseignement, Éducation & Formation"
+      };
+      const cartographyTitle = cartographyTitles[family.id] || `Cartographie d'Excellence — ${family.name}`;
 
-      const cartographyBadge = (family.id === 'numerique-ia')
-        ? "13 Pôles • 100+ Métiers"
-        : (family.id === 'finance-fintech'
-          ? "10 Domaines • 27+ Fiches Métiers"
-          : (family.id === 'agriculture-agritech'
-            ? "11 Domaines • 67 Fiches Métiers"
-            : (family.id === 'peche-maritime'
-              ? "1 Domaine • 12 Fiches Métiers"
-              : (family.id === 'energie-renouvelable'
-                ? "14 Domaines • 26 Fiches Métiers"
-                : (family.id === 'btp-architecture'
-                  ? "15 Domaines • 37 Fiches Métiers"
-                  : (family.id === 'lettres-langues-sciences-humaines'
-                    ? "20 Domaines • 32 Fiches Métiers"
-                    : (family.id === 'industrie-mecanique' || family.id === 'industrie-technologies-ingenierie'
-                      ? "30 Domaines • 36 Fiches Métiers"
-                      : (family.id === 'sciences-terre-geosciences' || family.id === 'mines-geosciences'
-                        ? "17 Domaines • 22 Fiches Métiers"
-                        : (family.id === 'sante-soins-paramedical' || family.id === 'sante-biomedical'
-                          ? "11 Domaines • 30 Fiches Métiers"
-                          : (family.id === 'biologie-chimie' || family.id === 'sciences-biotech'
-                            ? "15 Domaines • 24 Fiches Métiers (CIDJ)"
-                            : `${familyDomains.length} Domaines d'expertise`)))))))))));
+      const cartographyBadges = {
+        'numerique-ia': "13 Pôles • 100+ Métiers",
+        'finance-fintech': "10 Domaines • 27+ Fiches Métiers",
+        'agriculture-agritech': "11 Domaines • 67 Fiches Métiers",
+        'peche-maritime': "1 Domaine • 12 Fiches Métiers",
+        'energie-renouvelable': "14 Domaines • 26 Fiches Métiers",
+        'btp-architecture': "15 Domaines • 37 Fiches Métiers",
+        'lettres-langues-sciences-humaines': "20 Domaines • 32 Fiches Métiers",
+        'industrie-mecanique': "30 Domaines • 36 Fiches Métiers",
+        'industrie-technologies-ingenierie': "30 Domaines • 36 Fiches Métiers",
+        'sciences-terre-geosciences': "17 Domaines • 22 Fiches Métiers",
+        'mines-geosciences': "17 Domaines • 22 Fiches Métiers",
+        'sante-soins-paramedical': "11 Domaines • 30 Fiches Métiers",
+        'sante-biomedical': "11 Domaines • 30 Fiches Métiers",
+        'biologie-chimie': "15 Domaines • 24 Fiches Métiers (CIDJ)",
+        'sciences-biotech': "15 Domaines • 24 Fiches Métiers (CIDJ)",
+        'education-formation': "8 Domaines • 21 Fiches Métiers (Studyrama)",
+        'enseignement-education-formation': "8 Domaines • 21 Fiches Métiers (Studyrama)"
+      };
+      const cartographyBadge = cartographyBadges[family.id] || `${familyDomains.length} Domaines d'expertise`;
 
       const allDomainsLabel = (family.id === 'numerique-ia')
         ? `Tous les pôles (${familyDomains.length})`
