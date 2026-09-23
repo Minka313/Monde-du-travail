@@ -45,6 +45,12 @@ class InternalServerError extends AppError {
   }
 }
 
+class ServiceUnavailableError extends AppError {
+  constructor(message = 'Service temporairement indisponible') {
+    super(message, 503);
+  }
+}
+
 module.exports = {
   AppError,
   BadRequestError,
@@ -53,4 +59,5 @@ module.exports = {
   NotFoundError,
   ConflictError,
   InternalServerError,
+  ServiceUnavailableError,
 };

@@ -98,12 +98,16 @@ describe('Notifications & Web Push API', () => {
   }, 45000);
 
   describe('GET /api/notifications/vapid-key', () => {
-    it('doit renvoyer la clé publique VAPID sans authentification', async () => {
+    it('doit renvoyer la clé publique VAPID uniquement lorsqu’elle est configurée', async () => {
       const res = await request(app).get('/api/notifications/vapid-key');
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
-      expect(typeof res.body.data.publicKey).toBe('string');
-      expect(res.body.data.publicKey.length).toBeGreaterThan(10);
+      if (process.env.VAPID_PUBLIC_KEY) {
+        expect(res.status).toBe(200);
+        expect(res.body.success).toBe(true);
+        expect(typeof res.body.data.publicKey).toBe('string');
+      } else {
+        expect(res.status).toBe(503);
+        expect(res.body.success).toBe(false);
+      }
     });
   });
 
@@ -111,12 +115,13 @@ describe('Notifications & Web Push API', () => {
     it('doit échouer avec 400 si le body est incomplet', async () => {
       const res = await request(app)
         .post('/api/notifications/subscribe')
+        .set('Authorization', `Bearer ${memberToken}`)
         .send({ endpoint: 'https://bad-endpoint.com' });
       expect(res.status).toBe(400);
       expect(res.body.success).toBe(false);
     });
 
-    it('doit enregistrer une souscription anonyme avec succès', async () => {
+    it('doit refuser une souscription anonyme', async () => {
       const res = await request(app)
         .post('/api/notifications/subscribe')
         .send({
@@ -127,15 +132,8 @@ describe('Notifications & Web Push API', () => {
           },
         });
 
-      expect(res.status).toBe(201);
-      expect(res.body.success).toBe(true);
-
-      // Vérifier en base
-      const sub = await prisma.pushSubscription.findUnique({
-        where: { endpoint: testEndpoint },
-      });
-      expect(sub).not.toBeNull();
-      expect(sub.userId).toBeNull();
+      expect(res.status).toBe(401);
+      expect(res.body.success).toBe(false);
     });
 
     it('doit associer le userId lorsque l’utilisateur est authentifié', async () => {
@@ -194,11 +192,10 @@ describe('Notifications & Web Push API', () => {
   });
 
   describe('GET /api/notifications (Centre In-App)', () => {
-    it('doit retourner 200 avec les alertes publiques pour un visiteur non authentifié', async () => {
+    it('doit refuser l’accès à un visiteur non authentifié', async () => {
       const res = await request(app).get('/api/notifications');
-      expect(res.status).toBe(200);
-      expect(res.body.success).toBe(true);
-      expect(Array.isArray(res.body.data)).toBe(true);
+      expect(res.status).toBe(401);
+      expect(res.body.success).toBe(false);
     });
 
     it('doit retourner la liste des notifications et le décompte des non lues', async () => {
@@ -249,6 +246,37 @@ describe('Notifications & Web Push API', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
     });
+
+    it('doit empêcher un autre utilisateur de lire une notification privée', async () => {
+      const res = await request(app)
+        .patch(`/api/notifications/${createdNotif.id}/read`)
+        .set('Authorization', `Bearer ${ultraToken}`);
+
+      expect(res.status).toBe(403);
+      expect(res.body.success).toBe(false);
+    });
+
+    it('doit conserver la lecture d’un broadcast séparée par utilisateur', async () => {
+      const broadcast = await prisma.notification.create({
+        data: {
+          type: 'ANNOUNCEMENT',
+          title: 'Test Notif Isolation Broadcast',
+          message: 'Notification globale de test',
+        },
+      });
+
+      await request(app)
+        .patch(`/api/notifications/${broadcast.id}/read`)
+        .set('Authorization', `Bearer ${memberToken}`);
+
+      const ultraList = await request(app)
+        .get('/api/notifications')
+        .set('Authorization', `Bearer ${ultraToken}`);
+      const ultraNotification = ultraList.body.data.find(item => item.id === broadcast.id);
+
+      expect(ultraNotification).toBeDefined();
+      expect(ultraNotification.isRead).toBe(false);
+    });
   });
 
   describe('GET /api/notifications/stats', () => {
@@ -276,13 +304,14 @@ describe('Notifications & Web Push API', () => {
     it('doit désactiver et supprimer un abonnement', async () => {
       const res = await request(app)
         .post('/api/notifications/unsubscribe')
-        .send({ endpoint: testEndpoint });
+        .set('Authorization', `Bearer ${memberToken}`)
+        .send({ endpoint: memberEndpoint });
 
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
 
       const sub = await prisma.pushSubscription.findUnique({
-        where: { endpoint: testEndpoint },
+        where: { endpoint: memberEndpoint },
       });
       expect(sub).toBeNull();
     });

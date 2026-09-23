@@ -61,7 +61,7 @@
       ]).then(() => {
         if (!window.LMTNotifications && !document.querySelector('script[src*="notifications.js"]')) {
           const s = document.createElement('script');
-          s.src = (window.location.protocol === 'file:' ? 'js/' : '/frontend/js/') + 'notifications.js?v=2.2.0';
+          s.src = 'js/notifications.js?v=2.3.0';
           document.body.appendChild(s);
         }
         document.dispatchEvent(new Event('layout:loaded'));

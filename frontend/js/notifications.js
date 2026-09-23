@@ -45,6 +45,10 @@
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
+  function isAuthenticated() {
+    return Boolean(localStorage.getItem('accessToken') || localStorage.getItem('adminAccessToken'));
+  }
+
   // Carillon audio moderne haute fidélité généré via Web Audio API
   function playNotificationChime() {
     try {
@@ -103,12 +107,12 @@
 
   // ================= ENREGISTREMENT SERVICE WORKER & PUSH =================
   async function initServiceWorker() {
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    if (!isAuthenticated() || !('serviceWorker' in navigator) || !('PushManager' in window)) {
       return null;
     }
 
     try {
-      const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' });
+      const registration = await navigator.serviceWorker.register('sw.js', { scope: './' });
       swRegistration = registration;
       console.log('[Push] Service Worker enregistré avec succès:', registration.scope);
 
@@ -147,7 +151,7 @@
 
       if (subscription) {
         const subJson = subscription.toJSON();
-        await fetch(`${API_BASE}/notifications/subscribe`, {
+        const response = await fetch(`${API_BASE}/notifications/subscribe`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -159,6 +163,10 @@
             userAgent: navigator.userAgent,
           }),
         });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Abonnement Push refusé');
+        }
         console.log('[Push] Abonnement synchronisé avec le serveur');
       }
     } catch (err) {
@@ -167,6 +175,11 @@
   }
 
   async function requestPushPermission() {
+    if (!isAuthenticated()) {
+      showNotificationToast('Connectez-vous pour activer les alertes.', 'info');
+      return false;
+    }
+
     if (!('Notification' in window)) {
       alert('Votre navigateur ne prend pas en charge les notifications push.');
       return false;
@@ -238,6 +251,13 @@
 
   // ================= CENTRE DE NOTIFICATIONS IN-APP =================
   async function fetchNotifications() {
+    if (!isAuthenticated()) {
+      unreadCount = 0;
+      cachedNotifications = [];
+      updateBellBadge();
+      return;
+    }
+
     try {
       const res = await fetch(`${API_BASE}/notifications?limit=15`, {
         headers: getAuthHeader(),
@@ -349,6 +369,8 @@
   }
 
   async function markSingleAsRead(id) {
+    if (!isAuthenticated()) return;
+
     try {
       await fetch(`${API_BASE}/notifications/${id}/read`, {
         method: 'PATCH',
@@ -364,6 +386,8 @@
   }
 
   async function markAllAsRead() {
+    if (!isAuthenticated()) return;
+
     try {
       await fetch(`${API_BASE}/notifications/read-all`, {
         method: 'PATCH',
@@ -498,7 +522,7 @@
       injectBellUI();
     });
 
-    // Polling toutes les 45 secondes pour les nouvelles notifications quand l'onglet est actif
+    // Fallback fiable tant que l'authentification applicative n'est pas reliée à Supabase Realtime.
     if (pollInterval) clearInterval(pollInterval);
     pollInterval = setInterval(() => {
       if (document.visibilityState === 'visible') {

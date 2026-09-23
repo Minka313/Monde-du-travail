@@ -1,5 +1,6 @@
 const prisma = require('../config/database');
 const { NotFoundError, BadRequestError } = require('../utils/errors');
+const logger = require('../utils/logger');
 
 class FormationService {
   // Liste publique : uniquement les formations publiées
@@ -209,14 +210,17 @@ class FormationService {
     // Déclencher la notification push et in-app automatique
     try {
       const notificationService = require('./notificationService');
-      notificationService.broadcastNotification({
+      await notificationService.broadcastNotification({
         type: 'FORMATION',
         title: '🎓 Nouvelle formation disponible !',
         message: `${formation.title} : découvrez le programme et participez dès maintenant.`,
         url: `/frontend/formations.html#${formation.id}`,
         imageUrl: formation.image || null,
-      }).catch(() => {});
-    } catch (_) {}
+        dedupeKey: `FORMATION:${formation.id}:PUBLISHED`,
+      });
+    } catch (err) {
+      logger.warn('Notification formation non créée après publication', { formationId: id, error: err.message });
+    }
 
     return formation;
   }

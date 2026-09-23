@@ -447,14 +447,17 @@ class BlogService {
     // Déclencher la notification push et in-app automatique
     try {
       const notificationService = require('./notificationService');
-      notificationService.broadcastNotification({
+      await notificationService.broadcastNotification({
         type: 'BLOG',
         title: '📝 Nouvel article de blog !',
         message: `${updated.title} : découvrez notre dernière publication.`,
         url: `/frontend/blog-post.html?slug=${updated.slug}`,
         imageUrl: updated.coverImage || null,
-      }).catch(() => {});
-    } catch (_) {}
+        dedupeKey: `BLOG:${updated.id}:PUBLISHED`,
+      });
+    } catch (err) {
+      logger.warn('Notification article non créée après publication', { postId: id, error: err.message });
+    }
 
     return updated;
   }

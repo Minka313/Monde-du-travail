@@ -3,7 +3,6 @@ const router = express.Router();
 const NotificationController = require('../controllers/notificationController');
 const {
   authenticate,
-  optionalAuth,
   authorizeAdmin,
   authorizeUltraAdmin,
 } = require('../middleware/auth');
@@ -12,15 +11,15 @@ const {
 router.get('/vapid-key', NotificationController.getVapidKey);
 
 // Enregistrement et désabonnement d'un terminal Web Push
-router.post('/subscribe', optionalAuth, NotificationController.subscribe);
-router.post('/unsubscribe', NotificationController.unsubscribe);
+router.post('/subscribe', authenticate, NotificationController.subscribe);
+router.post('/unsubscribe', authenticate, NotificationController.unsubscribe);
 
 // Consultation des notifications in-app (visiteur ou connecté)
-router.get('/', optionalAuth, NotificationController.getNotifications);
+router.get('/', authenticate, NotificationController.getNotifications);
 
 // Gestion de lecture des notifications
-router.patch('/read-all', optionalAuth, NotificationController.markAllAsRead);
-router.patch('/:id/read', optionalAuth, NotificationController.markAsRead);
+router.patch('/read-all', authenticate, NotificationController.markAllAsRead);
+router.patch('/:id/read', authenticate, NotificationController.markAsRead);
 
 // Diffusion manuelle d'une alerte générale (Réservé Ultra Admin)
 router.post('/broadcast', authenticate, authorizeUltraAdmin, NotificationController.broadcast);
