@@ -1,5 +1,6 @@
 const prisma = require('../config/database');
 const { NotFoundError, BadRequestError } = require('../utils/errors');
+const logger = require('../utils/logger');
 
 class JobService {
   // Liste publique : uniquement les métiers publiés
@@ -223,14 +224,17 @@ class JobService {
     // Déclencher la notification push et in-app automatique
     try {
       const notificationService = require('./notificationService');
-      notificationService.broadcastNotification({
+      await notificationService.broadcastNotification({
         type: 'JOB',
         title: '💼 Nouvelle fiche métier & opportunité !',
         message: `${job.title} : explorez les compétences, débouchés et formations associées.`,
         url: `/frontend/job.html#${job.id}`,
         imageUrl: job.image || null,
-      }).catch(() => {});
-    } catch (_) {}
+        dedupeKey: `JOB:${job.id}:PUBLISHED`,
+      });
+    } catch (err) {
+      logger.warn('Notification métier non créée après publication', { jobId: id, error: err.message });
+    }
 
     return job;
   }

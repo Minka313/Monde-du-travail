@@ -1,5 +1,6 @@
 const prisma = require('../config/database');
 const { NotFoundError, BadRequestError } = require('../utils/errors');
+const logger = require('../utils/logger');
 
 class ForumService {
   static async getAllTopics({ category, search, status, page = 1, limit = 20, sort = 'latest' } = {}) {
@@ -180,14 +181,17 @@ class ForumService {
       try {
         const notificationService = require('./notificationService');
         const authorName = `${reply.author?.firstName || ''} ${reply.author?.lastName || ''}`.trim() || 'Un membre';
-        notificationService.createNotification({
+        await notificationService.createNotification({
           userId: topic.authorId,
           type: 'FORUM',
           title: '💬 Nouvelle réponse sur votre sujet !',
           message: `${authorName} a répondu à votre sujet « ${topic.title} ».`,
           url: `/frontend/forum-topic.html?id=${topic.id}`,
-        }).catch(() => {});
-      } catch (_) {}
+          dedupeKey: `FORUM_REPLY:${reply.id}`,
+        });
+      } catch (err) {
+        logger.warn('Notification de réponse forum non créée', { replyId: reply.id, error: err.message });
+      }
     }
 
     return reply;

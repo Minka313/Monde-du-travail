@@ -1,4 +1,5 @@
 const notificationService = require('../services/notificationService');
+const { ServiceUnavailableError } = require('../utils/errors');
 
 class NotificationController {
   /**
@@ -7,6 +8,9 @@ class NotificationController {
   static async getVapidKey(req, res, next) {
     try {
       const publicKey = notificationService.getVapidPublicKey();
+      if (!publicKey) {
+        throw new ServiceUnavailableError('Les notifications Push ne sont pas configurées');
+      }
       res.json({
         success: true,
         data: { publicKey },
@@ -22,7 +26,7 @@ class NotificationController {
   static async subscribe(req, res, next) {
     try {
       const { endpoint, keys, userAgent } = req.body;
-      const userId = req.user?.id || null;
+      const userId = req.user.id;
 
       if (!endpoint || !keys) {
         return res.status(400).json({
@@ -60,7 +64,7 @@ class NotificationController {
         });
       }
 
-      await notificationService.removeSubscription(endpoint);
+      await notificationService.removeSubscription(req.user.id, endpoint);
 
       res.json({
         success: true,
@@ -76,7 +80,7 @@ class NotificationController {
    */
   static async getNotifications(req, res, next) {
     try {
-      const userId = req.user?.id || null;
+      const userId = req.user.id;
       const { page, limit, unreadOnly } = req.query;
 
       const result = await notificationService.getUserNotifications(userId, {
@@ -106,7 +110,7 @@ class NotificationController {
   static async markAsRead(req, res, next) {
     try {
       const { id } = req.params;
-      const userId = req.user?.id || null;
+      const userId = req.user.id;
 
       const notification = await notificationService.markAsRead(id, userId);
 
@@ -125,7 +129,7 @@ class NotificationController {
    */
   static async markAllAsRead(req, res, next) {
     try {
-      const userId = req.user?.id || null;
+      const userId = req.user.id;
       const result = await notificationService.markAllAsRead(userId);
 
       res.json({
@@ -149,6 +153,13 @@ class NotificationController {
         return res.status(400).json({
           success: false,
           message: 'Le titre et le message sont obligatoires',
+        });
+      }
+
+      if (url && (!url.startsWith('/') || url.startsWith('//') || /[\r\n]/.test(url))) {
+        return res.status(400).json({
+          success: false,
+          message: 'L’URL de notification doit être un chemin interne',
         });
       }
 

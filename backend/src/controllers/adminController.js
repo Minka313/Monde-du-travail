@@ -258,14 +258,17 @@ class AdminController {
       // Notification Push & In-App instantanée au membre
       try {
         const notificationService = require('../services/notificationService');
-        notificationService.createNotification({
+        await notificationService.createNotification({
           userId: membership.userId,
           type: 'MEMBERSHIP',
           title: '🎉 Félicitations ! Votre adhésion a été approuvée',
           message: 'Bienvenue au sein du club Le Monde du Travail ! Votre compte est maintenant pleinement actif.',
           url: '/frontend/index.html',
-        }).catch(() => {});
-      } catch (_) {}
+          dedupeKey: `MEMBERSHIP:${membership.id}:APPROVED`,
+        });
+      } catch (err) {
+        logger.warn('Notification approbation adhésion non créée', { membershipId: membership.id, error: err.message });
+      }
 
       res.json({
         success: true,
@@ -331,6 +334,20 @@ class AdminController {
         });
       } catch (err) {
         logger.warn('Erreur envoi email refus adhésion', { error: err.message });
+      }
+
+      try {
+        const notificationService = require('../services/notificationService');
+        await notificationService.createNotification({
+          userId: membership.userId,
+          type: 'MEMBERSHIP',
+          title: 'Votre demande d’adhésion nécessite une révision',
+          message: reason || 'Votre demande a été refusée par l’administration. Consultez votre espace pour plus de détails.',
+          url: '/frontend/index.html',
+          dedupeKey: `MEMBERSHIP:${membership.id}:REJECTED`,
+        });
+      } catch (err) {
+        logger.warn('Notification refus adhésion non créée', { membershipId: membership.id, error: err.message });
       }
 
       res.json({

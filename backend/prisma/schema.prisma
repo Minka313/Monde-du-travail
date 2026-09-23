@@ -247,6 +247,7 @@ model User {
   clubAssignments    ClubAssignment[]    @relation("UserClubAssignments")
   assignedClubRoles  ClubAssignment[]    @relation("ClubAssignmentCreator")
   notifications      Notification[]      @relation("UserNotifications")
+  notificationReads   NotificationRead[]  @relation("UserNotificationReads")
   pushSubscriptions  PushSubscription[]  @relation("UserPushSubscriptions")
   analyticsEvents    AnalyticsEvent[]    @relation("UserAnalyticsEvents")
 
@@ -474,15 +475,31 @@ model Notification {
   message   String
   url       String?
   imageUrl  String?
+  dedupeKey String?          @unique
   isRead    Boolean          @default(false)
   readAt    DateTime?
   createdAt DateTime         @default(now())
   user      User?            @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  reads     NotificationRead[]
 
   @@index([userId])
+  @@index([userId, isRead, createdAt])
   @@index([isRead])
   @@index([createdAt])
   @@map("notifications")
+}
+
+model NotificationRead {
+  id             String       @id @default(cuid())
+  notificationId String
+  userId         String
+  readAt         DateTime     @default(now())
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User         @relation("UserNotificationReads", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+  @@index([userId, readAt])
+  @@map("notification_reads")
 }
 
 model PushSubscription {

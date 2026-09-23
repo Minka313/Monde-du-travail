@@ -25,8 +25,8 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'Le Monde du Travail';
   const options = {
     body: data.body || 'Vous avez une nouvelle notification',
-    icon: data.icon || '/logo.png',
-    badge: data.badge || '/logo.png',
+    icon: data.icon || 'logo.png',
+    badge: data.badge || 'logo.png',
     image: data.image || undefined,
     vibrate: data.vibrate || [200, 100, 200],
     tag: data.id || 'lmt-notification-' + Date.now(),
