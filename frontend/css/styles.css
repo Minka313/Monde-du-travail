@@ -2889,6 +2889,16 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 768px) {
+  .site-header {
+    z-index: 10001;
+    overflow: visible;
+  }
+
+  .notification-dropdown,
+  .user-dropdown-menu {
+    z-index: 10002 !important;
+  }
+
   :root {
     --nav-height: 0px;
   }
@@ -10422,6 +10432,19 @@ fade-in-up,
   }
   .floating-scroll-top-btn span:last-child {
     display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Dropdowns must escape the compact mobile header. */
+  .site-header {
+    overflow: visible !important;
+    z-index: 10001 !important;
+  }
+
+  .notification-dropdown,
+  .user-dropdown-menu {
+    z-index: 10002 !important;
   }
 }
 
