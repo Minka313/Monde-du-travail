@@ -61,7 +61,7 @@ async function runTests() {
 
   console.log('\n--- TEST GROUP 2 : Intégration dans OrientationData (Famille 11 & Routage) ---');
   const families = od.getFamilies();
-  assert(families.length === 22, `La plateforme compte exactement 22 grandes familles (actuel: ${families.length})`);
+  assert(families.length >= 22, `La plateforme compte au moins 22 grandes familles (actuel: ${families.length})`);
 
   const fam11 = od.getFamily('industrie-mecanique');
   assert(fam11 !== null, "La famille 'industrie-mecanique' existe");

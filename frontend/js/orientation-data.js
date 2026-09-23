@@ -1,13 +1,13 @@
 /**
  * ORIENTATION & MÉTIERS — SOURCE DE VÉRITÉ DATA-DRIVEN
- * Le Monde du Travail — 22 Grandes Familles, Sous-domaines, Métiers & Affinités
+ * Le Monde du Travail — 23 Grandes Familles, Sous-domaines, Métiers & Affinités
  */
 
 (function () {
   'use strict';
 
   // =========================================================================
-  // 1. LES 22 GRANDES FAMILLES PROFESSIONNELLES
+  // 1. LES 23 GRANDES FAMILLES PROFESSIONNELLES
   // =========================================================================
   const FAMILIES = [
     {
@@ -407,6 +407,25 @@
         'Édition, Rédaction & Métiers du livre', 'Médiation culturelle & Valorisation du patrimoine',
         'Économie sociale, Développement & SHS appliquées'
       ]
+    },
+    {
+      id: 'sciences-terre-geosciences',
+      order: 23,
+      name: 'Sciences de la Terre, Géosciences & Ressources Naturelles',
+      slug: 'sciences-terre-geosciences',
+      icon: '🌍',
+      color: '#0d9488', // Émeraude / Teal géosciences
+      image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80',
+      description: 'Explorer la Terre, comprendre les roches, prospecter et gérer l’eau souterraine, modéliser les géorisques et valoriser durablement les ressources minérales et géothermiques.',
+      stats: { jobsEstimate: '22+ métiers', subdomainsCount: 17 },
+      representativeJobs: ['Géologue / Docteur de la Planète', 'Hydrogéologue / Spécialiste des Eaux Souterraines', 'Pédologue / Spécialiste des Sols', 'Ingénieur Géotechnique', 'Paléontologue', 'Ingénieur en Géothermie'],
+      subdomains: [
+        'Géologie', 'Hydrogéologie & ressources en eau', 'Sciences du sol & pédologie', 'Paléontologie',
+        'Géophysique', 'Géomatique, cartographie & télédétection', 'Géologie minière & ressources minérales',
+        'Minéralogie', 'Géomatériaux & matériaux', 'Géotechnique', 'Géosciences marines',
+        'Environnement & géosciences', 'Risques naturels', 'Ressources énergétiques du sous-sol',
+        'Recherche scientifique', 'Enseignement & médiation scientifique', 'Analyse, laboratoire & instrumentation'
+      ]
     }
   ];
 
@@ -454,14 +473,14 @@
       icon: '🌱',
       label: 'Travailler avec la terre, la mer & l’environnement',
       description: 'Tu aimes le plein air, la biodiversité, les plantes, la météo, la lutte contre le réchauffement climatique.',
-      familyIds: ['agriculture-agritech', 'environnement-climat', 'peche-maritime', 'elevage-veterinaire']
+      familyIds: ['agriculture-agritech', 'environnement-climat', 'peche-maritime', 'elevage-veterinaire', 'sciences-terre-geosciences']
     },
     {
       id: 'construire-fabriquer',
       icon: '🏗️',
       label: 'Construire des édifices ou fabriquer des objets',
       description: 'Tu aimes voir du concret sortir de terre, coordonner des chantiers, comprendre le fonctionnement des ponts et machines.',
-      familyIds: ['btp-architecture', 'industrie-mecanique', 'mines-geosciences', 'energie-renouvelable']
+      familyIds: ['btp-architecture', 'industrie-mecanique', 'mines-geosciences', 'energie-renouvelable', 'sciences-terre-geosciences']
     },
     {
       id: 'negocier-convaincre',
@@ -482,7 +501,7 @@
       icon: '🧭',
       label: 'Rechercher en labo & explorer de nouvelles frontières',
       description: 'Tu as une insatiable curiosité scientifique, tu aimes tester des hypothèses et manipuler des microscopes ou télescopes.',
-      familyIds: ['sciences-biotech', 'mines-geosciences', 'environnement-climat', 'sante-biomedical', 'lettres-langues-sciences-humaines']
+      familyIds: ['sciences-biotech', 'mines-geosciences', 'environnement-climat', 'sante-biomedical', 'lettres-langues-sciences-humaines', 'sciences-terre-geosciences']
     },
     {
       id: 'lire-ecrire-litterature',
@@ -532,6 +551,13 @@
       label: 'Programmer des robots & automatiser les usines',
       description: 'Tu es passionné par les bras robotisés, les automates industriels, les lignes intelligentes et l’Industrie 4.0.',
       familyIds: ['industrie-mecanique', 'numerique-ia', 'cybersecurite-reseaux', 'metiers-emergents']
+    },
+    {
+      id: 'geosciences-terre-planete',
+      icon: '🪨',
+      label: 'Explorer la Terre, les roches, les eaux & les sous-sols',
+      description: 'Tu es passionné par les mystères de notre planète, les minéraux, l’eau souterraine, les séismes, les fossiles et la transition géologique.',
+      familyIds: ['sciences-terre-geosciences', 'mines-geosciences', 'environnement-climat', 'energie-renouvelable']
     }
   ];
 
@@ -1721,6 +1747,38 @@
         });
       }
 
+      // 1.h Intégration du catalogue Sciences de la Terre, Géosciences & Ressources Naturelles (OrientationGeosciencesData)
+      const geosciencesData = (typeof window !== 'undefined' && window.OrientationGeosciencesData)
+        ? window.OrientationGeosciencesData
+        : (typeof global !== 'undefined' && global.OrientationGeosciencesData ? global.OrientationGeosciencesData : null);
+
+      if (geosciencesData && typeof geosciencesData.getJobs === 'function') {
+        const geoJobs = geosciencesData.getJobs();
+        geoJobs.forEach(gJob => {
+          const existingIdx = combined.findIndex(j => j.slug === gJob.slug || j.id === gJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, gJob, combined[existingIdx], {
+              aliases: [...new Set([...(gJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              connectedFamilies: [...new Set([...(combined[existingIdx].connectedFamilies || [combined[existingIdx].familyId]), gJob.familyId, 'sciences-terre-geosciences'])],
+              domain: gJob.domain || combined[existingIdx].domain,
+              domainId: gJob.domainId || combined[existingIdx].domainId,
+              subdomain: gJob.subdomain || combined[existingIdx].subdomain,
+              gettingStarted: gJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: gJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || gJob.africaContext,
+              salary: gJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || gJob.saviezVous || null,
+              sourcePoitiers: gJob.sourcePoitiers !== undefined ? gJob.sourcePoitiers : combined[existingIdx].sourcePoitiers,
+              sourceBRGM: gJob.sourceBRGM !== undefined ? gJob.sourceBRGM : combined[existingIdx].sourceBRGM,
+              geosciencesPedagogy: gJob.geosciencesPedagogy || combined[existingIdx].geosciencesPedagogy,
+              sources: gJob.sources || combined[existingIdx].sources
+            });
+          } else {
+            combined.push(gJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -1805,6 +1863,9 @@
       if (familyId === 'industrie-mecanique' || familyId === 'industrie-technologies-ingenierie') {
         return all.filter(j => j.familyId === 'industrie-mecanique' || j.familyId === 'industrie-technologies-ingenierie');
       }
+      if (familyId === 'sciences-terre-geosciences') {
+        return all.filter(j => j.familyId === 'sciences-terre-geosciences' || (j.connectedFamilies && j.connectedFamilies.includes('sciences-terre-geosciences')) || j.sourcePoitiers);
+      }
       return all.filter(j => j.familyId === familyId);
     },
 
@@ -1823,6 +1884,8 @@
           matchesFamily = (j.familyId === 'peche-maritime' || j.domainId === 'peche-aquaculture');
         } else if (familyId === 'industrie-mecanique' || familyId === 'industrie-technologies-ingenierie') {
           matchesFamily = (j.familyId === 'industrie-mecanique' || j.familyId === 'industrie-technologies-ingenierie');
+        } else if (familyId === 'sciences-terre-geosciences') {
+          matchesFamily = (j.familyId === 'sciences-terre-geosciences' || (j.connectedFamilies && j.connectedFamilies.includes('sciences-terre-geosciences')) || j.sourcePoitiers);
         } else {
           matchesFamily = (j.familyId === familyId);
         }
@@ -2123,6 +2186,18 @@
       return [];
     },
 
+    getGeosciencesDomains: function () {
+      const geosciencesData = (typeof window !== 'undefined' && window.OrientationGeosciencesData)
+        ? window.OrientationGeosciencesData
+        : (typeof global !== 'undefined' && global.OrientationGeosciencesData
+          ? global.OrientationGeosciencesData
+          : (typeof OrientationGeosciencesData !== 'undefined' ? OrientationGeosciencesData : null));
+      if (geosciencesData && typeof geosciencesData.getDomains === 'function') {
+        return geosciencesData.getDomains();
+      }
+      return [];
+    },
+
     getFamilyDomains: function (familyId) {
       if (familyId === 'numerique-ia') {
         return this.getDigitalDomains();
@@ -2147,6 +2222,9 @@
       }
       if (familyId === 'industrie-mecanique' || familyId === 'industrie-technologies-ingenierie') {
         return this.getIndustryDomains();
+      }
+      if (familyId === 'sciences-terre-geosciences' || familyId === 'mines-geosciences') {
+        return this.getGeosciencesDomains();
       }
       return [];
     },
