@@ -553,7 +553,11 @@
                       ? "Cartographie d'Excellence Industrie, Technologies & Ingénierie"
                       : (family.id === 'sciences-terre-geosciences' || family.id === 'mines-geosciences'
                         ? "Cartographie d'Excellence Sciences de la Terre, Géosciences & Ressources Naturelles"
-                        : `Cartographie d'Excellence — ${family.name}`)))))))));
+                        : (family.id === 'sante-soins-paramedical' || family.id === 'sante-biomedical'
+                          ? "Cartographie d'Excellence Santé, Soins & Paramédical"
+                          : (family.id === 'biologie-chimie' || family.id === 'sciences-biotech'
+                            ? "Cartographie d'Excellence Biologie & Chimie"
+                            : `Cartographie d'Excellence — ${family.name}`)))))))))));
 
       const cartographyBadge = (family.id === 'numerique-ia')
         ? "13 Pôles • 100+ Métiers"
@@ -573,7 +577,11 @@
                       ? "30 Domaines • 36 Fiches Métiers"
                       : (family.id === 'sciences-terre-geosciences' || family.id === 'mines-geosciences'
                         ? "17 Domaines • 22 Fiches Métiers"
-                        : `${familyDomains.length} Domaines d'expertise`)))))))));
+                        : (family.id === 'sante-soins-paramedical' || family.id === 'sante-biomedical'
+                          ? "11 Domaines • 30 Fiches Métiers"
+                          : (family.id === 'biologie-chimie' || family.id === 'sciences-biotech'
+                            ? "15 Domaines • 24 Fiches Métiers (CIDJ)"
+                            : `${familyDomains.length} Domaines d'expertise`)))))))))));
 
       const allDomainsLabel = (family.id === 'numerique-ia')
         ? `Tous les pôles (${familyDomains.length})`
@@ -1418,6 +1426,32 @@
               <div class="dossier-energy-tech-row" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem;padding:0.75rem 1rem;background:#fefce8;border:1px solid #fef08a;border-radius:10px;">
                 <span style="font-size:0.86rem;font-weight:700;color:#854d0e;">⚡ Technologies & vecteurs :</span>
                 ${job.energyTechnology.map(tech => `<span class="badge" style="background:#fef9c3;color:#a16207;border:1px solid #fde047;padding:2px 9px;border-radius:16px;font-size:0.82rem;font-weight:600;">${escapeHtml(tech)}</span>`).join(' ')}
+              </div>
+            ` : ''}
+
+            <!-- Référentiel Officiel Santé, Soins & Paramédical (Studyrama / Ordres) -->
+            ${(job.familyId === 'sante-soins-paramedical' || job.studyramaUrl) ? `
+              <div class="dossier-health-ref-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:1.35rem;padding:0.85rem 1.15rem;background:linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);border:1.5px solid #fca5a5;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#991b1b;font-size:0.88rem;">
+                  <span>🏥</span>
+                  <span>Référentiel Médical & Paramédical d'Excellence</span>
+                </div>
+                <span style="font-size:0.8rem;color:#7f1d1d;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #fecaca;">Études PASS / L.AS • Diplômes d'État</span>
+              </div>
+            ` : ''}
+
+            <!-- Référentiel Officiel CIDJ Biologie & Chimie -->
+            ${(job.familyId === 'biologie-chimie' || job.cidjUrl) ? `
+              <div class="dossier-cidj-ref-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:1.35rem;padding:0.85rem 1.15rem;background:linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);border:1.5px solid #c4b5fd;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#5b21b6;font-size:0.88rem;">
+                  <span>🧬</span>
+                  <span>Fiche Métier Certifiée CIDJ Biologie & Chimie</span>
+                </div>
+                ${job.cidjUrl ? `
+                  <a href="${escapeHtml(job.cidjUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:0.8rem;color:#6d28d9;font-weight:600;text-decoration:none;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #ddd6fe;display:inline-flex;align-items:center;gap:4px;">
+                    Consulter sur CIDJ.com ↗
+                  </a>
+                ` : `<span style="font-size:0.8rem;color:#6d28d9;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #ddd6fe;">Référentiel CIDJ Officiel</span>`}
               </div>
             ` : ''}
 

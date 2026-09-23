@@ -257,20 +257,30 @@
       ]
     },
     {
-      id: 'sante-biomedical',
+      id: 'sante-soins-paramedical',
       order: 14,
-      name: 'Santé, Pharmacie & Biomédical',
-      slug: 'sante-biomedical',
+      name: 'Santé, Soins & Paramédical',
+      slug: 'sante-soins-paramedical',
+      aliasSlug: 'sante-biomedical',
+      aliases: ['sante-biomedical', 'sante-soins-paramedical', 'sante-pharmacie-biomedical'],
       icon: '🏥',
       color: '#ef4444', // Rouge santé
       image: 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&auto=format&fit=crop&q=80',
-      description: 'Soigner, rechercher de nouvelles thérapies, maintenir les technologies d’imagerie médicale et déployer la télémédecine.',
-      stats: { jobsEstimate: '70+ métiers', subdomainsCount: 12 },
-      representativeJobs: ['Médecin Spécialiste', 'Pharmacien Industriel', 'Ingénieur Biomédical', 'Biologiste Médical', 'Data Analyst Santé'],
+      description: 'Diagnostiquer, soigner, rééduquer, concevoir les thérapies de demain et administrer le système hospitalier et de soins.',
+      stats: { jobsEstimate: '30+ fiches d’excellence', subdomainsCount: 11 },
+      representativeJobs: ['Médecin Généraliste', 'Chirurgien', 'Infirmier en Pratique Avancée (IPA)', 'Sage-Femme', 'Pharmacien d’Officine', 'Biologiste Médical'],
       subdomains: [
-        'Médecine', 'Soins infirmiers', 'Pharmacie', 'Odontologie', 'Sage-femme',
-        'Biologie médicale', 'Imagerie', 'Rééducation', 'Nutrition', 'Santé publique',
-        'Biomédical', 'Santé numérique'
+        'Médecine & Chirurgie',
+        'Chirurgie, Anesthésie & Réanimation',
+        'Santé Bucco-Dentaire & Odontologie',
+        'Soins Infirmiers & Pratiques Avancées',
+        'Santé de la Femme & de l’Enfant (Maternité & Pédiatrie)',
+        'Rééducation, Kinésithérapie & Réadaptation',
+        'Urgences, Secours Médical & Régulation (SAMU)',
+        'Biologie Médicale & Diagnostics de Laboratoire',
+        'Pharmacie Clinique, Officine & Distribution',
+        'Direction, Encadrement & Administration Hospitalière',
+        'Technologies Biomédicales & Dispositifs Médicaux'
       ]
     },
     {
@@ -290,19 +300,34 @@
       ]
     },
     {
-      id: 'sciences-biotech',
+      id: 'biologie-chimie',
       order: 16,
-      name: 'Sciences, Recherche & Biotechnologies',
-      slug: 'sciences-biotech',
-      icon: '🧪',
-      color: '#ec4899', // Rose scientifique
+      name: 'Biologie & Chimie',
+      slug: 'biologie-chimie',
+      aliasSlug: 'sciences-biotech',
+      aliases: ['sciences-biotech', 'biologie-chimie', 'sciences-recherche-biotechnologies'],
+      icon: '🧬',
+      color: '#8b5cf6', // Violet biochimie
       image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&auto=format&fit=crop&q=80',
-      description: 'Explorer les lois de la matière, innover en biotechnologies, séquencer l’ADN végétal et conduire les programmes de R&D de rupture.',
-      stats: { jobsEstimate: '40+ métiers', subdomainsCount: 10 },
-      representativeJobs: ['Chercheur en Biotechnologies', 'Biologiste Moléculaire', 'Physicien des Matériaux', 'Ingénieur R&D'],
+      description: 'Explorer le vivant, synthétiser des molécules, créer arômes et cosmétiques, piloter la bioproduction et éclairer la justice par la police scientifique.',
+      stats: { jobsEstimate: '24 fiches certifiées CIDJ', subdomainsCount: 15 },
+      representativeJobs: ['Microbiologiste', 'Ingénieur en Formulation', 'Bio-informaticien', 'Parfumeur (Nez)', 'Technicien de Police Scientifique', 'Botaniste'],
       subdomains: [
-        'Mathématiques', 'Physique', 'Chimie', 'Biologie', 'Microbiologie',
-        'Biotechnologies', 'Génétique', 'Recherche', 'R&D', 'Laboratoire'
+        'Biologie Fondamentale & Sciences du Vivant',
+        'Microbiologie, Virologie & Bactériologie',
+        'Chimie Fondamentale, Synthèse & Analyse',
+        'Formulation Chimique, Émulsions & Matériaux',
+        'Galénique, Bioproduction & Procédés Pharmaceutiques',
+        'Biotechnologies & Génie Génétique',
+        'Bio-informatique & Données du Vivant',
+        'Biologie Végétale & Botanique',
+        'Laboratoires, Analyses & Essais Scientifiques',
+        'Parfumerie, Cosmétique & Aromatologie',
+        'Chimie Industrielle, Teintures & Matériaux',
+        'Environnement, Qualité de l\'Air & Dépollution NRBC',
+        'Recherche, R&D & Développement Produit',
+        'Police Technique & Scientifique (Criminalistique)',
+        'Sciences Thanatologiques & Soins Funéraires'
       ]
     },
     {
@@ -466,14 +491,14 @@
       icon: '❤️',
       label: 'Aider, soigner & accompagner les gens',
       description: 'Tu souhaites avoir un impact direct sur la vie des personnes, leur bien-être, leur santé ou leur éducation.',
-      familyIds: ['sante-biomedical', 'education-formation', 'elevage-veterinaire', 'lettres-langues-sciences-humaines']
+      familyIds: ['sante-soins-paramedical', 'sante-biomedical', 'education-formation', 'elevage-veterinaire', 'lettres-langues-sciences-humaines']
     },
     {
       id: 'nature-environnement',
       icon: '🌱',
       label: 'Travailler avec la terre, la mer & l’environnement',
       description: 'Tu aimes le plein air, la biodiversité, les plantes, la météo, la lutte contre le réchauffement climatique.',
-      familyIds: ['agriculture-agritech', 'environnement-climat', 'peche-maritime', 'elevage-veterinaire', 'sciences-terre-geosciences']
+      familyIds: ['agriculture-agritech', 'environnement-climat', 'peche-maritime', 'elevage-veterinaire', 'sciences-terre-geosciences', 'biologie-chimie']
     },
     {
       id: 'construire-fabriquer',
@@ -494,14 +519,14 @@
       icon: '🛡️',
       label: 'Protéger, faire respecter les règles & défendre',
       description: 'Tu as un sens aigu de la justice, de l’éthique, de la protection des biens, des données ou des citoyens.',
-      familyIds: ['cybersecurite-reseaux', 'finance-fintech', 'droit-management', 'metiers-emergents', 'lettres-langues-sciences-humaines']
+      familyIds: ['cybersecurite-reseaux', 'finance-fintech', 'droit-management', 'metiers-emergents', 'lettres-langues-sciences-humaines', 'biologie-chimie']
     },
     {
       id: 'explorer-decouvrir',
       icon: '🧭',
       label: 'Rechercher en labo & explorer de nouvelles frontières',
       description: 'Tu as une insatiable curiosité scientifique, tu aimes tester des hypothèses et manipuler des microscopes ou télescopes.',
-      familyIds: ['sciences-biotech', 'mines-geosciences', 'environnement-climat', 'sante-biomedical', 'lettres-langues-sciences-humaines', 'sciences-terre-geosciences']
+      familyIds: ['biologie-chimie', 'sciences-biotech', 'sante-soins-paramedical', 'sante-biomedical', 'mines-geosciences', 'environnement-climat', 'sciences-terre-geosciences']
     },
     {
       id: 'lire-ecrire-litterature',
@@ -522,7 +547,7 @@
       icon: '🧠',
       label: 'Comprendre l’humain, son esprit & la société',
       description: 'Tu t’intéresses à la psychologie humaine, aux comportements collectifs, à l’histoire des civilisations et à la philosophie.',
-      familyIds: ['lettres-langues-sciences-humaines', 'sante-biomedical', 'education-formation', 'droit-management']
+      familyIds: ['lettres-langues-sciences-humaines', 'sante-soins-paramedical', 'sante-biomedical', 'education-formation', 'droit-management']
     },
     {
       id: 'transmettre-animer-culture',
@@ -558,6 +583,55 @@
       label: 'Explorer la Terre, les roches, les eaux & les sous-sols',
       description: 'Tu es passionné par les mystères de notre planète, les minéraux, l’eau souterraine, les séismes, les fossiles et la transition géologique.',
       familyIds: ['sciences-terre-geosciences', 'mines-geosciences', 'environnement-climat', 'energie-renouvelable']
+    },
+    {
+      id: 'urgences-secours',
+      icon: '🚑',
+      label: 'Intervenir dans l’urgence, porter secours & sauver des vies',
+      description: 'Tu gardes ton sang-froid sous adrénaline, tu aimes réagir vite pour secourir des personnes en détresse vitale.',
+      familyIds: ['sante-soins-paramedical', 'sante-biomedical', 'securite-defense']
+    },
+    {
+      id: 'comprendre-corps-humain',
+      icon: '🩺',
+      label: 'Comprendre le corps humain, les maladies & l’anatomie',
+      description: 'Tu es fasciné par le fonctionnement des organes, la physiologie, la génétique et la manière dont on soigne les maladies.',
+      familyIds: ['sante-soins-paramedical', 'sante-biomedical', 'biologie-chimie', 'sciences-biotech']
+    },
+    {
+      id: 'observer-microscope',
+      icon: '🔬',
+      label: 'Observer au microscope, analyser des cellules & des bactéries',
+      description: 'Tu aimes explorer l’infiniment petit, cultiver des micro-organismes et observer les structures cellulaires.',
+      familyIds: ['biologie-chimie', 'sciences-biotech', 'sante-soins-paramedical', 'sante-biomedical']
+    },
+    {
+      id: 'experiences-laboratoire',
+      icon: '🧫',
+      label: 'Faire des expériences en laboratoire & manipuler des réactifs',
+      description: 'Tu aimes préparer des solutions, manipuler des pipettes de précision, lancer des chromatographies et analyser des réactions chimiques.',
+      familyIds: ['biologie-chimie', 'sciences-biotech', 'sante-soins-paramedical', 'sciences-terre-geosciences']
+    },
+    {
+      id: 'creer-produits-chimie',
+      icon: '🧴',
+      label: 'Créer des parfums, cosmétiques, peintures & formulations',
+      description: 'Tu aimes assembler des molécules, mélanger textures et principes actifs pour créer de nouveaux produits du quotidien ou de luxe.',
+      familyIds: ['biologie-chimie', 'sciences-biotech', 'industrie-mecanique']
+    },
+    {
+      id: 'nature-plantes-botanique',
+      icon: '🌿',
+      label: 'Étudier les plantes, la flore & la biologie végétale',
+      description: 'Tu aimes classifier les végétaux, herboriser, comprendre la photosynthèse et valoriser la biodiversité des plantes médicinales.',
+      familyIds: ['biologie-chimie', 'agriculture-agritech', 'environnement-climat']
+    },
+    {
+      id: 'police-scientifique-enquete',
+      icon: '🔎',
+      label: 'Mener des enquêtes scientifiques & analyser des indices forensiques',
+      description: 'Tu veux mettre la science au service de la vérité : révéler des empreintes, analyser des profils ADN et décrypter les scènes d’infraction.',
+      familyIds: ['biologie-chimie', 'securite-defense', 'droit-management']
     }
   ];
 
@@ -1501,7 +1575,7 @@
     // Récupérer une famille par son ID, son Slug ou son Alias
     getFamily: function (idOrSlug) {
       if (!idOrSlug) return null;
-      return FAMILIES.find(f => f.id === idOrSlug || f.slug === idOrSlug || (f.aliasSlug && f.aliasSlug === idOrSlug)) || null;
+      return FAMILIES.find(f => f.id === idOrSlug || f.slug === idOrSlug || (f.aliasSlug && f.aliasSlug === idOrSlug) || (Array.isArray(f.aliases) && f.aliases.includes(idOrSlug))) || null;
     },
 
     // Récupérer les centres d'intérêt / affinités
@@ -1779,6 +1853,66 @@
         });
       }
 
+      // 1.i Intégration du catalogue Santé, Soins & Paramédical (OrientationHealthData)
+      const healthData = (typeof window !== 'undefined' && window.OrientationHealthData)
+        ? window.OrientationHealthData
+        : (typeof global !== 'undefined' && global.OrientationHealthData ? global.OrientationHealthData : null);
+
+      if (healthData && typeof healthData.getJobs === 'function') {
+        const hJobs = healthData.getJobs();
+        hJobs.forEach(hJob => {
+          const existingIdx = combined.findIndex(j => j.slug === hJob.slug || j.id === hJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, hJob, combined[existingIdx], {
+              aliases: [...new Set([...(hJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              connectedFamilies: [...new Set([...(combined[existingIdx].connectedFamilies || [combined[existingIdx].familyId]), hJob.familyId, 'sante-soins-paramedical', 'sante-biomedical'])],
+              domain: hJob.domain || combined[existingIdx].domain,
+              domainId: hJob.domainId || combined[existingIdx].domainId,
+              subdomain: hJob.subdomain || combined[existingIdx].subdomain,
+              gettingStarted: hJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: hJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || hJob.africaContext,
+              salary: hJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || hJob.saviezVous || null,
+              studyramaUrl: hJob.studyramaUrl !== undefined ? hJob.studyramaUrl : combined[existingIdx].studyramaUrl,
+              sources: hJob.sources || combined[existingIdx].sources
+            });
+          } else {
+            combined.push(hJob);
+          }
+        });
+      }
+
+      // 1.j Intégration du catalogue Biologie & Chimie (OrientationBioChimieData)
+      const biochimieData = (typeof window !== 'undefined' && window.OrientationBioChimieData)
+        ? window.OrientationBioChimieData
+        : (typeof global !== 'undefined' && global.OrientationBioChimieData ? global.OrientationBioChimieData : null);
+
+      if (biochimieData && typeof biochimieData.getJobs === 'function') {
+        const bJobs = biochimieData.getJobs();
+        bJobs.forEach(bJob => {
+          const existingIdx = combined.findIndex(j => j.slug === bJob.slug || j.id === bJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, bJob, combined[existingIdx], {
+              aliases: [...new Set([...(bJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              connectedFamilies: [...new Set([...(combined[existingIdx].connectedFamilies || [combined[existingIdx].familyId]), bJob.familyId, 'biologie-chimie', 'sciences-biotech'])],
+              domain: bJob.domain || combined[existingIdx].domain,
+              domainId: bJob.domainId || combined[existingIdx].domainId,
+              subdomain: bJob.subdomain || combined[existingIdx].subdomain,
+              gettingStarted: bJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: bJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || bJob.africaContext,
+              salary: bJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || bJob.saviezVous || null,
+              cidjUrl: bJob.cidjUrl !== undefined ? bJob.cidjUrl : combined[existingIdx].cidjUrl,
+              sources: bJob.sources || combined[existingIdx].sources
+            });
+          } else {
+            combined.push(bJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -1866,6 +2000,12 @@
       if (familyId === 'sciences-terre-geosciences') {
         return all.filter(j => j.familyId === 'sciences-terre-geosciences' || (j.connectedFamilies && j.connectedFamilies.includes('sciences-terre-geosciences')) || j.sourcePoitiers);
       }
+      if (familyId === 'sante-soins-paramedical' || familyId === 'sante-biomedical') {
+        return all.filter(j => j.familyId === 'sante-soins-paramedical' || j.familyId === 'sante-biomedical');
+      }
+      if (familyId === 'biologie-chimie' || familyId === 'sciences-biotech') {
+        return all.filter(j => j.familyId === 'biologie-chimie' || j.familyId === 'sciences-biotech');
+      }
       return all.filter(j => j.familyId === familyId);
     },
 
@@ -1886,6 +2026,10 @@
           matchesFamily = (j.familyId === 'industrie-mecanique' || j.familyId === 'industrie-technologies-ingenierie');
         } else if (familyId === 'sciences-terre-geosciences') {
           matchesFamily = (j.familyId === 'sciences-terre-geosciences' || (j.connectedFamilies && j.connectedFamilies.includes('sciences-terre-geosciences')) || j.sourcePoitiers);
+        } else if (familyId === 'sante-soins-paramedical' || familyId === 'sante-biomedical') {
+          matchesFamily = (j.familyId === 'sante-soins-paramedical' || j.familyId === 'sante-biomedical');
+        } else if (familyId === 'biologie-chimie' || familyId === 'sciences-biotech') {
+          matchesFamily = (j.familyId === 'biologie-chimie' || j.familyId === 'sciences-biotech');
         } else {
           matchesFamily = (j.familyId === familyId);
         }
@@ -2059,8 +2203,16 @@
           }
         }
         if (job.typicalDay && Array.isArray(job.typicalDay)) {
-          if (job.typicalDay.some(t => (t.title && t.title.toLowerCase().includes(q)) || (t.desc && t.desc.toLowerCase().includes(q)))) return true;
+          if (job.typicalDay.some(t => (t.title && t.title.toLowerCase().includes(q)) || (t.desc && t.desc.toLowerCase().includes(q)) || (t.activity && t.activity.toLowerCase().includes(q)))) return true;
         }
+        if (job.daily && typeof job.daily === 'object') {
+          if (job.daily.morning && job.daily.morning.toLowerCase().includes(q)) return true;
+          if (job.daily.afternoon && job.daily.afternoon.toLowerCase().includes(q)) return true;
+          if (job.daily.challenges && job.daily.challenges.toLowerCase().includes(q)) return true;
+        }
+        if (job.studyramaUrl && "studyrama".includes(q)) return true;
+        if (job.cidjUrl && "cidj".includes(q)) return true;
+        if (job.connectedFamilies && Array.isArray(job.connectedFamilies) && job.connectedFamilies.some(cf => cf.toLowerCase().includes(q))) return true;
         if (job.saviezVous) {
           if (typeof job.saviezVous === 'string' && job.saviezVous.toLowerCase().includes(q)) return true;
           if (typeof job.saviezVous === 'object') {
@@ -2198,6 +2350,30 @@
       return [];
     },
 
+    getHealthDomains: function () {
+      const healthData = (typeof window !== 'undefined' && window.OrientationHealthData)
+        ? window.OrientationHealthData
+        : (typeof global !== 'undefined' && global.OrientationHealthData
+          ? global.OrientationHealthData
+          : (typeof OrientationHealthData !== 'undefined' ? OrientationHealthData : null));
+      if (healthData && typeof healthData.getDomains === 'function') {
+        return healthData.getDomains();
+      }
+      return [];
+    },
+
+    getBioChimieDomains: function () {
+      const biochimieData = (typeof window !== 'undefined' && window.OrientationBioChimieData)
+        ? window.OrientationBioChimieData
+        : (typeof global !== 'undefined' && global.OrientationBioChimieData
+          ? global.OrientationBioChimieData
+          : (typeof OrientationBioChimieData !== 'undefined' ? OrientationBioChimieData : null));
+      if (biochimieData && typeof biochimieData.getDomains === 'function') {
+        return biochimieData.getDomains();
+      }
+      return [];
+    },
+
     getFamilyDomains: function (familyId) {
       if (familyId === 'numerique-ia') {
         return this.getDigitalDomains();
@@ -2225,6 +2401,12 @@
       }
       if (familyId === 'sciences-terre-geosciences' || familyId === 'mines-geosciences') {
         return this.getGeosciencesDomains();
+      }
+      if (familyId === 'sante-soins-paramedical' || familyId === 'sante-biomedical') {
+        return this.getHealthDomains();
+      }
+      if (familyId === 'biologie-chimie' || familyId === 'sciences-biotech') {
+        return this.getBioChimieDomains();
       }
       return [];
     },
