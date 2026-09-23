@@ -10,6 +10,14 @@ require('dotenv').config({ path: path.resolve(__dirname, '../backend/.env') });
 const VERCEL_TOKEN = process.env.VERCEL_TOKEN;
 const PROJECT_NAME = process.env.VERCEL_PROJECT_NAME || 'monde-du-travail';
 
+function requiredEnv(name) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Variable d'environnement requise manquante: ${name}`);
+  }
+  return value;
+}
+
 const headers = {
   Authorization: `Bearer ${VERCEL_TOKEN}`,
   'Content-Type': 'application/json',
@@ -38,37 +46,37 @@ async function apiRequest(endpoint, method = 'GET', body = null, extraHeaders = 
 const envVars = [
   {
     key: 'DATABASE_URL',
-    value: 'postgresql://postgres.[PROJECT-REF]:***SUPPRIME***@aws-0-eu-west-2.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true&connection_limit=5&pool_timeout=20',
+    value: requiredEnv('DATABASE_URL'),
     type: 'encrypted',
     target: ['production', 'preview', 'development'],
   },
   {
     key: 'DIRECT_URL',
-    value: 'postgresql://postgres:***SUPPRIME***@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require',
+    value: requiredEnv('DIRECT_URL'),
     type: 'encrypted',
     target: ['production', 'preview', 'development'],
   },
   {
     key: 'JWT_SECRET',
-    value: 'super_secret_jwt_key_pour_le_monde_du_travail_2026_securise',
+    value: requiredEnv('JWT_SECRET'),
     type: 'encrypted',
     target: ['production', 'preview', 'development'],
   },
   {
     key: 'JWT_REFRESH_SECRET',
-    value: 'super_refresh_jwt_key_pour_le_monde_du_travail_2026_securise',
+    value: requiredEnv('JWT_REFRESH_SECRET'),
     type: 'encrypted',
     target: ['production', 'preview', 'development'],
   },
   {
     key: 'SUPABASE_URL',
-    value: 'https://[PROJECT-REF].supabase.co',
+    value: requiredEnv('SUPABASE_URL'),
     type: 'encrypted',
     target: ['production', 'preview', 'development'],
   },
   {
     key: 'SUPABASE_ANON_KEY',
-    value: '[SUPABASE_PUBLISHABLE_KEY]',
+    value: requiredEnv('SUPABASE_ANON_KEY'),
     type: 'encrypted',
     target: ['production', 'preview', 'development'],
   },
