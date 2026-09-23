@@ -10424,3 +10424,111 @@ fade-in-up,
     display: none;
   }
 }
+
+/* Job dossier reading layout: keep the header from consuming the scroll area. */
+#job-dossier-overlay .dossier-modal {
+  width: min(1120px, calc(100vw - 2rem));
+  height: min(94dvh, 900px);
+  max-height: calc(100dvh - 2rem);
+  min-height: 0;
+}
+
+#job-dossier-overlay .dossier-hero {
+  height: clamp(220px, 32dvh, 300px);
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(203, 213, 225, 0.7) transparent;
+}
+
+#job-dossier-overlay .dossier-body {
+  flex: 1 1 0;
+  min-height: 120px;
+}
+
+@media (max-width: 640px) {
+  #job-dossier-overlay {
+    padding: 0;
+  }
+
+  #job-dossier-overlay .dossier-modal {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  #job-dossier-overlay .dossier-hero {
+    height: clamp(240px, 38dvh, 330px);
+    padding: 1rem;
+  }
+
+  #job-dossier-overlay .dossier-title {
+    font-size: clamp(1.35rem, 7vw, 1.8rem);
+  }
+
+  #job-dossier-overlay .dossier-body {
+    min-height: 180px;
+    padding: 1.1rem 1rem 1.5rem;
+  }
+
+  #job-dossier-overlay .dossier-tabs {
+    padding: 0 0.35rem;
+  }
+
+  #job-dossier-overlay .dossier-tab {
+    min-height: 52px;
+    padding: 0.85rem 0.8rem;
+    font-size: 0.84rem;
+  }
+
+  #job-dossier-overlay .dossier-text-block,
+  #job-dossier-overlay .dossier-editorial-lead,
+  #job-dossier-overlay .dossier-section p,
+  #job-dossier-overlay .dossier-section li {
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+}
+
+@media (max-width: 768px) {
+  #job-dossier-overlay .dossier-footer {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0.55rem;
+    padding: 0.65rem 0.75rem;
+    overflow-x: auto;
+  }
+
+  #job-dossier-overlay .dossier-footer-actions {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.45rem;
+    scrollbar-width: none;
+  }
+
+  #job-dossier-overlay .dossier-footer-actions::-webkit-scrollbar {
+    display: none;
+  }
+
+  #job-dossier-overlay .dossier-footer .btn-dossier-action,
+  #job-dossier-overlay .dossier-footer .btn-dossier-close-footer {
+    width: auto;
+    min-width: max-content;
+    flex: 0 0 auto;
+    justify-content: center;
+    padding: 0.55rem 0.75rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  #job-dossier-overlay .dossier-footer .btn-dossier-close-footer {
+    white-space: nowrap;
+  }
+}
