@@ -27,6 +27,10 @@
       hamburger.setAttribute('aria-expanded', 'true');
     }
     document.body.classList.add('nav-open');
+    document.body.dataset.navPreviousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const firstLink = navLinks && navLinks.querySelector('.mobile-nav-menu a, .mobile-nav-footer a');
+    if (firstLink) requestAnimationFrame(() => firstLink.focus());
   }
 
   function closeMobileMenu() {
@@ -38,6 +42,9 @@
       hamburger.setAttribute('aria-expanded', 'false');
     }
     document.body.classList.remove('nav-open');
+    document.body.style.overflow = document.body.dataset.navPreviousOverflow || '';
+    delete document.body.dataset.navPreviousOverflow;
+    if (hamburger) requestAnimationFrame(() => hamburger.focus());
   }
 
   function toggleMobileMenu() {

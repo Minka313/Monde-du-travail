@@ -26,9 +26,7 @@
         "description": "Examiner, diagnostiquer, soigner les pathologies et réaliser des actes médicaux et chirurgicaux pour préserver et rétablir la santé.",
         "subdomains": [
             "Médecine générale",
-            "Chirurgie & Bloc",
-            "Médecine d'urgence",
-            "Spécialités médicales"
+            "Chirurgie & Bloc"
         ]
     },
     {
@@ -55,8 +53,7 @@
         "subdomains": [
             "Chirurgie dentaire",
             "Assistance dentaire",
-            "Prothèse dentaire & CFAO",
-            "Orthodontie"
+            "Prothèse dentaire & CFAO"
         ]
     },
     {
@@ -69,8 +66,7 @@
         "subdomains": [
             "Maïeutique & Maternité",
             "Pédiatrie & Néonatologie",
-            "Petite enfance",
-            "Gynécologie"
+            "Petite enfance"
         ]
     },
     {
@@ -82,9 +78,7 @@
         "description": "Diagnostiquer et soigner les troubles psychiques et psychiatriques, avec thérapies médicamenteuses et accompagnement relationnel.",
         "subdomains": [
             "Psychiatrie clinique",
-            "Soins infirmiers psychiatriques",
-            "Pédopsychiatrie",
-            "Réhabilitation psychosociale"
+            "Soins infirmiers psychiatriques"
         ]
     },
     {
@@ -111,10 +105,9 @@
         "chainStage": "Intervention Préhospitalière & Triage",
         "description": "Prendre en charge les urgences vitales, réguler les appels d'aide médicale urgente et transporter les patients sécurisés.",
         "subdomains": [
-            "Régulation médicale (SAMU)",
-            "Ambulance & Transport sanitaire",
             "SMUR & Déchocage",
-            "Secours d'urgence"
+            "Ambulance & Transport sanitaire",
+            "Régulation médicale (SAMU)"
         ]
     },
     {
@@ -126,9 +119,7 @@
         "description": "Réaliser et interpréter les examens de biologie médicale (hématologie, biochimie, sérologie) guidant les décisions cliniques.",
         "subdomains": [
             "Biochimie clinique",
-            "Hématologie & Hémostase",
-            "Microbiologie médicale",
-            "Immunologie & Sérologie"
+            "Hématologie & Hémostase"
         ]
     },
     {
@@ -140,9 +131,7 @@
         "description": "Délivrer les médicaments, analyser les ordonnances, garantir la sécurité thérapeutique et assurer la pharmacovigilance.",
         "subdomains": [
             "Pharmacie d'officine",
-            "Pharmacie à usage intérieur (PUI)",
-            "Préparation magistrale",
-            "Conseil thérapeutique"
+            "Préparation magistrale"
         ]
     },
     {
@@ -155,8 +144,7 @@
         "subdomains": [
             "Direction d'établissement",
             "Coordination des soins (Cadres)",
-            "Secrétariat & Dossier patient",
-            "Gestion hospitalière"
+            "Secrétariat & Dossier patient"
         ]
     },
     {
@@ -167,9 +155,6 @@
         "chainStage": "Maintenance & Équipements de Haute Précision",
         "description": "Maintenir, calibrer et déployer les technologies d'imagerie, respirateurs, moniteurs et blocs opératoires connectés.",
         "subdomains": [
-            "Imagerie médicale",
-            "Bloc opératoire & Réanimation",
-            "GMAO hospitalière",
             "Dispositifs médicaux"
         ]
     }
@@ -5269,7 +5254,10 @@
             return DOMAINS.find(function(d) { return d.id === id; });
         },
         getJobs: function() {
-            return JOBS;
+            return JOBS.map(function(j) {
+                if (!j.familyName) j.familyName = 'Santé, Soins & Paramédical';
+                return j;
+            });
         },
         getJobById: function(id) {
             return JOBS.find(function(j) { return j.id === id; });
