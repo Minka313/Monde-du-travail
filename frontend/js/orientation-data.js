@@ -286,17 +286,25 @@
     {
       id: 'education-formation',
       order: 15,
-      name: 'Éducation, Enseignement & Formation',
+      name: 'Enseignement, Éducation & Formation',
       slug: 'education-formation',
+      aliasSlug: 'enseignement-education-formation',
+      aliases: ['education-formation', 'enseignement-education-formation', 'enseignement-formation'],
       icon: '🎓',
       color: '#6366f1', // Indigo
       image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop&q=80',
-      description: 'Transmettre le savoir, concevoir des parcours d’apprentissage innovants (EdTech), encadrer l’orientation et former les talents adultes.',
-      stats: { jobsEstimate: '35+ métiers', subdomainsCount: 8 },
-      representativeJobs: ['Ingénieur Pédagogique (Instructional Designer)', 'Professeur / Enseignant-Chercheur', 'EdTech Specialist', 'Responsable L&D'],
+      description: 'Transmettre le savoir, enseigner de la maternelle à l’université, piloter la vie scolaire, concevoir des parcours de formation continue et innover en EdTech.',
+      stats: { jobsEstimate: '21+ fiches d’excellence (Studyrama)', subdomainsCount: 8 },
+      representativeJobs: ['Professeur des Écoles', 'Professeur de Collège et Lycée', 'Enseignant-Chercheur', 'Conseiller Principal d’Éducation (CPE)', 'Formateur Professionnel d’Adultes', 'Responsable Pédagogique'],
       subdomains: [
-        'Enseignement primaire', 'Enseignement secondaire', 'Enseignement supérieur',
-        'Formation professionnelle', 'Orientation', 'Ingénierie pédagogique', 'EdTech', 'Learning & Development'
+        'Enseignement Primaire & Maternelle',
+        'Enseignement Secondaire (Général, Technologique & Pro)',
+        'Enseignement Supérieur & Recherche Universitaire',
+        'Formation Professionnelle Continue & Éducation des Adultes',
+        'Pédagogie, Ingénierie Pédagogique & Technologies Éducatives (EdTech)',
+        'Orientation, Vie Scolaire & Inclusion Éducative',
+        'Direction, Encadrement, Administration & Inspection Scolaire',
+        'Santé, Prévention & Bien-Être en Milieu Éducatif'
       ]
     },
     {
@@ -632,6 +640,62 @@
       label: 'Mener des enquêtes scientifiques & analyser des indices forensiques',
       description: 'Tu veux mettre la science au service de la vérité : révéler des empreintes, analyser des profils ADN et décrypter les scènes d’infraction.',
       familyIds: ['biologie-chimie', 'securite-defense', 'droit-management']
+    },
+    {
+      id: 'expliquer-transmettre',
+      icon: '👨‍🏫',
+      label: 'Expliquer, transmettre des savoirs & faire progresser',
+      description: 'Tu as la passion d’expliquer, d’aider les autres à comprendre, de vulgariser des concepts et de guider les apprenants vers la réussite.',
+      familyIds: ['education-formation', 'lettres-langues-sciences-humaines']
+    },
+    {
+      id: 'travailler-enfants-ecole',
+      icon: '🧒',
+      label: 'Travailler avec les jeunes enfants & éveiller leur curiosité',
+      description: 'Tu aimes le contact des tout-petits, leur apprendre à lire, écrire, compter, t’émerveiller de leurs progrès et veiller à leur sécurité.',
+      familyIds: ['education-formation', 'sante-soins-paramedical']
+    },
+    {
+      id: 'enseigner-discipline-lycee',
+      icon: '📚',
+      label: 'Enseigner une matière passionnante en collège ou lycée',
+      description: 'Tu es passionné par une discipline (Maths, Physique, SVT, Français, Anglais, Histoire, Philo...) et veux transmettre ta flamme aux adolescents.',
+      familyIds: ['education-formation', 'lettres-langues-sciences-humaines', 'biologie-chimie', 'sciences-terre-geosciences', 'numerique-ia']
+    },
+    {
+      id: 'former-adultes-reconversion',
+      icon: '🧑‍🏫',
+      label: 'Former des adultes & accompagner la reconversion professionnelle',
+      description: 'Tu veux transmettre des compétences professionnelles concrètes à des salariés ou des adultes en reconversion pour booster leur carrière.',
+      familyIds: ['education-formation', 'droit-management', 'industrie-mecanique', 'numerique-ia']
+    },
+    {
+      id: 'concevoir-cours-edtech',
+      icon: '💡',
+      label: 'Concevoir des cours interactifs, des supports & innover en EdTech',
+      description: 'Tu aimes structurer des formations, scénariser du e-learning, créer des quiz multimédias et animer des communautés apprenantes en ligne.',
+      familyIds: ['education-formation', 'numerique-ia']
+    },
+    {
+      id: 'orienter-accompagner-eleves',
+      icon: '🧭',
+      label: 'Aider les élèves à s’orienter & veiller au bien-être scolaire',
+      description: 'Tu as le sens de l’écoute, tu veux guider les jeunes vers leur vocation future, lutter contre le décrochage et favoriser l’inclusion de tous.',
+      familyIds: ['education-formation', 'lettres-langues-sciences-humaines', 'sante-soins-paramedical']
+    },
+    {
+      id: 'enseigner-sciences-recherche',
+      icon: '🎓',
+      label: 'Enseigner à l’université & mener des recherches scientifiques',
+      description: 'Tu veux faire avancer les connaissances en laboratoire tout en dispensant des cours magistraux de haut niveau aux étudiants du supérieur.',
+      familyIds: ['education-formation', 'biologie-chimie', 'sciences-terre-geosciences', 'lettres-langues-sciences-humaines', 'numerique-ia']
+    },
+    {
+      id: 'animer-sport-scolaire',
+      icon: '🏃',
+      label: 'Transmettre le goût du sport, du mouvement & du fair-play',
+      description: 'Tu es passionné d’activité physique et tu veux développer la motricité, la santé et l’esprit d’équipe des jeunes sur les terrains de sport.',
+      familyIds: ['education-formation', 'sante-soins-paramedical']
     }
   ];
 
@@ -1770,10 +1834,14 @@
       if (llshData && typeof llshData.getJobs === 'function') {
         const llshJobs = llshData.getJobs();
         llshJobs.forEach(lJob => {
+          const isEduLinked = ['conseiller-orientation-psychologue', 'documentaliste', 'formateur-langues-fle', 'professeur-universite', 'enseignant-chercheur-philosophie'].includes(lJob.id);
+          const eduConnections = isEduLinked ? ['education-formation', 'enseignement-education-formation'] : [];
+
           const existingIdx = combined.findIndex(j => j.slug === lJob.slug || j.id === lJob.id);
           if (existingIdx >= 0) {
             combined[existingIdx] = Object.assign({}, lJob, combined[existingIdx], {
               aliases: [...new Set([...(lJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              connectedFamilies: [...new Set([...(combined[existingIdx].connectedFamilies || [combined[existingIdx].familyId || lJob.familyId]), ...eduConnections])],
               domain: lJob.domain || combined[existingIdx].domain,
               domainId: lJob.domainId || combined[existingIdx].domainId,
               subdomain: lJob.subdomain || combined[existingIdx].subdomain,
@@ -1786,7 +1854,11 @@
               sources: lJob.sources || combined[existingIdx].sources
             });
           } else {
-            combined.push(lJob);
+            const jobCopy = Object.assign({}, lJob);
+            if (isEduLinked) {
+              jobCopy.connectedFamilies = [...new Set([...(jobCopy.connectedFamilies || [jobCopy.familyId]), ...eduConnections])];
+            }
+            combined.push(jobCopy);
           }
         });
       }
@@ -1913,6 +1985,36 @@
         });
       }
 
+      // 1.k Intégration du catalogue Enseignement, Éducation & Formation (OrientationEducationData)
+      const educationData = (typeof window !== 'undefined' && window.OrientationEducationData)
+        ? window.OrientationEducationData
+        : (typeof global !== 'undefined' && global.OrientationEducationData ? global.OrientationEducationData : null);
+
+      if (educationData && typeof educationData.getJobs === 'function') {
+        const eduJobs = educationData.getJobs();
+        eduJobs.forEach(edJob => {
+          const existingIdx = combined.findIndex(j => j.slug === edJob.slug || j.id === edJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, edJob, combined[existingIdx], {
+              aliases: [...new Set([...(edJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              connectedFamilies: [...new Set([...(combined[existingIdx].connectedFamilies || [combined[existingIdx].familyId]), edJob.familyId, 'education-formation', 'enseignement-education-formation'])],
+              domain: edJob.domain || combined[existingIdx].domain,
+              domainId: edJob.domainId || combined[existingIdx].domainId,
+              subdomain: edJob.subdomain || combined[existingIdx].subdomain,
+              gettingStarted: edJob.gettingStarted || combined[existingIdx].gettingStarted,
+              aiImpact: edJob.aiImpact || combined[existingIdx].aiImpact,
+              africaContext: combined[existingIdx].africaContext || edJob.africaContext,
+              salary: edJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || edJob.saviezVous || null,
+              studyramaUrl: edJob.studyramaUrl !== undefined ? edJob.studyramaUrl : combined[existingIdx].studyramaUrl,
+              sources: edJob.sources || combined[existingIdx].sources
+            });
+          } else {
+            combined.push(edJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -2006,6 +2108,9 @@
       if (familyId === 'biologie-chimie' || familyId === 'sciences-biotech') {
         return all.filter(j => j.familyId === 'biologie-chimie' || j.familyId === 'sciences-biotech');
       }
+      if (familyId === 'education-formation' || familyId === 'enseignement-education-formation') {
+        return all.filter(j => j.familyId === 'education-formation' || (j.connectedFamilies && (j.connectedFamilies.includes('education-formation') || j.connectedFamilies.includes('enseignement-education-formation'))));
+      }
       return all.filter(j => j.familyId === familyId);
     },
 
@@ -2030,6 +2135,8 @@
           matchesFamily = (j.familyId === 'sante-soins-paramedical' || j.familyId === 'sante-biomedical');
         } else if (familyId === 'biologie-chimie' || familyId === 'sciences-biotech') {
           matchesFamily = (j.familyId === 'biologie-chimie' || j.familyId === 'sciences-biotech');
+        } else if (familyId === 'education-formation' || familyId === 'enseignement-education-formation') {
+          matchesFamily = (j.familyId === 'education-formation' || (j.connectedFamilies && (j.connectedFamilies.includes('education-formation') || j.connectedFamilies.includes('enseignement-education-formation'))));
         } else {
           matchesFamily = (j.familyId === familyId);
         }
@@ -2113,18 +2220,28 @@
       if (!query || typeof query !== 'string' || !query.trim()) {
         return [];
       }
-      const q = query.trim().toLowerCase();
+      const rawQ = query.trim().toLowerCase();
+      const q = rawQ;
+      const normalizeText = (s) => (s || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const normQ = normalizeText(query.trim());
+      const matchesStr = (val) => {
+        if (!val) return false;
+        const s = val.toString().toLowerCase();
+        if (s.includes(rawQ)) return true;
+        return normalizeText(s).includes(normQ);
+      };
+
       const all = await this.getAllJobs();
 
       return all.filter(job => {
-        if (job.title && job.title.toLowerCase().includes(q)) return true;
-        if (job.aliases && Array.isArray(job.aliases) && job.aliases.some(a => a.toLowerCase().includes(q))) return true;
-        if (job.domain && job.domain.toLowerCase().includes(q)) return true;
-        if (job.familyName && job.familyName.toLowerCase().includes(q)) return true;
-        if (job.subdomain && job.subdomain.toLowerCase().includes(q)) return true;
-        if (job.shortDescription && job.shortDescription.toLowerCase().includes(q)) return true;
-        if (job.longDescription && job.longDescription.toLowerCase().includes(q)) return true;
-        if (job.simpleDefinition && job.simpleDefinition.toLowerCase().includes(q)) return true;
+        if (matchesStr(job.title)) return true;
+        if (job.aliases && Array.isArray(job.aliases) && job.aliases.some(matchesStr)) return true;
+        if (matchesStr(job.domain)) return true;
+        if (matchesStr(job.familyName)) return true;
+        if (matchesStr(job.subdomain)) return true;
+        if (matchesStr(job.shortDescription)) return true;
+        if (matchesStr(job.longDescription)) return true;
+        if (matchesStr(job.simpleDefinition)) return true;
 
         // Spécialisations
         if (job.specializations && Array.isArray(job.specializations) && job.specializations.some(s => s.toLowerCase().includes(q))) return true;
@@ -2220,6 +2337,22 @@
             if (job.saviezVous.pourquoi && job.saviezVous.pourquoi.toLowerCase().includes(q)) return true;
           }
         }
+
+        // Enseignement, Éducation & Formation (Spécialités, Matières, Publics, Pédagogie)
+        if (job.specialties && Array.isArray(job.specialties) && job.specialties.some(sp => sp.toLowerCase().includes(q))) return true;
+        if (job.summary && job.summary.toLowerCase().includes(q)) return true;
+        if (job.targetAudience && job.targetAudience.toLowerCase().includes(q)) return true;
+        if (job.workEnvironment && typeof job.workEnvironment === 'string' && job.workEnvironment.toLowerCase().includes(q)) return true;
+        if (job.skills) {
+          if (Array.isArray(job.skills.hard) && job.skills.hard.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.skills.soft) && job.skills.soft.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.skills.pedagogie) && job.skills.pedagogie.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.skills.communication) && job.skills.communication.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.skills.organisation) && job.skills.organisation.some(s => s.toLowerCase().includes(q))) return true;
+          if (Array.isArray(job.skills.numerique) && job.skills.numerique.some(s => s.toLowerCase().includes(q))) return true;
+        }
+        if (Array.isArray(job.studies) && job.studies.some(st => typeof st === 'string' && st.toLowerCase().includes(q))) return true;
+        if (Array.isArray(job.qualities) && job.qualities.some(ql => ql.toLowerCase().includes(q))) return true;
 
         return false;
       });
@@ -2374,6 +2507,18 @@
       return [];
     },
 
+    getEducationDomains: function () {
+      const educationData = (typeof window !== 'undefined' && window.OrientationEducationData)
+        ? window.OrientationEducationData
+        : (typeof global !== 'undefined' && global.OrientationEducationData
+          ? global.OrientationEducationData
+          : (typeof OrientationEducationData !== 'undefined' ? OrientationEducationData : null));
+      if (educationData && typeof educationData.getDomains === 'function') {
+        return educationData.getDomains();
+      }
+      return [];
+    },
+
     getFamilyDomains: function (familyId) {
       if (familyId === 'numerique-ia') {
         return this.getDigitalDomains();
@@ -2407,6 +2552,9 @@
       }
       if (familyId === 'biologie-chimie' || familyId === 'sciences-biotech') {
         return this.getBioChimieDomains();
+      }
+      if (familyId === 'education-formation' || familyId === 'enseignement-education-formation') {
+        return this.getEducationDomains();
       }
       return [];
     },

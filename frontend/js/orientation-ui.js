@@ -1424,13 +1424,28 @@
             ` : ''}
 
             <!-- Référentiel Officiel Santé, Soins & Paramédical (Studyrama / Ordres) -->
-            ${(job.familyId === 'sante-soins-paramedical' || job.studyramaUrl) ? `
+            ${(job.familyId === 'sante-soins-paramedical' || job.familyId === 'sante-biomedical') ? `
               <div class="dossier-health-ref-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:1.35rem;padding:0.85rem 1.15rem;background:linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);border:1.5px solid #fca5a5;border-radius:12px;">
                 <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#991b1b;font-size:0.88rem;">
                   <span>🏥</span>
                   <span>Référentiel Médical & Paramédical d'Excellence</span>
                 </div>
                 <span style="font-size:0.8rem;color:#7f1d1d;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #fecaca;">Études PASS / L.AS • Diplômes d'État</span>
+              </div>
+            ` : ''}
+
+            <!-- Référentiel Officiel Enseignement, Éducation & Formation (Studyrama) -->
+            ${(job.familyId === 'education-formation' || job.familyId === 'enseignement-education-formation' || (job.studyramaUrl && job.studyramaUrl.includes('/enseignement/'))) ? `
+              <div class="dossier-education-ref-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:1.35rem;padding:0.85rem 1.15rem;background:linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);border:1.5px solid #93c5fd;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#1e40af;font-size:0.88rem;">
+                  <span>🎓</span>
+                  <span>Référentiel Métiers Enseignement & Éducation (Studyrama)</span>
+                </div>
+                ${job.studyramaUrl ? `
+                  <a href="${escapeHtml(job.studyramaUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:0.8rem;color:#1d4ed8;font-weight:600;text-decoration:none;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #bfdbfe;display:inline-flex;align-items:center;gap:4px;">
+                    Consulter sur Studyrama.com ↗
+                  </a>
+                ` : `<span style="font-size:0.8rem;color:#1e40af;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #bfdbfe;">Source Studyrama Enseignement</span>`}
               </div>
             ` : ''}
 

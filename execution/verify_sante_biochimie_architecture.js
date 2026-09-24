@@ -30,6 +30,7 @@ try {
   global.OrientationGeosciencesData = require('../frontend/js/orientation-geosciences-data.js');
   global.OrientationHealthData = require('../frontend/js/orientation-health-data.js');
   global.OrientationBioChimieData = require('../frontend/js/orientation-biochimie-data.js');
+  global.OrientationEducationData = require('../frontend/js/orientation-education-data.js');
   global.OrientationData = require('../frontend/js/orientation-data.js');
 
   console.log('✅ Tous les modules JS ont été chargés avec succès dans le runtime Node.js.\n');
@@ -159,8 +160,8 @@ async function runTests() {
   console.log('\n--- TEST GROUP 4 : Volumétrie globale & Règle Stricte Zéro Doublon ---');
   const allJobs = await od.getAllJobs();
   console.log(`  📊 Total catalogue unifié : ${allJobs.length} métiers`);
-  assert(allJobs.length >= 400, `Le catalogue total compte au moins 400 métiers (actuel: ${allJobs.length})`);
-  assert(allJobs.length === 410, `Le catalogue unifié atteint exactement 410 métiers (356 existants + 30 Santé + 24 BioChimie) (actuel: ${allJobs.length})`);
+  assert(allJobs.length >= 410, `Le catalogue total compte au moins 410 métiers (actuel: ${allJobs.length})`);
+  assert(allJobs.length === 431, `Le catalogue unifié atteint exactement 431 métiers (410 précédents + 21 Éducation) (actuel: ${allJobs.length})`);
 
   const seenIds = new Set();
   const duplicateIds = [];
