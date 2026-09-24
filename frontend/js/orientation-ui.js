@@ -552,7 +552,9 @@
         'biologie-chimie': "Cartographie d'Excellence Biologie & Chimie",
         'sciences-biotech': "Cartographie d'Excellence Biologie & Chimie",
         'education-formation': "Cartographie d'Excellence Enseignement, Éducation & Formation",
-        'enseignement-education-formation': "Cartographie d'Excellence Enseignement, Éducation & Formation"
+        'enseignement-education-formation': "Cartographie d'Excellence Enseignement, Éducation & Formation",
+        'environnement-developpement-durable': "Cartographie d'Excellence Environnement, Écologie & Développement durable",
+        'environnement-climat': "Cartographie d'Excellence Environnement, Écologie & Développement durable"
       };
       const cartographyTitle = cartographyTitles[family.id] || `Cartographie d'Excellence — ${family.name}`;
 
@@ -573,7 +575,9 @@
         'biologie-chimie': "15 Domaines • 24 Fiches Métiers (CIDJ)",
         'sciences-biotech': "15 Domaines • 24 Fiches Métiers (CIDJ)",
         'education-formation': "8 Domaines • 21 Fiches Métiers (Studyrama)",
-        'enseignement-education-formation': "8 Domaines • 21 Fiches Métiers (Studyrama)"
+        'enseignement-education-formation': "8 Domaines • 21 Fiches Métiers (Studyrama)",
+        'environnement-developpement-durable': "6 Domaines • 18 Fiches Métiers (Onisep)",
+        'environnement-climat': "6 Domaines • 18 Fiches Métiers (Onisep)"
       };
       const cartographyBadge = cartographyBadges[family.id] || `${familyDomains.length} Domaines d'expertise`;
 
@@ -1454,6 +1458,19 @@
                     Consulter sur Studyrama.com ↗
                   </a>
                 ` : `<span style="font-size:0.8rem;color:#1e40af;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #bfdbfe;">Source Studyrama Enseignement</span>`}
+              </div>
+            <!-- Référentiel Officiel Environnement & Développement Durable (Onisep 2025) -->
+            ${(job.familyId === 'environnement-developpement-durable' || job.familyId === 'environnement-climat' || job.onisepUrl || job.onisepSource) ? `
+              <div class="dossier-environment-ref-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:1.35rem;padding:0.85rem 1.15rem;background:linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);border:1.5px solid #6ee7b7;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#065f46;font-size:0.88rem;">
+                  <span>🌱</span>
+                  <span>Référentiel Métiers Environnement & Écologie (Onisep 2025)</span>
+                </div>
+                ${job.onisepUrl ? `
+                  <a href="${escapeHtml(job.onisepUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:0.8rem;color:#047857;font-weight:600;text-decoration:none;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #a7f3d0;display:inline-flex;align-items:center;gap:4px;">
+                    Consulter sur Onisep.fr ↗
+                  </a>
+                ` : `<span style="font-size:0.8rem;color:#065f46;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #a7f3d0;">Source Onisep Officielle</span>`}
               </div>
             ` : ''}
 

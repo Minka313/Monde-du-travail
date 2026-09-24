@@ -170,12 +170,9 @@
       if (!cleanProfile) return false;
       this.userProfile = cleanProfile;
 
-      // Synchronisation backend silencieuse
       let saved = false;
       try {
-        const token = (window.Api && typeof window.Api.getToken === 'function')
-          ? window.Api.getToken()
-          : (localStorage.getItem('accessToken') || null);
+        const token = window.Api?.getToken ? window.Api.getToken() : localStorage.getItem('accessToken');
         const headers = { 'Content-Type': 'application/json' };
         if (token) headers.Authorization = `Bearer ${token}`;
         const response = await fetch(`${this.apiUrl}/analytics/profile`, {

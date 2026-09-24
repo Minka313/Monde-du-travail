@@ -340,6 +340,7 @@
       }),
     },
     approvals: {
+      get: (id) => apiRequestWithRefresh(`/approvals/${id}`),
       getPending: () => apiRequestWithRefresh('/approvals/pending'),
       getAll: (params = {}) => {
         const query = new URLSearchParams();
@@ -361,6 +362,7 @@
       }),
     },
     formations: {
+      get: (id) => apiRequestWithRefresh(`/formations/${id}`),
       getAll: () => apiRequestWithRefresh('/formations'),
       getCategories: () => apiRequestWithRefresh('/formations/categories'),
       getAdmin: (params = {}) => contentListQuery('/formations/admin/list', params),
@@ -374,6 +376,7 @@
       archive: (id) => apiRequestWithRefresh(`/formations/${id}/archive`, { method: 'POST' }),
     },
     jobs: {
+      get: (id) => apiRequestWithRefresh(`/jobs/${id}`),
       getAll: () => apiRequestWithRefresh('/jobs'),
       getDomains: () => apiRequestWithRefresh('/jobs/domains'),
       getAdmin: (params = {}) => contentListQuery('/jobs/admin/list', params),
@@ -506,6 +509,7 @@
     },
     getToken,
     setToken,
+    reauth: showReauthModal,
     removeTokens,
     removeToken: removeTokens,
     isLoggedIn: () => !!getToken(),

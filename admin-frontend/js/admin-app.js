@@ -41,9 +41,10 @@
 
     getAuthorizedModules: function(user) {
       return Object.keys(MODULE_PERMISSIONS).filter(module => {
-        if (['dashboard', 'analytics', 'notifications', 'organization', 'vitrine'].includes(module)) {
+        if (['analytics', 'notifications', 'organization', 'vitrine'].includes(module)) {
           return this.isAdminUser(user);
         }
+        if (module === 'dashboard') return user?.role === 'ULTRA_ADMIN';
         if (module === 'approvals') {
           return this.hasPermission(user, 'approvals.read')
             || this.hasPermission(user, 'membership.read')

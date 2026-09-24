@@ -339,19 +339,25 @@
       ]
     },
     {
-      id: 'environnement-climat',
+      id: 'environnement-developpement-durable',
       order: 17,
-      name: 'Environnement, Climat & Métiers Verts',
-      slug: 'environnement-climat',
+      name: 'Environnement, Écologie & Développement durable',
+      slug: 'environnement-developpement-durable',
+      aliases: ['environnement-climat', 'ecologie-developpement-durable', 'environnement'],
+      aliasSlug: 'environnement-climat',
       icon: '🌱',
-      color: '#15803d', // Vert forêt
-      image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&auto=format&fit=crop&q=80',
-      description: 'Préserver la biodiversité, mesurer l’empreinte carbone, manager la transition RSE et concevoir des boucles d’économie circulaire.',
-      stats: { jobsEstimate: '40+ métiers', subdomainsCount: 10 },
-      representativeJobs: ['Ingénieur Écologue', 'Responsable RSE & Développement Durable', 'Hydrologue', 'Analyste Bilan Carbone'],
+      color: '#10b981', // Vert émeraude / Écologie
+      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80',
+      description: 'Protéger la biodiversité, préserver la ressource en eau, gérer et recycler les déchets, accélérer la transition énergétique, concevoir les stratégies RSE et sécuriser le droit environnemental.',
+      stats: { jobsEstimate: '28+ métiers', subdomainsCount: 6 },
+      representativeJobs: ['Hydraulicien', 'Biologiste en environnement', 'Chef de projet développement durable', 'Responsable de la collecte des déchets', 'Météorologiste', 'Animateur nature', 'Juriste en droit de l\'environnement'],
       subdomains: [
-        'Environnement', 'Écologie', 'Climat', 'Hydrologie', 'Déchets',
-        'Économie circulaire', 'Carbone', 'Développement durable', 'RSE', 'Transition énergétique'
+        'Eau & Hydraulique',
+        'Déchets, Tri & Recyclage',
+        'Biodiversité & Écosystèmes',
+        'Forêt & Espaces naturels',
+        'Conseil, Stratégie & Droit de l\'Environnement',
+        'Climat & Météorologie'
       ]
     },
     {
@@ -506,7 +512,49 @@
       icon: '🌱',
       label: 'Travailler avec la terre, la mer & l’environnement',
       description: 'Tu aimes le plein air, la biodiversité, les plantes, la météo, la lutte contre le réchauffement climatique.',
-      familyIds: ['agriculture-agritech', 'environnement-climat', 'peche-maritime', 'elevage-veterinaire', 'sciences-terre-geosciences', 'biologie-chimie']
+      familyIds: ['agriculture-agritech', 'environnement-developpement-durable', 'environnement-climat', 'peche-maritime', 'elevage-veterinaire', 'sciences-terre-geosciences', 'biologie-chimie']
+    },
+    {
+      id: 'proteger-eau-rivieres',
+      icon: '💧',
+      label: 'Protéger l’eau, les rivières & assainir les réseaux',
+      description: 'Tu veux agir pour préserver les ressources en eau douce, contrôler sa qualité biologique et assainir les réseaux.',
+      familyIds: ['environnement-developpement-durable', 'environnement-climat', 'sciences-terre-geosciences', 'agriculture-agritech']
+    },
+    {
+      id: 'recycler-reduire-dechets',
+      icon: '♻️',
+      label: 'Lutter contre la pollution, trier & recycler les déchets',
+      description: 'Tu veux valoriser les matières, promouvoir l’économie circulaire, le zéro déchet et les recycleries.',
+      familyIds: ['environnement-developpement-durable', 'environnement-climat', 'industrie-mecanique']
+    },
+    {
+      id: 'preserver-biodiversite-nature',
+      icon: '🌿',
+      label: 'Préserver la biodiversité, les forêts & les parcs naturels',
+      description: 'Tu aimes observer les animaux et les plantes sur le terrain, sauvegarder les espèces menacées et animer des sorties nature.',
+      familyIds: ['environnement-developpement-durable', 'environnement-climat', 'biologie-chimie', 'agriculture-agritech']
+    },
+    {
+      id: 'transition-energies-durables',
+      icon: '⚡',
+      label: 'Accélérer la transition écologique & l’efficacité énergétique',
+      description: 'Tu veux développer les énergies renouvelables, décarboner les usines et réduire le gaspillage énergétique.',
+      familyIds: ['environnement-developpement-durable', 'environnement-climat', 'energie-renouvelable', 'btp-architecture']
+    },
+    {
+      id: 'conseiller-entreprises-rse',
+      icon: '🌍',
+      label: 'Guider les organisations vers la RSE & le droit vert',
+      description: 'Tu aimes la stratégie responsable, le calcul d’empreinte carbone et la sécurisation juridique de la transition.',
+      familyIds: ['environnement-developpement-durable', 'environnement-climat', 'droit-management', 'finance-fintech']
+    },
+    {
+      id: 'etudier-climat-meteo',
+      icon: '🌦️',
+      label: 'Analyser le climat, l’atmosphère & prévoir la météo',
+      description: 'Tu es fasciné par les cartes satellites, les modèles numériques d’orages et l’anticipation des risques climatiques.',
+      familyIds: ['environnement-developpement-durable', 'environnement-climat', 'sciences-terre-geosciences', 'numerique-ia']
     },
     {
       id: 'construire-fabriquer',
@@ -1635,9 +1683,12 @@
   // 4. SERVICE DATA & MÉTHODES D'ACCÈS DU MODULE
   // =========================================================================
   const OrientationData = {
-    // Récupérer toutes les 22 familles triées par ordre
+    // Récupérer toutes les 23 familles triées par ordre
     getFamilies: function () {
       return [...FAMILIES].sort((a, b) => a.order - b.order);
+    },
+    getProfessionalFamilies: function () {
+      return this.getFamilies();
     },
 
     // Récupérer une famille par son ID, son Slug ou son Alias
@@ -2019,6 +2070,33 @@
         });
       }
 
+      // 1.l Intégration du catalogue Environnement, Écologie & Développement durable (OrientationEnvironmentData)
+      const environmentData = (typeof window !== 'undefined' && window.OrientationEnvironmentData)
+        ? window.OrientationEnvironmentData
+        : (typeof global !== 'undefined' && global.OrientationEnvironmentData ? global.OrientationEnvironmentData : null);
+
+      if (environmentData && typeof environmentData.getJobs === 'function') {
+        const envJobs = environmentData.getJobs();
+        envJobs.forEach(envJob => {
+          const existingIdx = combined.findIndex(j => j.slug === envJob.slug || j.id === envJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, envJob, combined[existingIdx], {
+              aliases: [...new Set([...(envJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              connectedFamilies: [...new Set([...(combined[existingIdx].connectedFamilies || [combined[existingIdx].familyId]), envJob.familyId, 'environnement-developpement-durable', 'environnement-climat'])],
+              domain: envJob.domain || combined[existingIdx].domain,
+              domainId: envJob.domainId || combined[existingIdx].domainId,
+              subdomain: envJob.subdomain || combined[existingIdx].subdomain,
+              salary: envJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || envJob.saviezVous || null,
+              onisepUrl: envJob.onisepUrl !== undefined ? envJob.onisepUrl : combined[existingIdx].onisepUrl,
+              sources: envJob.sources || combined[existingIdx].sources
+            });
+          } else {
+            combined.push(envJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -2115,6 +2193,9 @@
       if (familyId === 'education-formation' || familyId === 'enseignement-education-formation') {
         return all.filter(j => j.familyId === 'education-formation' || (j.connectedFamilies && (j.connectedFamilies.includes('education-formation') || j.connectedFamilies.includes('enseignement-education-formation'))));
       }
+      if (familyId === 'environnement-developpement-durable' || familyId === 'environnement-climat' || familyId === 'environnement' || familyId === 'ecologie-developpement-durable') {
+        return all.filter(j => j.familyId === 'environnement-developpement-durable' || j.familyId === 'environnement-climat' || (j.connectedFamilies && (j.connectedFamilies.includes('environnement-developpement-durable') || j.connectedFamilies.includes('environnement-climat') || j.connectedFamilies.includes('environnement'))));
+      }
       return all.filter(j => j.familyId === familyId);
     },
 
@@ -2141,6 +2222,8 @@
           matchesFamily = (j.familyId === 'biologie-chimie' || j.familyId === 'sciences-biotech');
         } else if (familyId === 'education-formation' || familyId === 'enseignement-education-formation') {
           matchesFamily = (j.familyId === 'education-formation' || (j.connectedFamilies && (j.connectedFamilies.includes('education-formation') || j.connectedFamilies.includes('enseignement-education-formation'))));
+        } else if (familyId === 'environnement-developpement-durable' || familyId === 'environnement-climat' || familyId === 'environnement' || familyId === 'ecologie-developpement-durable') {
+          matchesFamily = (j.familyId === 'environnement-developpement-durable' || j.familyId === 'environnement-climat' || (j.connectedFamilies && (j.connectedFamilies.includes('environnement-developpement-durable') || j.connectedFamilies.includes('environnement-climat') || j.connectedFamilies.includes('environnement'))));
         } else {
           matchesFamily = (j.familyId === familyId);
         }
@@ -2199,6 +2282,9 @@
       if (!slugOrId) return null;
       const all = await this.getAllJobs();
       return all.find(j => j.slug === slugOrId || j.id === slugOrId) || null;
+    },
+    getJobById: async function (id) {
+      return this.getJobBySlug(id);
     },
 
     // Récupérer les métiers proches pour une fiche métier
@@ -2383,6 +2469,22 @@
         }
         if (Array.isArray(job.studies) && job.studies.some(st => typeof st === 'string' && st.toLowerCase().includes(q))) return true;
         if (Array.isArray(job.qualities) && job.qualities.some(ql => ql.toLowerCase().includes(q))) return true;
+
+        // Environnement, Écologie & Développement durable (Onisep 04/11/2025)
+        if (job.didYouKnow && matchesStr(job.didYouKnow)) return true;
+        if (job.environmentalImpact && matchesStr(job.environmentalImpact)) return true;
+        if (job.perspectives && matchesStr(job.perspectives)) return true;
+        if (Array.isArray(job.technicalSkills) && job.technicalSkills.some(s => matchesStr(s))) return true;
+        if (Array.isArray(job.softSkills) && job.softSkills.some(s => matchesStr(s))) return true;
+        if (Array.isArray(job.dailyMissions) && job.dailyMissions.some(m => {
+          if (typeof m === 'string') return matchesStr(m);
+          if (m && typeof m === 'object') return matchesStr(m.mission) || matchesStr(m.time);
+          return false;
+        })) return true;
+        if (job.formations) {
+          if (Array.isArray(job.formations.france) && job.formations.france.some(f => matchesStr(f))) return true;
+          if (Array.isArray(job.formations.senegal) && job.formations.senegal.some(s => matchesStr(s))) return true;
+        }
 
         return false;
       });
@@ -2586,6 +2688,21 @@
       if (familyId === 'education-formation' || familyId === 'enseignement-education-formation') {
         return this.getEducationDomains();
       }
+      if (familyId === 'environnement-developpement-durable' || familyId === 'environnement-climat' || familyId === 'environnement' || familyId === 'ecologie-developpement-durable') {
+        return this.getEnvironmentDomains();
+      }
+      return [];
+    },
+
+    getEnvironmentDomains: function () {
+      const environmentData = (typeof window !== 'undefined' && window.OrientationEnvironmentData)
+        ? window.OrientationEnvironmentData
+        : (typeof global !== 'undefined' && global.OrientationEnvironmentData
+          ? global.OrientationEnvironmentData
+          : (typeof OrientationEnvironmentData !== 'undefined' ? OrientationEnvironmentData : null));
+      if (environmentData && typeof environmentData.getDomains === 'function') {
+        return environmentData.getDomains();
+      }
       return [];
     },
 
@@ -2600,6 +2717,9 @@
         case 'ENERGIE': return 'energie-renouvelable';
         case 'SANTE': return 'sante-biomedical';
         case 'EDUCATION': return 'education-formation';
+        case 'ENVIRONNEMENT':
+        case 'ECOLOGIE':
+          return 'environnement-developpement-durable';
         default: return 'droit-management';
       }
     }
