@@ -385,19 +385,25 @@
       ]
     },
     {
-      id: 'culture-medias',
+      id: 'communication-marketing-medias-creation',
       order: 19,
-      name: 'Culture, Médias, Communication & Industries Créatives',
-      slug: 'culture-medias',
-      icon: '🎨',
-      color: '#a855f7', // Pourpre créatif
-      image: 'https://images.unsplash.com/photo-1542744094-3a31f272c490?w=800&auto=format&fit=crop&q=80',
-      description: 'Raconter des histoires percutantes, produire des contenus vidéo/cinéma, designer des identités de marques et animer les communautés.',
-      stats: { jobsEstimate: '55+ métiers', subdomainsCount: 12 },
-      representativeJobs: ['Directeur Artistique', 'Motion Designer 3D', 'Journaliste d’Investigation', 'Social Media Strategist', 'Game Designer'],
+      name: 'Communication, Marketing, Médias & Création',
+      slug: 'communication-marketing-medias-creation',
+      aliases: ['culture-medias', 'communication-medias', 'communication', 'medias-creation'],
+      aliasSlug: 'culture-medias',
+      icon: '📣',
+      color: '#ea580c', // Orange flamboyant & créatif
+      image: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&auto=format&fit=crop&q=80',
+      description: 'Bâtir des réputations d’acier, inventer des marques inspirantes, orchestrer l’acquisition digitale, créer des univers visuels mémorables et faire vibrer le public lors d’événements d’envergure.',
+      stats: { jobsEstimate: '65+ métiers', subdomainsCount: 6 },
+      representativeJobs: ['Directeur de la Communication', 'Brand Strategist', 'Head of Acquisition', 'Directeur Artistique', 'Planneur Stratégique', 'Event Manager'],
       subdomains: [
-        'Design graphique', 'UX/UI', 'Photographie', 'Vidéo', 'Cinéma',
-        'Animation', '3D', 'Jeu vidéo', 'Journalisme', 'Communication', 'Production média', 'Création de contenu'
+        'Communication & Relations publiques',
+        'Marketing & Stratégie de marque',
+        'Marketing Digital & Acquisition',
+        'Médias, Publicité & Contenu',
+        'Création & Design',
+        'Événementiel & Expérience'
       ]
     },
     {
@@ -492,7 +498,7 @@
       icon: '🎨',
       label: 'Créer, dessiner, imaginer & designer',
       description: 'Tu as une sensibilité visuelle, tu aimes inventer de nouveaux concepts, assembler des formes et des couleurs.',
-      familyIds: ['culture-medias', 'numerique-ia', 'btp-architecture', 'commerce-marketing', 'lettres-langues-sciences-humaines', 'industrie-mecanique']
+      familyIds: ['communication-marketing-medias-creation', 'culture-medias', 'numerique-ia', 'btp-architecture', 'commerce-marketing', 'lettres-langues-sciences-humaines', 'industrie-mecanique']
     },
     {
       id: 'donnees-chiffres',
@@ -800,7 +806,49 @@
       icon: '🧳',
       label: 'Créer des séjours mémorables & faire rayonner l’hospitalité',
       description: 'Tu es passionné par le voyage, le tourisme culturel, l’éco-tourisme et les séjours inoubliables.',
-      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'culture-medias']
+      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'communication-marketing-medias-creation', 'culture-medias']
+    },
+    {
+      id: 'ecrire-publicites-slogans',
+      icon: '✍️',
+      label: 'Écrire des publicités, des slogans & des récits de marque',
+      description: 'Tu as la plume agile, tu aimes trouver des formules qui marquent les esprits et inventer des scénarios de films publicitaires.',
+      familyIds: ['communication-marketing-medias-creation', 'culture-medias', 'lettres-langues-sciences-humaines']
+    },
+    {
+      id: 'creer-visuels-identite-marque',
+      icon: '🎨',
+      label: 'Créer des visuels percutants, des logos & des univers de marque',
+      description: 'Tu es sensible à l’harmonie des couleurs, à la typographie, à la direction artistique et aux compositions graphiques audacieuses.',
+      familyIds: ['communication-marketing-medias-creation', 'culture-medias', 'numerique-ia']
+    },
+    {
+      id: 'strategie-marque-comportement',
+      icon: '💡',
+      label: 'Comprendre les marques & décrypter les attentes des consommateurs',
+      description: 'Tu aimes observer les tendances de société, analyser les motivations d’achat et bâtir des positionnements de marque solides.',
+      familyIds: ['communication-marketing-medias-creation', 'commerce-marketing', 'droit-management']
+    },
+    {
+      id: 'acquisition-digitale-reseaux',
+      icon: '📱',
+      label: 'Piloter l’acquisition digitale, les réseaux sociaux & le growth',
+      description: 'Tu es passionné par les algorithmes des plateformes, le community building, les campagnes social ads et la conversion en ligne.',
+      familyIds: ['communication-marketing-medias-creation', 'numerique-ia', 'commerce-marketing']
+    },
+    {
+      id: 'organiser-evenements-rassemblements',
+      icon: '🎪',
+      label: 'Organiser des événements vibrants & des rassemblements mémorables',
+      description: 'Tu as l’énergie du direct, le sens du détail scénographique et le goût de rassembler les foules autour de temps forts.',
+      familyIds: ['communication-marketing-medias-creation', 'hotellerie-restauration-hospitalite', 'culture-medias']
+    },
+    {
+      id: 'reputation-relations-presse-crise',
+      icon: '📣',
+      label: 'Défendre la réputation, gérer l’influence & les relations médias',
+      description: 'Tu as le sens de la diplomatie, de l’argumentation percutante, du contact avec les journalistes et de la communication d’engagement.',
+      familyIds: ['communication-marketing-medias-creation', 'droit-management', 'lettres-langues-sciences-humaines']
     }
   ];
 
@@ -2182,6 +2230,44 @@
         });
       }
 
+      // 1.n Intégration du catalogue Communication, Marketing, Médias & Création (OrientationCommunicationData)
+      const communicationData = (typeof window !== 'undefined' && window.OrientationCommunicationData)
+        ? window.OrientationCommunicationData
+        : (typeof global !== 'undefined' && global.OrientationCommunicationData ? global.OrientationCommunicationData : null);
+
+      if (communicationData && typeof communicationData.getJobs === 'function') {
+        const commJobs = communicationData.getJobs();
+        commJobs.forEach(commJob => {
+          const existingIdx = combined.findIndex(j => j.slug === commJob.slug || j.id === commJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, commJob, combined[existingIdx], {
+              aliases: [...new Set([...(commJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              connectedFamilies: [...new Set([...(combined[existingIdx].connectedFamilies || [combined[existingIdx].familyId]), commJob.familyId, 'communication-marketing-medias-creation', 'culture-medias', 'commerce-marketing'])],
+              domain: commJob.domain || combined[existingIdx].domain,
+              domainId: commJob.domainId || combined[existingIdx].domainId,
+              subdomain: commJob.subdomain || combined[existingIdx].subdomain,
+              salary: commJob.salary || combined[existingIdx].salary,
+              salaries: commJob.salaries || combined[existingIdx].salaries,
+              saviezVous: combined[existingIdx].saviezVous || commJob.saviezVous || null,
+              sources: commJob.sources || combined[existingIdx].sources
+            });
+          } else {
+            combined.push(commJob);
+          }
+        });
+      }
+
+      // 1.o Cross-linking des métiers digitaux & design transverses avec la famille Communication
+      const COMM_LINKED_JOBS = [
+        'ui-designer', 'motion-designer', 'growth-hacker', 'consultant-seo-sea',
+        'social-media-manager', 'community-manager', 'content-manager'
+      ];
+      combined.forEach(job => {
+        if (COMM_LINKED_JOBS.includes(job.id) || COMM_LINKED_JOBS.includes(job.slug)) {
+          job.connectedFamilies = [...new Set([...(job.connectedFamilies || [job.familyId]), 'communication-marketing-medias-creation', 'culture-medias'])];
+        }
+      });
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -2589,6 +2675,13 @@
           if (Array.isArray(job.evolution.passerelles) && job.evolution.passerelles.some(p => matchesStr(p))) return true;
         }
 
+        // Communication, Marketing, Médias & Création (ESP & Studyrama)
+        if (job.description && matchesStr(job.description)) return true;
+        if (job.interests && Array.isArray(job.interests) && job.interests.some(i => matchesStr(i))) return true;
+        if (job.subdomains && Array.isArray(job.subdomains) && job.subdomains.some(sd => matchesStr(sd))) return true;
+        if (job.career && typeof job.career === 'string' && matchesStr(job.career)) return true;
+        if (job.resources && Array.isArray(job.resources) && job.resources.some(r => r && matchesStr(r.title))) return true;
+
         return false;
       });
     },
@@ -2797,6 +2890,9 @@
       if (familyId === 'hotellerie-restauration-hospitalite' || familyId === 'tourisme-hotellerie' || familyId === 'hotellerie-restauration' || familyId === 'tourisme' || familyId === 'hotellerie' || familyId === 'restauration') {
         return this.getHospitalityDomains();
       }
+      if (familyId === 'communication-marketing-medias-creation' || familyId === 'culture-medias' || familyId === 'communication' || familyId === 'communication-medias' || familyId === 'medias-creation') {
+        return this.getCommunicationDomains();
+      }
       return [];
     },
 
@@ -2820,6 +2916,18 @@
           : (typeof OrientationHospitalityData !== 'undefined' ? OrientationHospitalityData : null));
       if (hospitalityData && typeof hospitalityData.getDomains === 'function') {
         return hospitalityData.getDomains();
+      }
+      return [];
+    },
+
+    getCommunicationDomains: function () {
+      const communicationData = (typeof window !== 'undefined' && window.OrientationCommunicationData)
+        ? window.OrientationCommunicationData
+        : (typeof global !== 'undefined' && global.OrientationCommunicationData
+          ? global.OrientationCommunicationData
+          : (typeof OrientationCommunicationData !== 'undefined' ? OrientationCommunicationData : null));
+      if (communicationData && typeof communicationData.getDomains === 'function') {
+        return communicationData.getDomains();
       }
       return [];
     },
