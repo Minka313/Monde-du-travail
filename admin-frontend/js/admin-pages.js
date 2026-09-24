@@ -540,13 +540,13 @@
       safely(window.AdminApi.rbac?.getMentors()),
     ]);
 
+    const user = window.AdminApp.currentUser;
+    const isUltraAdmin = user?.role === 'ULTRA_ADMIN';
+    const canApproveMemberships = window.AdminApp.hasPermission(user, 'membership.approve');
+
     if (isUltraAdmin && !superStatsRes?.data) {
       throw new Error('Les statistiques du tableau de bord sont momentanément indisponibles.');
     }
-
-    const user = window.AdminApp.currentUser;
-    const canApproveMemberships = window.AdminApp.hasPermission(user, 'membership.approve');
-    const isUltraAdmin = user?.role === 'ULTRA_ADMIN';
 
     const superData = superStatsRes?.data || {};
 
