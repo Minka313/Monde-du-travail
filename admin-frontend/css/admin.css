@@ -1739,6 +1739,12 @@ label {
   border: 1px solid rgba(100, 116, 139, 0.2);
 }
 
+.presence-status-pill.status-inactive {
+  background: rgba(148, 163, 184, 0.12);
+  color: #64748b;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
 .presence-dot {
   width: 8px;
   height: 8px;
@@ -1763,6 +1769,10 @@ label {
 
 .status-older .presence-dot {
   background: #94a3b8;
+}
+
+.status-inactive .presence-dot {
+  background: #cbd5e1;
 }
 
 @keyframes pulseGreenPresence {
