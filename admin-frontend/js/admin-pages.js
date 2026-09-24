@@ -356,7 +356,6 @@
       clearInterval(analyticsRefreshTimer);
       analyticsRefreshTimer = null;
     }
-
     if (module === 'analytics') {
       analyticsRefreshTimer = setInterval(() => {
         if (activeModule === 'analytics' && document.visibilityState === 'visible') {
@@ -541,6 +540,10 @@
       safely(window.AdminApi.rbac?.getMentors()),
     ]);
 
+    if (isUltraAdmin && !superStatsRes?.data) {
+      throw new Error('Les statistiques du tableau de bord sont momentanément indisponibles.');
+    }
+
     const user = window.AdminApp.currentUser;
     const canApproveMemberships = window.AdminApp.hasPermission(user, 'membership.approve');
     const isUltraAdmin = user?.role === 'ULTRA_ADMIN';
@@ -556,7 +559,7 @@
     const publishedPosts = superData.publishedPosts ?? 0;
     const draftPosts = superData.draftPosts ?? 0;
     const totalTopics = superData.totalTopics ?? 0;
-    const totalAdmins = superData.totalAdmins ?? 1;
+    const totalAdmins = superData.totalAdmins ?? 0;
     const pendingAdminsCount = superData.pendingAdmins ?? 0;
     const pendingApprovalsCount = superData.pendingApprovals ?? 0;
     const isMaintenance = superData.isMaintenance === true;
@@ -1182,7 +1185,7 @@
           </td>
           <td>
             <div class="presence-score-badge">
-              <span class="presence-score-val">${u.score || 0}</span>
+              <span class="presence-score-val">${u.presenceScore || 0}</span>
               <span class="presence-score-sub">pts</span>
             </div>
           </td>
@@ -1205,17 +1208,19 @@
 
   async function loadAnalytics() {
     let visitorStats = {
-      today: { visitors: 0, views: 0 },
-      last7Days: { visitors: 0, views: 0 },
-      last30Days: { visitors: 0, views: 0 },
-      allTime: { visitors: 0, views: 0 },
+      summary: {
+        today: { uniqueVisitors: 0, visits: 0 },
+        week: { uniqueVisitors: 0, visits: 0 },
+        month: { uniqueVisitors: 0, visits: 0 },
+        allTime: { totalUniqueVisitors: 0, totalVisits: 0 },
+      },
       dailyTrend: [],
       topPages: [],
-      deviceStats: { desktop: 0, mobile: 0, tablet: 0, other: 0 }
+      devices: { desktop: 0, mobile: 0, tablet: 0, total: 0 }
     };
     let presenceUsers = [];
     let impactStats = { profilesDistribution: {} };
-    let impactStatsUnavailable = false;
+    let analyticsUnavailable = false;
 
     try {
       const [visRes, presRes, impactRes] = await Promise.allSettled([
@@ -1226,14 +1231,14 @@
 
       if (visRes.status === 'fulfilled' && visRes.value?.data) {
         visitorStats = visRes.value.data;
+      } else {
+        analyticsUnavailable = true;
       }
       if (presRes.status === 'fulfilled' && Array.isArray(presRes.value?.data)) {
         presenceUsers = presRes.value.data;
       }
       if (impactRes.status === 'fulfilled' && impactRes.value?.data) {
         impactStats = impactRes.value.data;
-      } else {
-        impactStatsUnavailable = true;
       }
     } catch (err) {
       console.warn('[Analytics] Erreur chargement stats:', err);
@@ -1255,9 +1260,8 @@
     // Comptage par statut de présence
     const onlineCount = presenceUsers.filter(u => u.presenceStatus === 'ONLINE').length;
     const todayCount = presenceUsers.filter(u => u.presenceStatus === 'ONLINE' || u.presenceStatus === 'TODAY').length;
-    const profileEntries = Object.entries(impactStats.profilesDistribution || {})
-      .sort((a, b) => b[1] - a[1]);
-    const profileTotal = profileEntries.reduce((total, [, count]) => total + count, 0);
+    const profileEntries = Object.entries(impactStats.profilesDistribution || {}).sort((a, b) => b[1] - a[1]);
+    const profileTotal = profileEntries.reduce((sum, [, count]) => sum + count, 0);
 
     return `
       <div class="analytics-page-root" style="display: flex; flex-direction: column; gap: 1.5rem;">
@@ -1368,24 +1372,21 @@
             </div>
             <span class="badge badge-primary">${profileTotal} réponses</span>
           </div>
-          ${impactStatsUnavailable ? `
-            <div class="empty-state">Les statistiques de profils sont momentanément indisponibles. Vérifiez la connexion à l'API.</div>
+          ${!impactStats || Object.keys(impactStats).length === 0 ? `
+            <div class="empty-state">Les statistiques de profils sont momentanément indisponibles.</div>
           ` : profileEntries.length === 0 ? `
             <div class="empty-state">Aucun profil déclaré pour le moment.</div>
           ` : `
             <div class="analytics-devices-badge-row">
-              ${profileEntries.map(([profile, count]) => {
-                const percentage = profileTotal ? Math.round((count / profileTotal) * 100) : 0;
-                return `
-                  <div class="analytics-device-pill">
-                    <span class="device-icon">🎯</span>
-                    <div class="device-meta">
-                      <span class="device-name">${escapeHtml(profile)}</span>
-                      <strong class="device-pct">${count} (${percentage}%)</strong>
-                    </div>
+              ${profileEntries.map(([profile, count]) => `
+                <div class="analytics-device-pill">
+                  <span class="device-icon">🎯</span>
+                  <div class="device-meta">
+                    <span class="device-name">${escapeHtml(profile)}</span>
+                    <strong class="device-pct">${count} (${profileTotal ? Math.round((count / profileTotal) * 100) : 0}%)</strong>
                   </div>
-                `;
-              }).join('')}
+                </div>
+              `).join('')}
             </div>
           `}
         </div>

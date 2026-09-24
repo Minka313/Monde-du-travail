@@ -124,8 +124,7 @@ class AnalyticsService {
       const sevenDaysAgo = new Date(nowMs - 7 * 24 * 60 * 60 * 1000);
       const thirtyDaysAgo = new Date(nowMs - 30 * 24 * 60 * 60 * 1000);
 
-      // Récupération des visites récentes et du total historique.
-      // Les identifiants visiteurs sont conservés pour produire un total unique réel.
+      // Récupération des visites récentes et des totaux réels
       const [recentLogs, totalVisitLogs, totalLoginLogsCount] = await Promise.all([
         prisma.auditLog.findMany({
           where: {
@@ -187,7 +186,6 @@ class AnalyticsService {
         const page = log.resource || meta.path || '/';
         const dev = (meta.device || 'desktop').toLowerCase();
 
-        // Pages, appareils et visiteurs de la fenêtre de 30 jours.
         if (created >= thirtyDaysAgo) {
           visitsMonth++;
           pageCounts[page] = (pageCounts[page] || 0) + 1;
@@ -256,10 +254,8 @@ class AnalyticsService {
         uniqueVisitors: bucket.uniqueVisitors.size,
       }));
 
-      // Total historique : si peu de logs de visite (démarrage du tracker),
-      // combiner avec les connexions historiques pour donner une base solide
-      const totalVisits = totalVisitLogs.length;
-      const totalUniqueVisitors = new Set(totalVisitLogs.map(log => {
+      const totalVisits = totalVisitLogs;
+      const totalUniqueVisitors = new Set(recentLogs.map(log => {
         const meta = log.metadata || {};
         return meta.visitorId || log.userId || log.ipAddress || 'anon';
       })).size;
@@ -570,7 +566,7 @@ class AnalyticsService {
       // 1. Sauvegarde dans le cache mémoire de session
       sessionProfileCache.set(sid, cleanProfile);
 
-      // 2. Rétro-application asynchrone aux événements non profilés de cette session
+      // 2. Rattacher les événements déjà enregistrés à cette session
       await prisma.analyticsEvent.updateMany({
         where: {
           sessionId: sid,
