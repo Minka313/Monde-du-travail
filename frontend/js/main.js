@@ -1224,10 +1224,15 @@
 
         // Écouteur de sélection de profil
         banner.querySelectorAll('.prog-profile-chip').forEach(chip => {
-          chip.addEventListener('click', () => {
+          chip.addEventListener('click', async () => {
             const selectedProfile = chip.getAttribute('data-profile');
+            chip.disabled = true;
             if (window.AnalyticsTracker) {
-              window.AnalyticsTracker.setUserProfile(selectedProfile);
+              const saved = await window.AnalyticsTracker.setUserProfile(selectedProfile);
+              if (!saved) {
+                chip.disabled = false;
+                return;
+              }
             } else {
               try { localStorage.setItem('lmt_user_profile', selectedProfile); } catch (_) {}
             }

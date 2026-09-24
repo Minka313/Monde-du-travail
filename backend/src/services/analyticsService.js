@@ -571,7 +571,7 @@ class AnalyticsService {
       sessionProfileCache.set(sid, cleanProfile);
 
       // 2. Rétro-application asynchrone aux événements non profilés de cette session
-      prisma.analyticsEvent.updateMany({
+      await prisma.analyticsEvent.updateMany({
         where: {
           sessionId: sid,
           userProfile: null,
@@ -579,12 +579,10 @@ class AnalyticsService {
         data: {
           userProfile: cleanProfile,
         },
-      }).catch(err => {
-        logger.warn('Avertissement lors de la rétro-mise à jour du profil de session:', err.message);
       });
 
       // 3. Enregistrement d'un événement explicite de profilage
-      this.trackImpactEvent({
+      await this.trackImpactEvent({
         sessionId: sid,
         eventType: 'progressive_profile_set',
         entityType: 'survey',
@@ -620,10 +618,10 @@ class AnalyticsService {
           by: ['eventType'],
           _count: { id: true },
         }),
-        prisma.analyticsEvent.groupBy({
-          by: ['userProfile'],
-          _count: { id: true },
+        prisma.analyticsEvent.findMany({
           where: { userProfile: { not: null } },
+          select: { sessionId: true, userProfile: true },
+          distinct: ['sessionId', 'userProfile'],
         }),
         prisma.analyticsEvent.findMany({
           where: { eventType: 'survey_vote' },
@@ -690,7 +688,7 @@ class AnalyticsService {
       const profilesDistribution = {};
       profilesGrouped.forEach(item => {
         if (item.userProfile) {
-          profilesDistribution[item.userProfile] = item._count.id;
+          profilesDistribution[item.userProfile] = (profilesDistribution[item.userProfile] || 0) + 1;
         }
       });
 

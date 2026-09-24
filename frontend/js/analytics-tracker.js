@@ -164,25 +164,38 @@
      * Définit le profil progressif de l'utilisateur, l'enregistre en local
      * et informe le backend pour qu'il le rattache à la session.
      */
-    setUserProfile(profile) {
-      if (!profile) return;
+    async setUserProfile(profile) {
+      if (!profile) return false;
       const cleanProfile = String(profile).trim();
+      if (!cleanProfile) return false;
       this.userProfile = cleanProfile;
+
+      // Synchronisation backend silencieuse
+      let saved = false;
+      try {
+        const token = (window.Api && typeof window.Api.getToken === 'function')
+          ? window.Api.getToken()
+          : (localStorage.getItem('accessToken') || null);
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers.Authorization = `Bearer ${token}`;
+        const response = await fetch(`${this.apiUrl}/analytics/profile`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ sessionId: this.sessionId, profile: cleanProfile }),
+          keepalive: true,
+        });
+        saved = response.ok;
+      } catch (_) {}
+
+      if (!saved) return false;
 
       try {
         localStorage.setItem(STORAGE_USER_PROFILE, cleanProfile);
       } catch (_) {}
       setCookie(STORAGE_USER_PROFILE, cleanProfile, COOKIE_MAX_AGE_SEC);
 
-      // Notification des écouteurs locaux
       this.profileListeners.forEach(cb => {
         try { cb(cleanProfile); } catch (_) {}
-      });
-
-      // Synchronisation backend silencieuse
-      this._sendPayload(`${this.apiUrl}/analytics/profile`, {
-        sessionId: this.sessionId,
-        profile: cleanProfile,
       });
 
       // Événement d'audit analytique
@@ -190,6 +203,7 @@
         source: 'user_action',
         timestamp: new Date().toISOString(),
       });
+      return true;
     }
 
     /**

@@ -1214,11 +1214,14 @@
       deviceStats: { desktop: 0, mobile: 0, tablet: 0, other: 0 }
     };
     let presenceUsers = [];
+    let impactStats = { profilesDistribution: {} };
+    let impactStatsUnavailable = false;
 
     try {
-      const [visRes, presRes] = await Promise.allSettled([
+      const [visRes, presRes, impactRes] = await Promise.allSettled([
         window.AdminApi.analytics.getVisitors(),
-        window.AdminApi.analytics.getPresence(100)
+        window.AdminApi.analytics.getPresence(100),
+        window.AdminApi.analytics.getImpactStats()
       ]);
 
       if (visRes.status === 'fulfilled' && visRes.value?.data) {
@@ -1226,6 +1229,11 @@
       }
       if (presRes.status === 'fulfilled' && Array.isArray(presRes.value?.data)) {
         presenceUsers = presRes.value.data;
+      }
+      if (impactRes.status === 'fulfilled' && impactRes.value?.data) {
+        impactStats = impactRes.value.data;
+      } else {
+        impactStatsUnavailable = true;
       }
     } catch (err) {
       console.warn('[Analytics] Erreur chargement stats:', err);
@@ -1247,6 +1255,9 @@
     // Comptage par statut de présence
     const onlineCount = presenceUsers.filter(u => u.presenceStatus === 'ONLINE').length;
     const todayCount = presenceUsers.filter(u => u.presenceStatus === 'ONLINE' || u.presenceStatus === 'TODAY').length;
+    const profileEntries = Object.entries(impactStats.profilesDistribution || {})
+      .sort((a, b) => b[1] - a[1]);
+    const profileTotal = profileEntries.reduce((total, [, count]) => total + count, 0);
 
     return `
       <div class="analytics-page-root" style="display: flex; flex-direction: column; gap: 1.5rem;">
@@ -1345,6 +1356,38 @@
               <strong>${todayCount}</strong> membres actifs aujourd'hui
             </div>
           </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2>🎯 Profils déclarés par les visiteurs</h2>
+              <p style="color: var(--color-muted); font-size: 0.88rem; margin: 0.25rem 0 0 0;">
+                Répartition réelle des profils renseignés dans la notification d'orientation.
+              </p>
+            </div>
+            <span class="badge badge-primary">${profileTotal} réponses</span>
+          </div>
+          ${impactStatsUnavailable ? `
+            <div class="empty-state">Les statistiques de profils sont momentanément indisponibles. Vérifiez la connexion à l'API.</div>
+          ` : profileEntries.length === 0 ? `
+            <div class="empty-state">Aucun profil déclaré pour le moment.</div>
+          ` : `
+            <div class="analytics-devices-badge-row">
+              ${profileEntries.map(([profile, count]) => {
+                const percentage = profileTotal ? Math.round((count / profileTotal) * 100) : 0;
+                return `
+                  <div class="analytics-device-pill">
+                    <span class="device-icon">🎯</span>
+                    <div class="device-meta">
+                      <span class="device-name">${escapeHtml(profile)}</span>
+                      <strong class="device-pct">${count} (${percentage}%)</strong>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `}
         </div>
 
         <!-- Section Graphiques & Répartition (Split) -->

@@ -261,6 +261,7 @@
     analytics: {
       getVisitors: () => apiRequestWithRefresh('/analytics/visitors'),
       getPresence: (limit = 25) => apiRequestWithRefresh(`/analytics/presence?limit=${limit}`),
+      getImpactStats: () => apiRequestWithRefresh('/analytics/impact-stats'),
     },
     admin: {
       getStats: () => apiRequestWithRefresh('/admin/stats'),
