@@ -552,6 +552,7 @@
     const publishedFormations = superData.publishedFormations ?? 0;
     const draftFormations = superData.draftFormations ?? 0;
     const publishedJobs = superData.publishedJobs ?? 0;
+    const totalJobsCatalog = superData.totalJobsCatalog ?? (535 + publishedJobs);
     const draftJobs = superData.draftJobs ?? 0;
     const publishedPosts = superData.publishedPosts ?? 0;
     const draftPosts = superData.draftPosts ?? 0;
@@ -725,9 +726,9 @@
               <span class="dash-kpi-label"><span class="dash-kpi-icon">💼</span> Fiches Métiers</span>
               <span class="dash-kpi-arrow">→</span>
             </div>
-            <div class="dash-kpi-value">${publishedJobs}</div>
+            <div class="dash-kpi-value">${totalJobsCatalog}</div>
             <div class="dash-kpi-footer">
-              <span>${draftJobs} en cours de rédaction</span>
+              <span>${publishedJobs} en base • 535 certifiées</span>
               <span class="badge badge-primary">Orientation</span>
             </div>
           </div>
@@ -1633,10 +1634,18 @@
   }
 
   async function loadContentModule(moduleKey, config) {
-    const filters = contentFilters[moduleKey];
+    const filters = contentFilters[moduleKey] || {};
     const client = moduleKey === 'formations' ? window.AdminApi.formations : window.AdminApi.jobs;
-    const response = await client.getAdmin(filters);
-    const items = response.data || [];
+    let items = [];
+    try {
+      if (client && typeof client.getAdmin === 'function') {
+        const response = await client.getAdmin(filters);
+        items = response?.data || [];
+      }
+    } catch (err) {
+      console.warn(`[AdminContent] Erreur lors du chargement de ${moduleKey}:`, err);
+      items = [];
+    }
     contentCache[moduleKey] = {};
     items.forEach(item => { contentCache[moduleKey][item.id] = item; });
 

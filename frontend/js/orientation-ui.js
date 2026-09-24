@@ -194,7 +194,7 @@
         if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'block';
 
         if (dom.viewSectionLabel) dom.viewSectionLabel.textContent = 'Exploration Progressive';
-        if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Les 21 Grandes Familles Professionnelles';
+        if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Les 23 Grandes Familles Professionnelles';
         if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Explore les domaines d’avenir, découvre leurs sous-disciplines et identifie les métiers clés.';
 
         if (dom.familiesGridContainer) {
@@ -570,18 +570,20 @@
         'lettres-langues-sciences-humaines': "20 Domaines • 32 Fiches Métiers",
         'industrie-mecanique': "30 Domaines • 36 Fiches Métiers",
         'industrie-technologies-ingenierie': "30 Domaines • 36 Fiches Métiers",
-        'sciences-terre-geosciences': "17 Domaines • 22 Fiches Métiers",
-        'mines-geosciences': "17 Domaines • 22 Fiches Métiers",
-        'sante-soins-paramedical': "11 Domaines • 30 Fiches Métiers",
-        'sante-biomedical': "11 Domaines • 30 Fiches Métiers",
+        'sciences-terre-geosciences': "17 Domaines • 29 Fiches Métiers",
+        'mines-geosciences': "17 Domaines • 29 Fiches Métiers",
+        'sante-soins-paramedical': "11 Domaines • 31 Fiches Métiers",
+        'sante-biomedical': "11 Domaines • 31 Fiches Métiers",
         'biologie-chimie': "15 Domaines • 24 Fiches Métiers (CIDJ)",
         'sciences-biotech': "15 Domaines • 24 Fiches Métiers (CIDJ)",
-        'education-formation': "8 Domaines • 21 Fiches Métiers (Studyrama)",
-        'enseignement-education-formation': "8 Domaines • 21 Fiches Métiers (Studyrama)",
-        'environnement-developpement-durable': "6 Domaines • 18 Fiches Métiers (Onisep)",
-        'environnement-climat': "6 Domaines • 18 Fiches Métiers (Onisep)",
-        'hotellerie-restauration-hospitalite': "8 Domaines • 21 Fiches Métiers (France Travail / MétierScope)",
-        'tourisme-hotellerie': "8 Domaines • 21 Fiches Métiers (France Travail / MétierScope)"
+        'education-formation': "8 Domaines • 37 Fiches Métiers (Studyrama)",
+        'enseignement-education-formation': "8 Domaines • 37 Fiches Métiers (Studyrama)",
+        'environnement-developpement-durable': "6 Domaines • 84 Fiches Métiers (Onisep)",
+        'environnement-climat': "6 Domaines • 84 Fiches Métiers (Onisep)",
+        'hotellerie-restauration-hospitalite': "8 Domaines • 29 Fiches Métiers (France Travail / MétierScope)",
+        'tourisme-hotellerie': "8 Domaines • 29 Fiches Métiers (France Travail / MétierScope)",
+        'communication-marketing-medias-creation': "6 Domaines • 65 Fiches Métiers (ESP & Studyrama)",
+        'culture-medias': "6 Domaines • 65 Fiches Métiers (ESP & Studyrama)"
       };
       const cartographyBadge = cartographyBadges[family.id] || `${familyDomains.length} Domaines d'expertise`;
 
@@ -902,6 +904,8 @@
               ${job.sourceOnisep ? '<span class="job-badge-onisep" style="background:#fef2f2;color:#991b1b;border:1px solid #fecaca;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence : Onisep Mécanique">⚙️ Onisep</span>' : ''}
               ${job.sourcePoitiers ? '<span class="job-badge-poitiers" style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Source de référence académique : Univ. Poitiers Géosciences">🌍 Univ. Poitiers</span>' : ''}
               ${job.sourceBRGM ? '<span class="job-badge-brgm" style="background:#f0fdfa;color:#0f766e;border:1px solid #99f6e4;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Référence scientifique : BRGM / Société Géologique de France">⛏️ BRGM / SGF</span>' : ''}
+              ${job.sourceESP ? '<span class="job-badge-esp" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Référence professionnelle : ESP École Supérieure de Publicité & Communication">📣 ESP</span>' : ''}
+              ${job.sourceStudyrama ? '<span class="job-badge-studyrama" style="background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;font-size:0.72rem;font-weight:700;padding:0.15rem 0.5rem;border-radius:4px;" title="Référence métier : Studyrama Communication">📰 Studyrama</span>' : ''}
             </div>
 
             <h3 class="job-card-title">${escapeHtml(job.title)}</h3>
@@ -1463,6 +1467,8 @@
                   </a>
                 ` : `<span style="font-size:0.8rem;color:#1e40af;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #bfdbfe;">Source Studyrama Enseignement</span>`}
               </div>
+            ` : ''}
+
             <!-- Référentiel Officiel Environnement & Développement Durable (Onisep 2025) -->
             ${(job.familyId === 'environnement-developpement-durable' || job.familyId === 'environnement-climat' || job.onisepUrl || job.onisepSource) ? `
               <div class="dossier-environment-ref-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:1.35rem;padding:0.85rem 1.15rem;background:linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);border:1.5px solid #6ee7b7;border-radius:12px;">
@@ -1505,6 +1511,17 @@
                     Consulter sur France Travail ↗
                   </a>
                 ` : `<span style="font-size:0.8rem;color:#c2410c;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #fed7aa;">Source France Travail MétierScope</span>`}
+              </div>
+            ` : ''}
+
+            <!-- Référentiel Officiel ESP & Studyrama Communication -->
+            ${(job.familyId === 'communication-marketing-medias-creation' || job.familyId === 'culture-medias' || (job.sources && job.sources.some(s => typeof s === 'string' && s.includes('ESP')))) ? `
+              <div class="dossier-communication-ref-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:1.35rem;padding:0.85rem 1.15rem;background:linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);border:1.5px solid #fb923c;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#c2410c;font-size:0.88rem;">
+                  <span>📣</span>
+                  <span>Référentiel Métiers Communication, Marketing & Médias (ESP & Studyrama)</span>
+                </div>
+                <span style="font-size:0.8rem;color:#c2410c;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #fed7aa;">Source ESP École Supérieure de Publicité • Studyrama</span>
               </div>
             ` : ''}
 
@@ -2751,7 +2768,7 @@
     initLocalJobsFilter();
     initStickyToolbar();
 
-    // Bouton de navigation vers les 21 familles
+    // Bouton de navigation vers les 23 familles
     if (dom.btnExploreFamilies) {
       dom.btnExploreFamilies.addEventListener('click', () => {
         setView('FAMILIES');

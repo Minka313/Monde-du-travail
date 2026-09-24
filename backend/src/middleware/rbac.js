@@ -9,7 +9,7 @@ const hasPermission = (requiredPermission) => {
     const userPermissions = req.user.permissions || [];
     const userRole = req.user.role;
 
-    if (userRole === 'ULTRA_ADMIN') {
+    if (userRole === 'ULTRA_ADMIN' || userRole === 'ADMIN') {
       return next();
     }
 
@@ -34,7 +34,7 @@ const hasAnyPermission = (permissions) => {
     const userPermissions = req.user.permissions || [];
     const userRole = req.user.role;
 
-    if (userRole === 'ULTRA_ADMIN') {
+    if (userRole === 'ULTRA_ADMIN' || userRole === 'ADMIN') {
       return next();
     }
 

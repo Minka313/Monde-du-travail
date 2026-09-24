@@ -168,6 +168,8 @@ class SuperDashboardController {
         draftFormations,
         publishedJobs,
         draftJobs,
+        catalogJobsCount: 535,
+        totalJobsCatalog: 535 + publishedJobs,
         pendingAdmins,
         pendingApprovals,
         isMaintenance,
