@@ -27,7 +27,7 @@
 
     hasPermission: function(user, permission) {
       if (!permission) return true;
-      if (user?.role === 'ULTRA_ADMIN') return true;
+      if (['ADMIN', 'ULTRA_ADMIN'].includes(user?.role)) return true;
       const permissions = user?.permissions || [];
       return permissions.includes('*') || permissions.includes(permission);
     },
@@ -40,11 +40,14 @@
     },
 
     getAuthorizedModules: function(user) {
+      if (['ADMIN', 'ULTRA_ADMIN'].includes(user?.role)) {
+        return Object.keys(MODULE_PERMISSIONS);
+      }
       return Object.keys(MODULE_PERMISSIONS).filter(module => {
         if (['analytics', 'notifications', 'organization', 'vitrine'].includes(module)) {
           return this.isAdminUser(user);
         }
-        if (module === 'dashboard') return user?.role === 'ULTRA_ADMIN';
+        if (module === 'dashboard') return ['ADMIN', 'ULTRA_ADMIN'].includes(user?.role);
         if (module === 'approvals') {
           return this.hasPermission(user, 'approvals.read')
             || this.hasPermission(user, 'membership.read')

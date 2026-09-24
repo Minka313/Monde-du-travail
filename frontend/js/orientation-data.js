@@ -73,7 +73,7 @@
       color: '#10b981', // Émeraude
       image: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&auto=format&fit=crop&q=80',
       description: 'Financer l’économie réelle, gérer les capitaux, couvrir les risques des particuliers et des entreprises, et inventer la finance de demain grâce à la FinTech et aux technologies d’analyse prédictive.',
-      stats: { jobsEstimate: '60+ métiers', subdomainsCount: 22 },
+      stats: { jobsEstimate: '37+ métiers', subdomainsCount: 10 },
       representativeJobs: ['Actuaire', 'Trader', 'Analyste Financier', 'Directeur d’Agence Bancaire', 'Risk Manager', 'Gestionnaire de Patrimoine', 'Expert d’Assurances', 'Spécialiste Crypto-actifs'],
       subdomains: [
         'Banque & Services Financiers', 'Finance de Marché', 'Finance d’Entreprise', 'Comptabilité & Audit',
@@ -111,7 +111,7 @@
       color: '#16a34a', // Vert émeraude / agriculture
       image: 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=800&auto=format&fit=crop&q=80',
       description: 'Explorer toutes les facettes du vivant : des sciences agronomiques et de la production végétale à l’élevage, l’agroécologie, l’agroéquipement, la pêche/aquaculture, la forêt, l’agroalimentaire, l’économie rurale et l’AgriTech.',
-      stats: { jobsEstimate: '100+ métiers', subdomainsCount: 42 },
+      stats: { jobsEstimate: '80+ métiers', subdomainsCount: 11 },
       representativeJobs: ['Ingénieur Agronome', 'Éleveur Polyvalent', 'Ingénieur Production Animale', 'Capitaine-Propriétaire', 'Généticien Animal', 'Responsable Collecte Laitière', 'Ingénieur AgriTech'],
       subdomains: [
         'Agronomie & sciences agricoles', 'Grandes cultures & céréales', 'Maraîchage & horticulture',
@@ -137,7 +137,7 @@
       color: '#06b6d4', // Cyan océan
       image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop&q=80',
       description: 'Valoriser les ressources marines, développer les fermes aquacoles durables et organiser la logistique portuaire et de haute mer.',
-      stats: { jobsEstimate: '35+ métiers', subdomainsCount: 10 },
+      stats: { jobsEstimate: '12+ métiers', subdomainsCount: 10 },
       representativeJobs: ['Capitaine-Propriétaire', 'Aide-Pêcheur', 'Mécanicien Marin', 'Mariculteur', 'Ingénieur Halieute', 'Biologiste Marin'],
       subdomains: [
         'Pêche & capture', 'Aquaculture & mariculture', 'Transformation des produits marins',
@@ -155,7 +155,7 @@
       color: '#d97706', // Ocre chaud
       image: 'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=800&auto=format&fit=crop&q=80',
       description: 'Prendre soin de la santé animale, perfectionner la zootechnie, améliorer la nutrition et encadrer la filière laitière et avicole.',
-      stats: { jobsEstimate: '30+ métiers', subdomainsCount: 8 },
+      stats: { jobsEstimate: '26+ métiers', subdomainsCount: 8 },
       representativeJobs: ['Docteur Vétérinaire', 'Zootechnicien', 'Nutritionniste Animalier', 'Responsable Filière Avicole'],
       subdomains: [
         'Médecine vétérinaire', 'Zootechnie', 'Élevage bovin', 'Aviculture',
@@ -189,7 +189,7 @@
       color: '#d97706', // Ocre / Ambre BTP
       image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&auto=format&fit=crop&q=80',
       description: 'Le secteur regroupe les activités liées à la conception, la construction, la rénovation et l\'entretien des bâtiments et des infrastructures, ainsi qu\'un ensemble de métiers techniques, de gestion, d\'encadrement et de nouvelles spécialités liées au numérique et à la transition environnementale.',
-      stats: { jobsEstimate: '75+ métiers', subdomainsCount: 15 },
+      stats: { jobsEstimate: '65+ métiers', subdomainsCount: 15 },
       representativeJobs: ['Architecte DPLG', 'Ingénieur Génie Civil', 'Conducteur de Travaux', 'BIM Manager', 'Chef de Chantier', 'Électricien du BTP'],
       subdomains: [
         'Architecture & Conception', 'Ingénierie & Bureaux d\'Études', 'Économie de la Construction & Métrés',
@@ -209,7 +209,7 @@
       color: '#475569', // Métal / Acier industriel
       image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&auto=format&fit=crop&q=80',
       description: 'Concevoir, modéliser, usiner, automatiser, piloter la fabrication industrielle, optimiser la supply chain et bâtir l\'Industrie 4.0 et les usines de demain.',
-      stats: { jobsEstimate: '85+ métiers', subdomainsCount: 30 },
+      stats: { jobsEstimate: '36+ métiers', subdomainsCount: 30 },
       representativeJobs: ['Ingénieur Mécanique', 'Roboticien Industriel', 'Automaticien', 'Ingénieur R&D', 'Technicien Maintenance', 'Ingénieur Qualité'],
       subdomains: [
         'Conception & Ingénierie', 'Mécanique & Usinage', 'Génie Industriel & Organisation',
@@ -233,7 +233,7 @@
       color: '#b45309', // Cuivre
       image: 'https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?w=800&auto=format&fit=crop&q=80',
       description: 'Explorer les sous-sols, cartographier les gisements de minerais et d’hydrocarbures, et superviser les forages dans le respect des normes HSE.',
-      stats: { jobsEstimate: '35+ métiers', subdomainsCount: 10 },
+      stats: { jobsEstimate: '35+ métiers', subdomainsCount: 17 },
       representativeJobs: ['Géologue d’Exploration', 'Ingénieur Minier', 'Ingénieur Forage / Petroleum', 'Responsable HSE Pétro-gazier'],
       subdomains: [
         'Géologie', 'Géophysique', 'Mines', 'Pétrole', 'Gaz', 'Forage',
@@ -294,7 +294,7 @@
       color: '#6366f1', // Indigo
       image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop&q=80',
       description: 'Transmettre le savoir, enseigner de la maternelle à l’université, piloter la vie scolaire, concevoir des parcours de formation continue et innover en EdTech.',
-      stats: { jobsEstimate: '21+ fiches d’excellence (Studyrama)', subdomainsCount: 8 },
+      stats: { jobsEstimate: '37+ métiers', subdomainsCount: 8 },
       representativeJobs: ['Professeur des Écoles', 'Professeur de Collège et Lycée', 'Enseignant-Chercheur', 'Conseiller Principal d’Éducation (CPE)', 'Formateur Professionnel d’Adultes', 'Responsable Pédagogique'],
       subdomains: [
         'Enseignement Primaire & Maternelle',
@@ -349,7 +349,7 @@
       color: '#10b981', // Vert émeraude / Écologie
       image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&auto=format&fit=crop&q=80',
       description: 'Protéger la biodiversité, préserver la ressource en eau, gérer et recycler les déchets, accélérer la transition énergétique, concevoir les stratégies RSE et sécuriser le droit environnemental.',
-      stats: { jobsEstimate: '28+ métiers', subdomainsCount: 6 },
+      stats: { jobsEstimate: '80+ métiers', subdomainsCount: 6 },
       representativeJobs: ['Hydraulicien', 'Biologiste en environnement', 'Chef de projet développement durable', 'Responsable de la collecte des déchets', 'Météorologiste', 'Animateur nature', 'Juriste en droit de l\'environnement'],
       subdomains: [
         'Eau & Hydraulique',
@@ -371,7 +371,7 @@
       color: '#ea580c', // Cuivré / Ambre gastronomique
       image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80',
       description: 'Concevoir et sublimer les expériences culinaires, le service en salle, l’accueil en hébergement hôtelier et le management opérationnel selon les référentiels officiels France Travail / MétierScope (secteur 102).',
-      stats: { jobsEstimate: '21 métiers officiels', subdomainsCount: 8 },
+      stats: { jobsEstimate: '29 métiers certifiés', subdomainsCount: 8 },
       representativeJobs: ['Chef Cuisinier', 'Directeur d’Hôtel', 'Maître d’Hôtel', 'Pâtissier', 'Sommelier', 'Yield Manager'],
       subdomains: [
         'Production Culinaire & Cuisine',
@@ -448,7 +448,7 @@
       color: '#7c3aed', // Pourpre académique d'excellence
       image: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=800&auto=format&fit=crop&q=80',
       description: 'L’exploration féconde des humanités, des langues vivantes, de l’histoire, de la psychologie, de la philosophie, du patrimoine et des dynamiques sociales pour éclairer et façonner le monde contemporain.',
-      stats: { jobsEstimate: '32+ métiers', subdomainsCount: 20 },
+      stats: { jobsEstimate: '55+ métiers', subdomainsCount: 20 },
       representativeJobs: ['Linguiste-informaticien / Ingénieur TAL', 'Archiviste-Paléographe / Gestionnaire de données patrimoniales', 'Psychologue clinicien', 'Interprète de conférence & Traducteur', 'Conservateur du patrimoine & de musée', 'Sociologue des organisations'],
       subdomains: [
         'Lettres classiques et modernes', 'Sciences du langage & Linguistique', 'Linguistique computationnelle & TAL',
@@ -470,7 +470,7 @@
       color: '#0d9488', // Émeraude / Teal géosciences
       image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&auto=format&fit=crop&q=80',
       description: 'Explorer la Terre, comprendre les roches, prospecter et gérer l’eau souterraine, modéliser les géorisques et valoriser durablement les ressources minérales et géothermiques.',
-      stats: { jobsEstimate: '22+ métiers', subdomainsCount: 17 },
+      stats: { jobsEstimate: '37+ métiers', subdomainsCount: 17 },
       representativeJobs: ['Géologue / Docteur de la Planète', 'Hydrogéologue / Spécialiste des Eaux Souterraines', 'Pédologue / Spécialiste des Sols', 'Ingénieur Géotechnique', 'Paléontologue', 'Ingénieur en Géothermie'],
       subdomains: [
         'Géologie', 'Hydrogéologie & ressources en eau', 'Sciences du sol & pédologie', 'Paléontologie',
@@ -2116,9 +2116,11 @@
       }
 
       // 1.j Intégration du catalogue Biologie & Chimie (OrientationBioChimieData)
-      const biochimieData = (typeof window !== 'undefined' && window.OrientationBioChimieData)
-        ? window.OrientationBioChimieData
-        : (typeof global !== 'undefined' && global.OrientationBioChimieData ? global.OrientationBioChimieData : null);
+      const biochimieData = (typeof window !== 'undefined' && (window.OrientationBioChimieData || window.OrientationBiochimieData))
+        ? (window.OrientationBioChimieData || window.OrientationBiochimieData)
+        : (typeof global !== 'undefined' && (global.OrientationBioChimieData || global.OrientationBiochimieData)
+          ? (global.OrientationBioChimieData || global.OrientationBiochimieData)
+          : (typeof OrientationBioChimieData !== 'undefined' ? OrientationBioChimieData : (typeof OrientationBiochimieData !== 'undefined' ? OrientationBiochimieData : null)));
 
       if (biochimieData && typeof biochimieData.getJobs === 'function') {
         const bJobs = biochimieData.getJobs();
@@ -2349,11 +2351,14 @@
       if (familyId === 'peche-maritime') {
         return all.filter(j => j.familyId === 'peche-maritime' || j.domainId === 'peche-aquaculture');
       }
+      if (familyId === 'elevage-veterinaire') {
+        return all.filter(j => j.familyId === 'elevage-veterinaire' || j.domainId === 'elevage-productions-animales' || (j.connectedFamilies && j.connectedFamilies.includes('elevage-veterinaire')));
+      }
       if (familyId === 'industrie-mecanique' || familyId === 'industrie-technologies-ingenierie') {
         return all.filter(j => j.familyId === 'industrie-mecanique' || j.familyId === 'industrie-technologies-ingenierie');
       }
-      if (familyId === 'sciences-terre-geosciences') {
-        return all.filter(j => j.familyId === 'sciences-terre-geosciences' || (j.connectedFamilies && j.connectedFamilies.includes('sciences-terre-geosciences')) || j.sourcePoitiers);
+      if (familyId === 'sciences-terre-geosciences' || familyId === 'mines-geosciences') {
+        return all.filter(j => j.familyId === 'sciences-terre-geosciences' || j.familyId === 'mines-geosciences' || (j.connectedFamilies && (j.connectedFamilies.includes('sciences-terre-geosciences') || j.connectedFamilies.includes('mines-geosciences'))) || j.sourcePoitiers);
       }
       if (familyId === 'sante-soins-paramedical' || familyId === 'sante-biomedical') {
         return all.filter(j => j.familyId === 'sante-soins-paramedical' || j.familyId === 'sante-biomedical');
@@ -2370,7 +2375,13 @@
       if (familyId === 'hotellerie-restauration-hospitalite' || familyId === 'tourisme-hotellerie' || familyId === 'hotellerie-restauration' || familyId === 'tourisme' || familyId === 'hotellerie' || familyId === 'restauration') {
         return all.filter(j => j.familyId === 'hotellerie-restauration-hospitalite' || j.familyId === 'tourisme-hotellerie' || (j.connectedFamilies && (j.connectedFamilies.includes('hotellerie-restauration-hospitalite') || j.connectedFamilies.includes('tourisme-hotellerie'))));
       }
-      return all.filter(j => j.familyId === familyId);
+      if (familyId === 'communication-marketing-medias-creation' || familyId === 'culture-medias' || familyId === 'communication' || familyId === 'communication-medias' || familyId === 'medias-creation') {
+        return all.filter(j => j.familyId === 'communication-marketing-medias-creation' || j.familyId === 'culture-medias' || (j.connectedFamilies && (j.connectedFamilies.includes('communication-marketing-medias-creation') || j.connectedFamilies.includes('culture-medias'))));
+      }
+      if (familyId === 'transport-logistique') {
+        return all.filter(j => j.familyId === 'transport-logistique' || (j.connectedFamilies && (j.connectedFamilies.includes('transport-logistique') || j.connectedFamilies.includes('transports-logistique'))));
+      }
+      return all.filter(j => j.familyId === familyId || (j.connectedFamilies && j.connectedFamilies.includes(familyId)));
     },
 
     // Récupérer les métiers d'un sous-domaine au sein d'une famille
@@ -2386,10 +2397,12 @@
           matchesFamily = j.familyId === 'numerique-ia' || j.sourceESD || (j.domain && digitalDomainNames.includes(j.domain));
         } else if (familyId === 'peche-maritime') {
           matchesFamily = (j.familyId === 'peche-maritime' || j.domainId === 'peche-aquaculture');
+        } else if (familyId === 'elevage-veterinaire') {
+          matchesFamily = (j.familyId === 'elevage-veterinaire' || j.domainId === 'elevage-productions-animales' || (j.connectedFamilies && j.connectedFamilies.includes('elevage-veterinaire')));
         } else if (familyId === 'industrie-mecanique' || familyId === 'industrie-technologies-ingenierie') {
           matchesFamily = (j.familyId === 'industrie-mecanique' || j.familyId === 'industrie-technologies-ingenierie');
-        } else if (familyId === 'sciences-terre-geosciences') {
-          matchesFamily = (j.familyId === 'sciences-terre-geosciences' || (j.connectedFamilies && j.connectedFamilies.includes('sciences-terre-geosciences')) || j.sourcePoitiers);
+        } else if (familyId === 'sciences-terre-geosciences' || familyId === 'mines-geosciences') {
+          matchesFamily = (j.familyId === 'sciences-terre-geosciences' || j.familyId === 'mines-geosciences' || (j.connectedFamilies && (j.connectedFamilies.includes('sciences-terre-geosciences') || j.connectedFamilies.includes('mines-geosciences'))) || j.sourcePoitiers);
         } else if (familyId === 'sante-soins-paramedical' || familyId === 'sante-biomedical') {
           matchesFamily = (j.familyId === 'sante-soins-paramedical' || j.familyId === 'sante-biomedical');
         } else if (familyId === 'biologie-chimie' || familyId === 'sciences-biotech') {
@@ -2400,8 +2413,12 @@
           matchesFamily = (j.familyId === 'environnement-developpement-durable' || j.familyId === 'environnement-climat' || (j.connectedFamilies && (j.connectedFamilies.includes('environnement-developpement-durable') || j.connectedFamilies.includes('environnement-climat') || j.connectedFamilies.includes('environnement'))));
         } else if (familyId === 'hotellerie-restauration-hospitalite' || familyId === 'tourisme-hotellerie' || familyId === 'hotellerie-restauration' || familyId === 'tourisme' || familyId === 'hotellerie' || familyId === 'restauration') {
           matchesFamily = (j.familyId === 'hotellerie-restauration-hospitalite' || j.familyId === 'tourisme-hotellerie' || (j.connectedFamilies && (j.connectedFamilies.includes('hotellerie-restauration-hospitalite') || j.connectedFamilies.includes('tourisme-hotellerie'))));
+        } else if (familyId === 'communication-marketing-medias-creation' || familyId === 'culture-medias' || familyId === 'communication' || familyId === 'communication-medias' || familyId === 'medias-creation') {
+          matchesFamily = (j.familyId === 'communication-marketing-medias-creation' || j.familyId === 'culture-medias' || (j.connectedFamilies && (j.connectedFamilies.includes('communication-marketing-medias-creation') || j.connectedFamilies.includes('culture-medias'))));
+        } else if (familyId === 'transport-logistique') {
+          matchesFamily = (j.familyId === 'transport-logistique' || (j.connectedFamilies && (j.connectedFamilies.includes('transport-logistique') || j.connectedFamilies.includes('transports-logistique'))));
         } else {
-          matchesFamily = (j.familyId === familyId);
+          matchesFamily = (j.familyId === familyId || (j.connectedFamilies && j.connectedFamilies.includes(familyId)));
         }
 
         if (!matchesFamily) return false;
@@ -2859,6 +2876,9 @@
       }
       if (familyId === 'peche-maritime') {
         return (this.getAgriDomains() || []).filter(d => d.id === 'peche-aquaculture');
+      }
+      if (familyId === 'elevage-veterinaire') {
+        return (this.getAgriDomains() || []).filter(d => d.id === 'elevage-productions-animales');
       }
       if (familyId === 'energie-renouvelable') {
         return this.getEnergyDomains();

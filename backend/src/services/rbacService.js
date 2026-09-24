@@ -22,8 +22,8 @@ class RbacService {
       select: { role: true },
     });
 
-    if (user?.role === 'ULTRA_ADMIN') {
-      return { permissions: ['*'], adminRoles: ['ULTRA_ADMIN'] };
+    if (user?.role === 'ULTRA_ADMIN' || user?.role === 'ADMIN') {
+      return { permissions: ['*'], adminRoles: [user.role] };
     }
 
     const userRoles = await prisma.userAdminRole.findMany({

@@ -50,11 +50,15 @@ class StatsController {
         }),
       ]);
 
+      // Référentiel des fiches métiers certifiées de la plateforme (535 fiches sur 23 familles)
+      const STATIC_CATALOG_JOBS_COUNT = 535;
+      const totalJobs = STATIC_CATALOG_JOBS_COUNT + publishedJobs;
+
       // Calcul des formations et ateliers pratiques
       const totalTraining = publishedFormations + totalEvents;
 
       // Calcul des fiches métiers d'orientation et dossiers spécialisés
-      const totalOrientationGuides = publishedJobs + publishedPosts;
+      const totalOrientationGuides = totalJobs + publishedPosts;
 
       // Calcul des interactions communautaires (sujets + réponses forum)
       const totalCommunityInteractions = totalTopics + totalReplies;
@@ -63,7 +67,9 @@ class StatsController {
         formations: publishedFormations,
         events: totalEvents,
         totalTraining,
-        jobs: publishedJobs,
+        jobs: totalJobs,
+        dbJobs: publishedJobs,
+        catalogJobs: STATIC_CATALOG_JOBS_COUNT,
         articles: publishedPosts,
         totalOrientationGuides,
         members: activeMembers,
