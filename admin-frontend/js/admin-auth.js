@@ -489,7 +489,7 @@
           }
         });
         const qs = query.toString();
-        return apiRequestWithRefresh(`/notifications${qs ? `?${qs}` : ''}`);
+        return apiRequestWithRefresh(`/notifications/admin/list${qs ? `?${qs}` : ''}`);
       },
       broadcast: (data) => apiRequestWithRefresh('/notifications/broadcast', {
         method: 'POST',

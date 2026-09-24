@@ -330,6 +330,34 @@ class NotificationService {
       unreadCount,
     };
   }
+
+  /**
+   * Récupérer toutes les notifications pour la console d'administration
+   */
+  async getAllNotificationsForAdmin({ page = 1, limit = 20, type = null } = {}) {
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
+    const skip = (pageNum - 1) * limitNum;
+    const where = type ? { type } : {};
+
+    const [items, total] = await Promise.all([
+      prisma.notification.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limitNum,
+      }),
+      prisma.notification.count({ where }),
+    ]);
+
+    return {
+      notifications: items,
+      page: pageNum,
+      limit: limitNum,
+      total,
+      totalPages: Math.ceil(total / limitNum) || 1,
+    };
+  }
 }
 
 module.exports = new NotificationService();

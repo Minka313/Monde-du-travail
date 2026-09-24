@@ -195,6 +195,28 @@ class NotificationController {
       next(error);
     }
   }
+
+  /**
+   * Liste complète des notifications pour la console d'administration
+   */
+  static async getAdminNotifications(req, res, next) {
+    try {
+      const { page, limit, type } = req.query;
+      const result = await notificationService.getAllNotificationsForAdmin({ page, limit, type });
+      res.json({
+        success: true,
+        data: result.notifications,
+        pagination: {
+          page: result.page,
+          limit: result.limit,
+          total: result.total,
+          totalPages: result.totalPages,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = NotificationController;

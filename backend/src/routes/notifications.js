@@ -26,5 +26,6 @@ router.post('/broadcast', authenticate, authorizeUltraAdmin, NotificationControl
 
 // Métriques pour l'espace d'administration
 router.get('/stats', authenticate, authorizeAdmin, NotificationController.getStats);
+router.get('/admin/list', authenticate, authorizeAdmin, NotificationController.getAdminNotifications);
 
 module.exports = router;

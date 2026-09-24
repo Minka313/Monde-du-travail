@@ -543,10 +543,7 @@
     const user = window.AdminApp.currentUser;
     const isUltraAdmin = user?.role === 'ULTRA_ADMIN';
     const canApproveMemberships = window.AdminApp.hasPermission(user, 'membership.approve');
-
-    if (isUltraAdmin && !superStatsRes?.data) {
-      throw new Error('Les statistiques du tableau de bord sont momentanément indisponibles.');
-    }
+    const isStatsUnavailable = !superStatsRes?.data;
 
     const superData = superStatsRes?.data || {};
 
@@ -922,28 +919,28 @@
                     return `
                       <tr>
                         <td>
-                          <span class="presence-medal">${u.medal}</span>
+                          <span class="presence-medal">${escapeHtml(u.medal || '—')}</span>
                         </td>
                         <td>
                           <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div class="presence-avatar">${escapeHtml(u.initials)}</div>
+                            <div class="presence-avatar">${escapeHtml(u.initials || '??')}</div>
                             <div>
                               <div style="font-weight: 700; color: var(--color-text); font-size: 0.95rem;">
-                                ${escapeHtml(u.fullName)}
+                                ${escapeHtml(u.fullName || u.email || 'Membre')}
                               </div>
-                              <div style="font-size: 0.8rem; color: var(--color-muted);">${escapeHtml(u.email)}</div>
+                              <div style="font-size: 0.8rem; color: var(--color-muted);">${escapeHtml(u.email || '')}</div>
                             </div>
                           </div>
                         </td>
                         <td>
                           <span class="badge ${u.role === 'ULTRA_ADMIN' ? 'badge-primary' : u.role === 'ADMIN' ? 'badge-info' : 'badge-muted'}">
-                            ${escapeHtml(u.displayRole)}
+                            ${escapeHtml(u.displayRole || u.role || 'Membre')}
                           </span>
                         </td>
                         <td>
-                          <span class="presence-status-pill status-${u.presenceStatus.toLowerCase()}">
+                          <span class="presence-status-pill status-${escapeHtml((u.presenceStatus || 'older').toLowerCase())}">
                             <span class="presence-dot"></span>
-                            ${escapeHtml(u.presenceLabel)}
+                            ${escapeHtml(u.presenceLabel || 'Inconnu')}
                           </span>
                         </td>
                         <td style="font-size: 0.88rem;">
@@ -951,9 +948,9 @@
                         </td>
                         <td>
                           <div style="display: flex; gap: 0.5rem; font-size: 0.85rem;">
-                            <span title="Actions / Connexions">⚡ ${u.actionsCount}</span>
-                            <span title="Sujets créés">💬 ${u.forumTopics}</span>
-                            <span title="Réponses postées">✍️ ${u.forumReplies}</span>
+                            <span title="Actions / Connexions">⚡ ${u.actionsCount || 0}</span>
+                            <span title="Sujets créés">💬 ${u.forumTopics || 0}</span>
+                            <span title="Réponses postées">✍️ ${u.forumReplies || 0}</span>
                           </div>
                         </td>
                         <td style="text-align: right;">
@@ -1143,7 +1140,7 @@
 
   function renderPresenceRows(users) {
     if (!users || users.length === 0) {
-      return `<tr><td colspan="7"><div class="empty-state" style="padding:1.5rem;">Aucun membre ne correspond aux critères de recherche.</div></td></tr>`;
+      return `<tr><td colspan="8"><div class="empty-state" style="padding:1.5rem;">Aucun membre ne correspond aux critères de recherche.</div></td></tr>`;
     }
     return users.map(u => {
       const lastLoginText = u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('fr-FR', {
@@ -1288,6 +1285,20 @@
             </div>
           </div>
         </div>
+
+        ${analyticsUnavailable ? `
+          <div class="card" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; padding: 1rem 1.25rem;">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <span style="font-size:1.4rem;">⚠️</span>
+              <div>
+                <strong style="color:#b91c1c;">Statistiques de fréquentation momentanément indisponibles</strong>
+                <p style="margin:0.25rem 0 0 0;font-size:0.88rem;color:#7f1d1d;">
+                  Le service de mesure d'audience n'a pas pu être joint. Les cartes ci-dessous présentent des valeurs initiales en attente de reconnexion.
+                </p>
+              </div>
+            </div>
+          </div>
+        ` : ''}
 
         <!-- Grille des Cartes KPI d'Audience -->
         <div class="analytics-metrics-grid">
@@ -1535,6 +1546,7 @@
                 <option value="TODAY">🟡 Actif aujourd'hui</option>
                 <option value="THIS_WEEK">⚪ Cette semaine</option>
                 <option value="OLDER">💤 Inactif (&gt;7j)</option>
+                <option value="INACTIVE">💤 Jamais connecté</option>
               </select>
             </div>
           </div>
