@@ -554,7 +554,9 @@
         'education-formation': "Cartographie d'Excellence Enseignement, Éducation & Formation",
         'enseignement-education-formation': "Cartographie d'Excellence Enseignement, Éducation & Formation",
         'environnement-developpement-durable': "Cartographie d'Excellence Environnement, Écologie & Développement durable",
-        'environnement-climat': "Cartographie d'Excellence Environnement, Écologie & Développement durable"
+        'environnement-climat': "Cartographie d'Excellence Environnement, Écologie & Développement durable",
+        'hotellerie-restauration-hospitalite': "Cartographie d'Excellence Hôtellerie, Restauration & Hospitalité",
+        'tourisme-hotellerie': "Cartographie d'Excellence Hôtellerie, Restauration & Hospitalité"
       };
       const cartographyTitle = cartographyTitles[family.id] || `Cartographie d'Excellence — ${family.name}`;
 
@@ -577,7 +579,9 @@
         'education-formation': "8 Domaines • 21 Fiches Métiers (Studyrama)",
         'enseignement-education-formation': "8 Domaines • 21 Fiches Métiers (Studyrama)",
         'environnement-developpement-durable': "6 Domaines • 18 Fiches Métiers (Onisep)",
-        'environnement-climat': "6 Domaines • 18 Fiches Métiers (Onisep)"
+        'environnement-climat': "6 Domaines • 18 Fiches Métiers (Onisep)",
+        'hotellerie-restauration-hospitalite': "8 Domaines • 21 Fiches Métiers (France Travail / MétierScope)",
+        'tourisme-hotellerie': "8 Domaines • 21 Fiches Métiers (France Travail / MétierScope)"
       };
       const cartographyBadge = cartographyBadges[family.id] || `${familyDomains.length} Domaines d'expertise`;
 
@@ -1486,6 +1490,21 @@
                     Consulter sur CIDJ.com ↗
                   </a>
                 ` : `<span style="font-size:0.8rem;color:#6d28d9;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #ddd6fe;">Référentiel CIDJ Officiel</span>`}
+              </div>
+            ` : ''}
+
+            <!-- Référentiel Officiel France Travail / MétierScope (Secteur 102 Hôtellerie-Restauration) -->
+            ${(job.familyId === 'hotellerie-restauration-hospitalite' || job.familyId === 'tourisme-hotellerie' || job.codeRome || job.franceTravailUrl) ? `
+              <div class="dossier-hospitality-ref-box" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:1.35rem;padding:0.85rem 1.15rem;background:linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);border:1.5px solid #fdba74;border-radius:12px;">
+                <div style="display:flex;align-items:center;gap:0.5rem;font-weight:700;color:#c2410c;font-size:0.88rem;">
+                  <span>🏨</span>
+                  <span>Référentiel Métiers Hôtellerie & Restauration (France Travail MétierScope${job.codeRome ? ` • Code ROME ${escapeHtml(job.codeRome)}` : ''})</span>
+                </div>
+                ${job.franceTravailUrl ? `
+                  <a href="${escapeHtml(job.franceTravailUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:0.8rem;color:#ea580c;font-weight:600;text-decoration:none;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #fed7aa;display:inline-flex;align-items:center;gap:4px;">
+                    Consulter sur France Travail ↗
+                  </a>
+                ` : `<span style="font-size:0.8rem;color:#c2410c;font-weight:600;background:#ffffff;padding:3px 10px;border-radius:12px;border:1px solid #fed7aa;">Source France Travail MétierScope</span>`}
               </div>
             ` : ''}
 

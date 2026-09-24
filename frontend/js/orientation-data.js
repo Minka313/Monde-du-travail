@@ -361,19 +361,27 @@
       ]
     },
     {
-      id: 'tourisme-hotellerie',
+      id: 'hotellerie-restauration-hospitalite',
       order: 18,
-      name: 'Tourisme, Hôtellerie, Restauration & Événementiel',
-      slug: 'tourisme-hotellerie',
-      icon: '🧳',
-      color: '#f97316', // Orange soleil
+      name: 'Hôtellerie, Restauration & Hospitalité',
+      slug: 'hotellerie-restauration-hospitalite',
+      aliasSlug: 'tourisme-hotellerie',
+      aliases: ['tourisme-hotellerie', 'hotellerie-restauration', 'tourisme', 'hotellerie', 'restauration'],
+      icon: '🏨',
+      color: '#ea580c', // Cuivré / Ambre gastronomique
       image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&auto=format&fit=crop&q=80',
-      description: 'Créer des expériences d’accueil exceptionnelles, promouvoir le patrimoine touristique, manager les complexes hôteliers et grands événements.',
-      stats: { jobsEstimate: '45+ métiers', subdomainsCount: 7 },
-      representativeJobs: ['Directeur d’Hôtel / Resort', 'Event & Wedding Planner', 'Revenue Manager', 'Chef de Cuisine Gastronomique'],
+      description: 'Concevoir et sublimer les expériences culinaires, le service en salle, l’accueil en hébergement hôtelier et le management opérationnel selon les référentiels officiels France Travail / MétierScope (secteur 102).',
+      stats: { jobsEstimate: '21 métiers officiels', subdomainsCount: 8 },
+      representativeJobs: ['Chef Cuisinier', 'Directeur d’Hôtel', 'Maître d’Hôtel', 'Pâtissier', 'Sommelier', 'Yield Manager'],
       subdomains: [
-        'Tourisme', 'Hôtellerie', 'Restauration', 'Voyage', 'Événementiel',
-        'Hospitality Management', 'Revenue Management'
+        'Production Culinaire & Cuisine',
+        'Arts de la Table & Service en Salle',
+        'Accueil, Réception & Conciergerie',
+        'Hébergement, Propreté & Entretien Hôtelier',
+        'Direction, Management Opérationnel & Gestion',
+        'Bar, Mixologie & Sommellerie',
+        'Pâtisserie & Métiers de Bouche Hôteliers',
+        'Restauration Collective & Systèmes de Restauration'
       ]
     },
     {
@@ -744,6 +752,55 @@
       label: 'Transmettre le goût du sport, du mouvement & du fair-play',
       description: 'Tu es passionné d’activité physique et tu veux développer la motricité, la santé et l’esprit d’équipe des jeunes sur les terrains de sport.',
       familyIds: ['education-formation', 'sante-soins-paramedical']
+    },
+    {
+      id: 'passion-cuisine-gastronomie',
+      icon: '🍳',
+      label: 'Sublimer les saveurs, cuisiner & diriger une brigade',
+      description: 'Tu aimes concocter des plats raffinés, manier le couteau, respecter les cuissons parfaites et le coup de feu en cuisine.',
+      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'agriculture-agritech']
+    },
+    {
+      id: 'patisserie-desserts-creatifs',
+      icon: '🎂',
+      label: 'Façonner pâtes, viennoiseries, entremets & pièces montées',
+      description: 'Tu as la passion de la précision au gramme près, du tempérage du chocolat, du pochage et des créations sucrées.',
+      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'culture-medias']
+    },
+    {
+      id: 'accueil-relation-client-service',
+      icon: '🛎️',
+      label: 'Accueillir les clients, veiller au séjour & servir avec excellence',
+      description: 'Tu as le sens inné du contact, de l’élégance, de l’écoute bienveillante et du service haut de gamme.',
+      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'commerce-marketing']
+    },
+    {
+      id: 'bar-mixologie-sommellerie',
+      icon: '🍸',
+      label: 'Créer des cocktails signatures, conseiller les vins & gérer la cave',
+      description: 'Tu es fasciné par la mixologie, les arômes, les accords mets-vins et l’ambiance feutrée du bar.',
+      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'commerce-marketing']
+    },
+    {
+      id: 'management-direction-etablissement',
+      icon: '🏨',
+      label: 'Piloter un hôtel, un restaurant ou un resort avec rentabilité',
+      description: 'Tu as l’esprit d’un gestionnaire et d’un leader : coordonner les équipes, garantir la rentabilité et l’image de marque.',
+      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'droit-management', 'finance-fintech']
+    },
+    {
+      id: 'yield-revenue-management',
+      icon: '📈',
+      label: 'Optimiser les tarifs, le taux d’occupation & les revenus hôteliers',
+      description: 'Tu aimes analyser la demande, manier les algorithmes de pricing dynamique et maximiser le RevPAR.',
+      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'data-decision', 'finance-fintech']
+    },
+    {
+      id: 'voyage-hospitalite-hotellerie',
+      icon: '🧳',
+      label: 'Créer des séjours mémorables & faire rayonner l’hospitalité',
+      description: 'Tu es passionné par le voyage, le tourisme culturel, l’éco-tourisme et les séjours inoubliables.',
+      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'culture-medias']
     }
   ];
 
@@ -2097,6 +2154,34 @@
         });
       }
 
+      // 1.m Intégration du catalogue Hôtellerie, Restauration & Hospitalité (OrientationHospitalityData)
+      const hospitalityData = (typeof window !== 'undefined' && window.OrientationHospitalityData)
+        ? window.OrientationHospitalityData
+        : (typeof global !== 'undefined' && global.OrientationHospitalityData ? global.OrientationHospitalityData : null);
+
+      if (hospitalityData && typeof hospitalityData.getJobs === 'function') {
+        const hospJobs = hospitalityData.getJobs();
+        hospJobs.forEach(hospJob => {
+          const existingIdx = combined.findIndex(j => j.slug === hospJob.slug || j.id === hospJob.id);
+          if (existingIdx >= 0) {
+            combined[existingIdx] = Object.assign({}, hospJob, combined[existingIdx], {
+              aliases: [...new Set([...(hospJob.aliases || []), ...(combined[existingIdx].aliases || [])])],
+              connectedFamilies: [...new Set([...(combined[existingIdx].connectedFamilies || [combined[existingIdx].familyId]), hospJob.familyId, 'hotellerie-restauration-hospitalite', 'tourisme-hotellerie'])],
+              domain: hospJob.domain || combined[existingIdx].domain,
+              domainId: hospJob.domainId || combined[existingIdx].domainId,
+              subdomain: hospJob.subdomain || combined[existingIdx].subdomain,
+              salary: hospJob.salary || combined[existingIdx].salary,
+              saviezVous: combined[existingIdx].saviezVous || hospJob.saviezVous || null,
+              codeRome: hospJob.codeRome || combined[existingIdx].codeRome,
+              franceTravailUrl: hospJob.franceTravailUrl !== undefined ? hospJob.franceTravailUrl : combined[existingIdx].franceTravailUrl,
+              sources: hospJob.sources || combined[existingIdx].sources
+            });
+          } else {
+            combined.push(hospJob);
+          }
+        });
+      }
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -2196,6 +2281,9 @@
       if (familyId === 'environnement-developpement-durable' || familyId === 'environnement-climat' || familyId === 'environnement' || familyId === 'ecologie-developpement-durable') {
         return all.filter(j => j.familyId === 'environnement-developpement-durable' || j.familyId === 'environnement-climat' || (j.connectedFamilies && (j.connectedFamilies.includes('environnement-developpement-durable') || j.connectedFamilies.includes('environnement-climat') || j.connectedFamilies.includes('environnement'))));
       }
+      if (familyId === 'hotellerie-restauration-hospitalite' || familyId === 'tourisme-hotellerie' || familyId === 'hotellerie-restauration' || familyId === 'tourisme' || familyId === 'hotellerie' || familyId === 'restauration') {
+        return all.filter(j => j.familyId === 'hotellerie-restauration-hospitalite' || j.familyId === 'tourisme-hotellerie' || (j.connectedFamilies && (j.connectedFamilies.includes('hotellerie-restauration-hospitalite') || j.connectedFamilies.includes('tourisme-hotellerie'))));
+      }
       return all.filter(j => j.familyId === familyId);
     },
 
@@ -2224,6 +2312,8 @@
           matchesFamily = (j.familyId === 'education-formation' || (j.connectedFamilies && (j.connectedFamilies.includes('education-formation') || j.connectedFamilies.includes('enseignement-education-formation'))));
         } else if (familyId === 'environnement-developpement-durable' || familyId === 'environnement-climat' || familyId === 'environnement' || familyId === 'ecologie-developpement-durable') {
           matchesFamily = (j.familyId === 'environnement-developpement-durable' || j.familyId === 'environnement-climat' || (j.connectedFamilies && (j.connectedFamilies.includes('environnement-developpement-durable') || j.connectedFamilies.includes('environnement-climat') || j.connectedFamilies.includes('environnement'))));
+        } else if (familyId === 'hotellerie-restauration-hospitalite' || familyId === 'tourisme-hotellerie' || familyId === 'hotellerie-restauration' || familyId === 'tourisme' || familyId === 'hotellerie' || familyId === 'restauration') {
+          matchesFamily = (j.familyId === 'hotellerie-restauration-hospitalite' || j.familyId === 'tourisme-hotellerie' || (j.connectedFamilies && (j.connectedFamilies.includes('hotellerie-restauration-hospitalite') || j.connectedFamilies.includes('tourisme-hotellerie'))));
         } else {
           matchesFamily = (j.familyId === familyId);
         }
@@ -2486,6 +2576,19 @@
           if (Array.isArray(job.formations.senegal) && job.formations.senegal.some(s => matchesStr(s))) return true;
         }
 
+        // Hôtellerie, Restauration & Hospitalité (France Travail MétierScope secteur 102)
+        if (job.codeRome && matchesStr(job.codeRome)) return true;
+        if (job.franceTravailUrl && matchesStr(job.franceTravailUrl)) return true;
+        if (Array.isArray(job.equipment) && job.equipment.some(eq => matchesStr(eq))) return true;
+        if (job.saviezVous && typeof job.saviezVous === 'object') {
+          if (job.saviezVous.anecdote && matchesStr(job.saviezVous.anecdote)) return true;
+          if (job.saviezVous.reference && matchesStr(job.saviezVous.reference)) return true;
+        }
+        if (job.evolution && typeof job.evolution === 'object') {
+          if (Array.isArray(job.evolution.promotions) && job.evolution.promotions.some(p => matchesStr(p))) return true;
+          if (Array.isArray(job.evolution.passerelles) && job.evolution.passerelles.some(p => matchesStr(p))) return true;
+        }
+
         return false;
       });
     },
@@ -2691,6 +2794,9 @@
       if (familyId === 'environnement-developpement-durable' || familyId === 'environnement-climat' || familyId === 'environnement' || familyId === 'ecologie-developpement-durable') {
         return this.getEnvironmentDomains();
       }
+      if (familyId === 'hotellerie-restauration-hospitalite' || familyId === 'tourisme-hotellerie' || familyId === 'hotellerie-restauration' || familyId === 'tourisme' || familyId === 'hotellerie' || familyId === 'restauration') {
+        return this.getHospitalityDomains();
+      }
       return [];
     },
 
@@ -2702,6 +2808,18 @@
           : (typeof OrientationEnvironmentData !== 'undefined' ? OrientationEnvironmentData : null));
       if (environmentData && typeof environmentData.getDomains === 'function') {
         return environmentData.getDomains();
+      }
+      return [];
+    },
+
+    getHospitalityDomains: function () {
+      const hospitalityData = (typeof window !== 'undefined' && window.OrientationHospitalityData)
+        ? window.OrientationHospitalityData
+        : (typeof global !== 'undefined' && global.OrientationHospitalityData
+          ? global.OrientationHospitalityData
+          : (typeof OrientationHospitalityData !== 'undefined' ? OrientationHospitalityData : null));
+      if (hospitalityData && typeof hospitalityData.getDomains === 'function') {
+        return hospitalityData.getDomains();
       }
       return [];
     },
@@ -2720,6 +2838,11 @@
         case 'ENVIRONNEMENT':
         case 'ECOLOGIE':
           return 'environnement-developpement-durable';
+        case 'HOTELLERIE':
+        case 'RESTAURATION':
+        case 'TOURISME':
+        case 'HOSPITALITE':
+          return 'hotellerie-restauration-hospitalite';
         default: return 'droit-management';
       }
     }
