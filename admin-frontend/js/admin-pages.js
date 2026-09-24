@@ -349,6 +349,22 @@
 
   // ===== OPTIMISATIONS HAUTE PERFORMANCE & UX RÉACTIVE =====
   let activeModule = null;
+  let analyticsRefreshTimer = null;
+
+  function syncAnalyticsRefresh(module) {
+    if (analyticsRefreshTimer) {
+      clearInterval(analyticsRefreshTimer);
+      analyticsRefreshTimer = null;
+    }
+
+    if (module === 'analytics') {
+      analyticsRefreshTimer = setInterval(() => {
+        if (activeModule === 'analytics' && document.visibilityState === 'visible') {
+          loadPage('analytics', true);
+        }
+      }, 15000);
+    }
+  }
 
   function showTopLoader() {
     let loader = document.getElementById('admin-top-progress');
@@ -505,6 +521,7 @@
       content.innerHTML = html;
       bindPageEvents(module);
       activeModule = module;
+      syncAnalyticsRefresh(module);
     } catch (error) {
       content.style.opacity = '1';
       content.style.pointerEvents = '';
@@ -1204,11 +1221,11 @@
         window.AdminApi.analytics.getPresence(100)
       ]);
 
-      if (visRes.status === 'fulfilled' && visRes.value?.data?.stats) {
-        visitorStats = visRes.value.data.stats;
+      if (visRes.status === 'fulfilled' && visRes.value?.data) {
+        visitorStats = visRes.value.data;
       }
-      if (presRes.status === 'fulfilled' && Array.isArray(presRes.value?.data?.users)) {
-        presenceUsers = presRes.value.data.users;
+      if (presRes.status === 'fulfilled' && Array.isArray(presRes.value?.data)) {
+        presenceUsers = presRes.value.data;
       }
     } catch (err) {
       console.warn('[Analytics] Erreur chargement stats:', err);
@@ -1218,12 +1235,12 @@
 
     // Calculs pour les graphiques CSS
     const dailyTrend = visitorStats.dailyTrend || [];
-    const maxDayViews = Math.max(1, ...dailyTrend.map(d => d.views || 0));
+    const maxDayViews = Math.max(1, ...dailyTrend.map(d => d.visits || 0));
 
-    const totalDevices = Object.values(visitorStats.deviceStats || {}).reduce((a, b) => a + b, 0) || 1;
-    const desktopPct = Math.round(((visitorStats.deviceStats?.desktop || 0) / totalDevices) * 100);
-    const mobilePct = Math.round(((visitorStats.deviceStats?.mobile || 0) / totalDevices) * 100);
-    const tabletPct = Math.round(((visitorStats.deviceStats?.tablet || 0) / totalDevices) * 100);
+    const totalDevices = visitorStats.devices?.total || 1;
+    const desktopPct = Math.round(((visitorStats.devices?.desktop || 0) / totalDevices) * 100);
+    const mobilePct = Math.round(((visitorStats.devices?.mobile || 0) / totalDevices) * 100);
+    const tabletPct = Math.round(((visitorStats.devices?.tablet || 0) / totalDevices) * 100);
 
     const maxPageViews = Math.max(1, ...(visitorStats.topPages || []).map(p => p.views || 0));
 
@@ -1265,11 +1282,11 @@
               <span class="analytics-stat-icon">🌅</span>
             </div>
             <div class="analytics-stat-val">
-              ${(visitorStats.today?.visitors || 0).toLocaleString('fr-FR')}
+              ${(visitorStats.summary?.today?.uniqueVisitors || 0).toLocaleString('fr-FR')}
               <span class="analytics-stat-unit">visiteurs</span>
             </div>
             <div class="analytics-stat-sub">
-              <strong>${(visitorStats.today?.views || 0).toLocaleString('fr-FR')}</strong> pages consultées
+              <strong>${(visitorStats.summary?.today?.visits || 0).toLocaleString('fr-FR')}</strong> pages consultées
             </div>
           </div>
 
@@ -1279,11 +1296,11 @@
               <span class="analytics-stat-icon">📊</span>
             </div>
             <div class="analytics-stat-val">
-              ${(visitorStats.last7Days?.visitors || 0).toLocaleString('fr-FR')}
+              ${(visitorStats.summary?.week?.uniqueVisitors || 0).toLocaleString('fr-FR')}
               <span class="analytics-stat-unit">visiteurs</span>
             </div>
             <div class="analytics-stat-sub">
-              <strong>${(visitorStats.last7Days?.views || 0).toLocaleString('fr-FR')}</strong> pages consultées
+              <strong>${(visitorStats.summary?.week?.visits || 0).toLocaleString('fr-FR')}</strong> pages consultées
             </div>
           </div>
 
@@ -1293,11 +1310,11 @@
               <span class="analytics-stat-icon">🗓️</span>
             </div>
             <div class="analytics-stat-val">
-              ${(visitorStats.last30Days?.visitors || 0).toLocaleString('fr-FR')}
+              ${(visitorStats.summary?.month?.uniqueVisitors || 0).toLocaleString('fr-FR')}
               <span class="analytics-stat-unit">visiteurs</span>
             </div>
             <div class="analytics-stat-sub">
-              <strong>${(visitorStats.last30Days?.views || 0).toLocaleString('fr-FR')}</strong> pages consultées
+              <strong>${(visitorStats.summary?.month?.visits || 0).toLocaleString('fr-FR')}</strong> pages consultées
             </div>
           </div>
 
@@ -1307,11 +1324,11 @@
               <span class="analytics-stat-icon">🌐</span>
             </div>
             <div class="analytics-stat-val">
-              ${(visitorStats.allTime?.visitors || 0).toLocaleString('fr-FR')}
+              ${(visitorStats.summary?.allTime?.totalUniqueVisitors || 0).toLocaleString('fr-FR')}
               <span class="analytics-stat-unit">uniques</span>
             </div>
             <div class="analytics-stat-sub">
-              <strong>${(visitorStats.allTime?.views || 0).toLocaleString('fr-FR')}</strong> lectures cumulées
+              <strong>${(visitorStats.summary?.allTime?.totalVisits || 0).toLocaleString('fr-FR')}</strong> lectures cumulées
             </div>
           </div>
 
@@ -1349,15 +1366,15 @@
               <div class="analytics-daily-bars-container">
                 <div class="analytics-daily-bars">
                   ${dailyTrend.map(d => {
-                    const heightPct = Math.max(12, Math.round(((d.views || 0) / maxDayViews) * 100));
+                    const heightPct = Math.max(12, Math.round(((d.visits || 0) / maxDayViews) * 100));
                     const dateObj = new Date(d.date);
                     const dayName = dateObj.toLocaleDateString('fr-FR', { weekday: 'short' });
                     const dayNum = dateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
                     return `
-                      <div class="analytics-bar-item" title="${d.date}: ${d.visitors || 0} visiteurs, ${d.views || 0} pages vues">
+                      <div class="analytics-bar-item" title="${d.date}: ${d.uniqueVisitors || 0} visiteurs, ${d.visits || 0} pages vues">
                         <div class="analytics-bar-track">
                           <div class="analytics-bar-fill" style="height: ${heightPct}%;">
-                            <span class="analytics-bar-tooltip">${d.views || 0} vues<br>${d.visitors || 0} vis.</span>
+                            <span class="analytics-bar-tooltip">${d.visits || 0} vues<br>${d.uniqueVisitors || 0} vis.</span>
                           </div>
                         </div>
                         <div class="analytics-bar-label">
@@ -5746,7 +5763,7 @@
       if (refreshBtn) {
         refreshBtn.addEventListener('click', () => {
           showToast('Actualisation des statistiques d\'audience...', 'info');
-          loadPage('analytics', false, true);
+          loadPage('analytics', true);
         });
       }
 

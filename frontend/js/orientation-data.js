@@ -271,16 +271,16 @@
       representativeJobs: ['Médecin Généraliste', 'Chirurgien', 'Infirmier en Pratique Avancée (IPA)', 'Sage-Femme', 'Pharmacien d’Officine', 'Biologiste Médical'],
       subdomains: [
         'Médecine & Chirurgie',
-        'Chirurgie, Anesthésie & Réanimation',
-        'Santé Bucco-Dentaire & Odontologie',
         'Soins Infirmiers & Pratiques Avancées',
-        'Santé de la Femme & de l’Enfant (Maternité & Pédiatrie)',
-        'Rééducation, Kinésithérapie & Réadaptation',
-        'Urgences, Secours Médical & Régulation (SAMU)',
+        'Santé Dentaire & Odontologie',
+        "Santé de la Femme & de l'Enfant",
+        'Santé Mentale & Psychiatrie',
+        'Rééducation, Réadaptation & Autonomie',
+        'Urgences, Secours Médical & Régulation',
         'Biologie Médicale & Diagnostics de Laboratoire',
         'Pharmacie Clinique, Officine & Distribution',
-        'Direction, Encadrement & Administration Hospitalière',
-        'Technologies Biomédicales & Dispositifs Médicaux'
+        'Direction, Encadrement & Administration de Santé',
+        'Dispositifs Médicaux & Ingénierie Biomédicale'
       ]
     },
     {
@@ -1335,9 +1335,13 @@
       title: 'Ingénieur Biomédical',
       icon: '🏥',
       image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&auto=format&fit=crop&q=80',
-      familyId: 'sante-biomedical',
-      familyName: 'Santé, Pharmacie & Biomédical',
-      subdomain: 'Biomédical',
+      familyId: 'sante-soins-paramedical',
+      familyName: 'Santé, Soins & Paramédical',
+      domain: 'Dispositifs Médicaux & Ingénierie Biomédicale',
+      domainId: 'technologies-biomedicales',
+      subdomain: 'Dispositifs médicaux',
+      aliases: ['Ingénieur hospitalier', 'Ingénieur en technologies médicales', 'Responsable biomédical'],
+      connectedFamilies: ['sante-soins-paramedical', 'sante-biomedical', 'biologie-chimie', 'industrie-mecanique'],
       shortDescription: 'Fait le lien vital entre la médecine et la technologie en garantissant l’acquisition, la maintenance et la fiabilité des équipements de pointe hospitaliers.',
       longDescription: 'Dans un hôpital moderne, aucun médecin ne peut opérer sans respirateurs fiables, scanners IRM ou moniteurs cardiaques calibrés. L’ingénieur biomédical choisit les équipements médicaux les plus performants, forme le personnel soignant à leur usage et organise la maintenance préventive pour éviter toute panne en pleine réanimation.',
       level: 'Bac +5 (Ingénieur Biomédical ou Master Technologies de Santé)',
@@ -1950,7 +1954,7 @@
               sources: hJob.sources || combined[existingIdx].sources
             });
           } else {
-            combined.push(hJob);
+            combined.push(Object.assign({ familyName: 'Santé, Soins & Paramédical' }, hJob));
           }
         });
       }
@@ -1980,7 +1984,7 @@
               sources: bJob.sources || combined[existingIdx].sources
             });
           } else {
-            combined.push(bJob);
+            combined.push(Object.assign({ familyName: 'Biologie & Chimie' }, bJob));
           }
         });
       }
@@ -2143,11 +2147,12 @@
 
         if (!matchesFamily) return false;
 
+        const familyDomains = (typeof this.getFamilyDomains === 'function')
+          ? this.getFamilyDomains(familyId)
+          : ((typeof this.getDigitalDomains === 'function') ? this.getDigitalDomains() : []);
+
         // Filtrage optionnel par domaine (par ID ou par Nom)
         if (domain && domain !== 'all') {
-          const familyDomains = (typeof this.getFamilyDomains === 'function')
-            ? this.getFamilyDomains(familyId)
-            : ((typeof this.getDigitalDomains === 'function') ? this.getDigitalDomains() : []);
           const domObj = familyDomains.find(d => (d.id && d.id.toLowerCase() === domain.toLowerCase()) || (d.name && d.name.toLowerCase() === domain.toLowerCase())) || null;
           const targetName = domObj ? domObj.name.toLowerCase() : domain.toLowerCase();
           const targetId = domObj ? domObj.id.toLowerCase() : domain.toLowerCase();
@@ -2160,7 +2165,32 @@
 
         // Filtrage par sous-domaine
         if (!subdomain || subdomain === 'all') return true;
-        return (j.subdomain || '').toLowerCase() === subdomain.toLowerCase();
+
+        const subLower = subdomain.toLowerCase();
+        // 1. Correspondance directe sur subdomain
+        if ((j.subdomain || '').toLowerCase() === subLower) return true;
+
+        // 2. Correspondance directe sur domain ou domainId du job
+        if ((j.domain || '').toLowerCase() === subLower || (j.domainId || '').toLowerCase() === subLower) return true;
+
+        // 3. Correspondance si le subdomain passé correspond à un domaine de la famille
+        const matchingDomain = familyDomains.find(d => 
+          (d.id && d.id.toLowerCase() === subLower) || 
+          (d.name && d.name.toLowerCase() === subLower)
+        );
+        if (matchingDomain) {
+          if ((j.domainId && j.domainId.toLowerCase() === matchingDomain.id.toLowerCase()) ||
+              (j.domain && j.domain.toLowerCase() === matchingDomain.name.toLowerCase()) ||
+              (matchingDomain.subdomains && matchingDomain.subdomains.some(s => s.toLowerCase() === (j.subdomain || '').toLowerCase()))) {
+            return true;
+          }
+        }
+
+        // 4. Correspondance flexible / partielle (ex: "Chirurgie, Anesthésie" ou "SAMU")
+        const jobSub = (j.subdomain || '').toLowerCase();
+        if (jobSub && (jobSub.includes(subLower) || subLower.includes(jobSub))) return true;
+
+        return false;
       });
     },
 

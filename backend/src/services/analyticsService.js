@@ -98,7 +98,9 @@ class AnalyticsService {
         }
       }
 
-      return await logPromise;
+      const log = await logPromise;
+      this.invalidateCache();
+      return log;
     } catch (error) {
       logger.error('Erreur lors du suivi de la visite (AnalyticsService.trackVisit):', error);
       // Ne jamais faire échouer la navigation du visiteur
@@ -122,13 +124,13 @@ class AnalyticsService {
       const sevenDaysAgo = new Date(nowMs - 7 * 24 * 60 * 60 * 1000);
       const thirtyDaysAgo = new Date(nowMs - 30 * 24 * 60 * 60 * 1000);
 
-      // Récupération en parallèle des visites récentes et des totaux
-      const [recentLogs, totalVisitsCount, totalLoginLogsCount] = await Promise.all([
+      // Récupération des visites récentes et du total historique.
+      // Les identifiants visiteurs sont conservés pour produire un total unique réel.
+      const [recentLogs, totalVisitLogs, totalLoginLogsCount] = await Promise.all([
         prisma.auditLog.findMany({
           where: {
             module: 'analytics',
             action: 'site.visit',
-            createdAt: { gte: thirtyDaysAgo },
           },
           select: {
             createdAt: true,
@@ -155,7 +157,7 @@ class AnalyticsService {
       // Calcul des visites et visiteurs uniques par période
       let visitsToday = 0;
       let visitsWeek = 0;
-      let visitsMonth = recentLogs.length;
+      let visitsMonth = 0;
 
       const uniqueTodaySet = new Set();
       const uniqueWeekSet = new Set();
@@ -185,14 +187,18 @@ class AnalyticsService {
         const page = log.resource || meta.path || '/';
         const dev = (meta.device || 'desktop').toLowerCase();
 
-        // Pages les plus consultées (sur 30 jours)
-        pageCounts[page] = (pageCounts[page] || 0) + 1;
+        // Pages, appareils et visiteurs de la fenêtre de 30 jours.
+        if (created >= thirtyDaysAgo) {
+          visitsMonth++;
+          pageCounts[page] = (pageCounts[page] || 0) + 1;
 
-        // Appareils
-        if (deviceCounts[dev] !== undefined) {
-          deviceCounts[dev]++;
-        } else {
-          deviceCounts.desktop++;
+          if (deviceCounts[dev] !== undefined) {
+            deviceCounts[dev]++;
+          } else {
+            deviceCounts.desktop++;
+          }
+
+          uniqueMonthSet.add(vid);
         }
 
         // Aujourd'hui
@@ -213,8 +219,6 @@ class AnalyticsService {
           }
         }
 
-        // 30 derniers jours
-        uniqueMonthSet.add(vid);
       });
 
       // Formatage du Top Pages
@@ -254,8 +258,11 @@ class AnalyticsService {
 
       // Total historique : si peu de logs de visite (démarrage du tracker),
       // combiner avec les connexions historiques pour donner une base solide
-      const totalVisits = Math.max(totalVisitsCount, visitsMonth);
-      const totalUniqueVisitors = Math.max(uniqueMonthSet.size, Math.round(totalVisits * 0.45));
+      const totalVisits = totalVisitLogs.length;
+      const totalUniqueVisitors = new Set(totalVisitLogs.map(log => {
+        const meta = log.metadata || {};
+        return meta.visitorId || log.userId || log.ipAddress || 'anon';
+      })).size;
 
       const stats = {
         summary: {

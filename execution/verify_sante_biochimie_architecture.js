@@ -264,6 +264,46 @@ async function runTests() {
   assert(jobHtmlContent.includes('orientation-biochimie-data.js'), "job.html inclut orientation-biochimie-data.js");
 
   // -------------------------------------------------------------------------
+  // TEST GROUP 9 : Accessibilité & Navigation Intégrale Santé (Zéro État Vide)
+  // -------------------------------------------------------------------------
+  console.log('\n--- TEST GROUP 9 : Accessibilité & Navigation Intégrale Santé (Zéro État Vide) ---');
+  const healthDomains = od.getFamilyDomains('sante-soins-paramedical');
+  assert(healthDomains.length === 11, `La famille santé possède bien 11 domaines (trouvé: ${healthDomains.length})`);
+
+  // Vérification de l'ingénieur biomédical rattaché au domaine 11
+  const bioEng = (await od.getAllJobs()).find(j => j.id === 'ingenieur-biomedical');
+  assert(Boolean(bioEng), "Ingénieur biomédical présent dans le catalogue global");
+  assert(bioEng && bioEng.domainId === 'technologies-biomedicales', "Ingénieur biomédical rattaché au domaine 'technologies-biomedicales'");
+  assert(bioEng && bioEng.subdomain === 'Dispositifs médicaux', "Ingénieur biomédical sous-domaine 'Dispositifs médicaux'");
+
+  // Test de chaque domaine santé (aucun ne doit retourner 0 métiers)
+  for (const dom of healthDomains) {
+    const jobsInDom = await od.getJobsBySubdomain('sante-soins-paramedical', 'all', dom.id);
+    assert(jobsInDom.length > 0, `Domaine [${dom.id}] ${dom.name} retourne > 0 métiers (trouvé: ${jobsInDom.length})`);
+
+    // Test de chaque sous-domaine sous ce domaine
+    for (const sub of (dom.subdomains || [])) {
+      const jobsInSub = await od.getJobsBySubdomain('sante-soins-paramedical', sub, dom.id);
+      assert(jobsInSub.length > 0, `Sous-domaine [${sub}] sous [${dom.id}] retourne > 0 métiers (trouvé: ${jobsInSub.length})`);
+    }
+  }
+
+  // Test de chaque pilule de sous-domaine au niveau famille (selectedDomain = 'all')
+  const famHealthPills = od.getFamilies().find(f => f.id === 'sante-soins-paramedical');
+  assert(famHealthPills && famHealthPills.subdomains && famHealthPills.subdomains.length > 0, "La famille santé a une liste de sous-domaines définie");
+  for (const subPill of famHealthPills.subdomains) {
+    const jobsForPill = await od.getJobsBySubdomain('sante-soins-paramedical', subPill, 'all');
+    assert(jobsForPill.length > 0, `Pilule sous-domaine [${subPill}] au niveau famille retourne > 0 métiers (trouvé: ${jobsForPill.length})`);
+  }
+
+  // Vérification de l'accès direct aux métiers santé par slug (getJobBySlug)
+  const sampleSlugs = ['medecin-generaliste', 'chirurgien', 'infirmier-diplome-etat', 'sage-femme', 'pharmacien-officine', 'ingenieur-biomedical'];
+  for (const s of sampleSlugs) {
+    const j = await od.getJobBySlug(s);
+    assert(Boolean(j), `Accès direct au métier par slug réussi : '${s}'`);
+  }
+
+  // -------------------------------------------------------------------------
   // BILAN FINAL
   // -------------------------------------------------------------------------
   console.log('\n========================================================================');

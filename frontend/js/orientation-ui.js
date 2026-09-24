@@ -1217,7 +1217,10 @@
       : [];
 
     // Calculs d'impact et indicateurs de lecture rapides
-    const textToAnalyze = `${job.longDescription || ''} ${job.shortDescription || ''} ${(job.typicalDay || []).join(' ')}`;
+    const typicalDayWords = Array.isArray(job.typicalDay)
+      ? job.typicalDay.map(s => (typeof s === 'string' ? s : `${s.title || ''} ${s.activity || ''} ${s.desc || ''}`)).join(' ')
+      : '';
+    const textToAnalyze = `${job.longDescription || ''} ${job.shortDescription || ''} ${typicalDayWords}`;
     const words = textToAnalyze.trim().split(/\s+/).filter(Boolean).length;
     const readingTimeMin = Math.max(2, Math.min(6, Math.ceil(words / 140)));
     const tensionText = job.marketTension || (job.salary ? 'Fort recrutement' : 'Métier en plein essor');
@@ -1313,6 +1316,11 @@
                 ${job.sourceBRGM ? `
                   <span class="dossier-meta-tag" style="background:rgba(15,118,110,0.25);border-color:rgba(45,212,191,0.5);color:#ccfbf1;" title="Fiche documentée d'après le BRGM & la Société Géologique de France">
                     ⛏️ Référence BRGM / SGF
+                  </span>
+                ` : ''}
+                ${(job.familyId === 'sante-soins-paramedical' || job.familyId === 'sante-biomedical' || job.studyramaUrl) ? `
+                  <span class="dossier-meta-tag" style="background:rgba(239,68,68,0.25);border-color:rgba(248,113,113,0.5);color:#fee2e2;" title="Fiche documentée d'après le référentiel officiel Studyrama Santé & Ordres Professionnels">
+                    🏥 Référence Studyrama Santé
                   </span>
                 ` : ''}
               </div>
@@ -1524,15 +1532,17 @@
               </div>
             ` : ''}
 
-            ${job.workEnvironment && job.workEnvironment.length > 0 ? `
+            ${job.workEnvironment && (Array.isArray(job.workEnvironment) ? job.workEnvironment.length > 0 : Boolean(job.workEnvironment)) ? `
               <div class="dossier-section" style="background:#f8fafc;border:1px solid #e2e8f0;padding:1.25rem;border-radius:10px;margin-top:1.25rem;">
                 <h4 style="color:#0f172a;font-size:0.95rem;margin-bottom:0.75rem;">💻 À quoi ressemble ce métier au quotidien ?</h4>
                 <div class="work-environment-tags-grid">
-                  ${job.workEnvironment.map(tag => `
+                  ${Array.isArray(job.workEnvironment) ? job.workEnvironment.map(tag => `
                     <div class="env-tag-chip">
                       <span>${escapeHtml(tag)}</span>
                     </div>
-                  `).join('')}
+                  `).join('') : `
+                    <p style="margin:0;color:#334155;font-size:0.92rem;line-height:1.6;">${escapeHtml(job.workEnvironment)}</p>
+                  `}
                 </div>
               </div>
             ` : ''}
@@ -1542,15 +1552,20 @@
                 <h3 class="dossier-section-title">Journée type indicative</h3>
                 <p style="color:#64748b;font-size:0.88rem;margin-bottom:1rem;">À quoi peut ressembler une journée de travail typique :</p>
                 <div class="typical-day-timeline">
-                  ${job.typicalDay.map(slot => `
-                    <div class="timeline-item">
-                      <div class="timeline-time">${escapeHtml(slot.time)}</div>
-                      <div class="timeline-content">
-                        <strong>${escapeHtml(slot.title)}</strong>
-                        <p>${escapeHtml(slot.desc)}</p>
+                  ${job.typicalDay.map(slot => {
+                    const timeText = escapeHtml(slot.time || '');
+                    const titleText = escapeHtml(slot.title || slot.activity || '');
+                    const descText = slot.desc ? `<p>${escapeHtml(slot.desc)}</p>` : (slot.title && slot.activity ? `<p>${escapeHtml(slot.activity)}</p>` : '');
+                    return `
+                      <div class="timeline-item">
+                        <div class="timeline-time">${timeText}</div>
+                        <div class="timeline-content">
+                          <strong>${titleText}</strong>
+                          ${descText}
+                        </div>
                       </div>
-                    </div>
-                  `).join('')}
+                    `;
+                  }).join('')}
                 </div>
               </div>
             ` : ''}
