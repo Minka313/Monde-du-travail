@@ -88,6 +88,40 @@
       activeFiltersBanner: document.getElementById('activeFiltersBanner'),
       activeFiltersPills: document.getElementById('activeFiltersPills'),
       btnClearAllFilters: document.getElementById('btnClearAllFilters'),
+
+      // Modules Boussole : Quiz RIASEC & Roue Canvas
+      tabModeQuiz: document.getElementById('tabModeQuiz'),
+      tabModeWheel: document.getElementById('tabModeWheel'),
+      tabModeChips: document.getElementById('tabModeChips'),
+      boussoleQuizView: document.getElementById('boussoleQuizView'),
+      boussoleWheelView: document.getElementById('boussoleWheelView'),
+      boussoleChipsView: document.getElementById('boussoleChipsView'),
+      boussoleResultsView: document.getElementById('boussoleResultsView'),
+      quizQuestionCategory: document.getElementById('quizQuestionCategory'),
+      quizQuestionCounter: document.getElementById('quizQuestionCounter'),
+      quizProgressFill: document.getElementById('quizProgressFill'),
+      quizQuestionText: document.getElementById('quizQuestionText'),
+      quizOptionsGrid: document.getElementById('quizOptionsGrid'),
+      btnQuizPrev: document.getElementById('btnQuizPrev'),
+      btnQuizNext: document.getElementById('btnQuizNext'),
+      orientationWheelCanvas: document.getElementById('orientationWheelCanvas'),
+      btnSpinWheelFree: document.getElementById('btnSpinWheelFree'),
+      wheelStatusNotice: document.getElementById('wheelStatusNotice'),
+      quizProfileBanner: document.getElementById('quizProfileBanner'),
+      resProfileIcon: document.getElementById('resProfileIcon'),
+      resHollandBadge: document.getElementById('resHollandBadge'),
+      resTopMatchRate: document.getElementById('resTopMatchRate'),
+      resProfileTitle: document.getElementById('resProfileTitle'),
+      resProfileSummary: document.getElementById('resProfileSummary'),
+      riasecGaugesGrid: document.getElementById('riasecGaugesGrid'),
+      senegalPathwayCard: document.getElementById('senegalPathwayCard'),
+      resBacSeries: document.getElementById('resBacSeries'),
+      resUniversities: document.getElementById('resUniversities'),
+      resSalaryFcfa: document.getElementById('resSalaryFcfa'),
+      resVisionPillar: document.getElementById('resVisionPillar'),
+      quizRecommendedJobsGrid: document.getElementById('quizRecommendedJobsGrid'),
+      btnRestartQuiz: document.getElementById('btnRestartQuiz'),
+      btnViewAllMatchedJobs: document.getElementById('btnViewAllMatchedJobs'),
       
       // Reset & retours
       btnBackToFamilies: document.getElementById('btnBackToFamilies'),
@@ -1217,7 +1251,403 @@
   }
 
   // =========================================================================
-  // BOUSSOLE DES AFFINITÉS (« Je ne sais pas encore »)
+  // BOUSSOLE D'ORIENTATION INTELLIGENTE : QUIZ RIASEC & ROUE INTERACTIVE
+  // =========================================================================
+  let wheelInstance = null;
+  let quizState = {
+    currentIndex: 0,
+    answers: {},
+    latestResult: null
+  };
+
+  function initBoussoleModule() {
+    initBoussoleTabs();
+    initQuizEngine();
+    initWheelEngine();
+    initAffinityExplorer();
+  }
+
+  // Gestion des onglets de la boussole (Quiz vs Roue vs Puces)
+  function initBoussoleTabs() {
+    const tabs = [
+      { btn: dom.tabModeQuiz, panel: dom.boussoleQuizView },
+      { btn: dom.tabModeWheel, panel: dom.boussoleWheelView },
+      { btn: dom.tabModeChips, panel: dom.boussoleChipsView }
+    ];
+
+    tabs.forEach(({ btn, panel }) => {
+      if (!btn || !panel) return;
+      btn.addEventListener('click', () => {
+        tabs.forEach(t => {
+          if (t.btn) {
+            t.btn.classList.remove('active');
+            t.btn.setAttribute('aria-selected', 'false');
+          }
+          if (t.panel) {
+            t.panel.style.display = 'none';
+            t.panel.classList.remove('active');
+          }
+        });
+
+        // Masquer également les résultats si on change manuellement d'onglet
+        if (dom.boussoleResultsView) {
+          dom.boussoleResultsView.style.display = 'none';
+        }
+
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        panel.style.display = 'block';
+        panel.classList.add('active');
+
+        // Si on passe sur la roue, s'assurer que le canvas est redessiné avec les bonnes dimensions
+        if (panel === dom.boussoleWheelView && wheelInstance) {
+          wheelInstance.initCanvasSize();
+          wheelInstance.draw();
+        }
+      });
+    });
+  }
+
+  // Initialisation et flux du Quiz RIASEC
+  function initQuizEngine() {
+    if (!window.OrientationQuizData || !dom.quizOptionsGrid) return;
+
+    renderQuizQuestion(quizState.currentIndex);
+
+    if (dom.btnQuizPrev) {
+      dom.btnQuizPrev.addEventListener('click', () => {
+        if (quizState.currentIndex > 0) {
+          quizState.currentIndex--;
+          renderQuizQuestion(quizState.currentIndex);
+        }
+      });
+    }
+
+    if (dom.btnQuizNext) {
+      dom.btnQuizNext.addEventListener('click', () => {
+        const questions = window.OrientationQuizData.QUESTIONS;
+        const total = questions.length;
+
+        // Si c'est la dernière question, calculer le score et lancer la révélation par la roue !
+        if (quizState.currentIndex === total - 1) {
+          handleQuizCompletion();
+        } else {
+          quizState.currentIndex++;
+          renderQuizQuestion(quizState.currentIndex);
+        }
+      });
+    }
+
+    if (dom.btnRestartQuiz) {
+      dom.btnRestartQuiz.addEventListener('click', () => {
+        quizState.currentIndex = 0;
+        quizState.answers = {};
+        quizState.latestResult = null;
+
+        if (dom.boussoleResultsView) dom.boussoleResultsView.style.display = 'none';
+        if (dom.boussoleQuizView) dom.boussoleQuizView.style.display = 'block';
+        if (dom.tabModeQuiz) {
+          dom.tabModeQuiz.classList.add('active');
+          dom.tabModeQuiz.setAttribute('aria-selected', 'true');
+        }
+        if (dom.tabModeWheel) dom.tabModeWheel.classList.remove('active');
+        if (dom.tabModeChips) dom.tabModeChips.classList.remove('active');
+
+        renderQuizQuestion(0);
+        scrollToElement(dom.interestExplorerBox || dom.viewSectionHeader || 200, -80);
+      });
+    }
+  }
+
+  function renderQuizQuestion(index) {
+    if (!window.OrientationQuizData) return;
+    const questions = window.OrientationQuizData.QUESTIONS;
+    const total = questions.length;
+    const q = questions[index];
+    if (!q) return;
+
+    if (dom.quizQuestionCategory) dom.quizQuestionCategory.textContent = q.category;
+    if (dom.quizQuestionCounter) dom.quizQuestionCounter.textContent = `Question ${index + 1} sur ${total}`;
+    if (dom.quizProgressFill) {
+      dom.quizProgressFill.style.width = `${((index + 1) / total) * 100}%`;
+    }
+    if (dom.quizQuestionText) dom.quizQuestionText.textContent = q.question;
+
+    const currentSelectedOptionId = quizState.answers[q.id];
+
+    dom.quizOptionsGrid.innerHTML = q.options.map(opt => `
+      <button type="button" class="quiz-option-card ${currentSelectedOptionId === opt.id ? 'selected' : ''}" data-option-id="${escapeHtml(opt.id)}">
+        <span class="quiz-option-icon">${escapeHtml(opt.icon)}</span>
+        <span class="quiz-option-text">${escapeHtml(opt.text)}</span>
+        <span class="quiz-option-check" aria-hidden="true">✓</span>
+      </button>
+    `).join('');
+
+    dom.quizOptionsGrid.querySelectorAll('.quiz-option-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const optId = card.getAttribute('data-option-id');
+        quizState.answers[q.id] = optId;
+
+        dom.quizOptionsGrid.querySelectorAll('.quiz-option-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        if (dom.btnQuizNext) dom.btnQuizNext.removeAttribute('disabled');
+      });
+    });
+
+    // Gestion du bouton précédent
+    if (dom.btnQuizPrev) {
+      dom.btnQuizPrev.style.display = index > 0 ? 'inline-flex' : 'none';
+    }
+
+    // Gestion du bouton suivant
+    if (dom.btnQuizNext) {
+      if (currentSelectedOptionId) {
+        dom.btnQuizNext.removeAttribute('disabled');
+      } else {
+        dom.btnQuizNext.setAttribute('disabled', 'true');
+      }
+
+      if (index === total - 1) {
+        dom.btnQuizNext.innerHTML = '<span>Révéler mon profil & faire tourner la roue</span> <span>🎡</span>';
+      } else {
+        dom.btnQuizNext.innerHTML = '<span>Suivant</span> <span>&rarr;</span>';
+      }
+    }
+  }
+
+  // Traitement de fin de Quiz et transition vers la Roue de suspense
+  function handleQuizCompletion() {
+    if (!window.OrientationQuizData) return;
+    const selectedOptionIds = Object.values(quizState.answers);
+    const result = window.OrientationQuizData.calculateScore(selectedOptionIds);
+    quizState.latestResult = result;
+
+    // Basculer sur l'écran de la Roue pour le suspense révélateur
+    if (dom.boussoleQuizView) dom.boussoleQuizView.style.display = 'none';
+    if (dom.boussoleWheelView) {
+      dom.boussoleWheelView.style.display = 'block';
+      dom.boussoleWheelView.classList.add('active');
+    }
+
+    if (dom.tabModeQuiz) dom.tabModeQuiz.classList.remove('active');
+    if (dom.tabModeWheel) {
+      dom.tabModeWheel.classList.add('active');
+      dom.tabModeWheel.setAttribute('aria-selected', 'true');
+    }
+
+    if (dom.wheelStatusNotice) {
+      dom.wheelStatusNotice.innerHTML = `
+        <span class="wheel-suspense-pulse">
+          🎡 Analyse psychométrique terminée ! La roue de l'orientation révèle ton profil dominant...
+        </span>
+      `;
+    }
+
+    scrollToElement(dom.interestExplorerBox || dom.orientationWheelCanvas || 200, -80);
+
+    // Initialiser et lancer la roue vers le profil gagnant
+    if (!wheelInstance && dom.orientationWheelCanvas && window.OrientationWheel) {
+      wheelInstance = new window.OrientationWheel(dom.orientationWheelCanvas);
+    }
+
+    if (wheelInstance) {
+      wheelInstance.initCanvasSize();
+      setTimeout(() => {
+        wheelInstance.spinTo(result.dominantCode, (winner) => {
+          if (dom.wheelStatusNotice) {
+            dom.wheelStatusNotice.innerHTML = `✨ <strong>Profil Révélé : ${winner.label} ${winner.icon}</strong>`;
+          }
+
+          // Après un bref moment d'admiration, afficher la restitution complète des résultats
+          setTimeout(() => {
+            renderQuizResults(result);
+          }, 1400);
+        });
+      }, 500);
+    }
+  }
+
+  // Moteur de la Roue Interactive
+  function initWheelEngine() {
+    if (!dom.orientationWheelCanvas || !window.OrientationWheel) return;
+
+    wheelInstance = new window.OrientationWheel(dom.orientationWheelCanvas, {
+      onSectorTick: (sec) => {
+        if (dom.wheelStatusNotice && wheelInstance.isSpinning) {
+          dom.wheelStatusNotice.textContent = `🎯 ${sec.label}...`;
+        }
+      }
+    });
+
+    if (dom.btnSpinWheelFree) {
+      dom.btnSpinWheelFree.addEventListener('click', () => {
+        if (!wheelInstance || wheelInstance.isSpinning) return;
+        dom.btnSpinWheelFree.setAttribute('disabled', 'true');
+
+        if (dom.wheelStatusNotice) {
+          dom.wheelStatusNotice.textContent = '🎡 La roue tourne... suspense !';
+        }
+
+        wheelInstance.spinFree(async (winningSector) => {
+          dom.btnSpinWheelFree.removeAttribute('disabled');
+          if (dom.wheelStatusNotice) {
+            dom.wheelStatusNotice.innerHTML = `✨ <strong>Tu es tombé sur le profil : ${winningSector.label} ${winningSector.icon} !</strong>`;
+          }
+
+          // Créer un résultat simulé basé sur ce profil
+          const profile = window.OrientationQuizData.PROFILES[winningSector.code];
+          const simulatedResult = {
+            rawScores: {},
+            percentages: { [winningSector.code]: 85 },
+            dominantCode: winningSector.code,
+            secondaryCode: winningSector.code === 'I' ? 'E' : 'I',
+            dominantProfile: profile,
+            secondaryProfile: window.OrientationQuizData.PROFILES[winningSector.code === 'I' ? 'E' : 'I'],
+            hollandCode: `${winningSector.code}`
+          };
+
+          setTimeout(() => {
+            renderQuizResults(simulatedResult);
+          }, 1200);
+        });
+      });
+    }
+  }
+
+  // Restitution des résultats du Quiz et profil sénégalais
+  async function renderQuizResults(result) {
+    if (!dom.boussoleResultsView || !result || !result.dominantProfile) return;
+
+    // Masquer les autres panneaux et afficher les résultats
+    if (dom.boussoleQuizView) dom.boussoleQuizView.style.display = 'none';
+    if (dom.boussoleWheelView) dom.boussoleWheelView.style.display = 'none';
+    if (dom.boussoleChipsView) dom.boussoleChipsView.style.display = 'none';
+    dom.boussoleResultsView.style.display = 'block';
+
+    const p = result.dominantProfile;
+
+    // 1. Bandeau Profil
+    if (dom.resProfileIcon) dom.resProfileIcon.textContent = p.icon;
+    if (dom.resHollandBadge) {
+      dom.resHollandBadge.textContent = `Profil RIASEC : ${p.name} (${result.hollandCode || p.code})`;
+      dom.resHollandBadge.style.backgroundColor = p.color;
+    }
+    if (dom.resProfileTitle) dom.resProfileTitle.textContent = `${p.title} (${p.name})`;
+    if (dom.resProfileSummary) dom.resProfileSummary.textContent = `${p.summary} ${p.description}`;
+
+    // 2. Jauges des 6 dimensions RIASEC
+    if (dom.riasecGaugesGrid && window.OrientationQuizData.PROFILES) {
+      const allProfiles = window.OrientationQuizData.PROFILES;
+      const scores = result.percentages || {};
+
+      dom.riasecGaugesGrid.innerHTML = Object.keys(allProfiles).map(dim => {
+        const prof = allProfiles[dim];
+        const pct = scores[dim] || (dim === result.dominantCode ? 80 : Math.floor(Math.random() * 35) + 15);
+        return `
+          <div class="riasec-gauge-card ${dim === result.dominantCode ? 'is-dominant' : ''}">
+            <div class="gauge-card-header">
+              <span class="gauge-icon">${prof.icon}</span>
+              <span class="gauge-name">${prof.name} (${dim})</span>
+              <span class="gauge-pct">${pct}%</span>
+            </div>
+            <div class="gauge-bar-track">
+              <div class="gauge-bar-fill" style="width: ${pct}%; background-color: ${prof.color};"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 3. Pôle Éducatif Sénégalais & Débouchés CNOSP
+    if (dom.resBacSeries && p.seriesBac) {
+      dom.resBacSeries.innerHTML = p.seriesBac.map(s => `
+        <span class="pathway-tag-pill bac-pill">🎓 ${escapeHtml(s)}</span>
+      `).join('');
+    }
+
+    if (dom.resUniversities && p.universities) {
+      dom.resUniversities.innerHTML = p.universities.map(u => `
+        <span class="pathway-tag-pill uni-pill">🏛️ ${escapeHtml(u)}</span>
+      `).join('');
+    }
+
+    if (dom.resSalaryFcfa) {
+      dom.resSalaryFcfa.textContent = p.salaryRangeFcfa || '250 000 à 750 000 FCFA / mois';
+    }
+
+    if (dom.resVisionPillar) {
+      dom.resVisionPillar.textContent = `🇸🇳 ${p.vision2050Pillar || 'Secteur Prioritaire Sénégal 2050'}`;
+    }
+
+    // 4. Métiers Recommandés Compatibles
+    if (dom.quizRecommendedJobsGrid) {
+      dom.quizRecommendedJobsGrid.innerHTML = `
+        <div class="job-card-skeleton" style="grid-column: 1 / -1; padding: 2rem; text-align: center;">
+          <p class="text-muted">Sélection des métiers d'excellence les plus compatibles...</p>
+        </div>
+      `;
+
+      try {
+        const recommendedJobs = await window.OrientationQuizData.getRecommendedJobs(result, 6);
+        if (recommendedJobs.length === 0) {
+          dom.quizRecommendedJobsGrid.innerHTML = `
+            <p class="text-muted text-center" style="grid-column:1 / -1;padding:1.5rem;">
+              Consulte le catalogue complet des 23 familles pour découvrir l'ensemble des métiers de ce profil.
+            </p>
+          `;
+        } else {
+          dom.quizRecommendedJobsGrid.innerHTML = recommendedJobs.map(job => `
+            <div class="quiz-job-card" data-job-id="${escapeHtml(job.id)}">
+              <div class="quiz-job-header">
+                <span class="quiz-job-icon">${escapeHtml(job.familyIcon || '💼')}</span>
+                <span class="quiz-job-compat-badge">✨ ${job.compatibility || 92}% compatible</span>
+              </div>
+              <h5 class="quiz-job-title">${escapeHtml(job.title)}</h5>
+              <p class="quiz-job-desc">${escapeHtml(job.shortDescription || (job.longDescription || '').slice(0, 110) + '...')}</p>
+              <div class="quiz-job-footer">
+                <span class="quiz-job-salary">${escapeHtml(job.salary || 'Salaire attractif')}</span>
+                <button type="button" class="btn btn-outline btn-sm btn-open-quiz-job" data-job-id="${escapeHtml(job.id)}">
+                  <span>Dossier</span> &rarr;
+                </button>
+              </div>
+            </div>
+          `).join('');
+
+          dom.quizRecommendedJobsGrid.querySelectorAll('.btn-open-quiz-job, .quiz-job-card').forEach(el => {
+            el.addEventListener('click', async (e) => {
+              e.stopPropagation();
+              const jId = el.getAttribute('data-job-id');
+              const foundJob = recommendedJobs.find(j => j.id === jId);
+              if (foundJob && typeof openJobModal === 'function') {
+                openJobModal(foundJob);
+              }
+            });
+          });
+        }
+      } catch (err) {
+        console.error('Erreur chargement métiers recommandés:', err);
+      }
+    }
+
+    // 5. Bouton Explorer tous les métiers associés
+    if (dom.btnViewAllMatchedJobs) {
+      dom.btnViewAllMatchedJobs.onclick = () => {
+        const families = window.OrientationQuizData.PROFILE_TO_FAMILIES[result.dominantCode] || [];
+        if (families.length > 0) {
+          setView('FAMILY_DRILLDOWN', { familyId: families[0], subdomain: 'all' });
+          scrollToElement(dom.familyDrilldownContainer || 200, -80);
+        } else {
+          setView('ALL_JOBS');
+        }
+      };
+    }
+
+    scrollToElement(dom.boussoleResultsView, -80);
+  }
+
+  // =========================================================================
+  // BOUSSOLE DES AFFINITÉS DIRECTES (PUCES EXISTANTES)
   // =========================================================================
   function initAffinityExplorer() {
     if (!dom.affinitiesChipsContainer) return;
@@ -3384,7 +3814,7 @@
   document.addEventListener('DOMContentLoaded', async () => {
     initDomRefs();
     initUniversalSearch();
-    initAffinityExplorer();
+    initBoussoleModule();
     initLocalJobsFilter();
     initStickyToolbar();
     initMobileInterestAccordion();

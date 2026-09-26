@@ -124,29 +124,190 @@
                 <p id="viewSectionSubtitle" class="text-muted">Explore les domaines d’avenir, découvre leurs sous-disciplines et identifie les métiers clés</p>
             </div>
 
-            <!-- PORTE C : BOUSSOLE DES AFFINITÉS (« Je ne sais pas encore ») AVEC ACCORDÉON MOBILE -->
+            <!-- PORTE C : BOUSSOLE DES AFFINITÉS & ORIENTATION RIASEC (« Je ne sais pas encore ») -->
             <div id="interestExplorerWrap" class="interest-explorer-wrap">
                 <!-- Bouton Accordéon Visible uniquement sur Mobile (< 768px) -->
                 <button type="button" id="interestAccordionToggle" class="interest-accordion-toggle" aria-expanded="false" aria-controls="interestExplorerBox" style="display:none;">
                     <div class="accordion-toggle-left">
                         <span class="accordion-toggle-icon">🧭</span>
-                        <span class="accordion-toggle-text">Boussole d'orientation : Choisis ce que tu aimes faire</span>
+                        <span class="accordion-toggle-text">Boussole d'orientation : Quiz RIASEC & Roue des Métiers</span>
                     </div>
                     <span class="accordion-chevron" aria-hidden="true">&darr;</span>
                 </button>
 
                 <div id="interestExplorerBox" class="interest-explorer-card" style="display:none;" role="region" aria-label="Boussole d'orientation">
+                    <!-- En-tête de la Boussole -->
                     <div class="interest-header">
                         <div class="interest-icon-badge">🧭</div>
                         <div>
-                            <h3 style="margin:0 0 0.25rem 0;color:#0f172a;font-size:1.2rem;">Boussole d'orientation : Choisis ce que tu aimes faire</h3>
-                            <p style="margin:0;color:#64748b;font-size:0.9rem;">Sélectionne un ou plusieurs univers ci-dessous pour découvrir les domaines professionnels qui te correspondent :</p>
+                            <h3 style="margin:0 0 0.25rem 0;color:#0f172a;font-size:1.25rem;">Boussole d'orientation : Trouve ta voie d'avenir</h3>
+                            <p style="margin:0;color:#64748b;font-size:0.92rem;">Inspiré du CNOSP (Ministère de l'Éducation Nationale) et du test RIASEC : évalue ta personnalité, fais tourner la roue de l'orientation et découvre les métiers faits pour toi !</p>
                         </div>
                     </div>
-                    <div id="affinitiesChipsContainer" class="affinities-chips-grid">
-                        <!-- Généré dynamiquement -->
+
+                    <!-- Onglets de sélection du mode -->
+                    <div class="boussole-modes-nav" role="tablist" aria-label="Modes de la boussole">
+                        <button type="button" id="tabModeQuiz" class="boussole-mode-btn active" role="tab" aria-selected="true" aria-controls="boussoleQuizView">
+                            <span>📝</span>
+                            <span>Quiz Personnalité & Métiers</span>
+                            <span class="boussole-mode-badge">Recommandé</span>
+                        </button>
+                        <button type="button" id="tabModeWheel" class="boussole-mode-btn" role="tab" aria-selected="false" aria-controls="boussoleWheelView">
+                            <span>🎡</span>
+                            <span>La Roue de l'Orientation</span>
+                        </button>
+                        <button type="button" id="tabModeChips" class="boussole-mode-btn" role="tab" aria-selected="false" aria-controls="boussoleChipsView">
+                            <span>🎯</span>
+                            <span>Par centres d'intérêt directs</span>
+                        </button>
                     </div>
-                    <div id="affinityResultsNotice" class="affinity-results-container"></div>
+
+                    <!-- VUE 1 : QUIZ RIASEC INTERACTIF -->
+                    <div id="boussoleQuizView" class="boussole-view-panel active" role="tabpanel" aria-labelledby="tabModeQuiz">
+                        <div class="quiz-container">
+                            <!-- Barre de progression -->
+                            <div class="quiz-progress-bar-wrap">
+                                <div class="quiz-progress-header">
+                                    <span id="quizQuestionCategory" class="quiz-category-tag">Phase 1</span>
+                                    <span id="quizQuestionCounter" class="quiz-counter-text">Question 1 sur 8</span>
+                                </div>
+                                <div class="quiz-progress-track">
+                                    <div id="quizProgressFill" class="quiz-progress-fill" style="width: 12.5%;"></div>
+                                </div>
+                            </div>
+
+                            <!-- Carte de la Question -->
+                            <div class="quiz-card">
+                                <h4 id="quizQuestionText" class="quiz-question-title">Chargement du test...</h4>
+                                <p class="quiz-hint-text">Sélectionne la réponse qui correspond le plus spontanément à ce que tu es :</p>
+                                <div id="quizOptionsGrid" class="quiz-options-grid">
+                                    <!-- Options injectées par orientation-ui.js -->
+                                </div>
+                            </div>
+
+                            <!-- Actions de navigation du Quiz -->
+                            <div class="quiz-actions-bar">
+                                <button type="button" id="btnQuizPrev" class="btn btn-outline btn-sm" style="display:none;">
+                                    <span>&larr;</span>
+                                    <span>Question précédente</span>
+                                </button>
+                                <button type="button" id="btnQuizNext" class="btn btn-primary" disabled>
+                                    <span>Suivant</span>
+                                    <span>&rarr;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VUE 2 : LA ROUE INTERACTIVE (CANVAS ENGINE) -->
+                    <div id="boussoleWheelView" class="boussole-view-panel" style="display:none;" role="tabpanel" aria-labelledby="tabModeWheel">
+                        <div class="wheel-panel-content">
+                            <p class="wheel-intro-text">
+                                Fais tourner la roue interactive pour explorer les 6 grands univers RIASEC ou laisse le hasard t'inspirer vers un domaine d'excellence !
+                            </p>
+                            
+                            <div class="wheel-canvas-container">
+                                <canvas id="orientationWheelCanvas" width="380" height="380"></canvas>
+                            </div>
+
+                            <div class="wheel-controls">
+                                <button type="button" id="btnSpinWheelFree" class="btn btn-primary btn-lg wheel-spin-btn">
+                                    <span>🎡</span>
+                                    <span>Faire tourner la roue !</span>
+                                </button>
+                                <p id="wheelStatusNotice" class="wheel-status-notice">Clique pour lancer la rotation</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VUE 3 : CENTRES D'INTÉRÊT DIRECTS (PUCES EXISTANTES) -->
+                    <div id="boussoleChipsView" class="boussole-view-panel" style="display:none;" role="tabpanel" aria-labelledby="tabModeChips">
+                        <p style="margin:0 0 1rem 0;color:#64748b;font-size:0.9rem;">Sélectionne un ou plusieurs univers ci-dessous pour découvrir les domaines professionnels qui te correspondent :</p>
+                        <div id="affinitiesChipsContainer" class="affinities-chips-grid">
+                            <!-- Généré dynamiquement -->
+                        </div>
+                        <div id="affinityResultsNotice" class="affinity-results-container"></div>
+                    </div>
+
+                    <!-- VUE 4 : RÉSULTATS PERSONNALISÉS DU TEST RIASEC -->
+                    <div id="boussoleResultsView" class="boussole-view-panel" style="display:none;" role="region" aria-label="Résultats de ton orientation">
+                        <div class="quiz-results-card">
+                            <!-- Bandeau du Profil Gagnant -->
+                            <div class="quiz-profile-banner" id="quizProfileBanner">
+                                <div class="profile-banner-left">
+                                    <div class="profile-icon-badge" id="resProfileIcon">🔬</div>
+                                    <div>
+                                        <div class="profile-tag-line">
+                                            <span class="badge-holland" id="resHollandBadge">Profil : Investigateur</span>
+                                            <span class="badge-affinity-high" id="resTopMatchRate">Compatibilité 96%</span>
+                                        </div>
+                                        <h3 id="resProfileTitle" class="profile-title">L'Analyste & Chercheur d'Avenir</h3>
+                                        <p id="resProfileSummary" class="profile-summary">Tu as une curiosité insatiable et une grande rigueur intellectuelle.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Jauges des 6 Dimensions RIASEC -->
+                            <div class="riasec-gauges-section">
+                                <h4 class="riasec-section-title">📊 Répartition de ta Personnalité Professionnelle (Modèle RIASEC)</h4>
+                                <div class="riasec-gauges-grid" id="riasecGaugesGrid">
+                                    <!-- Jauges injectées dynamiquement -->
+                                </div>
+                            </div>
+
+                            <!-- Pôle Éducatif Sénégalais & Débouchés (Inspiré CNOSP) -->
+                            <div class="senegal-pathway-card" id="senegalPathwayCard">
+                                <div class="pathway-card-header">
+                                    <span class="pathway-icon">🇸🇳</span>
+                                    <div>
+                                        <h4 style="margin:0;color:#0f172a;font-size:1.05rem;">Filières & Études recommandées au Sénégal</h4>
+                                        <p style="margin:0;color:#64748b;font-size:0.85rem;">Repères d'orientation académique du CNOSP et vision Sénégal 2050</p>
+                                    </div>
+                                </div>
+                                <div class="pathway-grid">
+                                    <div class="pathway-item">
+                                        <span class="pathway-label">Séries du Baccalauréat Idéales :</span>
+                                        <div class="pathway-tags" id="resBacSeries"></div>
+                                    </div>
+                                    <div class="pathway-item">
+                                        <span class="pathway-label">Pôles Universitaires & Grandes Écoles :</span>
+                                        <div class="pathway-tags" id="resUniversities"></div>
+                                    </div>
+                                    <div class="pathway-item">
+                                        <span class="pathway-label">Fourchette Salariale Indicative (Sénégal) :</span>
+                                        <p id="resSalaryFcfa" class="pathway-salary"></p>
+                                    </div>
+                                    <div class="pathway-item">
+                                        <span class="pathway-label">Pilier Stratégique National :</span>
+                                        <span id="resVisionPillar" class="badge-priority-pillar"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Top Métiers Stars Recommandés -->
+                            <div class="top-jobs-section">
+                                <div class="top-jobs-header">
+                                    <h4 style="margin:0;font-size:1.15rem;color:#0f172a;">🌟 Métiers d'Excellence Recommandés pour Ton Profil</h4>
+                                    <span class="text-muted" style="font-size:0.85rem;">Classés par affinité avec ta personnalité</span>
+                                </div>
+                                <div id="quizRecommendedJobsGrid" class="quiz-recommended-jobs-grid">
+                                    <!-- Fiches injectées dynamiquement -->
+                                </div>
+                            </div>
+
+                            <!-- Boutons d'Action de Sortie -->
+                            <div class="results-actions-bar">
+                                <button type="button" id="btnRestartQuiz" class="btn btn-outline">
+                                    <span>↺</span>
+                                    <span>Refaire le test</span>
+                                </button>
+                                <button type="button" id="btnViewAllMatchedJobs" class="btn btn-primary">
+                                    <span>Explorer tous les métiers associés</span>
+                                    <span>&rarr;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -383,6 +544,8 @@
 <script src="js/orientation-hospitality-data.js"></script>
 <script src="js/orientation-communication-data.js"></script>
 <script src="js/orientation-data.js"></script>
+<script src="js/orientation-quiz-data.js"></script>
+<script src="js/orientation-wheel.js"></script>
 <script src="js/orientation-ui.js?v=20260924-1"></script>
 <script src="js/notifications.js?v=2.3.1"></script>
 <script src="js/layout.js?v=2.3.1"></script>
