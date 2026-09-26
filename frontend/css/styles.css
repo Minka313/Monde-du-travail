@@ -10770,3 +10770,509 @@ textarea {
     transition: none !important;
   }
 }
+
+/* =========================================================================
+   REFONTE UX/UI & MICRO-INTERACTIONS JOB.HTML (Mobile-First & A11y)
+   ========================================================================= */
+
+/* 1. Micro-interactions sur les cartes et éléments cliquables */
+.family-card,
+.job-card-modern,
+.interest-explorer-card,
+.btn-quick-nav,
+.affinity-chip,
+.domain-chip,
+.subdomain-chip {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.family-card:hover,
+.job-card-modern:hover {
+  transform: translateY(-4px) scale(1.015);
+  box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.06);
+}
+
+/* 2. Animations Fade-In & Slide-Up */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.job-card-enter {
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--stagger-idx, 0) * 0.035s);
+}
+
+/* 3. Skeleton Loader (Shimmer / animate-pulse) */
+@keyframes shimmerPulse {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.jobs-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.job-card-skeleton {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+}
+
+.skeleton-media {
+  height: 180px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmerPulse 1.6s infinite ease-in-out;
+}
+
+.skeleton-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmerPulse 1.6s infinite ease-in-out;
+}
+
+.skeleton-line.short { width: 35%; height: 12px; }
+.skeleton-line.title { width: 75%; height: 20px; }
+
+.skeleton-chips {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.skeleton-chip {
+  height: 24px;
+  width: 80px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmerPulse 1.6s infinite ease-in-out;
+}
+
+/* 4. Touch Targets Minimales Mobile-First (44x44px) */
+.btn-quick-nav,
+.affinity-chip,
+.btn-explore-family,
+.btn-back-link,
+.subdomain-chip,
+.domain-chip,
+.btn-clear-filters-animated,
+.btn-open-drawer-filters,
+.drawer-close-btn,
+.interest-accordion-toggle,
+.sticky-btn-back,
+.sticky-btn-top,
+.floating-scroll-top-btn,
+.sticky-domain-select {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 5. Accordéon Mobile pour la Boussole d'orientation */
+.interest-explorer-wrap {
+  margin-bottom: 2rem;
+}
+
+.interest-accordion-toggle {
+  width: 100%;
+  padding: 0.9rem 1.25rem;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border: 1.5px solid #cbd5e1;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+  transition: all 0.25s ease;
+  margin-bottom: 0.75rem;
+}
+
+.interest-accordion-toggle:hover {
+  background: #ffffff;
+  border-color: #0284c7;
+  color: #0284c7;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(2, 132, 199, 0.12);
+}
+
+.accordion-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: left;
+}
+
+.accordion-chevron {
+  font-size: 1.1rem;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.interest-accordion-toggle[aria-expanded="true"] .accordion-chevron {
+  transform: rotate(180deg);
+}
+
+/* 6. Autocomplétion intelligente de la recherche unifiée */
+.search-suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(56, 189, 248, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.15);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 0.6rem 0;
+  text-align: left;
+}
+
+.suggestion-item {
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  color: #f1f5f9;
+  font-size: 0.92rem;
+  transition: background 0.15s ease, transform 0.15s ease;
+  min-height: 44px;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+}
+
+.suggestion-title {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.suggestion-meta {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  white-space: nowrap;
+}
+
+.suggestion-group-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #38bdf8;
+  padding: 0.45rem 1.25rem 0.25rem 1.25rem;
+  font-weight: 700;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.suggestion-group-title:first-child {
+  border-top: none;
+}
+
+/* 7. Bannière des Filtres Actifs */
+.active-filters-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 12px;
+  padding: 0.75rem 1.15rem;
+  margin-bottom: 1.5rem;
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.active-filters-content {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.active-filters-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0369a1;
+}
+
+.active-filters-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.active-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #7dd3fc;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 32px;
+}
+
+.active-filter-pill:hover {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.btn-clear-filters-animated {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #ffffff;
+  color: #0284c7;
+  border: 1.5px solid #0284c7;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-clear-filters-animated:hover {
+  background: #0284c7;
+  color: #ffffff;
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.2);
+}
+
+/* 8. Off-canvas Drawer pour Filtres Mobiles */
+.mobile-filters-trigger-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.btn-open-drawer-filters {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  font-weight: 650;
+  padding: 0.65rem 1.25rem;
+  border-radius: 9999px;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+  transition: all 0.2s ease;
+}
+
+.btn-open-drawer-filters:hover {
+  border-color: #0284c7;
+  color: #0284c7;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.15);
+}
+
+.mobile-jobs-count-pill {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.filters-drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 9998;
+  transition: opacity 0.3s ease;
+}
+
+.filters-offcanvas-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 86vw;
+  max-width: 380px;
+  background: #ffffff;
+  z-index: 9999;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  animation: drawerSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes drawerSlideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.drawer-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.drawer-title {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  color: #64748b;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.2rem 0.5rem;
+}
+
+.drawer-body {
+  padding: 1.25rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.drawer-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+/* 9. Scroll-snap horizontal tactile */
+.subdomains-bar-track,
+.digital-domains-scroll-track,
+.subdomains-scroll-track {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.domain-chip,
+.subdomain-chip {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+
+/* 10. Responsive adaptations (< 768px) */
+@media (max-width: 768px) {
+  .interest-accordion-toggle {
+    display: flex !important;
+  }
+
+  .interest-explorer-card {
+    border-radius: 12px;
+    padding: 1.2rem;
+  }
+
+  .mobile-filters-trigger-bar {
+    display: flex !important;
+  }
+
+  .jobs-skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .active-filters-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-clear-filters-animated {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 769px) {
+  .interest-accordion-toggle {
+    display: none !important;
+  }
+
+  .mobile-filters-trigger-bar {
+    display: none !important;
+  }
+}
+
+/* 11. Support de l'accessibilité (@media prefers-reduced-motion) */
+@media (prefers-reduced-motion: reduce) {
+  .family-card,
+  .job-card-modern,
+  .job-card-enter,
+  .btn-clear-filters-animated,
+  .filters-offcanvas-drawer,
+  .skeleton-media,
+  .skeleton-line,
+  .skeleton-chip {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
