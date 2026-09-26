@@ -368,7 +368,7 @@
 
         if (dom.viewSectionLabel) dom.viewSectionLabel.textContent = 'Exploration Progressive';
         if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Les 23 Grandes Familles Professionnelles';
-        if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Explore les domaines d’avenir, découvre leurs sous-disciplines et identifie les métiers clés.';
+        if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Explore les domaines d’avenir, découvre leurs sous-disciplines et identifie les métiers clés';
 
         if (dom.familiesGridContainer) {
           dom.familiesGridContainer.style.display = 'grid';
@@ -459,7 +459,7 @@
 
         if (dom.viewSectionLabel) dom.viewSectionLabel.textContent = 'Catalogue Global';
         if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Tous les dossiers métiers';
-        if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Parcours l’ensemble des fiches métiers documentées par Le Monde du Travail.';
+        if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Parcours l’ensemble des fiches métiers documentées par Le Monde du Travail';
 
         if (dom.mobileFiltersTriggerBar) {
           dom.mobileFiltersTriggerBar.style.display = 'flex';
@@ -481,7 +481,7 @@
 
         if (dom.viewSectionLabel) dom.viewSectionLabel.textContent = 'Porte C • Orientation par affinités';
         if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Boussole des Affinités & Centres d’Intérêt';
-        if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Sélectionne ce qui t’attire pour découvrir les univers professionnels correspondants.';
+        if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Sélectionne ce qui t’attire pour découvrir les univers professionnels correspondants';
 
         renderBreadcrumbs([
           { label: 'Accueil', url: 'index.html' },

@@ -89,7 +89,7 @@
                         <form id="loginForm" novalidate>
                             <div class="form-group">
                                 <label for="loginEmail" class="form-label">Email</label>
-                                <input type="email" id="loginEmail" name="email" class="form-input" placeholder="votre@email.com" required autocomplete="username" spellcheck="false">
+                                <input type="email" id="loginEmail" name="email" class="form-input" placeholder="ton@email.com" required autocomplete="username" spellcheck="false">
                                 <span class="form-error" role="alert"></span>
                             </div>
                             <div class="form-group">
@@ -112,7 +112,7 @@
 
                     <div class="info-box" id="infoBox" role="tabpanel" aria-labelledby="tabBtnRegister">
                         <h2>Pas encore membre ?</h2>
-                        <p>Rejoignez une communauté dynamique de jeunes qui se préparent au monde professionnel.</p>
+                        <p>Rejoins une communauté dynamique de jeunes qui se préparent au monde professionnel.</p>
                         <ul class="mission-list">
                             <li>Accès au forum d'échange</li>
                             <li>Formations exclusives en leadership</li>
@@ -132,7 +132,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="regEmail" class="form-label">Email</label>
-                                <input type="email" id="regEmail" class="form-input" placeholder="votre@email.com" required autocomplete="off">
+                                <input type="email" id="regEmail" class="form-input" placeholder="ton@email.com" required autocomplete="off">
                             </div>
                             <div class="form-group">
                                 <label for="regPassword" class="form-label">Mot de passe</label>
@@ -140,8 +140,8 @@
                                 <small>8 caractères minimum, avec au moins une lettre et un chiffre.</small>
                             </div>
                             <div class="form-group">
-                                <label for="regMotivation" class="form-label">Votre motivation (facultatif)</label>
-                                <textarea id="regMotivation" class="form-input" rows="3" placeholder="Pourquoi souhaitez-vous rejoindre le club ?"></textarea>
+                                <label for="regMotivation" class="form-label">Ta motivation (facultatif)</label>
+                                <textarea id="regMotivation" class="form-input" rows="3" placeholder="Pourquoi souhaites-tu rejoindre le club ?"></textarea>
                             </div>
                             <span class="form-error" id="registerError" role="alert"></span>
                             <button type="submit" class="btn btn-primary btn-full">Envoyer ma demande</button>
@@ -164,14 +164,14 @@
                         <div style="width:48px;height:48px;background:#e0f2fe;color:#0284c7;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:12px;">🔑</div>
                         <h3 style="margin:0;color:#0f172a;font-size:1.25rem;font-weight:700;">Mot de passe oublié ?</h3>
                         <p style="margin:8px 0 0;color:#64748b;font-size:0.88rem;line-height:1.5;">
-                            Saisissez votre adresse email. Nous vous enverrons un lien sécurisé valable 15 minutes pour réinitialiser votre mot de passe.
+                            Saisis ton adresse email. Nous t'enverrons un lien sécurisé valable 15 minutes pour réinitialiser ton mot de passe.
                         </p>
                     </div>
 
                     <form id="forgotPasswordForm" novalidate>
                         <div class="form-group" style="margin-bottom:16px;">
-                            <label for="forgotEmail" class="form-label" style="font-size:0.85rem;font-weight:600;color:#334155;margin-bottom:6px;display:block;">Votre adresse email</label>
-                            <input type="email" id="forgotEmail" class="form-input" placeholder="votre@email.com" required style="width:100%;box-sizing:border-box;">
+                            <label for="forgotEmail" class="form-label" style="font-size:0.85rem;font-weight:600;color:#334155;margin-bottom:6px;display:block;">Ton adresse email</label>
+                            <input type="email" id="forgotEmail" class="form-input" placeholder="ton@email.com" required style="width:100%;box-sizing:border-box;">
                             <span id="forgotEmailError" class="form-error" role="alert" style="color:#ef4444;font-size:0.8rem;margin-top:4px;display:none;"></span>
                         </div>
 
@@ -387,7 +387,7 @@
         /* ─── Connexion ─── */
         async function handleLogin(email, password) {
           if (!window.Api || !window.Api.auth || typeof window.Api.auth.login !== 'function') {
-            showLoginError('Le service est temporairement indisponible. Vérifiez votre connexion et réessayez.');
+            showLoginError('Le service est temporairement indisponible. Vérifie ta connexion et réessaie.');
             return;
           }
 
@@ -426,15 +426,15 @@
             const msg = error.message || '';
 
             if (status === 403 || msg.includes('pas encore activé') || msg.includes('attente')) {
-              showLoginError("⏳ Votre compte n'est pas encore activé. Votre demande d'adhésion est en cours d'examen par notre équipe d'administration. Vous recevrez un email dès son approbation.");
+              showLoginError("⏳ Ton compte n'est pas encore activé. Ta demande d'adhésion est en cours d'examen par notre équipe d'administration. Tu recevras un email dès son approbation.");
             } else if (status === 429 || msg.includes('Trop de tentatives') || msg.includes('patienter')) {
-              showLoginError("🛡️ Trop de tentatives de connexion infructueuses. Par mesure de sécurité, veuillez patienter quelques minutes avant de réessayer.");
+              showLoginError("🛡️ Trop de tentatives de connexion infructueuses. Par mesure de sécurité, patiente quelques minutes avant de réessayer.");
             } else if (status === 401 || msg.includes('incorrect') || msg.includes('invalide')) {
-              showLoginError("Email ou mot de passe incorrect. Vérifiez vos identifiants ou cliquez sur « Mot de passe oublié ? ».");
+              showLoginError("Email ou mot de passe incorrect. Vérifie tes identifiants ou clique sur « Mot de passe oublié ? ».");
             } else if (status >= 500) {
-              showLoginError("⚠️ Une erreur technique temporaire est survenue côté serveur. Nos équipes sont informées, veuillez réessayer dans un instant.");
+              showLoginError("⚠️ Une erreur technique temporaire est survenue côté serveur. Nos équipes sont informées, réessaie dans un instant.");
             } else {
-              showLoginError(msg || "Impossible de joindre le serveur. Vérifiez votre connexion Internet et réessayez.");
+              showLoginError(msg || "Impossible de joindre le serveur. Vérifie ta connexion Internet et réessaie.");
             }
           } finally {
             submitBtn.disabled = false;
@@ -498,8 +498,8 @@
                 <div style="font-size:2rem;margin-bottom:0.5rem;">✅</div>
                 <h3 style="margin:0 0 0.5rem 0;color:#15803d;font-size:1rem;">Demande envoyée !</h3>
                 <p style="margin:0;color:#166534;font-size:0.875rem;line-height:1.5;">
-                  Votre demande d'adhésion a bien été reçue.<br>
-                  Un administrateur l'examinera et vous pourrez vous connecter dès qu'elle sera validée.
+                  Ta demande d'adhésion a bien été reçue.<br>
+                  Un administrateur l'examinera et tu pourras te connecter dès qu'elle sera validée.
                 </p>
               `;
               infoBox.appendChild(successDiv);
@@ -517,7 +517,7 @@
               errorEl.style.fontSize = '0.88rem';
               errorEl.style.lineHeight = '1.45';
 
-              const errMsg = error.message || "Erreur lors de l'envoi de votre demande.";
+              const errMsg = error.message || "Erreur lors de l'envoi de ta demande.";
 
               if (errMsg.includes('déjà utilisé')) {
                 errorEl.innerHTML = `
@@ -525,7 +525,7 @@
                     <span style="font-size:1.1rem;">⚠️</span>
                     <div>
                       <strong>Cette adresse email est déjà enregistrée.</strong><br>
-                      Votre candidature a déjà été déposée ou votre compte existe déjà.<br>
+                      Ta candidature a déjà été déposée ou ton compte existe déjà.<br>
                       <div style="margin-top:8px;">
                         <a href="login.html" style="color:#0284c7;font-weight:600;text-decoration:underline;margin-right:12px;">Se connecter</a>
                         <button type="button" id="btnForgotFromRegister" style="background:none;border:none;color:#0284c7;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;">Mot de passe oublié ?</button>
@@ -544,7 +544,7 @@
                     <div>
                       <strong>Impossible de finaliser l'inscription :</strong><br>
                       ${escapeHtml(errMsg)}<br>
-                      <span style="display:inline-block;margin-top:4px;color:#7f1d1d;font-size:0.84rem;">Vous pouvez corriger vos informations ci-dessus et cliquer à nouveau sur « Envoyer ma demande ».</span>
+                      <span style="display:inline-block;margin-top:4px;color:#7f1d1d;font-size:0.84rem;">Tu peux corriger tes informations ci-dessus et cliquer à nouveau sur « Envoyer ma demande ».</span>
                     </div>
                   </div>
                 `;
@@ -614,7 +614,7 @@
             const email = (emailInput.value || '').trim();
             const password = passwordInput.value || '';
             if (!email || !password) {
-              showLoginError('Veuillez remplir tous les champs.');
+              showLoginError('Remplis tous les champs.');
               return;
             }
             isSubmitting = true;
@@ -673,7 +673,7 @@
               e.preventDefault();
               transferCredentialsToRegister(
                 true,
-                "👋 Bienvenue ! Vos informations saisies ont été transférées. Renseignez votre prénom et votre nom pour finaliser votre demande d'adhésion."
+                "👋 Bienvenue ! Tes informations saisies ont été transférées. Renseigne ton prénom et ton nom pour finaliser ta demande d'adhésion."
               );
             });
           }
@@ -745,15 +745,15 @@
               }
 
               if (!data.firstName) {
-                showRegFieldError('Veuillez renseigner votre prénom.', document.getElementById('regFirstName'));
+                showRegFieldError('Renseigne ton prénom.', document.getElementById('regFirstName'));
                 return;
               }
               if (!data.lastName) {
-                showRegFieldError('Veuillez renseigner votre nom.', document.getElementById('regLastName'));
+                showRegFieldError('Renseigne ton nom.', document.getElementById('regLastName'));
                 return;
               }
               if (!data.email || !data.email.includes('@')) {
-                showRegFieldError('Veuillez renseigner une adresse email valide (ex : nom@exemple.com).', document.getElementById('regEmail'));
+                showRegFieldError('Renseigne une adresse email valide (ex : nom@exemple.com).', document.getElementById('regEmail'));
                 return;
               }
               if (!data.password || data.password.length < 8) {
@@ -829,7 +829,7 @@
               const email = (forgotEmailInput?.value || '').trim();
               if (!email || !email.includes('@')) {
                 if (forgotError) {
-                  forgotError.textContent = 'Veuillez saisir une adresse email valide.';
+                  forgotError.textContent = 'Saisis une adresse email valide.';
                   forgotError.style.display = 'block';
                 }
                 return;
@@ -848,7 +848,7 @@
                   forgotFeedback.style.background = '#f0fdf4';
                   forgotFeedback.style.border = '1px solid #86efac';
                   forgotFeedback.style.color = '#166534';
-                  forgotFeedback.textContent = res.message || 'Si cette adresse correspond à un compte actif, un lien de réinitialisation vient de vous être envoyé.';
+                  forgotFeedback.textContent = res.message || 'Si cette adresse correspond à un compte actif, un lien de réinitialisation vient de t\'être envoyé.';
                 }
                 if (forgotEmailInput) forgotEmailInput.value = '';
               } catch (err) {
