@@ -57,6 +57,21 @@ async function testOrientationData() {
     console.log(`    - Pôle "${d.name}" : ${subJobs.length} fiches`);
     assert(subJobs.length > 0, `Le pôle communication ${d.name} ne doit pas être vide`);
   }
+
+  // Test spécifique Métiers Émergents
+  console.log('\n🧪 TEST 3b : Validation famille Métiers Émergents & du Futur');
+  const emergingJobs = await OrientationData.getJobsByFamily('metiers-emergents');
+  console.log(`  -> Fiches métiers émergents : ${emergingJobs.length}`);
+  assert.strictEqual(emergingJobs.length, 39, 'La famille Métiers Émergents doit comporter exactement 39 fiches');
+
+  // Test pôles métiers émergents
+  const emergingDomains = OrientationData.getFamilyDomains('metiers-emergents');
+  assert.strictEqual(emergingDomains.length, 7, 'Métiers Émergents doit comporter exactement 7 pôles structurés');
+  for (const ed of emergingDomains) {
+    const subJobs = await OrientationData.getJobsBySubdomain('metiers-emergents', 'all', ed.id);
+    console.log(`    - Pôle "${ed.name}" : ${subJobs.length} fiches`);
+    assert(subJobs.length > 0, `Le pôle émergent ${ed.name} ne doit pas être vide`);
+  }
 }
 
 function testAdminRBAC() {

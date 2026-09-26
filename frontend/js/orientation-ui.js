@@ -556,7 +556,8 @@
         'environnement-developpement-durable': "Cartographie d'Excellence Environnement, Écologie & Développement durable",
         'environnement-climat': "Cartographie d'Excellence Environnement, Écologie & Développement durable",
         'hotellerie-restauration-hospitalite': "Cartographie d'Excellence Hôtellerie, Restauration & Hospitalité",
-        'tourisme-hotellerie': "Cartographie d'Excellence Hôtellerie, Restauration & Hospitalité"
+        'tourisme-hotellerie': "Cartographie d'Excellence Hôtellerie, Restauration & Hospitalité",
+        'metiers-emergents': "Cartographie d'Excellence des Métiers Émergents & du Futur"
       };
       const cartographyTitle = cartographyTitles[family.id] || `Cartographie d'Excellence — ${family.name}`;
 
@@ -583,7 +584,8 @@
         'hotellerie-restauration-hospitalite': "8 Domaines • 29 Fiches Métiers (France Travail / MétierScope)",
         'tourisme-hotellerie': "8 Domaines • 29 Fiches Métiers (France Travail / MétierScope)",
         'communication-marketing-medias-creation': "6 Domaines • 65 Fiches Métiers (ESP & Studyrama)",
-        'culture-medias': "6 Domaines • 65 Fiches Métiers (ESP & Studyrama)"
+        'culture-medias': "6 Domaines • 65 Fiches Métiers (ESP & Studyrama)",
+        'metiers-emergents': "7 Pôles d'Avenir • 39 Métiers Émergents"
       };
       const cartographyBadge = cartographyBadges[family.id] || `${familyDomains.length} Domaines d'expertise`;
 
