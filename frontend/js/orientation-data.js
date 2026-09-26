@@ -431,12 +431,16 @@
       color: '#0284c7', // Bleu technologique lumineux
       image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&auto=format&fit=crop&q=80',
       description: 'Les rôles pionniers nés des révolutions technologiques, climatiques et sociales : gouvernance de l’IA, véhicules autonomes et économie décarbonée.',
-      stats: { jobsEstimate: '30+ métiers', subdomainsCount: 14 },
-      representativeJobs: ['Prompt Engineer & AI Specialist', 'Auditeur de Gouvernance IA', 'Ingénieur Véhicules Électriques & Systèmes Autonomes', 'Analyste Risques Climatiques'],
+      stats: { jobsEstimate: '39 métiers d’avenir', subdomainsCount: 7 },
+      representativeJobs: ['Prompt Engineer & IA Générative', 'Ingénieur Smart Grids & Énergie', 'BIM Manager & Bâtiment Durable', 'Actuaire Big Data & FinTech'],
       subdomains: [
-        'AI Engineering', 'AI Product', 'AI Governance', 'AI Safety', 'AI Integration',
-        'AgriTech', 'HealthTech', 'FinTech', 'ClimateTech', 'GreenTech',
-        'MobilityTech', 'Robotics', 'Autonomous Systems', 'Digital Transformation'
+        'Intelligence Artificielle Générative & Deep Tech',
+        'FinTech, Blockchain & Finance Durable',
+        'AgriTech, Smart Farming & Bioressources',
+        'CleanTech, Smart Grids & Transition Énergétique',
+        'ConTech, BIM & Bâtiment Intelligent',
+        'Éthique des Technologies, TAL & New Work',
+        'EdTech, Santé Avancée & Économie Circulaire'
       ]
     },
     {
@@ -2270,6 +2274,34 @@
         }
       });
 
+      // 1.p Cross-linking et marquage d'excellence pour la famille Métiers Émergents & du Futur
+      const EMERGING_JOB_SLUGS = [
+        // Pôle 1 : IA Générative & Deep Tech
+        'prompt-engineer', 'prompt-engineer-specialiste-ia-generative', 'ai-researcher', 'llm-engineer',
+        'generative-ai-engineer', 'charge-dinnovation', 'analyste-grc', 'linguiste-informaticien',
+        // Pôle 2 : FinTech, Blockchain & Finance Durable
+        'actuaire-big-data', 'conseiller-investissement-responsable', 'analyste-data-science-finance',
+        'expert-cybersecurite-financiere', 'specialiste-cryptomonnaies', 'architecte-cloud-assurance', 'ingenieur-smart-contracts',
+        // Pôle 3 : AgriTech, Smart Farming & Bioressources
+        'ingenieur-agroecologie', 'ingenieur-irrigation-hydraulique', 'charge-valorisation-dechets-agricoles',
+        'ingenieur-machinisme-agricole', 'ingenieur-agritech', 'telepilote-drone-agricole', 'data-analyste-agricole', 'geneticien',
+        // Pôle 4 : CleanTech, Smart Grids & Transition Énergétique
+        'ingenieur-rd-energie', 'ingenieur-geothermie-energetique', 'responsable-unite-biogaz-methanisation',
+        'ingenieur-smart-grids-reseaux-intelligents', 'energy-manager-auditeur-energetique',
+        // Pôle 5 : ConTech, BIM & Bâtiment Intelligent
+        'bim-manager', 'domoticien', 'ingenieur-eco-conception-btp',
+        // Pôle 6 : Éthique des Technologies, TAL & New Work
+        'enseignant-chercheur-philosophie', 'psychologue-du-travail', 'geographe-cartographe', 'ingenieur-rd-industriel',
+        // Pôle 7 : EdTech, Santé Avancée & Économie Circulaire
+        'responsable-pedagogique', 'learning-community-manager', 'responsable-recyclerie', 'infirmier-pratique-avancee', 'yield-manager'
+      ];
+      combined.forEach(job => {
+        if (EMERGING_JOB_SLUGS.includes(job.id) || EMERGING_JOB_SLUGS.includes(job.slug) || job.isEmerging === true) {
+          job.isEmerging = true;
+          job.connectedFamilies = [...new Set([...(job.connectedFamilies || [job.familyId]), 'metiers-emergents'])];
+        }
+      });
+
       // 2. Récupérer les métiers dynamiques du backend sans impacter l'expérience si l'API est indisponible
       try {
         if (typeof window !== 'undefined' && window.Api && window.Api.jobs && typeof window.Api.jobs.getAll === 'function') {
@@ -2381,6 +2413,9 @@
       if (familyId === 'transport-logistique') {
         return all.filter(j => j.familyId === 'transport-logistique' || (j.connectedFamilies && (j.connectedFamilies.includes('transport-logistique') || j.connectedFamilies.includes('transports-logistique'))));
       }
+      if (familyId === 'metiers-emergents') {
+        return all.filter(j => j.familyId === 'metiers-emergents' || (j.connectedFamilies && j.connectedFamilies.includes('metiers-emergents')) || j.isEmerging === true);
+      }
       return all.filter(j => j.familyId === familyId || (j.connectedFamilies && j.connectedFamilies.includes(familyId)));
     },
 
@@ -2417,6 +2452,8 @@
           matchesFamily = (j.familyId === 'communication-marketing-medias-creation' || j.familyId === 'culture-medias' || (j.connectedFamilies && (j.connectedFamilies.includes('communication-marketing-medias-creation') || j.connectedFamilies.includes('culture-medias'))));
         } else if (familyId === 'transport-logistique') {
           matchesFamily = (j.familyId === 'transport-logistique' || (j.connectedFamilies && (j.connectedFamilies.includes('transport-logistique') || j.connectedFamilies.includes('transports-logistique'))));
+        } else if (familyId === 'metiers-emergents') {
+          matchesFamily = (j.familyId === 'metiers-emergents' || (j.connectedFamilies && j.connectedFamilies.includes('metiers-emergents')) || j.isEmerging === true);
         } else {
           matchesFamily = (j.familyId === familyId || (j.connectedFamilies && j.connectedFamilies.includes(familyId)));
         }
@@ -2426,6 +2463,28 @@
         const familyDomains = (typeof this.getFamilyDomains === 'function')
           ? this.getFamilyDomains(familyId)
           : ((typeof this.getDigitalDomains === 'function') ? this.getDigitalDomains() : []);
+
+        // Cas dédié pour Métiers Émergents
+        if (familyId === 'metiers-emergents') {
+          if (domain && domain !== 'all') {
+            const domObj = familyDomains.find(d => (d.id && d.id.toLowerCase() === domain.toLowerCase()) || (d.name && d.name.toLowerCase() === domain.toLowerCase())) || null;
+            if (domObj && domObj.jobSlugs) {
+              if (!domObj.jobSlugs.includes(j.slug) && !domObj.jobSlugs.includes(j.id)) return false;
+            }
+          }
+          if (!subdomain || subdomain === 'all') return true;
+          const subLower = subdomain.toLowerCase();
+          const matchingDomain = familyDomains.find(d => 
+            (d.id && d.id.toLowerCase() === subLower) || 
+            (d.name && d.name.toLowerCase() === subLower)
+          );
+          if (matchingDomain && matchingDomain.jobSlugs) {
+            return matchingDomain.jobSlugs.includes(j.slug) || matchingDomain.jobSlugs.includes(j.id);
+          }
+          const jobSub = (j.subdomain || '').toLowerCase();
+          const jobDom = (j.domain || '').toLowerCase();
+          return jobSub.includes(subLower) || subLower.includes(jobSub) || jobDom.includes(subLower);
+        }
 
         // Filtrage optionnel par domaine (par ID ou par Nom)
         if (domain && domain !== 'all') {
@@ -2913,7 +2972,71 @@
       if (familyId === 'communication-marketing-medias-creation' || familyId === 'culture-medias' || familyId === 'communication' || familyId === 'communication-medias' || familyId === 'medias-creation') {
         return this.getCommunicationDomains();
       }
+      if (familyId === 'metiers-emergents') {
+        return this.getEmergingDomains();
+      }
       return [];
+    },
+
+    getEmergingDomains: function () {
+      return [
+        {
+          id: 'ia-generative-deeptech',
+          name: 'Intelligence Artificielle Générative & Deep Tech',
+          icon: '🤖',
+          description: 'Métiers pionniers de l’IA générative, des LLMs, de la vision artificielle et de la robotique autonome.',
+          subdomains: ['Prompt Engineering', 'Large Language Models (LLM)', 'IA Générative', 'Deep Learning & Vision', 'Robotique & Autonomie'],
+          jobSlugs: ['prompt-engineer', 'prompt-engineer-specialiste-ia-generative', 'ai-researcher', 'llm-engineer', 'generative-ai-engineer', 'charge-dinnovation', 'analyste-grc', 'linguiste-informaticien']
+        },
+        {
+          id: 'fintech-blockchain-esg',
+          name: 'FinTech, Blockchain & Finance Durable',
+          icon: '⚡',
+          description: 'Mutation des marchés financiers par les algorithmes, les smart contracts, la DeFi et la finance à impact ESG.',
+          subdomains: ['Blockchain & Smart Contracts', 'Crypto-actifs & DeFi', 'FinTech Data Science', 'Cybersécurité Financière', 'Investissement ESG'],
+          jobSlugs: ['actuaire-big-data', 'conseiller-investissement-responsable', 'analyste-data-science-finance', 'expert-cybersecurite-financiere', 'specialiste-cryptomonnaies', 'architecte-cloud-assurance', 'ingenieur-smart-contracts']
+        },
+        {
+          id: 'agritech-smart-farming',
+          name: 'AgriTech, Smart Farming & Bioressources',
+          icon: '🌱',
+          description: 'Agriculture de précision assistée par drones, capteurs IoT, IA agronomique et génétique durable.',
+          subdomains: ['Smart Farming & IoT', 'Drones & Télédétection', 'Data Agronomique', 'Agroéquipement & Robotique', 'Biométhanisation'],
+          jobSlugs: ['ingenieur-agroecologie', 'ingenieur-irrigation-hydraulique', 'charge-valorisation-dechets-agricoles', 'ingenieur-machinisme-agricole', 'ingenieur-agritech', 'telepilote-drone-agricole', 'data-analyste-agricole', 'geneticien']
+        },
+        {
+          id: 'cleantech-smartgrids',
+          name: 'CleanTech, Smart Grids & Transition Énergétique',
+          icon: '🌍',
+          description: 'Ingénierie de la transition bas-carbone, réseaux électriques intelligents, hydrogène et géothermie.',
+          subdomains: ['Smart Grids', 'Géothermie & Biogaz', 'Audits & Management Énergétique', 'R&D Énergie Bas-Carbone'],
+          jobSlugs: ['ingenieur-rd-energie', 'ingenieur-geothermie-energetique', 'responsable-unite-biogaz-methanisation', 'ingenieur-smart-grids-reseaux-intelligents', 'energy-manager-auditeur-energetique']
+        },
+        {
+          id: 'contech-smart-building',
+          name: 'ConTech, BIM & Bâtiment Intelligent',
+          icon: '🏢',
+          description: 'Digitalisation du bâtiment, maquette numérique collaborative (BIM), domotique et éco-conception.',
+          subdomains: ['BIM Management', 'Domotique & GTB', 'Éco-Conception BTP'],
+          jobSlugs: ['bim-manager', 'domoticien', 'ingenieur-eco-conception-btp']
+        },
+        {
+          id: 'ethique-tal-new-work',
+          name: 'Éthique des Technologies, TAL & New Work',
+          icon: '🧠',
+          description: 'Impacts sociétaux de la tech : éthique des algorithmes, traitement automatique des langues et nouvelles organisations.',
+          subdomains: ['Traitement Automatique des Langues (TAL)', 'Éthique de l’IA & Philosophie', 'Psychologie du Nouveau Travail', 'Géomatique & Données Spatiales'],
+          jobSlugs: ['enseignant-chercheur-philosophie', 'psychologue-du-travail', 'geographe-cartographe', 'ingenieur-rd-industriel']
+        },
+        {
+          id: 'edtech-sante-avancee',
+          name: 'EdTech, Santé Avancée & Économie Circulaire',
+          icon: '🎯',
+          description: 'Pédagogies immersives, communautés apprenantes et pratiques soignantes avancées.',
+          subdomains: ['Ingénierie Pédagogique Digitale', 'Communautés Apprenantes', 'Pratiques Soignantes Avancées', 'Revenue & Yield Management'],
+          jobSlugs: ['responsable-pedagogique', 'learning-community-manager', 'responsable-recyclerie', 'infirmier-pratique-avancee', 'yield-manager']
+        }
+      ];
     },
 
     getEnvironmentDomains: function () {
