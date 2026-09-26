@@ -228,6 +228,22 @@ p {
   text-wrap: pretty;
 }
 
+/* Centrage garanti des conteneurs d'animation et badges dans le Hero */
+.hero fade-in-up,
+.hero-content fade-in-up {
+  display: block;
+  text-align: center !important;
+  width: 100%;
+}
+
+.hero-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-inline: auto !important;
+  text-align: center !important;
+}
+
 /* Justification harmonieuse pour les textes éditoriaux, corps de carte et paragraphes du hero */
 .hero p,
 .hero-content p,
@@ -246,6 +262,7 @@ p {
 
 .hero p,
 .hero-content p {
+  text-align-last: center !important;
   max-width: 42rem;
   margin-left: auto !important;
   margin-right: auto !important;
@@ -3409,10 +3426,13 @@ input:-webkit-autofill:active {
   /* ===== ADAPTATION HEADER MOBILE (Anti-débordement, Avatar compact, Hamburger 100% visible) ===== */
   .site-header {
     height: var(--header-height);
-    overflow: hidden;
+    overflow: visible;
   }
 
   .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 0 12px;
     gap: 8px;
     width: 100%;
