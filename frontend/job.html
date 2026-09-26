@@ -76,12 +76,13 @@
                 <h1>Explore les Métiers d'Avenir</h1>
                 <p>Découvre les 23 grandes familles, les compétences clés et les formations qui façonnent le monde professionnel contemporain.</p>
                 
-                <!-- Porte A : Barre de recherche instantanée -->
-                <div class="orientation-search-box reveal-up reveal-delay-2">
+                <!-- Porte A : Barre de recherche intelligente unifiée avec suggestions instantanées -->
+                <div class="orientation-search-box reveal-up reveal-delay-2" id="unifiedSearchContainer">
                     <div class="search-input-wrapper">
-                        <span class="search-input-icon">🔎</span>
-                        <input type="text" id="orientationSearchInput" class="orientation-search-input" placeholder="Quel métier, domaine, compétence ou formation recherches-tu ?" autocomplete="off" aria-label="Rechercher un métier ou domaine">
+                        <span class="search-input-icon" aria-hidden="true">🔎</span>
+                        <input type="text" id="orientationSearchInput" class="orientation-search-input" placeholder="Rechercher parmi 535 métiers, compétences, salaires ou familles (ex: IA, BIM, Python, Finance)..." autocomplete="off" aria-label="Rechercher un métier, domaine ou compétence" aria-expanded="false" aria-controls="searchSuggestionsBox">
                         <button type="button" id="searchClearBtn" class="search-clear-btn" aria-label="Effacer la recherche" style="display:none;">&times;</button>
+                        <div id="searchSuggestionsBox" class="search-suggestions-dropdown" style="display:none;" role="listbox" aria-label="Suggestions de métiers et formations"></div>
                     </div>
                 </div>
 
@@ -123,19 +124,44 @@
                 <p id="viewSectionSubtitle" class="text-muted">Explore les domaines d’avenir, découvre leurs sous-disciplines et identifie les métiers clés.</p>
             </div>
 
-            <!-- PORTE C : BOUSSOLE DES AFFINITÉS (« Je ne sais pas encore ») -->
-            <div id="interestExplorerBox" class="interest-explorer-card" style="display:none;">
-                <div class="interest-header">
-                    <div class="interest-icon-badge">🧭</div>
-                    <div>
-                        <h3 style="margin:0 0 0.25rem 0;color:#0f172a;font-size:1.2rem;">Boussole d'orientation : Choisis ce que tu aimes faire</h3>
-                        <p style="margin:0;color:#64748b;font-size:0.9rem;">Sélectionne un ou plusieurs univers ci-dessous pour découvrir les domaines professionnels qui te correspondent :</p>
+            <!-- PORTE C : BOUSSOLE DES AFFINITÉS (« Je ne sais pas encore ») AVEC ACCORDÉON MOBILE -->
+            <div id="interestExplorerWrap" class="interest-explorer-wrap">
+                <!-- Bouton Accordéon Visible uniquement sur Mobile (< 768px) -->
+                <button type="button" id="interestAccordionToggle" class="interest-accordion-toggle" aria-expanded="false" aria-controls="interestExplorerBox" style="display:none;">
+                    <div class="accordion-toggle-left">
+                        <span class="accordion-toggle-icon">🧭</span>
+                        <span class="accordion-toggle-text">Boussole d'orientation : Choisis ce que tu aimes faire</span>
+                    </div>
+                    <span class="accordion-chevron" aria-hidden="true">&darr;</span>
+                </button>
+
+                <div id="interestExplorerBox" class="interest-explorer-card" style="display:none;" role="region" aria-label="Boussole d'orientation">
+                    <div class="interest-header">
+                        <div class="interest-icon-badge">🧭</div>
+                        <div>
+                            <h3 style="margin:0 0 0.25rem 0;color:#0f172a;font-size:1.2rem;">Boussole d'orientation : Choisis ce que tu aimes faire</h3>
+                            <p style="margin:0;color:#64748b;font-size:0.9rem;">Sélectionne un ou plusieurs univers ci-dessous pour découvrir les domaines professionnels qui te correspondent :</p>
+                        </div>
+                    </div>
+                    <div id="affinitiesChipsContainer" class="affinities-chips-grid">
+                        <!-- Généré dynamiquement -->
+                    </div>
+                    <div id="affinityResultsNotice" class="affinity-results-container"></div>
+                </div>
+            </div>
+
+            <!-- BANNIÈRE DES FILTRES ACTIFS & RÉINITIALISATION ANIMÉE -->
+            <div id="activeFiltersBanner" class="active-filters-banner" style="display:none;" aria-live="polite">
+                <div class="active-filters-content">
+                    <span class="active-filters-label">Filtres actifs :</span>
+                    <div id="activeFiltersPills" class="active-filters-pills">
+                        <!-- Badges dynamiques des filtres actifs -->
                     </div>
                 </div>
-                <div id="affinitiesChipsContainer" class="affinities-chips-grid">
-                    <!-- Généré dynamiquement -->
-                </div>
-                <div id="affinityResultsNotice" class="affinity-results-container"></div>
+                <button type="button" id="btnClearAllFilters" class="btn-clear-filters-animated" aria-label="Réinitialiser tous les filtres">
+                    <span>↺</span>
+                    <span>Réinitialiser les filtres</span>
+                </button>
             </div>
 
             <!-- BARRE DE RÉSULTATS DE RECHERCHE -->
@@ -202,14 +228,56 @@
                 <!-- 23 cartes de familles générées dynamiquement -->
             </div>
 
-            <!-- FILTRE RAPIDE LOCAL AU NIVEAU DES MÉTIERS -->
-            <div id="localJobsFilterBar" class="local-jobs-filter-bar" style="display:none;">
-                <div class="local-filter-input-wrap">
-                    <span class="local-filter-icon">🔍</span>
-                    <input type="text" id="localJobsFilterInput" class="local-filter-input" placeholder="Filtrer rapidement parmi ces fiches métiers (ex: Python, IA, Cloud, Dakar...)" autocomplete="off">
-                    <button type="button" id="localJobsFilterClear" class="local-filter-clear" aria-label="Effacer le filtre">&times;</button>
+            <!-- BARRE D'ACTION MOBILE POUR LES FILTRES (DRAWER) -->
+            <div id="mobileFiltersTriggerBar" class="mobile-filters-trigger-bar" style="display:none;">
+                <button type="button" id="btnOpenFiltersDrawer" class="btn-open-drawer-filters" aria-label="Ouvrir les filtres et pôles">
+                    <span>🎛️</span>
+                    <span id="mobileFiltersBadgeText">Filtres & Pôles</span>
+                </button>
+                <span id="mobileJobsCountPill" class="mobile-jobs-count-pill">Chargement...</span>
+            </div>
+
+            <!-- SKELETON LOADER (ANIMATE-PULSE / SHIMMER) -->
+            <div id="jobsSkeletonContainer" class="jobs-skeleton-grid" style="display:none;" aria-hidden="true">
+                <div class="job-card-skeleton">
+                    <div class="skeleton-media"></div>
+                    <div class="skeleton-body">
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-chips">
+                            <div class="skeleton-chip"></div>
+                            <div class="skeleton-chip"></div>
+                        </div>
+                    </div>
                 </div>
-                <span id="localJobsFilterCount" class="local-filter-count">0 métiers</span>
+                <div class="job-card-skeleton">
+                    <div class="skeleton-media"></div>
+                    <div class="skeleton-body">
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-chips">
+                            <div class="skeleton-chip"></div>
+                            <div class="skeleton-chip"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="job-card-skeleton">
+                    <div class="skeleton-media"></div>
+                    <div class="skeleton-body">
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line title"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-line"></div>
+                        <div class="skeleton-chips">
+                            <div class="skeleton-chip"></div>
+                            <div class="skeleton-chip"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- GRILLE DES CARTES DE MÉTIERS (NIVEAU 3) -->
@@ -248,6 +316,24 @@
             </div>
         </div>
     </section>
+
+    <!-- OFF-CANVAS DRAWER DE FILTRES MOBILE -->
+    <div id="filtersDrawerBackdrop" class="filters-drawer-backdrop" style="display:none;" aria-hidden="true"></div>
+    <div id="filtersOffcanvasDrawer" class="filters-offcanvas-drawer" role="dialog" aria-modal="true" aria-label="Filtres de navigation et domaines" style="display:none;">
+        <div class="drawer-header">
+            <div class="drawer-title-wrap">
+                <span class="drawer-icon">🎛️</span>
+                <h3 class="drawer-title">Filtres & Pôles</h3>
+            </div>
+            <button type="button" id="btnCloseFiltersDrawer" class="drawer-close-btn" aria-label="Fermer les filtres">&times;</button>
+        </div>
+        <div class="drawer-body" id="drawerBodyContent">
+            <!-- Pôles et filtres injectés dynamiquement -->
+        </div>
+        <div class="drawer-footer">
+            <button type="button" id="btnApplyDrawerFilters" class="btn btn-primary btn-block">Voir les résultats</button>
+        </div>
+    </div>
 </main>
 
 <footer data-layout="footer" class="site-footer">

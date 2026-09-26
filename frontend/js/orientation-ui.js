@@ -62,6 +62,7 @@
       explorerSection: document.getElementById('explorerSection'),
       heroSearchInput: document.getElementById('orientationSearchInput'),
       heroSearchClear: document.getElementById('searchClearBtn'),
+      searchSuggestionsBox: document.getElementById('searchSuggestionsBox'),
       btnDiscoverInterests: document.getElementById('btnDiscoverInterests'),
       btnExploreFamilies: document.getElementById('btnExploreFamilies'),
       btnViewAllJobs: document.getElementById('btnViewAllJobs'),
@@ -72,15 +73,21 @@
       viewSectionTitle: document.getElementById('viewSectionTitle'),
       viewSectionSubtitle: document.getElementById('viewSectionSubtitle'),
       
-      // Conteneurs de vue
+      // Conteneurs de vue & Accordéon Boussole
       familiesGridContainer: document.getElementById('familiesGridContainer'),
       familyDrilldownContainer: document.getElementById('familyDrilldownContainer'),
       subdomainsBarContainer: document.getElementById('subdomainsBarContainer'),
       jobsGridContainer: document.getElementById('jobsGridContainer'),
+      jobsSkeletonContainer: document.getElementById('jobsSkeletonContainer'),
+      interestExplorerWrap: document.getElementById('interestExplorerWrap'),
+      interestAccordionToggle: document.getElementById('interestAccordionToggle'),
       interestExplorerBox: document.getElementById('interestExplorerBox'),
       affinitiesChipsContainer: document.getElementById('affinitiesChipsContainer'),
       affinityResultsNotice: document.getElementById('affinityResultsNotice'),
       searchResultsSummary: document.getElementById('searchResultsSummary'),
+      activeFiltersBanner: document.getElementById('activeFiltersBanner'),
+      activeFiltersPills: document.getElementById('activeFiltersPills'),
+      btnClearAllFilters: document.getElementById('btnClearAllFilters'),
       
       // Reset & retours
       btnBackToFamilies: document.getElementById('btnBackToFamilies'),
@@ -98,11 +105,16 @@
       stickyCountBadge: document.getElementById('stickyCountBadge'),
       stickyBtnScrollTop: document.getElementById('stickyBtnScrollTop'),
 
-      // Filtre rapide local dans la famille / catalogue
-      localJobsFilterBar: document.getElementById('localJobsFilterBar'),
-      localJobsFilterInput: document.getElementById('localJobsFilterInput'),
-      localJobsFilterClear: document.getElementById('localJobsFilterClear'),
-      localJobsFilterCount: document.getElementById('localJobsFilterCount'),
+      // Contrôle mobile & Drawer Off-canvas
+      mobileFiltersTriggerBar: document.getElementById('mobileFiltersTriggerBar'),
+      btnOpenFiltersDrawer: document.getElementById('btnOpenFiltersDrawer'),
+      mobileFiltersBadgeText: document.getElementById('mobileFiltersBadgeText'),
+      mobileJobsCountPill: document.getElementById('mobileJobsCountPill'),
+      filtersDrawerBackdrop: document.getElementById('filtersDrawerBackdrop'),
+      filtersOffcanvasDrawer: document.getElementById('filtersOffcanvasDrawer'),
+      btnCloseFiltersDrawer: document.getElementById('btnCloseFiltersDrawer'),
+      drawerBodyContent: document.getElementById('drawerBodyContent'),
+      btnApplyDrawerFilters: document.getElementById('btnApplyDrawerFilters'),
 
       // Pagination progressive & Bouton flottant
       orientationPaginationWrap: document.getElementById('orientationPaginationWrap'),
@@ -160,10 +172,170 @@
   }
 
   // =========================================================================
+  // GESTION DU SKELETON LOADER & DES FILTRES ACTIFS
+  // =========================================================================
+  function showSkeleton(isLoading) {
+    if (dom.jobsSkeletonContainer) {
+      dom.jobsSkeletonContainer.style.display = isLoading ? 'grid' : 'none';
+    }
+    if (dom.jobsGridContainer) {
+      if (isLoading) {
+        dom.jobsGridContainer.style.display = 'none';
+      } else {
+        if (AppState.currentView !== 'FAMILIES') {
+          dom.jobsGridContainer.style.display = 'grid';
+        }
+      }
+    }
+    if (dom.orientationPaginationWrap && isLoading) {
+      dom.orientationPaginationWrap.style.display = 'none';
+    }
+  }
+
+  function updateActiveFiltersBanner() {
+    if (!dom.activeFiltersBanner || !dom.activeFiltersPills) return;
+
+    const pills = [];
+
+    if (AppState.currentView === 'FAMILY_DRILLDOWN' && AppState.selectedFamilyId) {
+      const fam = window.OrientationData.getFamily(AppState.selectedFamilyId);
+      if (fam) {
+        pills.push({
+          label: `Famille : ${fam.icon || '📁'} ${fam.name}`,
+          onRemove: () => {
+            setView('FAMILIES');
+            scrollToElement(dom.familiesGridContainer || dom.explorerSection || 200, -80);
+          }
+        });
+      }
+
+      if (AppState.selectedDomain && AppState.selectedDomain !== 'all') {
+        const familyDomains = (typeof window.OrientationData.getFamilyDomains === 'function')
+          ? window.OrientationData.getFamilyDomains(AppState.selectedFamilyId)
+          : [];
+        const domObj = familyDomains.find(d => d.id === AppState.selectedDomain);
+        const domLabel = domObj ? `${domObj.icon || '📌'} ${domObj.name}` : AppState.selectedDomain;
+        pills.push({
+          label: `Pôle : ${domLabel}`,
+          onRemove: () => {
+            AppState.selectedDomain = 'all';
+            AppState.selectedSubdomain = 'all';
+            const f = window.OrientationData.getFamily(AppState.selectedFamilyId);
+            if (f) {
+              renderSubdomainsBar(f);
+              updateFamilyBreadcrumbs(f);
+              updateStickyToolbarInfo(f);
+            }
+            renderJobsForFamily(AppState.selectedFamilyId, 'all', 'all');
+          }
+        });
+      }
+
+      if (AppState.selectedSubdomain && AppState.selectedSubdomain !== 'all') {
+        pills.push({
+          label: `Sous-domaine : ${AppState.selectedSubdomain}`,
+          onRemove: () => {
+            AppState.selectedSubdomain = 'all';
+            const f = window.OrientationData.getFamily(AppState.selectedFamilyId);
+            if (f) {
+              renderSubdomainsBar(f);
+              updateFamilyBreadcrumbs(f);
+              updateStickyToolbarInfo(f);
+            }
+            renderJobsForFamily(AppState.selectedFamilyId, 'all', AppState.selectedDomain);
+          }
+        });
+      }
+    } else if (AppState.currentView === 'INTERESTS' && AppState.selectedAffinities && AppState.selectedAffinities.length > 0) {
+      const allAffinities = window.OrientationData.getAffinities();
+      AppState.selectedAffinities.forEach(affId => {
+        const affObj = allAffinities.find(a => a.id === affId);
+        if (affObj) {
+          pills.push({
+            label: `${affObj.icon || '✨'} ${affObj.label}`,
+            onRemove: () => {
+              AppState.selectedAffinities = AppState.selectedAffinities.filter(id => id !== affId);
+              if (dom.affinitiesChipsContainer) {
+                const btn = dom.affinitiesChipsContainer.querySelector(`[data-affinity-id="${affId}"]`);
+                if (btn) btn.classList.remove('active');
+              }
+              renderAffinityResults();
+            }
+          });
+        }
+      });
+    } else if (AppState.currentView === 'SEARCH' && AppState.searchQuery) {
+      pills.push({
+        label: `Recherche : "${AppState.searchQuery}"`,
+        onRemove: () => {
+          if (dom.heroSearchInput) dom.heroSearchInput.value = '';
+          AppState.searchQuery = '';
+          if (dom.heroSearchClear) dom.heroSearchClear.style.display = 'none';
+          setView('FAMILIES');
+        }
+      });
+    }
+
+    if (AppState.localSearchQuery && AppState.localSearchQuery.trim()) {
+      pills.push({
+        label: `Filtre texte : "${AppState.localSearchQuery}"`,
+        onRemove: () => {
+          AppState.localSearchQuery = '';
+          if (dom.localJobsFilterInput) dom.localJobsFilterInput.value = '';
+          if (dom.localJobsFilterClear) dom.localJobsFilterClear.style.display = 'none';
+          renderJobCardsList(AppState.currentFilteredJobsList);
+        }
+      });
+    }
+
+    if (pills.length === 0) {
+      dom.activeFiltersBanner.style.display = 'none';
+      dom.activeFiltersPills.innerHTML = '';
+      return;
+    }
+
+    dom.activeFiltersBanner.style.display = 'flex';
+    dom.activeFiltersPills.innerHTML = '';
+    pills.forEach((p) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'active-filter-pill';
+      btn.setAttribute('aria-label', `Supprimer le filtre ${p.label}`);
+      btn.innerHTML = `<span>${escapeHtml(p.label)}</span><span class="pill-remove" aria-hidden="true" style="font-weight:700;margin-left:0.25rem;">✕</span>`;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        p.onRemove();
+        updateActiveFiltersBanner();
+      });
+      dom.activeFiltersPills.appendChild(btn);
+    });
+
+    if (dom.btnClearAllFilters) {
+      dom.btnClearAllFilters.onclick = () => {
+        AppState.selectedFamilyId = null;
+        AppState.selectedDomain = 'all';
+        AppState.selectedSubdomain = 'all';
+        AppState.selectedAffinities = [];
+        AppState.searchQuery = '';
+        AppState.localSearchQuery = '';
+        if (dom.heroSearchInput) dom.heroSearchInput.value = '';
+        if (dom.heroSearchClear) dom.heroSearchClear.style.display = 'none';
+        if (dom.localJobsFilterInput) dom.localJobsFilterInput.value = '';
+        if (dom.affinitiesChipsContainer) {
+          dom.affinitiesChipsContainer.querySelectorAll('.affinity-pill').forEach(b => b.classList.remove('active'));
+        }
+        setView('FAMILIES');
+        scrollToElement(dom.familiesGridContainer || dom.explorerSection || 200, -80);
+      };
+    }
+  }
+
+  // =========================================================================
   // GESTIONNAIRE D'AFFICHAGE DES VUES (PROGRESSIVE DISCLOSURE)
   // =========================================================================
   function setView(viewName, params = {}) {
     AppState.currentView = viewName;
+    showSkeleton(false);
 
     // Réinitialiser les affichages
     if (dom.familiesGridContainer) dom.familiesGridContainer.style.display = 'none';
@@ -171,6 +343,7 @@
     if (dom.interestExplorerBox) dom.interestExplorerBox.style.display = 'none';
     if (dom.searchResultsSummary) dom.searchResultsSummary.style.display = 'none';
     if (dom.localJobsFilterBar) dom.localJobsFilterBar.style.display = 'none';
+    if (dom.mobileFiltersTriggerBar) dom.mobileFiltersTriggerBar.style.display = 'none';
     if (dom.orientationPaginationWrap) dom.orientationPaginationWrap.style.display = 'none';
 
     // Mise à jour de l'URL hash/params de manière transparente
@@ -207,6 +380,7 @@
 
         if (dom.stickyOrientationToolbar) dom.stickyOrientationToolbar.style.display = 'none';
         if (dom.btnFloatingScrollTop) dom.btnFloatingScrollTop.classList.remove('is-visible');
+        updateActiveFiltersBanner();
         syncScrollLayout();
         break;
 
@@ -249,8 +423,8 @@
             renderSubdomainsBar(family);
           }
 
-          if (dom.localJobsFilterBar) {
-            dom.localJobsFilterBar.style.display = 'flex';
+          if (dom.mobileFiltersTriggerBar) {
+            dom.mobileFiltersTriggerBar.style.display = 'flex';
           }
 
           if (dom.jobsGridContainer) {
@@ -258,6 +432,7 @@
             renderJobsForFamily(AppState.selectedFamilyId, AppState.selectedSubdomain, AppState.selectedDomain);
           }
         }
+        updateActiveFiltersBanner();
         break;
 
       case 'ALL_JOBS':
@@ -286,14 +461,15 @@
         if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Tous les dossiers métiers';
         if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Parcours l’ensemble des fiches métiers documentées par Le Monde du Travail.';
 
-        if (dom.localJobsFilterBar) {
-          dom.localJobsFilterBar.style.display = 'flex';
+        if (dom.mobileFiltersTriggerBar) {
+          dom.mobileFiltersTriggerBar.style.display = 'flex';
         }
 
         if (dom.jobsGridContainer) {
           dom.jobsGridContainer.style.display = 'grid';
           renderAllJobsGrid();
         }
+        updateActiveFiltersBanner();
         break;
 
       case 'INTERESTS':
@@ -316,10 +492,14 @@
         if (dom.interestExplorerBox) {
           dom.interestExplorerBox.style.display = 'block';
         }
+        if (dom.interestAccordionToggle) {
+          dom.interestAccordionToggle.setAttribute('aria-expanded', 'true');
+        }
         if (dom.jobsGridContainer) {
           dom.jobsGridContainer.style.display = 'grid';
           renderAffinityResults();
         }
+        updateActiveFiltersBanner();
         break;
 
       case 'SEARCH':
@@ -342,10 +522,14 @@
         if (dom.searchResultsSummary) {
           dom.searchResultsSummary.style.display = 'block';
         }
+        if (dom.mobileFiltersTriggerBar) {
+          dom.mobileFiltersTriggerBar.style.display = 'flex';
+        }
         if (dom.jobsGridContainer) {
           dom.jobsGridContainer.style.display = 'grid';
           renderSearchResults();
         }
+        updateActiveFiltersBanner();
         break;
     }
   }
@@ -764,52 +948,67 @@
   // =========================================================================
   async function renderJobsForFamily(familyId, subdomain, domain = null) {
     if (!dom.jobsGridContainer) return;
-    dom.jobsGridContainer.innerHTML = '<p class="text-muted text-center" style="grid-column:1/-1;padding:2rem;">Chargement des fiches métiers...</p>';
+    showSkeleton(true);
 
-    const activeDomain = (domain !== null && domain !== undefined) ? domain : AppState.selectedDomain;
-    const jobs = await window.OrientationData.getJobsBySubdomain(familyId, subdomain, activeDomain);
+    try {
+      const activeDomain = (domain !== null && domain !== undefined) ? domain : AppState.selectedDomain;
+      const jobs = await window.OrientationData.getJobsBySubdomain(familyId, subdomain, activeDomain);
+      showSkeleton(false);
 
-    if (jobs.length === 0) {
-      dom.jobsGridContainer.innerHTML = `
-        <div class="empty-state-card" style="grid-column:1/-1;">
-          <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem;">🧭</span>
-          <h4 style="font-size:1.15rem;color:#0f172a;margin-bottom:0.5rem;">Dossiers en cours de documentation pour cette sélection</h4>
-          <p style="color:#64748b;max-width:550px;margin:0 auto 1.25rem auto;font-size:0.92rem;line-height:1.6;">
-            Nos mentors et professionnels partenaires enrichissent continuellement les fiches métiers. Tu peux explorer l'ensemble des métiers de cette famille ou réinitialiser les filtres.
-          </p>
-          <button type="button" class="btn btn-outline-dark btn-sm" id="btnShowAllFamilyJobs" style="background:#ffffff;color:#0284c7;border:1.5px solid #0284c7;font-weight:650;padding:0.6rem 1.25rem;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;">
-            <span>Voir tous les métiers de cette famille</span>
-            <span>&rarr;</span>
-          </button>
-        </div>
-      `;
-      const btn = document.getElementById('btnShowAllFamilyJobs');
-      if (btn) {
-        btn.addEventListener('click', () => {
-          AppState.selectedDomain = 'all';
-          AppState.selectedSubdomain = 'all';
-          const family = window.OrientationData.getFamily(familyId);
-          if (family) {
-            renderSubdomainsBar(family);
-            updateFamilyBreadcrumbs(family);
-            updateStickyToolbarInfo(family);
-          }
-          renderJobsForFamily(familyId, 'all', 'all');
-        });
+      if (jobs.length === 0) {
+        dom.jobsGridContainer.innerHTML = `
+          <div class="empty-state-card" style="grid-column:1/-1;">
+            <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem;">🧭</span>
+            <h4 style="font-size:1.15rem;color:#0f172a;margin-bottom:0.5rem;">Dossiers en cours de documentation pour cette sélection</h4>
+            <p style="color:#64748b;max-width:550px;margin:0 auto 1.25rem auto;font-size:0.92rem;line-height:1.6;">
+              Nos mentors et professionnels partenaires enrichissent continuellement les fiches métiers. Tu peux explorer l'ensemble des métiers de cette famille ou réinitialiser les filtres.
+            </p>
+            <button type="button" class="btn btn-outline-dark btn-sm" id="btnShowAllFamilyJobs" style="background:#ffffff;color:#0284c7;border:1.5px solid #0284c7;font-weight:650;padding:0.6rem 1.25rem;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:0.4rem;">
+              <span>Voir tous les métiers de cette famille</span>
+              <span>&rarr;</span>
+            </button>
+          </div>
+        `;
+        const btn = document.getElementById('btnShowAllFamilyJobs');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            AppState.selectedDomain = 'all';
+            AppState.selectedSubdomain = 'all';
+            const family = window.OrientationData.getFamily(familyId);
+            if (family) {
+              renderSubdomainsBar(family);
+              updateFamilyBreadcrumbs(family);
+              updateStickyToolbarInfo(family);
+            }
+            renderJobsForFamily(familyId, 'all', 'all');
+          });
+        }
+        if (dom.orientationPaginationWrap) dom.orientationPaginationWrap.style.display = 'none';
+        updateActiveFiltersBanner();
+        syncScrollLayout();
+        return;
       }
-      if (dom.orientationPaginationWrap) dom.orientationPaginationWrap.style.display = 'none';
-      syncScrollLayout();
-      return;
-    }
 
-    renderJobCardsList(jobs);
+      renderJobCardsList(jobs);
+      updateActiveFiltersBanner();
+    } catch (err) {
+      showSkeleton(false);
+      console.error(err);
+    }
   }
 
   async function renderAllJobsGrid() {
     if (!dom.jobsGridContainer) return;
-    dom.jobsGridContainer.innerHTML = '<p class="text-muted text-center" style="grid-column:1/-1;padding:2rem;">Chargement de l’ensemble des dossiers...</p>';
-    const all = await window.OrientationData.getAllJobs();
-    renderJobCardsList(all);
+    showSkeleton(true);
+    try {
+      const all = await window.OrientationData.getAllJobs();
+      showSkeleton(false);
+      renderJobCardsList(all);
+      updateActiveFiltersBanner();
+    } catch (err) {
+      showSkeleton(false);
+      console.error(err);
+    }
   }
 
   function renderJobCardsList(jobs) {
@@ -839,6 +1038,9 @@
     // Mise à jour des compteurs
     if (dom.localJobsFilterCount) {
       dom.localJobsFilterCount.textContent = `${totalCount} métier${totalCount > 1 ? 's' : ''}`;
+    }
+    if (dom.mobileJobsCountPill) {
+      dom.mobileJobsCountPill.textContent = `${totalCount} métier${totalCount > 1 ? 's' : ''}`;
     }
     if (dom.stickyCountBadge) {
       dom.stickyCountBadge.textContent = `${totalCount} métier${totalCount > 1 ? 's' : ''}`;
@@ -885,7 +1087,7 @@
       const isESD = Boolean(job.sourceESD);
 
       return `
-        <article class="card job-card-modern stagger-item" data-job-slug="${escapeHtml(job.slug || job.id)}" style="--stagger-idx: ${idx % 8};">
+        <article class="card job-card-modern job-card-enter stagger-item" data-job-slug="${escapeHtml(job.slug || job.id)}" style="--stagger-idx: ${idx % 8};">
           <div class="job-card-media-wrap">
             <img src="${escapeHtml(img)}" alt="${escapeHtml(job.title)}" loading="lazy" width="600" height="370">
             <div class="job-card-overlay"></div>
@@ -1056,35 +1258,150 @@
         `;
       }
       dom.jobsGridContainer.innerHTML = '';
+      updateActiveFiltersBanner();
       return;
     }
 
-    const { matchedFamilies, matchedJobs } = await window.OrientationData.getExplorationByAffinities(AppState.selectedAffinities);
+    showSkeleton(true);
+    try {
+      const { matchedFamilies, matchedJobs } = await window.OrientationData.getExplorationByAffinities(AppState.selectedAffinities);
+      showSkeleton(false);
 
-    if (dom.affinityResultsNotice) {
-      dom.affinityResultsNotice.innerHTML = `
-        <div class="affinity-results-banner">
-          <p style="margin:0;font-weight:600;color:#0f172a;">
-            ✨ Ces univers professionnels résonnent avec tes affinités :
-            <span style="color:#0284c7;">${matchedFamilies.map(f => f.icon + ' ' + f.name).join(' • ')}</span>
-          </p>
-          <span style="font-size:0.85rem;color:#64748b;display:block;margin-top:0.3rem;">
-            (${matchedJobs.length} fiches métiers directement associées)
-          </span>
-        </div>
-      `;
+      if (dom.affinityResultsNotice) {
+        dom.affinityResultsNotice.innerHTML = `
+          <div class="affinity-results-banner">
+            <p style="margin:0;font-weight:600;color:#0f172a;">
+              ✨ Ces univers professionnels résonnent avec tes affinités :
+              <span style="color:#0284c7;">${matchedFamilies.map(f => f.icon + ' ' + f.name).join(' • ')}</span>
+            </p>
+            <span style="font-size:0.85rem;color:#64748b;display:block;margin-top:0.3rem;">
+              (${matchedJobs.length} fiches métiers directement associées)
+            </span>
+          </div>
+        `;
+      }
+
+      renderJobCardsList(matchedJobs);
+      updateActiveFiltersBanner();
+    } catch (err) {
+      showSkeleton(false);
+      console.error(err);
     }
-
-    renderJobCardsList(matchedJobs);
   }
 
   // =========================================================================
-  // MOTEUR DE RECHERCHE UNIVERSEL INSTANTANÉ
+  // MOTEUR DE RECHERCHE UNIVERSEL & AUTOCOMPLÉTION INTELLIGENTE
   // =========================================================================
   let searchDebounceTimer = null;
+  let activeSuggestionIndex = -1;
 
   function initUniversalSearch() {
     if (!dom.heroSearchInput) return;
+
+    const closeSuggestions = () => {
+      if (dom.searchSuggestionsBox) {
+        dom.searchSuggestionsBox.style.display = 'none';
+        dom.searchSuggestionsBox.innerHTML = '';
+      }
+      activeSuggestionIndex = -1;
+    };
+
+    const renderSuggestions = async (query) => {
+      if (!dom.searchSuggestionsBox) return;
+      const q = query.trim().toLowerCase();
+      if (q.length < 2) {
+        closeSuggestions();
+        return;
+      }
+
+      const allFamilies = (typeof window.OrientationData.getFamilies === 'function')
+        ? window.OrientationData.getFamilies()
+        : [];
+
+      const matchedFamilies = allFamilies.filter(f => {
+        if (f.name && f.name.toLowerCase().includes(q)) return true;
+        if (f.description && f.description.toLowerCase().includes(q)) return true;
+        if (Array.isArray(f.subdomains) && f.subdomains.some(s => s.toLowerCase().includes(q))) return true;
+        return false;
+      }).slice(0, 3);
+
+      const allJobs = await window.OrientationData.searchJobs(query);
+      const matchedJobs = (allJobs || []).slice(0, 6);
+
+      if (matchedFamilies.length === 0 && matchedJobs.length === 0) {
+        dom.searchSuggestionsBox.innerHTML = `
+          <div class="suggestion-item" style="cursor:default;color:#94a3b8;justify-content:center;">
+            <span>Aucun résultat instantané. Appuyez sur Entrée pour rechercher dans tous les métiers.</span>
+          </div>
+        `;
+        dom.searchSuggestionsBox.style.display = 'block';
+        return;
+      }
+
+      let html = '';
+
+      if (matchedFamilies.length > 0) {
+        html += `<div class="suggestion-group-title">Familles professionnelles</div>`;
+        matchedFamilies.forEach(f => {
+          html += `
+            <div class="suggestion-item" data-type="family" data-family-id="${escapeHtml(f.id)}" tabindex="0" role="button">
+              <span class="suggestion-title">
+                <span>${escapeHtml(f.icon || '📁')}</span>
+                <span>${escapeHtml(f.name)}</span>
+              </span>
+              <span class="suggestion-meta">Famille • ${escapeHtml(f.jobCount || '')} métiers</span>
+            </div>
+          `;
+        });
+      }
+
+      if (matchedJobs.length > 0) {
+        html += `<div class="suggestion-group-title">Métiers clés</div>`;
+        matchedJobs.forEach(job => {
+          html += `
+            <div class="suggestion-item" data-type="job" data-job-slug="${escapeHtml(job.slug || job.id)}" tabindex="0" role="button">
+              <span class="suggestion-title">
+                <span>${escapeHtml(job.icon || '💼')}</span>
+                <span>${escapeHtml(job.title)}</span>
+              </span>
+              <span class="suggestion-meta">${escapeHtml(job.subdomain || job.familyName || 'Métier')}</span>
+            </div>
+          `;
+        });
+      }
+
+      html += `
+        <div class="suggestion-item" data-type="search-all" style="border-top:1px solid rgba(255,255,255,0.08);background:rgba(2,132,199,0.15);color:#38bdf8;font-weight:600;justify-content:center;" tabindex="0" role="button">
+          <span>Voir tous les résultats pour « ${escapeHtml(query)} » &rarr;</span>
+        </div>
+      `;
+
+      dom.searchSuggestionsBox.innerHTML = html;
+      dom.searchSuggestionsBox.style.display = 'block';
+      activeSuggestionIndex = -1;
+
+      dom.searchSuggestionsBox.querySelectorAll('.suggestion-item').forEach(item => {
+        item.addEventListener('click', async () => {
+          const type = item.getAttribute('data-type');
+          if (type === 'family') {
+            const fId = item.getAttribute('data-family-id');
+            closeSuggestions();
+            setView('FAMILY_DRILLDOWN', { familyId: fId, domain: 'all', subdomain: 'all' });
+            scrollToElement(dom.familyDrilldownContainer || dom.explorerSection || 200, -80);
+          } else if (type === 'job') {
+            const slug = item.getAttribute('data-job-slug');
+            closeSuggestions();
+            const targetJob = await window.OrientationData.getJobBySlug(slug);
+            if (targetJob) openJobModal(targetJob);
+          } else if (type === 'search-all') {
+            closeSuggestions();
+            AppState.searchQuery = query;
+            setView('SEARCH');
+            scrollToElement(dom.searchResultsSummary || dom.jobsGridContainer || 200, -80);
+          }
+        });
+      });
+    };
 
     dom.heroSearchInput.addEventListener('input', (e) => {
       const query = e.target.value.trim();
@@ -1095,13 +1412,80 @@
       }
 
       clearTimeout(searchDebounceTimer);
-      searchDebounceTimer = setTimeout(async () => {
+      searchDebounceTimer = setTimeout(() => {
         if (query.length >= 2) {
-          setView('SEARCH');
-        } else if (query.length === 0) {
-          setView('FAMILIES');
+          renderSuggestions(query);
+        } else {
+          closeSuggestions();
+          if (query.length === 0 && AppState.currentView === 'SEARCH') {
+            setView('FAMILIES');
+          }
         }
-      }, 250);
+      }, 180);
+    });
+
+    dom.heroSearchInput.addEventListener('keydown', (e) => {
+      if (!dom.searchSuggestionsBox || dom.searchSuggestionsBox.style.display === 'none') {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const query = dom.heroSearchInput.value.trim();
+          if (query.length > 0) {
+            closeSuggestions();
+            AppState.searchQuery = query;
+            setView('SEARCH');
+            scrollToElement(dom.searchResultsSummary || dom.jobsGridContainer || 200, -80);
+          }
+        }
+        return;
+      }
+
+      const items = dom.searchSuggestionsBox.querySelectorAll('.suggestion-item[tabindex="0"]');
+      if (!items || items.length === 0) return;
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeSuggestionIndex = (activeSuggestionIndex + 1) % items.length;
+        items.forEach((it, idx) => {
+          if (idx === activeSuggestionIndex) {
+            it.classList.add('selected');
+            it.scrollIntoView({ block: 'nearest' });
+          } else {
+            it.classList.remove('selected');
+          }
+        });
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeSuggestionIndex = (activeSuggestionIndex - 1 + items.length) % items.length;
+        items.forEach((it, idx) => {
+          if (idx === activeSuggestionIndex) {
+            it.classList.add('selected');
+            it.scrollIntoView({ block: 'nearest' });
+          } else {
+            it.classList.remove('selected');
+          }
+        });
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (activeSuggestionIndex >= 0 && items[activeSuggestionIndex]) {
+          items[activeSuggestionIndex].click();
+        } else {
+          closeSuggestions();
+          const query = dom.heroSearchInput.value.trim();
+          if (query.length > 0) {
+            AppState.searchQuery = query;
+            setView('SEARCH');
+            scrollToElement(dom.searchResultsSummary || dom.jobsGridContainer || 200, -80);
+          }
+        }
+      } else if (e.key === 'Escape') {
+        closeSuggestions();
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (dom.searchSuggestionsBox && !dom.searchSuggestionsBox.contains(e.target) && e.target !== dom.heroSearchInput) {
+        closeSuggestions();
+      }
     });
 
     if (dom.heroSearchClear) {
@@ -1109,6 +1493,7 @@
         dom.heroSearchInput.value = '';
         dom.heroSearchClear.style.display = 'none';
         AppState.searchQuery = '';
+        closeSuggestions();
         setView('FAMILIES');
       });
     }
@@ -1118,6 +1503,7 @@
         dom.heroSearchInput.value = '';
         if (dom.heroSearchClear) dom.heroSearchClear.style.display = 'none';
         AppState.searchQuery = '';
+        closeSuggestions();
         setView('FAMILIES');
       });
     }
@@ -1127,38 +1513,47 @@
     if (!dom.jobsGridContainer) return;
     const q = AppState.searchQuery;
 
-    const results = await window.OrientationData.searchJobs(q);
+    showSkeleton(true);
+    try {
+      const results = await window.OrientationData.searchJobs(q);
+      showSkeleton(false);
 
-    const summaryText = document.getElementById('searchCountText');
-    if (summaryText) {
-      summaryText.textContent = `${results.length} résultat${results.length > 1 ? 's' : ''} trouvé${results.length > 1 ? 's' : ''} pour "${escapeHtml(q)}"`;
-    }
-
-    if (results.length === 0) {
-      dom.jobsGridContainer.innerHTML = `
-        <div class="empty-state-card" style="grid-column:1/-1;">
-          <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem;">🔍</span>
-          <h4 style="font-size:1.15rem;color:#0f172a;margin-bottom:0.5rem;">Aucun métier ne correspond exactement à "${escapeHtml(q)}"</h4>
-          <p style="color:#64748b;max-width:500px;margin:0 auto 1.25rem auto;font-size:0.92rem;line-height:1.6;">
-            Essaie avec d’autres mots-clés (ex: "code", "langues", "lettres", "histoire", "psychologie", "finance") ou explore nos 23 grandes familles.
-          </p>
-          <button type="button" class="btn btn-primary btn-sm" id="btnEmptyResetSearch">
-            Voir les 23 familles professionnelles
-          </button>
-        </div>
-      `;
-      const btn = document.getElementById('btnEmptyResetSearch');
-      if (btn) {
-        btn.addEventListener('click', () => {
-          if (dom.heroSearchInput) dom.heroSearchInput.value = '';
-          AppState.searchQuery = '';
-          setView('FAMILIES');
-        });
+      const summaryText = document.getElementById('searchCountText');
+      if (summaryText) {
+        summaryText.textContent = `${results.length} résultat${results.length > 1 ? 's' : ''} trouvé${results.length > 1 ? 's' : ''} pour "${escapeHtml(q)}"`;
       }
-      return;
-    }
 
-    renderJobCardsList(results);
+      if (results.length === 0) {
+        dom.jobsGridContainer.innerHTML = `
+          <div class="empty-state-card" style="grid-column:1/-1;">
+            <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem;">🔍</span>
+            <h4 style="font-size:1.15rem;color:#0f172a;margin-bottom:0.5rem;">Aucun métier ne correspond exactement à "${escapeHtml(q)}"</h4>
+            <p style="color:#64748b;max-width:500px;margin:0 auto 1.25rem auto;font-size:0.92rem;line-height:1.6;">
+              Essaie avec d’autres mots-clés (ex: "code", "langues", "lettres", "histoire", "psychologie", "finance") ou explore nos 23 grandes familles.
+            </p>
+            <button type="button" class="btn btn-primary btn-sm" id="btnEmptyResetSearch">
+              Voir les 23 familles professionnelles
+            </button>
+          </div>
+        `;
+        const btn = document.getElementById('btnEmptyResetSearch');
+        if (btn) {
+          btn.addEventListener('click', () => {
+            if (dom.heroSearchInput) dom.heroSearchInput.value = '';
+            AppState.searchQuery = '';
+            setView('FAMILIES');
+          });
+        }
+        updateActiveFiltersBanner();
+        return;
+      }
+
+      renderJobCardsList(results);
+      updateActiveFiltersBanner();
+    } catch (err) {
+      showSkeleton(false);
+      console.error(err);
+    }
   }
 
   // =========================================================================
@@ -2761,6 +3156,229 @@
   }
 
   // =========================================================================
+  // GESTION DU TIROIR LATÉRAL MOBILE (OFF-CANVAS DRAWER) & ACCORDÉON BOUSSOLE
+  // =========================================================================
+  function initMobileInterestAccordion() {
+    if (!dom.interestAccordionToggle || !dom.interestExplorerBox) return;
+
+    const isMobile = () => window.innerWidth < 768;
+
+    const updateAccordionState = () => {
+      if (isMobile()) {
+        dom.interestAccordionToggle.style.display = 'flex';
+        if (AppState.currentView === 'INTERESTS') {
+          dom.interestAccordionToggle.setAttribute('aria-expanded', 'true');
+          dom.interestExplorerBox.style.display = 'block';
+        } else {
+          dom.interestAccordionToggle.setAttribute('aria-expanded', 'false');
+          dom.interestExplorerBox.style.display = 'none';
+        }
+      } else {
+        dom.interestAccordionToggle.style.display = 'none';
+        if (AppState.currentView === 'INTERESTS') {
+          dom.interestExplorerBox.style.display = 'block';
+        } else {
+          dom.interestExplorerBox.style.display = 'none';
+        }
+      }
+    };
+
+    dom.interestAccordionToggle.addEventListener('click', () => {
+      const isExpanded = dom.interestAccordionToggle.getAttribute('aria-expanded') === 'true';
+      const nextState = !isExpanded;
+      dom.interestAccordionToggle.setAttribute('aria-expanded', String(nextState));
+      dom.interestExplorerBox.style.display = nextState ? 'block' : 'none';
+      if (nextState) {
+        scrollToElement(dom.interestAccordionToggle, -80);
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      if (!isMobile()) {
+        dom.interestAccordionToggle.style.display = 'none';
+        if (AppState.currentView === 'INTERESTS') {
+          dom.interestExplorerBox.style.display = 'block';
+        } else {
+          dom.interestExplorerBox.style.display = 'none';
+        }
+      } else {
+        dom.interestAccordionToggle.style.display = 'flex';
+      }
+    });
+
+    updateAccordionState();
+  }
+
+  function populateDrawerContent() {
+    if (!dom.drawerBodyContent) return;
+
+    if (AppState.currentView === 'FAMILY_DRILLDOWN' && AppState.selectedFamilyId) {
+      const family = window.OrientationData.getFamily(AppState.selectedFamilyId);
+      const allFamilies = (typeof window.OrientationData.getFamilies === 'function')
+        ? window.OrientationData.getFamilies()
+        : [];
+      const familyDomains = (typeof window.OrientationData.getFamilyDomains === 'function')
+        ? window.OrientationData.getFamilyDomains(family.id)
+        : ((family.id === 'numerique-ia' && typeof window.OrientationData.getDigitalDomains === 'function') ? window.OrientationData.getDigitalDomains() : []);
+
+      let html = `
+        <div style="margin-bottom:1.5rem;">
+          <label style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#0284c7;font-weight:700;display:block;margin-bottom:0.5rem;">Changer de famille</label>
+          <select id="drawerFamilySelect" style="width:100%;min-height:44px;padding:0.5rem 0.75rem;border-radius:10px;border:1.5px solid #cbd5e1;font-size:0.92rem;font-weight:600;color:#0f172a;background:#ffffff;">
+            ${allFamilies.map(f => `<option value="${escapeHtml(f.id)}" ${f.id === family.id ? 'selected' : ''}>${escapeHtml(f.icon || '📁')} ${escapeHtml(f.name)}</option>`).join('')}
+          </select>
+        </div>
+      `;
+
+      if (familyDomains && familyDomains.length > 0) {
+        html += `
+          <div style="margin-bottom:1.5rem;">
+            <label style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#0284c7;font-weight:700;display:block;margin-bottom:0.6rem;">Pôle spécialisé</label>
+            <div style="display:flex;flex-direction:column;gap:0.4rem;">
+              <button type="button" class="drawer-filter-btn ${AppState.selectedDomain === 'all' ? 'active' : ''}" data-domain-id="all" style="min-height:44px;text-align:left;padding:0.6rem 0.9rem;border-radius:10px;border:1.5px solid ${AppState.selectedDomain === 'all' ? '#0284c7' : '#e2e8f0'};background:${AppState.selectedDomain === 'all' ? '#f0f9ff' : '#ffffff'};font-weight:600;font-size:0.88rem;color:#0f172a;cursor:pointer;">
+                🌟 Tous les pôles (${familyDomains.length})
+              </button>
+              ${familyDomains.map(d => `
+                <button type="button" class="drawer-filter-btn ${AppState.selectedDomain === d.id ? 'active' : ''}" data-domain-id="${escapeHtml(d.id)}" style="min-height:44px;text-align:left;padding:0.6rem 0.9rem;border-radius:10px;border:1.5px solid ${AppState.selectedDomain === d.id ? '#0284c7' : '#e2e8f0'};background:${AppState.selectedDomain === d.id ? '#f0f9ff' : '#ffffff'};font-weight:600;font-size:0.88rem;color:#0f172a;cursor:pointer;">
+                  ${escapeHtml(d.icon)} ${escapeHtml(d.name)}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Sous-domaines
+      let subdomains = [];
+      if (AppState.selectedDomain !== 'all') {
+        const domObj = familyDomains.find(d => d.id === AppState.selectedDomain);
+        if (domObj && Array.isArray(domObj.subdomains)) subdomains = domObj.subdomains;
+      } else {
+        subdomains = family.subdomains || [];
+      }
+
+      if (subdomains && subdomains.length > 0) {
+        html += `
+          <div style="margin-bottom:1.5rem;">
+            <label style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#0284c7;font-weight:700;display:block;margin-bottom:0.6rem;">Sous-domaines</label>
+            <div style="display:flex;flex-wrap:wrap;gap:0.4rem;">
+              <button type="button" class="drawer-subdomain-btn ${AppState.selectedSubdomain === 'all' ? 'active' : ''}" data-subdomain="all" style="min-height:44px;padding:0.5rem 0.85rem;border-radius:8px;border:1.5px solid ${AppState.selectedSubdomain === 'all' ? '#0284c7' : '#e2e8f0'};background:${AppState.selectedSubdomain === 'all' ? '#0284c7' : '#ffffff'};color:${AppState.selectedSubdomain === 'all' ? '#ffffff' : '#0f172a'};font-weight:600;font-size:0.85rem;cursor:pointer;">
+                Tous
+              </button>
+              ${subdomains.map(s => `
+                <button type="button" class="drawer-subdomain-btn ${AppState.selectedSubdomain === s ? 'active' : ''}" data-subdomain="${escapeHtml(s)}" style="min-height:44px;padding:0.5rem 0.85rem;border-radius:8px;border:1.5px solid ${AppState.selectedSubdomain === s ? '#0284c7' : '#e2e8f0'};background:${AppState.selectedSubdomain === s ? '#0284c7' : '#ffffff'};color:${AppState.selectedSubdomain === s ? '#ffffff' : '#0f172a'};font-weight:600;font-size:0.85rem;cursor:pointer;">
+                  ${escapeHtml(s)}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      dom.drawerBodyContent.innerHTML = html;
+
+      const famSelect = document.getElementById('drawerFamilySelect');
+      if (famSelect) {
+        famSelect.addEventListener('change', (e) => {
+          setView('FAMILY_DRILLDOWN', { familyId: e.target.value, domain: 'all', subdomain: 'all' });
+          if (dom.filtersOffcanvasDrawer) dom.filtersOffcanvasDrawer.classList.remove('is-open');
+          if (dom.filtersDrawerBackdrop) dom.filtersDrawerBackdrop.classList.remove('is-open');
+          document.body.style.overflow = '';
+        });
+      }
+
+      dom.drawerBodyContent.querySelectorAll('.drawer-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const domId = btn.getAttribute('data-domain-id');
+          AppState.selectedDomain = domId;
+          AppState.selectedSubdomain = 'all';
+          const f = window.OrientationData.getFamily(AppState.selectedFamilyId);
+          if (f) {
+            renderSubdomainsBar(f);
+            updateFamilyBreadcrumbs(f);
+            updateStickyToolbarInfo(f);
+          }
+          renderJobsForFamily(AppState.selectedFamilyId, 'all', domId);
+          populateDrawerContent();
+        });
+      });
+
+      dom.drawerBodyContent.querySelectorAll('.drawer-subdomain-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const sub = btn.getAttribute('data-subdomain');
+          AppState.selectedSubdomain = sub;
+          const f = window.OrientationData.getFamily(AppState.selectedFamilyId);
+          if (f) {
+            renderSubdomainsBar(f);
+            updateFamilyBreadcrumbs(f);
+            updateStickyToolbarInfo(f);
+          }
+          renderJobsForFamily(AppState.selectedFamilyId, sub, AppState.selectedDomain);
+          if (dom.filtersOffcanvasDrawer) dom.filtersOffcanvasDrawer.classList.remove('is-open');
+          if (dom.filtersDrawerBackdrop) dom.filtersDrawerBackdrop.classList.remove('is-open');
+          document.body.style.overflow = '';
+        });
+      });
+    } else {
+      const allFamilies = (typeof window.OrientationData.getFamilies === 'function')
+        ? window.OrientationData.getFamilies()
+        : [];
+      dom.drawerBodyContent.innerHTML = `
+        <div>
+          <label style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;color:#0284c7;font-weight:700;display:block;margin-bottom:0.75rem;">Choisir une famille de métiers</label>
+          <div style="display:flex;flex-direction:column;gap:0.4rem;">
+            ${allFamilies.map(f => `
+              <button type="button" class="drawer-family-link-btn" data-family-id="${escapeHtml(f.id)}" style="min-height:44px;text-align:left;padding:0.65rem 0.9rem;border-radius:10px;border:1.5px solid #e2e8f0;background:#ffffff;font-weight:600;font-size:0.88rem;color:#0f172a;cursor:pointer;display:flex;align-items:center;gap:0.6rem;">
+                <span style="font-size:1.15rem;">${escapeHtml(f.icon || '📁')}</span>
+                <span>${escapeHtml(f.name)}</span>
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      dom.drawerBodyContent.querySelectorAll('.drawer-family-link-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const fId = btn.getAttribute('data-family-id');
+          setView('FAMILY_DRILLDOWN', { familyId: fId, domain: 'all', subdomain: 'all' });
+          if (dom.filtersOffcanvasDrawer) dom.filtersOffcanvasDrawer.classList.remove('is-open');
+          if (dom.filtersDrawerBackdrop) dom.filtersDrawerBackdrop.classList.remove('is-open');
+          document.body.style.overflow = '';
+        });
+      });
+    }
+  }
+
+  function initMobileFiltersDrawer() {
+    if (!dom.btnOpenFiltersDrawer || !dom.filtersOffcanvasDrawer) return;
+
+    const openDrawer = () => {
+      populateDrawerContent();
+      dom.filtersOffcanvasDrawer.classList.add('is-open');
+      if (dom.filtersDrawerBackdrop) dom.filtersDrawerBackdrop.classList.add('is-open');
+      dom.filtersOffcanvasDrawer.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeDrawer = () => {
+      dom.filtersOffcanvasDrawer.classList.remove('is-open');
+      if (dom.filtersDrawerBackdrop) dom.filtersDrawerBackdrop.classList.remove('is-open');
+      dom.filtersOffcanvasDrawer.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    };
+
+    dom.btnOpenFiltersDrawer.addEventListener('click', openDrawer);
+    if (dom.btnCloseFiltersDrawer) dom.btnCloseFiltersDrawer.addEventListener('click', closeDrawer);
+    if (dom.filtersDrawerBackdrop) dom.filtersDrawerBackdrop.addEventListener('click', closeDrawer);
+    if (dom.btnApplyDrawerFilters) dom.btnApplyDrawerFilters.addEventListener('click', closeDrawer);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && dom.filtersOffcanvasDrawer.classList.contains('is-open')) {
+        closeDrawer();
+      }
+    });
+  }
+
+  // =========================================================================
   // INITIALISATION GLOBALE DU MODULE
   // =========================================================================
   document.addEventListener('DOMContentLoaded', async () => {
@@ -2769,6 +3387,8 @@
     initAffinityExplorer();
     initLocalJobsFilter();
     initStickyToolbar();
+    initMobileInterestAccordion();
+    initMobileFiltersDrawer();
 
     // Bouton de navigation vers les 23 familles
     if (dom.btnExploreFamilies) {
@@ -2820,12 +3440,21 @@
 
     if (familyParam) {
       setView('FAMILY_DRILLDOWN', { familyId: familyParam, domain: domainParam || 'all', subdomain: subdomainParam || 'all' });
+      setTimeout(() => {
+        scrollToElement(dom.familyDrilldownContainer || dom.explorerSection || 200, -80);
+      }, 150);
     } else if (searchParam) {
       if (dom.heroSearchInput) dom.heroSearchInput.value = searchParam;
       AppState.searchQuery = searchParam;
       setView('SEARCH');
+      setTimeout(() => {
+        scrollToElement(dom.searchResultsSummary || dom.jobsGridContainer || 200, -80);
+      }, 150);
     } else if (window.location.hash === '#decouvrir') {
       setView('INTERESTS');
+      setTimeout(() => {
+        scrollToElement(dom.interestExplorerWrap || dom.interestExplorerBox || dom.explorerSection || 200, -80);
+      }, 150);
     } else {
       setView('FAMILIES');
     }
