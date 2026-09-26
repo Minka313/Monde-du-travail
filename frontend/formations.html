@@ -73,7 +73,7 @@
                 <div class="hero-content">
                     <span class="hero-label">🎓 Formations & Soft Skills</span>
                     <h1>Formations & Soft Skills d'Avenir</h1>
-                    <p>Parce que le diplôme ne suffit pas, le club vous forme aux compétences indispensables pour s'épanouir professionnellement.</p>
+                    <p>Parce que le diplôme ne suffit pas, le club te forme aux compétences indispensables pour s'épanouir professionnellement.</p>
                 </div>
             </div>
             <div class="scene-divider" aria-hidden="true"></div>
@@ -82,9 +82,9 @@
         <section class="section section-editorial-compact scene" id="scene-formations-intro">
             <div class="container page-content">
                 <div class="centered-editorial reveal-up">
-                    <span class="section-label">Développez vos talents</span>
+                    <span class="section-label">Développe tes talents</span>
                     <h2>Les compétences humaines et techniques pour réussir</h2>
-                    <p>Des programmes intensifs, axés sur la pratique et l'immersion professionnelle pour booster votre employabilité.</p>
+                    <p>Des programmes intensifs, axés sur la pratique et l'immersion professionnelle pour booster ton employabilité.</p>
                 </div>
                 
                 <!-- Ruban de fonctionnalités interactif apportant de la valeur -->
@@ -102,7 +102,7 @@
                     <div class="feature-card reveal-scale">
                         <div class="feature-icon-badge">📜</div>
                         <h3>Certificats de Réussite</h3>
-                        <p>Validez chaque module avec une attestation reconnue à mettre en avant sur votre CV et profil LinkedIn.</p>
+                        <p>Valide chaque module avec une attestation reconnue à mettre en avant sur ton CV et ton profil LinkedIn.</p>
                     </div>
                 </div>
             </div>
@@ -157,7 +157,7 @@
             <div class="container page-content">
                 <div class="section-header reveal-up">
                     <span class="section-label">Catalogue des formations</span>
-                    <h2>Développez vos compétences clés</h2>
+                    <h2>Développe tes compétences clés</h2>
                     <p>Des formations pratiques et certifiantes animées par des professionnels chevronnés.</p>
                 </div>
 
@@ -209,8 +209,8 @@
                     <p class="geopolitique">"Une meilleure compréhension du monde passe aussi par l'analyse de la géopolitique mondiale. Comprendre les dynamiques internationales permet de mieux anticiper les mutations professionnelles."</p>
                 </div>
                 <div class="motivation-box mt-2">
-                    <h3>Le saviez-vous ?</h3>
-                    <p>85% de la réussite professionnelle vient des Soft Skills. Préparez-vous dès maintenant avec nous !</p>
+                    <h3>Le savais-tu ?</h3>
+                    <p>85% de la réussite professionnelle vient des Soft Skills. Prépare-toi dès maintenant avec nous !</p>
                 </div>
             </div>
         </section>
@@ -582,12 +582,12 @@
                 ${currentUser ? `
                   <div class="preregister-notice">
                     <span>✨</span>
-                    <div><strong>Membre Connecté :</strong> Vos coordonnées ont été pré-remplies. Validez pour confirmer votre réservation instantanément.</div>
+                    <div><strong>Membre Connecté :</strong> Tes coordonnées ont été pré-remplies. Valide pour confirmer ta réservation instantanément.</div>
                   </div>
                 ` : `
                   <div class="preregister-notice" style="background:#eff6ff;border-color:#bfdbfe;color:#1e40af;">
                     <span>ℹ️</span>
-                    <div>Remplissez ce formulaire express pour réserver votre place. Les membres connectés s'inscrivent en 1 clic.</div>
+                    <div>Remplis ce formulaire express pour réserver ta place. Les membres connectés s'inscrivent en 1 clic.</div>
                   </div>
                 `}
                 <div class="preregister-field">
@@ -596,14 +596,14 @@
                 </div>
                 <div class="preregister-field">
                   <label for="regEmail">Adresse email *</label>
-                  <input type="email" id="regEmail" required value="${escapeHtml(defaultEmail)}" placeholder="votre.email@domaine.com">
+                  <input type="email" id="regEmail" required value="${escapeHtml(defaultEmail)}" placeholder="ton.email@domaine.com">
                 </div>
                 <div class="preregister-field">
                   <label for="regPhone">Numéro Téléphone / WhatsApp</label>
                   <input type="tel" id="regPhone" value="${escapeHtml(defaultPhone)}" placeholder="+221 77 000 00 00">
                 </div>
                 <div class="preregister-field">
-                  <label for="regMotivation">Votre objectif principal pour cette session</label>
+                  <label for="regMotivation">Ton objectif principal pour cette session</label>
                   <input type="text" id="regMotivation" placeholder="Ex: Préparer mes entretiens, monter en compétences...">
                 </div>
                 <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;">
@@ -654,9 +654,9 @@
             closeRegModal();
 
             if (window.toast) {
-              window.toast.success(`🎉 Félicitations ! Votre pré-inscription à "${f.title}" est validée.`);
+              window.toast.success(`🎉 Félicitations ! Ta pré-inscription à "${f.title}" est validée.`);
             } else {
-              alert(`🎉 Félicitations ! Votre pré-inscription à "${f.title}" est validée.`);
+              alert(`🎉 Félicitations ! Ta pré-inscription à "${f.title}" est validée.`);
             }
           });
         }
@@ -851,12 +851,12 @@
           console.warn('API non disponible, affichage des formations de secours :', error);
           if (container) {
             allFormations = [
-              { id: 'fb-1', title: 'Leadership & Management', description: 'Développez votre capacité à inspirer, à fédérer et à piloter des équipes vers des objectifs communs.', icon: '🤝', category: 'Management' },
-              { id: 'fb-2', title: 'Communication efficace', description: 'Améliorez vos interactions professionnelles et apprenez à transmettre vos messages clairement.', icon: '💬', category: 'Soft Skills' },
-              { id: 'fb-3', title: 'Prise de parole en public', description: 'Maîtrisez l\'art de la présentation et de l\'éloquence pour convaincre et captiver votre audience.', icon: '🗣️', category: 'Soft Skills' },
-              { id: 'fb-4', title: 'Entrepreneuriat', description: 'Apprenez à transformer vos idées en projets viables et à créer votre propre opportunité.', icon: '💡', category: 'Entrepreneuriat' },
-              { id: 'fb-5', title: 'Développement personnel', description: 'Travaillez sur votre mindset, votre confiance en vous et votre capacité à vous dépasser.', icon: '🧠', category: 'Soft Skills' },
-              { id: 'fb-6', title: 'Énergies renouvelables & Métiers verts', description: 'Sensibilisez-vous aux enjeux énergétiques et aux métiers d\'avenir sur le continent africain.', icon: '🌱', category: 'Environnement' }
+              { id: 'fb-1', title: 'Leadership & Management', description: 'Développe ta capacité à inspirer, à fédérer et à piloter des équipes vers des objectifs communs.', icon: '🤝', category: 'Management' },
+              { id: 'fb-2', title: 'Communication efficace', description: 'Améliore tes interactions professionnelles et apprends à transmettre tes messages clairement.', icon: '💬', category: 'Soft Skills' },
+              { id: 'fb-3', title: 'Prise de parole en public', description: 'Maîtrise l\'art de la présentation et de l\'éloquence pour convaincre et captiver ton audience.', icon: '🗣️', category: 'Soft Skills' },
+              { id: 'fb-4', title: 'Entrepreneuriat', description: 'Apprends à transformer tes idées en projets viables et à créer ta propre opportunité.', icon: '💡', category: 'Entrepreneuriat' },
+              { id: 'fb-5', title: 'Développement personnel', description: 'Travaille sur ton mindset, ta confiance en toi et ta capacité à te dépasser.', icon: '🧠', category: 'Soft Skills' },
+              { id: 'fb-6', title: 'Énergies renouvelables & Métiers verts', description: 'Sensibilise-toi aux enjeux énergétiques et aux métiers d\'avenir sur le continent africain.', icon: '🌱', category: 'Environnement' }
             ];
             allFormations.forEach(f => { formationsMap[f.id] = f; });
             await loadCategories();

@@ -125,7 +125,7 @@ ul {
   list-style: none;
 }
 
-/* ===== TYPOGRAPHIE ===== */
+/* ===== TYPOGRAPHIE & ALIGNEMENTS HARMONISÉS ===== */
 h1,
 h2,
 h3,
@@ -137,6 +137,8 @@ h6 {
   line-height: 1.18;
   letter-spacing: -0.01em;
   color: var(--color-gray-900);
+  text-wrap: balance;
+  text-align: left;
 }
 
 h1 {
@@ -181,6 +183,8 @@ p {
   color: var(--color-gray-800);
   line-height: 1.8;
   margin-bottom: var(--space-5);
+  text-wrap: pretty;
+  text-align: left;
 }
 
 .text-display {
@@ -189,6 +193,69 @@ p {
 
 .text-balance {
   text-wrap: balance;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+/* Centrage textuel exclusif aux bannières Hero et en-têtes expressément centrés */
+.hero-content-center,
+.hero-content-center h1,
+.hero-content-center p,
+.section-header.text-center,
+.section-header.text-center h2,
+.section-header.text-center p,
+.text-center {
+  text-align: center;
+}
+
+/* ===== ALIGNEMENT SYSTÉMATIQUE VERTICAL CENTRÉ (ICÔNES / EMOJIS & TEXTE) ===== */
+.icon-text,
+.hero-label,
+.section-label,
+.nav-links a,
+.mobile-nav-menu a,
+.job-card-pill-tag,
+.job-card-salary-badge,
+.job-card-level-badge,
+.job-card-meta-line span,
+.affinity-pill,
+.active-filter-pill,
+.btn-job-action,
+.btn-back-link,
+.btn-open-drawer-filters,
+.accordion-toggle-left,
+.user-menu-btn,
+.user-dropdown-item,
+.stat-badge,
+.impact-item,
+.quick-nav-pill,
+.subdomain-pill,
+.card-badge,
+.badge,
+.pill,
+.tag,
+.btn-cta,
+.btn-mobile-cta,
+.btn-primary,
+.btn-secondary,
+.btn-outline,
+.btn-clear-filters-animated,
+.drilldown-header-top .btn-back-link,
+.mobile-nav-brand,
+.logo-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  vertical-align: middle;
+}
+
+/* ===== NETTOYAGE DES BALISES VIDES PARASITES ===== */
+p:empty,
+span:empty:not(.icon):not(.bell-icon):not([class*="pulse"]):not([class*="badge"]):not([class*="chevron"]):not(.arrow-icon):not(.notif-header-pulse),
+div:empty:not([class*="skeleton"]):not([class*="spinner"]):not([class*="pulse"]):not([class*="aurora"]):not([id*="Progress"]):not(.nav-overlay) {
+  display: none !important;
 }
 
 .section-label {
@@ -633,6 +700,10 @@ p {
   .mobile-nav-footer,
   .nav-overlay {
     display: none !important;
+  }
+
+  .header-auth-slot {
+    display: flex !important;
   }
 
   .mobile-nav-menu {
@@ -2892,6 +2963,11 @@ input:-webkit-autofill:active {
   .site-header {
     z-index: 10001;
     overflow: visible;
+  }
+
+  /* Élimination de la redondance sur mobile : "Se connecter" est exclusivement dans le drawer mobile */
+  .header-auth-slot {
+    display: none !important;
   }
 
   .notification-dropdown,

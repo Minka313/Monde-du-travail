@@ -84,7 +84,7 @@
                         <div class="forum-form-group">
                             <label for="topicTags">Tags <span style="font-weight: 400; color: var(--color-gray-500);">(séparés par des virgules)</span></label>
                             <input type="text" id="topicTags" placeholder="Ex : alternance, candidature, CV">
-                            <small style="color: var(--color-gray-500);">Optionnel. Ajoutez des mots-clés pour faciliter la recherche.</small>
+                            <small style="color: var(--color-gray-500);">Optionnel. Ajoute des mots-clés pour faciliter la recherche.</small>
                         </div>
 
                         <div class="forum-form-group">
@@ -96,7 +96,7 @@
                                 <button type="button" class="md-btn" data-tag="list" title="Liste à puces">• Liste</button>
                                 <button type="button" class="md-btn" data-tag="link" title="Lien hypertexte">🔗 Lien</button>
                             </div>
-                            <textarea id="topicContent" class="with-toolbar" required minlength="10" placeholder="Décrivez votre question ou votre sujet en détail..."></textarea>
+                            <textarea id="topicContent" class="with-toolbar" required minlength="10" placeholder="Décris ta question ou ton sujet en détail..."></textarea>
                         </div>
 
                         <div class="forum-form-actions">
@@ -190,7 +190,7 @@
           const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
 
           if (!title || !category || !content) {
-            alert('Veuillez remplir tous les champs obligatoires.');
+            alert('Remplis tous les champs obligatoires.');
             return;
           }
 

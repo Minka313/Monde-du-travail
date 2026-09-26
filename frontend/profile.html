@@ -6,7 +6,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Espace Membre — Le Monde du Travail. Gérez vos inscriptions aux formations, consultez vos métiers favoris et vos échanges.">
+    <meta name="description" content="Espace Membre — Le Monde du Travail. Gère tes inscriptions aux formations, consulte tes métiers favoris et tes échanges.">
     <title>Mon Espace Membre — Le Monde du Travail</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="css/styles.css">
@@ -64,7 +64,7 @@
     <section class="profile-hero">
         <div class="container">
             <div class="profile-header-flex">
-                <div class="profile-avatar-wrapper" id="profileAvatarWrapper" title="Cliquer pour changer votre photo de profil">
+                <div class="profile-avatar-wrapper" id="profileAvatarWrapper" title="Cliquer pour changer ta photo de profil">
                     <div class="profile-avatar-big" id="profileBigAvatar">👤</div>
                     <button type="button" class="avatar-edit-badge" id="btnOpenAvatarModal" aria-label="Modifier la photo de profil" title="Modifier la photo">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
@@ -95,7 +95,7 @@
                         <h2><span>🎓</span> Mes Inscriptions aux Formations</h2>
                         <div id="profileFormationsList">
                             <div class="profile-empty-hint">
-                                <p>Vous n'avez pas encore réservé de formation ou d'atelier.</p>
+                                <p>Tu n'as pas encore réservé de formation ou d'atelier.</p>
                                 <a href="formations.html" class="btn btn-primary btn-sm">Explorer le catalogue &rarr;</a>
                             </div>
                         </div>
@@ -106,7 +106,7 @@
                         <h2><span>⭐</span> Mes Métiers & Domaines Favoris</h2>
                         <div id="profileFavoriteJobsList">
                             <div class="profile-empty-hint">
-                                <p>Aucun métier enregistré dans vos favoris pour le moment.</p>
+                                <p>Aucun métier enregistré dans tes favoris pour le moment.</p>
                                 <a href="job.html" class="btn btn-outline btn-sm">🧭 Découvrir les métiers &rarr;</a>
                             </div>
                         </div>
@@ -116,7 +116,7 @@
                     <div class="profile-box">
                         <h2><span>💬</span> Communauté & Forum</h2>
                         <p style="color: var(--color-gray-600); font-size: 0.95rem; margin-bottom: 1rem;">
-                            Participez aux discussions, posez vos questions d'orientation et partagez vos retours d'expérience.
+                            Participe aux discussions, pose tes questions d'orientation et partage tes retours d'expérience.
                         </p>
                         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                             <a href="forum-create.html" class="btn btn-primary btn-sm">+ Poser une question</a>
@@ -187,7 +187,7 @@
                 <div class="avatar-live-preview-meta">
                     <span class="avatar-preview-badge">Aperçu en temps réel</span>
                     <div class="avatar-preview-name" id="modalLivePreviewName">Membre</div>
-                    <p class="avatar-preview-hint" id="modalLivePreviewHint">Choisissez un avatar ou importez une photo</p>
+                    <p class="avatar-preview-hint" id="modalLivePreviewHint">Choisis un avatar ou importe une photo</p>
                 </div>
             </div>
 
@@ -203,7 +203,7 @@
 
             <!-- Panneau 1 : Avatars illustrés prédéfinis -->
             <div class="avatar-tab-panel active" id="tabPresets">
-                <p style="font-size:0.85rem;color:#64748b;margin-top:0;margin-bottom:0.85rem;">Sélectionnez l'avatar qui correspond le mieux à votre profil :</p>
+                <p style="font-size:0.85rem;color:#64748b;margin-top:0;margin-bottom:0.85rem;">Sélectionne l'avatar qui correspond le mieux à ton profil :</p>
                 <div class="avatar-presets-grid" id="avatarPresetsGrid">
                     <!-- Rempli dynamiquement par JS -->
                 </div>
@@ -214,17 +214,17 @@
                 <input type="file" id="avatarFileInput" accept="image/png, image/jpeg, image/webp" style="display:none;">
                 <div class="avatar-upload-zone" id="avatarDropZone">
                     <div class="avatar-upload-icon">📁</div>
-                    <div class="avatar-upload-title">Glissez votre photo ici</div>
+                    <div class="avatar-upload-title">Glisse ta photo ici</div>
                     <p class="avatar-upload-desc">Formats JPG, PNG ou WebP • Recadrage carré automatique</p>
                     <button type="button" class="btn-upload-browse" id="btnUploadBrowse">Parcourir mes photos</button>
                 </div>
                 <div class="avatar-preview-section" id="uploadPreviewSection" style="display:none;">
                     <div class="avatar-preview-img-wrapper">
-                        <img id="uploadPreviewImg" src="" alt="Aperçu de votre photo importée">
+                        <img id="uploadPreviewImg" src="" alt="Aperçu de ta photo importée">
                     </div>
                     <div class="avatar-preview-info">
                         <h5>Photo prête !</h5>
-                        <p>Cliquez sur "Enregistrer" pour l'appliquer à votre profil.</p>
+                        <p>Clique sur "Enregistrer" pour l'appliquer à ton profil.</p>
                     </div>
                 </div>
             </div>
@@ -504,7 +504,7 @@
       const modalLivePreviewName = document.getElementById('modalLivePreviewName');
       if (modalLivePreviewName) modalLivePreviewName.textContent = fullName;
 
-      updateModalLivePreview(selectedAvatarUrl, selectedAvatarUrl ? 'Votre photo actuelle' : 'Choisissez un avatar ci-dessous ou importez une photo');
+      updateModalLivePreview(selectedAvatarUrl, selectedAvatarUrl ? 'Ta photo actuelle' : 'Choisis un avatar ci-dessous ou importe une photo');
 
       // Réinitialiser vers le premier onglet (Avatars illustrés)
       tabBtnPresets?.classList.add('active');
@@ -600,8 +600,8 @@
 
     function processCustomImageFile(file) {
       if (!file || !file.type.startsWith('image/')) {
-        if (window.toast) window.toast.error('Format non supporté. Veuillez choisir une image JPG, PNG ou WebP.');
-        else alert('Format non supporté. Veuillez choisir une image JPG, PNG ou WebP.');
+        if (window.toast) window.toast.error('Format non supporté. Choisis une image JPG, PNG ou WebP.');
+        else alert('Format non supporté. Choisis une image JPG, PNG ou WebP.');
         return;
       }
       if (file.size > 8 * 1024 * 1024) {
@@ -648,7 +648,7 @@
       if (uploadPreviewSection) uploadPreviewSection.style.display = 'none';
       if (avatarFileInput) avatarFileInput.value = '';
       updateModalLivePreview(null, 'Photo réinitialisée aux initiales.');
-      if (window.toast) window.toast.info('Photo prête à être retirée. Cliquez sur "Enregistrer" pour valider.');
+      if (window.toast) window.toast.info('Photo prête à être retirée. Clique sur "Enregistrer" pour valider.');
     });
 
     // Enregistrer le choix d'avatar
