@@ -2171,15 +2171,16 @@
 
             <h2 class="dossier-title" id="dossierJobTitle">${escapeHtml(job.title)}</h2>
             ${(job.aliases && job.aliases.length > 0) ? `
-              <div style="font-size:0.86rem;color:#cbd5e1;margin-top:-0.2rem;margin-bottom:0.5rem;font-style:italic;">
-                Aussi appelé : ${job.aliases.map(a => escapeHtml(a)).join(' • ')}
+              <div class="dossier-aliases-wrap">
+                <span class="dossier-aliases-label">Aussi appelé :</span>
+                <span class="dossier-aliases-text">${job.aliases.map(a => escapeHtml(a)).join(' • ')}</span>
               </div>
             ` : ''}
             
             <div class="dossier-meta-tags">
-              <span class="dossier-meta-tag">🎓 <strong>${escapeHtml(job.level || 'Bac +3 à +5')}</strong></span>
-              ${job.salary ? `<span class="dossier-meta-tag">💰 <strong>${escapeHtml(job.salary)}</strong></span>` : ''}
-              <span class="dossier-meta-tag">🌍 Sénégal • Afrique • International</span>
+              <span class="dossier-meta-tag meta-level">🎓 <strong>${escapeHtml(job.level || 'Bac +3 à +5')}</strong></span>
+              ${job.salary ? `<span class="dossier-meta-tag meta-salary">💰 <strong>${escapeHtml(job.salary)}</strong></span>` : ''}
+              <span class="dossier-meta-tag meta-geo">🌍 Sénégal • Afrique • International</span>
             </div>
 
             <!-- Indicateurs de lecture rapides (Quick Stats) -->
@@ -2191,10 +2192,6 @@
               <span class="dossier-quick-stat-badge tension-high">
                 <span class="stat-dot"></span>
                 <span>🔥 ${escapeHtml(tensionText)}</span>
-              </span>
-              <span class="dossier-quick-stat-badge">
-                <span>🎓</span>
-                <span>Cursus : ${escapeHtml(job.level || 'Bac +2 à +5')}</span>
               </span>
             </div>
           </div>

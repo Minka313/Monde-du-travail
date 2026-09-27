@@ -5378,12 +5378,16 @@ body.modal-open {
 /* Hero & Header */
 .dossier-hero {
   position: relative;
-  min-height: 130px;
+  min-height: 200px;
+  height: auto;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0369a1 100%);
   color: #ffffff;
   display: flex;
-  align-items: flex-end;
-  padding: 1.25rem 1.75rem;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 1.5rem 1.75rem 1.25rem;
+  padding-right: 3.8rem;
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
@@ -5392,7 +5396,18 @@ body.modal-open {
 .dossier-hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 10%, rgba(15, 23, 42, 0.45) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.88) 0%,
+    rgba(15, 23, 42, 0.78) 50%,
+    rgba(15, 23, 42, 0.95) 100%
+  ),
+  linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.85) 0%,
+    rgba(15, 23, 42, 0.55) 100%
+  );
+  pointer-events: none;
 }
 
 .dossier-hero-content {
@@ -5403,14 +5418,14 @@ body.modal-open {
 
 .dossier-close-btn {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 30;
-  background: rgba(15, 23, 42, 0.75);
+  top: 14px;
+  right: 14px;
+  z-index: 40;
+  background: rgba(15, 23, 42, 0.88);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   width: 36px;
   height: 36px;
@@ -5420,6 +5435,7 @@ body.modal-open {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .dossier-close-btn:hover {
@@ -5432,42 +5448,100 @@ body.modal-open {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(99, 102, 241, 0.3);
-  border: 1px solid rgba(165, 180, 252, 0.4);
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(165, 180, 252, 0.5);
   color: #e0e7ff;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.3rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 650;
+  padding: 0.35rem 0.8rem;
   border-radius: 9999px;
-  margin-bottom: 0.6rem;
-  backdrop-filter: blur(4px);
+  margin-bottom: 0.4rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .dossier-title {
   font-size: clamp(1.4rem, 2.5vw, 1.95rem);
   font-weight: 750;
   color: #ffffff;
-  margin: 0 0 0.5rem 0;
+  margin: 0.25rem 0 0.4rem 0;
   line-height: 1.25;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.dossier-aliases-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.86rem;
+  color: #f1f5f9;
+  margin: 0.15rem 0 0.55rem 0;
+  padding: 0.3rem 0.75rem;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  line-height: 1.4;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.dossier-aliases-label {
+  font-weight: 650;
+  color: #94a3b8;
+  font-style: normal;
+}
+
+.dossier-aliases-text {
+  font-style: italic;
+  color: #f8fafc;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .dossier-meta-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.6rem;
-  margin-top: 0.4rem;
+  margin-top: 0.35rem;
 }
 
 .dossier-meta-tag {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  font-size: 0.82rem;
-  color: #f1f5f9;
-  padding: 0.25rem 0.65rem;
-  border-radius: 6px;
+  gap: 0.4rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  font-size: 0.84rem;
+  font-weight: 550;
+  color: #f8fafc;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  line-height: 1.45;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.dossier-meta-tag.meta-level {
+  background: rgba(23, 37, 84, 0.85);
+  border-color: rgba(96, 165, 250, 0.45);
+  color: #eff6ff;
+}
+
+.dossier-meta-tag.meta-salary {
+  background: rgba(6, 78, 59, 0.85);
+  border-color: rgba(52, 211, 153, 0.45);
+  color: #ecfdf5;
+}
+
+.dossier-meta-tag.meta-geo {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(148, 163, 184, 0.35);
+  color: #f8fafc;
 }
 
 /* Navigation Tabs */
@@ -11003,11 +11077,16 @@ fade-in-up,
 }
 
 #job-dossier-overlay .dossier-hero {
-  height: clamp(220px, 32dvh, 300px);
-  min-height: 0;
+  height: auto;
+  min-height: 190px;
+  max-height: 50dvh;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(203, 213, 225, 0.7) transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
 #job-dossier-overlay .dossier-body {
@@ -11028,8 +11107,11 @@ fade-in-up,
   }
 
   #job-dossier-overlay .dossier-hero {
-    height: clamp(240px, 38dvh, 330px);
-    padding: 1rem;
+    height: auto;
+    min-height: 200px;
+    max-height: 52dvh;
+    padding: 1.25rem 1rem 1rem;
+    padding-right: 3.5rem;
   }
 
   #job-dossier-overlay .dossier-title {
