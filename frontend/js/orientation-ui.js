@@ -38,6 +38,24 @@
     return null;
   }
 
+  // Optimiseur d'images haute performance (WebP/AVIF auto via CDN Imgix/Unsplash, dimensionnement exact, qualité contrôlée)
+  function optimizeImageUrl(url, width = 420, quality = 65) {
+    if (!url || typeof url !== 'string') return '';
+    if (url.includes('images.unsplash.com')) {
+      try {
+        const u = new URL(url);
+        u.searchParams.set('w', String(width));
+        u.searchParams.set('auto', 'format');
+        u.searchParams.set('fit', 'crop');
+        u.searchParams.set('q', String(quality));
+        return u.toString();
+      } catch (_) {
+        return url;
+      }
+    }
+    return url;
+  }
+
   // État global du module
   const AppState = {
     currentView: 'FAMILIES', // 'FAMILIES' | 'FAMILY_DRILLDOWN' | 'ALL_JOBS' | 'INTERESTS' | 'SEARCH'
@@ -640,12 +658,13 @@
 
     dom.familiesGridContainer.innerHTML = families.map((family, idx) => {
       const sampleJobs = (family.representativeJobs || []).slice(0, 3);
-      const img = safeUrl(family.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80');
+      const rawImg = safeUrl(family.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=420&auto=format&fit=crop&q=65');
+      const img = optimizeImageUrl(rawImg, 420, 65);
 
       return `
         <article class="family-card stagger-item" data-family-id="${escapeHtml(family.id)}" style="--family-accent: ${escapeHtml(family.color || '#3b82f6')}; --stagger-idx: ${idx % 8};">
           <div class="family-card-media">
-            <img src="${escapeHtml(img)}" alt="${escapeHtml(family.name)}" loading="lazy">
+            <img src="${escapeHtml(img)}" alt="${escapeHtml(family.name)}" loading="lazy" decoding="async" width="400" height="225">
             <div class="family-card-media-overlay"></div>
             <div class="family-card-badge">
               <span class="family-badge-icon">${escapeHtml(family.icon)}</span>
@@ -1114,7 +1133,8 @@
     const visibleJobs = listToDisplay.slice(0, displayedCount);
 
     dom.jobsGridContainer.innerHTML = visibleJobs.map((job, idx) => {
-      const img = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&q=80');
+      const rawImg = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=420&auto=format&fit=crop&q=65');
+      const img = optimizeImageUrl(rawImg, 420, 65);
       const techSkills = job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.slice(0, 3) : [];
       const totalSkillsCount = (job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.length : 0);
       const isEmerging = Boolean(job.isEmerging);
@@ -1123,7 +1143,7 @@
       return `
         <article class="card job-card-modern job-card-enter stagger-item" data-job-slug="${escapeHtml(job.slug || job.id)}" style="--stagger-idx: ${idx % 8};">
           <div class="job-card-media-wrap">
-            <img src="${escapeHtml(img)}" alt="${escapeHtml(job.title)}" loading="lazy" width="600" height="370">
+            <img src="${escapeHtml(img)}" alt="${escapeHtml(job.title)}" loading="lazy" decoding="async" width="400" height="247">
             <div class="job-card-overlay"></div>
             <div class="job-card-pill-tag">
               <span>${escapeHtml(job.icon || '💼')}</span>
@@ -2048,7 +2068,8 @@
     const existing = document.getElementById('job-dossier-overlay');
     if (existing) existing.remove();
 
-    const img = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1000&q=80');
+    const rawImg = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=70');
+    const img = optimizeImageUrl(rawImg, 800, 70);
     const embedVideoUrl = (job.resources && job.resources.find(r => r.type === 'video')) ? getYoutubeEmbedUrl(job.resources.find(r => r.type === 'video').url) : null;
     const relatedJobs = await window.OrientationData.getRelatedJobs(job);
     const crossJobs = (typeof window.OrientationData.getCrossRecommendations === 'function') 
