@@ -1,6 +1,6 @@
 /**
  * ORIENTATION & MÉTIERS — SOURCE DE VÉRITÉ DATA-DRIVEN
- * Le Monde du Travail — 23 Grandes Familles, Sous-domaines, Métiers & Affinités
+ * Le Monde du Travail — 21 Grandes Familles, Sous-domaines, Métiers & Affinités
  */
 
 (function () {
@@ -13,60 +13,28 @@
     {
       id: 'numerique-ia',
       order: 1,
-      name: 'Numérique, Informatique & IA',
+      name: 'Numérique, IA, Big Data & Cybersécurité',
       slug: 'numerique-ia',
+      aliases: ['cybersecurite-reseaux', 'data-decision', 'cybersecurite', 'data', 'numerique-informatique-ia'],
       icon: '💻',
       color: '#3b82f6', // Bleu vibrant
       image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format&fit=crop&q=80',
-      description: 'Concevoir les logiciels, architectures cloud, applications et intelligences artificielles qui automatisent et transforment les organisations.',
-      stats: { jobsEstimate: '100+ métiers', subdomainsCount: 24 },
-      representativeJobs: ['Développeur Full-Stack', 'Ingénieur IA & ML', 'Prompt Engineer', 'DevOps Engineer', 'Product Designer', 'Cloud Architect'],
+      description: 'Concevoir les logiciels, architectures cloud, solutions d’intelligence artificielle, valoriser les données massives (Big Data) et sécuriser les réseaux et infrastructures critiques.',
+      stats: { jobsEstimate: '100+ métiers', subdomainsCount: 28 },
+      representativeJobs: ['Ingénieur IA & ML', 'Expert Cybersécurité / SOC', 'Data Scientist / Analyst', 'Développeur Full-Stack', 'Cloud Architect', 'Pentester'],
       subdomains: [
         'Développement web', 'Développement Front-end', 'Développement Back-end', 'Développement Full-Stack',
         'Développement mobile', 'Génie logiciel & Architecture', 'Intelligence artificielle', 'Machine Learning',
         'Deep Learning', 'IA Générative & LLM', 'Prompt Engineering', 'AI Engineering', 'MLOps',
-        'Data Analysis', 'Data Science', 'Data Engineering', 'SOC & Détection d’incidents',
-        'Sécurité offensive & Pentest', 'Cloud Architecture', 'CI/CD & Automatisation', 'UX/UI Design',
-        'Product Design', 'Growth & Acquisition', 'Innovation & Stratégie'
-      ]
-    },
-    {
-      id: 'cybersecurite-reseaux',
-      order: 2,
-      name: 'Cybersécurité & Réseaux',
-      slug: 'cybersecurite-reseaux',
-      icon: '🔐',
-      color: '#0ea5e9', // Cyan / Bleu ciel
-      image: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&auto=format&fit=crop&q=80',
-      description: 'Protéger les systèmes d’information, déjouer les cyberattaques, auditer les failles et sécuriser les réseaux d’infrastructures critiques.',
-      stats: { jobsEstimate: '45+ métiers', subdomainsCount: 14 },
-      representativeJobs: ['Analyste SOC', 'Pentester', 'Ingénieur Cybersécurité', 'Architecte Sécurité Cloud', 'Consultant GRC'],
-      subdomains: [
-        'Sécurité réseau', 'Sécurité cloud', 'SOC', 'Threat Intelligence', 'Pentest',
-        'Sécurité applicative', 'IAM', 'GRC', 'Forensics', 'Réponse à incident',
-        'Sécurité offensive', 'Sécurité défensive', 'Audit', 'Gouvernance cyber'
-      ]
-    },
-    {
-      id: 'data-decision',
-      order: 3,
-      name: 'Data, Statistiques & Décision',
-      slug: 'data-decision',
-      icon: '📊',
-      color: '#8b5cf6', // Violet
-      image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
-      description: 'Collecter, modéliser, explorer et valoriser les données massives pour guider les décisions stratégiques et financières des entreprises.',
-      stats: { jobsEstimate: '35+ métiers', subdomainsCount: 11 },
-      representativeJobs: ['Data Scientist', 'Data Engineer', 'Data Analyst', 'Business Intelligence Analyst', 'Actuaire'],
-      subdomains: [
-        'Data Analysis', 'Data Science', 'Data Engineering', 'Business Intelligence',
-        'Statistiques', 'Économétrie', 'Actuariat', 'Data Governance',
-        'Data Architecture', 'Bases de données', 'Analytics'
+        'Data Analysis', 'Data Science', 'Data Engineering', 'Business Intelligence', 'Data Architecture & Big Data',
+        'Sécurité réseau & Cloud', 'SOC & Détection d’incidents', 'Sécurité offensive & Pentest', 'Sécurité applicative & IAM',
+        'Gouvernance & Conformité Cyber', 'Cloud Architecture', 'CI/CD & Automatisation', 'UX/UI Design',
+        'Product Design', 'Growth & Acquisition'
       ]
     },
     {
       id: 'finance-fintech',
-      order: 4,
+      order: 2,
       name: 'Finance, Banque, Assurance & FinTech',
       slug: 'finance-fintech',
       icon: '🏦',
@@ -87,7 +55,7 @@
     },
     {
       id: 'commerce-marketing',
-      order: 5,
+      order: 3,
       name: 'Commerce, Vente, Marketing & E-Commerce',
       slug: 'commerce-marketing',
       icon: '🛒',
@@ -104,7 +72,7 @@
     },
     {
       id: 'agriculture-agritech',
-      order: 6,
+      order: 4,
       name: 'Agriculture, Élevage & Agroalimentaire',
       slug: 'agriculture-agritech',
       icon: '🌱',
@@ -130,7 +98,7 @@
     },
     {
       id: 'peche-maritime',
-      order: 7,
+      order: 5,
       name: 'Pêche, Aquaculture & Économie Maritime',
       slug: 'peche-maritime',
       icon: '🐟',
@@ -148,7 +116,7 @@
     },
     {
       id: 'elevage-veterinaire',
-      order: 8,
+      order: 6,
       name: 'Élevage, Vétérinaire & Productions Animales',
       slug: 'elevage-veterinaire',
       icon: '🐄',
@@ -164,7 +132,7 @@
     },
     {
       id: 'energie-renouvelable',
-      order: 9,
+      order: 7,
       name: 'Énergie, Électricité & Transition Énergétique',
       slug: 'energie-renouvelable',
       icon: '⚡',
@@ -182,7 +150,7 @@
     },
     {
       id: 'btp-architecture',
-      order: 10,
+      order: 8,
       name: 'BTP, Architecture & Construction',
       slug: 'btp-architecture',
       icon: '🏗️',
@@ -201,7 +169,7 @@
     },
     {
       id: 'industrie-mecanique',
-      order: 11,
+      order: 9,
       name: 'Industrie, Technologies & Ingénierie',
       slug: 'industrie-mecanique',
       aliasSlug: 'industrie-technologies-ingenierie',
@@ -226,7 +194,7 @@
     },
     {
       id: 'mines-geosciences',
-      order: 12,
+      order: 10,
       name: 'Mines, Pétrole, Gaz & Géosciences',
       slug: 'mines-geosciences',
       icon: '⛏️',
@@ -242,7 +210,7 @@
     },
     {
       id: 'transport-logistique',
-      order: 13,
+      order: 11,
       name: 'Transport, Logistique & Supply Chain',
       slug: 'transport-logistique',
       icon: '🚚',
@@ -258,7 +226,7 @@
     },
     {
       id: 'sante-soins-paramedical',
-      order: 14,
+      order: 12,
       name: 'Santé, Soins & Paramédical',
       slug: 'sante-soins-paramedical',
       aliasSlug: 'sante-biomedical',
@@ -285,7 +253,7 @@
     },
     {
       id: 'education-formation',
-      order: 15,
+      order: 13,
       name: 'Enseignement, Éducation & Formation',
       slug: 'education-formation',
       aliasSlug: 'enseignement-education-formation',
@@ -309,7 +277,7 @@
     },
     {
       id: 'biologie-chimie',
-      order: 16,
+      order: 14,
       name: 'Biologie & Chimie',
       slug: 'biologie-chimie',
       aliasSlug: 'sciences-biotech',
@@ -340,7 +308,7 @@
     },
     {
       id: 'environnement-developpement-durable',
-      order: 17,
+      order: 15,
       name: 'Environnement, Écologie & Développement durable',
       slug: 'environnement-developpement-durable',
       aliases: ['environnement-climat', 'ecologie-developpement-durable', 'environnement'],
@@ -362,7 +330,7 @@
     },
     {
       id: 'hotellerie-restauration-hospitalite',
-      order: 18,
+      order: 16,
       name: 'Hôtellerie, Restauration & Hospitalité',
       slug: 'hotellerie-restauration-hospitalite',
       aliasSlug: 'tourisme-hotellerie',
@@ -386,7 +354,7 @@
     },
     {
       id: 'communication-marketing-medias-creation',
-      order: 19,
+      order: 17,
       name: 'Communication, Marketing, Médias & Création',
       slug: 'communication-marketing-medias-creation',
       aliases: ['culture-medias', 'communication-medias', 'communication', 'medias-creation'],
@@ -408,7 +376,7 @@
     },
     {
       id: 'droit-management',
-      order: 20,
+      order: 18,
       name: 'Droit, Administration, Management & Services Professionnels',
       slug: 'droit-management',
       icon: '⚖️',
@@ -424,7 +392,7 @@
     },
     {
       id: 'metiers-emergents',
-      order: 21,
+      order: 19,
       name: 'Métiers Émergents & Métiers du Futur',
       slug: 'metiers-emergents',
       icon: '🌟',
@@ -445,7 +413,7 @@
     },
     {
       id: 'lettres-langues-sciences-humaines',
-      order: 22,
+      order: 20,
       name: 'Lettres, Langues & Sciences Humaines',
       slug: 'lettres-langues-sciences-humaines',
       icon: '📚',
@@ -467,7 +435,7 @@
     },
     {
       id: 'sciences-terre-geosciences',
-      order: 23,
+      order: 21,
       name: 'Sciences de la Terre, Géosciences & Ressources Naturelles',
       slug: 'sciences-terre-geosciences',
       icon: '🌍',
@@ -495,7 +463,7 @@
       icon: '🧩',
       label: 'Résoudre des énigmes & des problèmes logiques',
       description: 'Tu aimes décortiquer les puzzles, analyser pourquoi quelque chose ne fonctionne pas et concevoir une solution astucieuse.',
-      familyIds: ['numerique-ia', 'cybersecurite-reseaux', 'data-decision', 'finance-fintech', 'industrie-mecanique', 'sciences-biotech']
+      familyIds: ['numerique-ia', 'finance-fintech', 'industrie-mecanique', 'sciences-biotech']
     },
     {
       id: 'creer-designer',
@@ -509,14 +477,14 @@
       icon: '📊',
       label: 'Travailler avec les données & les chiffres',
       description: 'Tu es à l’aise avec les statistiques, les tableurs, la rentabilité financière et la mise en évidence de tendances.',
-      familyIds: ['data-decision', 'finance-fintech', 'commerce-marketing', 'droit-management']
+      familyIds: ['numerique-ia', 'finance-fintech', 'commerce-marketing', 'droit-management']
     },
     {
       id: 'technologie-code',
       icon: '⚡',
       label: 'Manipuler la technologie, coder & automatiser',
       description: 'Tu es fasciné par les ordinateurs, les applications mobiles, l’IA, les robots et les objets connectés.',
-      familyIds: ['numerique-ia', 'cybersecurite-reseaux', 'finance-fintech', 'energie-renouvelable', 'metiers-emergents', 'industrie-mecanique']
+      familyIds: ['numerique-ia', 'finance-fintech', 'energie-renouvelable', 'metiers-emergents', 'industrie-mecanique']
     },
     {
       id: 'soigner-aider',
@@ -593,7 +561,7 @@
       icon: '🛡️',
       label: 'Protéger, faire respecter les règles & défendre',
       description: 'Tu as un sens aigu de la justice, de l’éthique, de la protection des biens, des données ou des citoyens.',
-      familyIds: ['cybersecurite-reseaux', 'finance-fintech', 'droit-management', 'metiers-emergents', 'lettres-langues-sciences-humaines', 'biologie-chimie']
+      familyIds: ['numerique-ia', 'finance-fintech', 'droit-management', 'metiers-emergents', 'lettres-langues-sciences-humaines', 'biologie-chimie']
     },
     {
       id: 'explorer-decouvrir',
@@ -649,7 +617,7 @@
       icon: '🤖',
       label: 'Programmer des robots & automatiser les usines',
       description: 'Tu es passionné par les bras robotisés, les automates industriels, les lignes intelligentes et l’Industrie 4.0.',
-      familyIds: ['industrie-mecanique', 'numerique-ia', 'cybersecurite-reseaux', 'metiers-emergents']
+      familyIds: ['industrie-mecanique', 'numerique-ia', 'metiers-emergents']
     },
     {
       id: 'geosciences-terre-planete',
@@ -803,7 +771,7 @@
       icon: '📈',
       label: 'Optimiser les tarifs, le taux d’occupation & les revenus hôteliers',
       description: 'Tu aimes analyser la demande, manier les algorithmes de pricing dynamique et maximiser le RevPAR.',
-      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'data-decision', 'finance-fintech']
+      familyIds: ['hotellerie-restauration-hospitalite', 'tourisme-hotellerie', 'numerique-ia', 'finance-fintech']
     },
     {
       id: 'voyage-hospitalite-hotellerie',
@@ -1005,8 +973,8 @@
       title: 'Analyste Cybersécurité / SOC Analyst',
       icon: '🛡️',
       image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop&q=80',
-      familyId: 'cybersecurite-reseaux',
-      familyName: 'Cybersécurité & Réseaux',
+      familyId: 'numerique-ia',
+      familyName: 'Numérique, IA, Big Data & Cybersécurité',
       subdomain: 'SOC',
       shortDescription: 'Surveille en temps réel les flux informatiques, détecte les tentatives d’intrusion, analyse les malwares et déclenche les mesures de riposte immédiate.',
       longDescription: 'Tel une sentinelle dans la tour de contrôle d’une organisation (le SOC - Security Operations Center), l’analyste cybersécurité surveille les alertes de sécurité 24/7. Il identifie les comportements anormaux, isole les machines compromises, décortique les tactiques des cybercriminels et renforce la résilience des infrastructures.',
@@ -1070,8 +1038,8 @@
       title: 'Pentester / Hacker Éthique',
       icon: '🔓',
       image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80',
-      familyId: 'cybersecurite-reseaux',
-      familyName: 'Cybersécurité & Réseaux',
+      familyId: 'numerique-ia',
+      familyName: 'Numérique, IA, Big Data & Cybersécurité',
       subdomain: 'Pentest',
       shortDescription: 'Teste la résistance des systèmes informatiques en simulant des attaques réelles avec l’autorisation de l’entreprise pour identifier les failles avant les pirates.',
       longDescription: 'Le Pentester (testeur d’intrusion) agit comme un pirate informatique mais avec une éthique irréprochable et un cadre contractuel strict. Il s’infiltre dans les applications web, les réseaux internes ou les téléphones pour découvrir les brèches techniques et humaines, puis fournit aux équipes des recommandations concrètes de colmatage.',
@@ -1130,8 +1098,8 @@
       title: 'Data Scientist',
       icon: '📊',
       image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
-      familyId: 'data-decision',
-      familyName: 'Data, Statistiques & Décision',
+      familyId: 'numerique-ia',
+      familyName: 'Numérique, IA, Big Data & Cybersécurité',
       subdomain: 'Data Science',
       shortDescription: 'Fait parler les données massives pour aider l’entreprise à prédire le comportement de ses clients, réduire ses coûts et prendre les bonnes décisions.',
       longDescription: 'À la croisée de l’informatique, des mathématiques et de la stratégie d’entreprise, le Data Scientist extrait de la valeur des téraoctets de données collectées. Il élabore des algorithmes prédictifs pour anticiper le désabonnement des clients télécoms, calculer les prix des assurances ou optimiser les stocks agricoles.',
@@ -1188,8 +1156,8 @@
       title: 'Data Analyst / Business Intelligence Analyst',
       icon: '📈',
       image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
-      familyId: 'data-decision',
-      familyName: 'Data, Statistiques & Décision',
+      familyId: 'numerique-ia',
+      familyName: 'Numérique, IA, Big Data & Cybersécurité',
       subdomain: 'Data Analysis',
       shortDescription: 'Extrait, organise et traduit les données chiffrées de l’entreprise en tableaux de bord visuels et indicateurs clés faciles à comprendre par les managers.',
       longDescription: 'Le Data Analyst répond aux questions concrètes du quotidien : Quels produits se vendent le mieux ce mois-ci ? Pourquoi les livraisons prennent-elles du retard dans telle région ? Grâce à des requêtes SQL et des tableaux de bord interactifs (Power BI), il offre aux décideurs une boussole chiffrée infaillible.',
@@ -1792,7 +1760,7 @@
   // 4. SERVICE DATA & MÉTHODES D'ACCÈS DU MODULE
   // =========================================================================
   const OrientationData = {
-    // Récupérer toutes les 23 familles triées par ordre
+    // Récupérer toutes les 21 familles triées par ordre
     getFamilies: function () {
       return [...FAMILIES].sort((a, b) => a.order - b.order);
     },
@@ -3075,13 +3043,14 @@
       return [];
     },
 
-    // Aide pour mapper les catégories d'anciennes versions vers les nouvelles 22 familles
+    // Aide pour mapper les catégories d'anciennes versions vers les 21 familles
     _mapCategoryToFamily: function (category) {
       if (!category) return 'numerique-ia';
       const c = category.toUpperCase();
       switch (c) {
         case 'TECH': return 'numerique-ia';
-        case 'SECURITE': return 'cybersecurite-reseaux';
+        case 'SECURITE': return 'numerique-ia';
+        case 'DATA': return 'numerique-ia';
         case 'FINANCE': return 'finance-fintech';
         case 'ENERGIE': return 'energie-renouvelable';
         case 'SANTE': return 'sante-biomedical';

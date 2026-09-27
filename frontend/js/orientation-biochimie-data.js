@@ -994,7 +994,7 @@
         "connectedFamilies": [
             "biologie-chimie",
             "numerique-ia",
-            "data-decision",
+            "numerique-ia",
             "sante-soins-paramedical"
         ],
         "domain": "Bio-informatique & Données du Vivant",

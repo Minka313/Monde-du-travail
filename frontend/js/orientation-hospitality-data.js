@@ -3336,7 +3336,7 @@
         "familyName": "Hôtellerie, Restauration & Hospitalité",
         "connectedFamilies": [
             "hotellerie-restauration-hospitalite",
-            "data-decision",
+            "numerique-ia",
             "finance-fintech",
             "commerce-marketing",
             "tourisme-hotellerie",

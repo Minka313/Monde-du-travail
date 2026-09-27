@@ -12,7 +12,7 @@ Le moteur évalue les 6 dimensions fondamentales :
 1. **R - Réaliste (Terrain & Technique) :** Aime manipuler des objets, machines, outils, travailler en extérieur, construire, réparer.
    - *Familles associées :* BTP & Architecture, Agriculture & AgriTech, Énergie & Renouvelable, Industrie & Mécanique, Pêche & Maritime, Transport & Logistique.
 2. **I - Investigateur (Scientifique & Analytique) :** Aime analyser, observer, rechercher, résoudre des problèmes intellectuels ou scientifiques complexes, manipuler la data.
-   - *Familles associées :* Numérique & IA, Data & Décision, Cybersécurité & Réseaux, Santé & Soins, Sciences de la Terre & Géosciences, Biologie & Chimie.
+   - *Familles associées :* Numérique, IA, Big Data & Cybersécurité, Santé & Soins, Sciences de la Terre & Géosciences, Biologie & Chimie.
 3. **A - Artistique (Créatif & Expression) :** Aime créer, innover visuellement ou textuellement, concevoir des récits, dessiner, s'exprimer librement.
    - *Familles associées :* Communication & Création, Médias & Publicité, Lettres & Sciences Humaines, Design, Métiers Émergents.
 4. **S - Social (Humain & Transmission) :** Aime aider, soigner, former, enseigner, écouter, animer, accompagner autrui.

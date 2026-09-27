@@ -499,7 +499,7 @@
         cons: 'Niveau de stress élevé, journées intenses calées sur les horaires des places financières mondiales.'
       },
       relatedJobSlugs: ['analyste-financier', 'actuaire', 'gestionnaire-patrimoine'],
-      connectedFamilies: ['data-decision', 'numerique-ia'],
+      connectedFamilies: ['numerique-ia'],
       resources: [{ type: 'article', title: 'Fiche métier Opérateur de marché / Trader', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance/operateur-de-marche.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'Autorité des Marchés Financiers (AMF)', 'BRVM'],
       interests: ['donnees-chiffres', 'resoudre-problemes'],
@@ -565,7 +565,7 @@
         cons: 'Horaires chargés lors de la saison des résultats comptables ou du bouclage d’opérations financières.'
       },
       relatedJobSlugs: ['trader-operateur-marche', 'auditeur-financier', 'credit-manager', 'gestionnaire-patrimoine'],
-      connectedFamilies: ['data-decision', 'droit-management'],
+      connectedFamilies: ['numerique-ia', 'droit-management'],
       resources: [{ type: 'article', title: 'Fiche métier Analyste financier', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance/analyste-financier.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'CFA Institute', 'SFAF'],
       interests: ['donnees-chiffres', 'resoudre-problemes'],
@@ -1158,7 +1158,7 @@
         cons: 'Études sélectives et très exigeantes en mathématiques, haute responsabilité réglementaire.'
       },
       relatedJobSlugs: ['actuaire-big-data', 'analyste-financier', 'souscripteur-assurance', 'risk-manager'],
-      connectedFamilies: ['data-decision', 'sciences-biotech', 'numerique-ia'],
+      connectedFamilies: ['sciences-biotech', 'numerique-ia'],
       resources: [{ type: 'article', title: 'Fiche métier Actuaire', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance/actuaire.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'Institut des Actuaires', 'International Actuarial Association (IAA)'],
       interests: ['donnees-chiffres', 'resoudre-problemes'],
@@ -1222,7 +1222,7 @@
         cons: 'Nécessite une veille technologique permanente, équilibre délicat entre performance statistique et conformité réglementaire.'
       },
       relatedJobSlugs: ['actuaire', 'analyste-data-science-finance', 'architecte-cloud-assurance'],
-      connectedFamilies: ['numerique-ia', 'data-decision'],
+      connectedFamilies: ['numerique-ia'],
       resources: [{ type: 'article', title: 'L’actuaire spécialisé en Big Data : métier d’avenir de l’assurance', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'Institut des Actuaires', 'Observatoire de l’Évolution des Métiers de l’Assurance (OEMA)'],
       interests: ['donnees-chiffres', 'technologie-code', 'resoudre-problemes'],
@@ -1423,7 +1423,7 @@
         cons: 'Pression lors des situations de crise, nécessité de concilier prudence et développement commercial.'
       },
       relatedJobSlugs: ['actuaire', 'responsable-conformite-compliance', 'analyste-financier'],
-      connectedFamilies: ['data-decision', 'cybersecurite-reseaux'],
+      connectedFamilies: ['numerique-ia'],
       resources: [{ type: 'article', title: 'La gestion des risques dans le secteur bancaire', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'GARP (Global Association of Risk Professionals)', 'BCEAO'],
       interests: ['donnees-chiffres', 'resoudre-problemes', 'proteger-defendre'],
@@ -1488,7 +1488,7 @@
         cons: 'Responsabilité lourde en cas de faille de contrôle, rigueur procédurale permanente.'
       },
       relatedJobSlugs: ['risk-manager', 'auditeur-financier', 'expert-cybersecurite-financiere'],
-      connectedFamilies: ['droit-management', 'cybersecurite-reseaux'],
+      connectedFamilies: ['droit-management', 'numerique-ia'],
       resources: [{ type: 'article', title: 'L’importance de la conformité et de la réglementation', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'GAFI (Groupe d’Action Financière)', 'CENTIF Sénégal', 'ACPR'],
       interests: ['proteger-defendre', 'resoudre-problemes'],
@@ -1690,7 +1690,7 @@
         cons: 'Pression de la précision des modèles, responsabilité éthique sur l’octroi ou le refus de crédit aux usagers.'
       },
       relatedJobSlugs: ['actuaire-big-data', 'expert-cybersecurite-financiere', 'trader-operateur-marche'],
-      connectedFamilies: ['numerique-ia', 'data-decision'],
+      connectedFamilies: ['numerique-ia'],
       resources: [{ type: 'article', title: 'L’analyste en Data Science financière selon L’Étudiant', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'FinTech Mag', 'BCEAO — Comité FinTech & Innovation'],
       interests: ['donnees-chiffres', 'technologie-code', 'resoudre-problemes'],
@@ -1754,7 +1754,7 @@
         cons: 'Pression constante (les attaquants ne dorment jamais), astreintes possibles en cas de crise.'
       },
       relatedJobSlugs: ['analyste-cybersecurite', 'responsable-conformite-compliance', 'architecte-cloud-assurance'],
-      connectedFamilies: ['cybersecurite-reseaux', 'numerique-ia'],
+      connectedFamilies: ['numerique-ia'],
       resources: [{ type: 'article', title: 'L’expert en cybersécurité financière selon L’Étudiant', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'ANSSI', 'CIRT Sénégal'],
       interests: ['technologie-code', 'proteger-defendre', 'resoudre-problemes'],
@@ -1818,7 +1818,7 @@
         cons: 'Volatilité extrême des marchés, évolution réglementaire rapide exigeant une adaptation permanente.'
       },
       relatedJobSlugs: ['ingenieur-smart-contracts', 'analyste-data-science-finance', 'trader-operateur-marche'],
-      connectedFamilies: ['numerique-ia', 'data-decision'],
+      connectedFamilies: ['numerique-ia'],
       resources: [{ type: 'article', title: 'Le spécialiste des cryptomonnaies selon L’Étudiant', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'Autorité des Marchés Financiers (AMF)', 'European Securities and Markets Authority (ESMA)'],
       interests: ['technologie-code', 'donnees-chiffres'],
@@ -1882,7 +1882,7 @@
         cons: 'Forte responsabilité en cas d’interruption de service des serveurs, complexité des contraintes réglementaires bancaires.'
       },
       relatedJobSlugs: ['expert-cybersecurite-financiere', 'actuaire-big-data', 'ingenieur-smart-contracts'],
-      connectedFamilies: ['numerique-ia', 'cybersecurite-reseaux'],
+      connectedFamilies: ['numerique-ia'],
       resources: [{ type: 'article', title: 'L’architecte de solutions Cloud pour l’assurance selon L’Étudiant', url: 'https://www.letudiant.fr/metiers/secteur/banque-assurance.html', source: 'L’Étudiant' }],
       sources: ['L’Étudiant', 'France Assureurs', 'Réglementation DORA'],
       interests: ['technologie-code', 'resoudre-problemes'],

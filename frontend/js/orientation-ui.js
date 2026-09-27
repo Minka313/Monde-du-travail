@@ -401,7 +401,7 @@
         if (dom.viewSectionHeader) dom.viewSectionHeader.style.display = 'block';
 
         if (dom.viewSectionLabel) dom.viewSectionLabel.textContent = 'Exploration Progressive';
-        if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Les 23 Grandes Familles Professionnelles';
+        if (dom.viewSectionTitle) dom.viewSectionTitle.textContent = 'Les 21 Grandes Familles Professionnelles';
         if (dom.viewSectionSubtitle) dom.viewSectionSubtitle.textContent = 'Explore les domaines d’avenir, découvre leurs sous-disciplines et identifie les métiers clés';
 
         if (dom.familiesGridContainer) {
@@ -1593,7 +1593,7 @@
         if (recommendedJobs.length === 0) {
           dom.quizRecommendedJobsGrid.innerHTML = `
             <p class="text-muted text-center" style="grid-column:1 / -1;padding:1.5rem;">
-              Consulte le catalogue complet des 23 familles pour découvrir l'ensemble des métiers de ce profil.
+              Consulte le catalogue complet des 21 familles pour découvrir l'ensemble des métiers de ce profil.
             </p>
           `;
         } else {
@@ -1959,10 +1959,10 @@
             <span style="font-size:2.5rem;display:block;margin-bottom:0.75rem;">🔍</span>
             <h4 style="font-size:1.15rem;color:#0f172a;margin-bottom:0.5rem;">Aucun métier ne correspond exactement à "${escapeHtml(q)}"</h4>
             <p style="color:#64748b;max-width:500px;margin:0 auto 1.25rem auto;font-size:0.92rem;line-height:1.6;">
-              Essaie avec d’autres mots-clés (ex: "code", "langues", "lettres", "histoire", "psychologie", "finance") ou explore nos 23 grandes familles.
+              Essaie avec d’autres mots-clés (ex: "code", "langues", "lettres", "histoire", "psychologie", "finance") ou explore nos 21 grandes familles.
             </p>
             <button type="button" class="btn btn-primary btn-sm" id="btnEmptyResetSearch">
-              Voir les 23 familles professionnelles
+              Voir les 21 familles professionnelles
             </button>
           </div>
         `;
@@ -3820,7 +3820,7 @@
     initMobileInterestAccordion();
     initMobileFiltersDrawer();
 
-    // Bouton de navigation vers les 23 familles
+    // Bouton de navigation vers les 21 familles
     if (dom.btnExploreFamilies) {
       dom.btnExploreFamilies.addEventListener('click', () => {
         setView('FAMILIES');

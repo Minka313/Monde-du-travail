@@ -2471,7 +2471,7 @@
         "connectedFamilies": [
             "energie-renouvelable",
             "industrie-mecanique",
-            "data-decision",
+            "numerique-ia",
             "environnement-climat"
         ],
         "relatedJobs": [
@@ -2724,7 +2724,7 @@
         "connectedFamilies": [
             "environnement-climat",
             "btp-architecture",
-            "data-decision",
+            "numerique-ia",
             "sciences-biotech"
         ],
         "relatedJobs": [
@@ -2980,7 +2980,7 @@
         "salary": "🇫🇷 France : 28 000 - 54 000 € brut/an • 🇸🇳 Sénégal : 350 000 - 1 500 000 FCFA net/mois",
         "connectedFamilies": [
             "numerique-ia",
-            "data-decision",
+            "numerique-ia",
             "environnement-climat",
             "agriculture-agritech"
         ],
@@ -3494,7 +3494,7 @@
             "sciences-biotech",
             "education-formation",
             "environnement-climat",
-            "data-decision"
+            "numerique-ia"
         ],
         "relatedJobs": [
             "enseignant-chercheur-geosciences",
@@ -3990,7 +3990,7 @@
         "connectedFamilies": [
             "sciences-biotech",
             "industrie-mecanique",
-            "data-decision",
+            "numerique-ia",
             "education-formation"
         ],
         "relatedJobs": [
@@ -4237,7 +4237,7 @@
         "connectedFamilies": [
             "sciences-biotech",
             "environnement-climat",
-            "data-decision",
+            "numerique-ia",
             "btp-architecture"
         ],
         "relatedJobs": [
@@ -5255,7 +5255,7 @@
         "connectedFamilies": [
             "environnement-climat",
             "btp-architecture",
-            "data-decision",
+            "numerique-ia",
             "droit-management"
         ],
         "relatedJobs": [
