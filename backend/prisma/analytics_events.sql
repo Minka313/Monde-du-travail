@@ -25,7 +25,8 @@ CREATE INDEX IF NOT EXISTS idx_analytics_events_created_at ON analytics_events(c
 CREATE INDEX IF NOT EXISTS idx_analytics_events_user_profile ON analytics_events(user_profile);
 
 -- 3. Vue analytique du Funnel d'Orientation (Mesure d'impact réel)
-CREATE OR REPLACE VIEW view_orientation_funnel AS
+CREATE OR REPLACE VIEW view_orientation_funnel 
+WITH (security_invoker = true) AS
 SELECT 
     DATE_TRUNC('day', created_at) AS date_bucket,
     COUNT(CASE WHEN event_type = 'job_view' THEN 1 END) AS total_job_views,
