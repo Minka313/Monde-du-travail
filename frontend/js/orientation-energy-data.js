@@ -3884,7 +3884,7 @@
         ],
         "connectedFamilies": [
             "numerique-ia",
-            "cybersecurite-reseaux"
+            "numerique-ia"
         ],
         "resources": [
             {
@@ -4108,7 +4108,7 @@
         ],
         "connectedFamilies": [
             "numerique-ia",
-            "cybersecurite-reseaux"
+            "numerique-ia"
         ],
         "resources": [
             {

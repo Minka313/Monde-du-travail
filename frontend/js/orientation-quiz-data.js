@@ -359,7 +359,7 @@
     }
   ];
 
-  // 3. MAPPING RIASEC VERS LES 23 FAMILLES DU SITE LE MONDE DU TRAVAIL
+  // 3. MAPPING RIASEC VERS LES 21 FAMILLES DU SITE LE MONDE DU TRAVAIL
   const PROFILE_TO_FAMILIES = {
     R: [
       'btp-architecture',
@@ -372,8 +372,6 @@
     ],
     I: [
       'numerique-ia',
-      'cybersecurite-reseaux',
-      'data-decision',
       'sante-soins-paramedical',
       'biologie-chimie',
       'sciences-terre-geosciences',
