@@ -12600,3 +12600,446 @@ textarea {
     transform: none !important;
   }
 }
+
+/* =========================================================================
+   12. SYSTÈME DE THÈME : MODE SOMBRE (DARK MODE) & MODE CLAIR (LIGHT MODE)
+   ========================================================================= */
+
+/* --- BOUTON DE BASCULE DU THÈME (DESKTOP & MOBILE) --- */
+.theme-toggle-btn {
+  background: rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  color: var(--color-gray-800);
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.15rem;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.theme-toggle-btn:hover {
+  background: rgba(15, 23, 42, 0.1);
+  border-color: rgba(15, 23, 42, 0.25);
+  transform: scale(1.08);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+.theme-toggle-btn-mobile {
+  width: 100%;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* --- VARIABLES & PALETTE DU MODE SOMBRE --- */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-white: #0f172a;
+  --color-gray-50: #162032;
+  --color-gray-100: #1a253a;
+  --color-gray-200: #2d3b55;
+  --color-gray-300: #475569;
+  --color-gray-400: #64748b;
+  --color-gray-500: #94a3b8;
+  --color-gray-600: #cbd5e1;
+  --color-gray-700: #e2e8f0;
+  --color-gray-800: #f1f5f9;
+  --color-gray-900: #ffffff;
+}
+
+[data-theme="dark"] body {
+  background: linear-gradient(180deg, #090d16 0%, #0f172a 35%, #080c14 100%);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+  color: #ffffff;
+}
+
+/* En-tête & Navigation */
+[data-theme="dark"] .site-header {
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .main-nav {
+  background: rgba(15, 23, 42, 0.94);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .site-title {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .nav-links a {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .nav-links a:hover,
+[data-theme="dark"] .nav-links a[aria-current="page"] {
+  color: #38bdf8;
+}
+
+[data-theme="dark"] .mobile-nav-header,
+[data-theme="dark"] .mobile-nav-menu,
+[data-theme="dark"] .mobile-nav-footer {
+  background: #0f172a;
+}
+
+[data-theme="dark"] .mobile-nav-menu a {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .mobile-nav-menu a:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #38bdf8;
+}
+
+/* Boutons Toggle en Mode Sombre */
+[data-theme="dark"] .theme-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fef08a;
+}
+
+[data-theme="dark"] .theme-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: scale(1.08);
+}
+
+/* Cartes (Métiers, Familles, Articles, Forum, Formations) */
+[data-theme="dark"] .card,
+[data-theme="dark"] .job-card-modern,
+[data-theme="dark"] .family-card,
+[data-theme="dark"] .article-card,
+[data-theme="dark"] .forum-card,
+[data-theme="dark"] .forum-topic-item,
+[data-theme="dark"] .formation-card,
+[data-theme="dark"] .quiz-job-card,
+[data-theme="dark"] .empty-state-card,
+[data-theme="dark"] .interest-explorer-wrap {
+  background: #131c2e;
+  border-color: rgba(255, 255, 255, 0.09);
+  color: #e2e8f0;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .job-card-body,
+[data-theme="dark"] .family-card-content {
+  background: #131c2e;
+}
+
+[data-theme="dark"] .job-card-title,
+[data-theme="dark"] .family-card-title {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .job-card-desc,
+[data-theme="dark"] .family-card-desc {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .job-card-level-badge {
+  background: #1e293b;
+  border-color: #334155;
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .family-stat-tag {
+  background: rgba(255, 255, 255, 0.06);
+  color: #cbd5e1;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .sample-job-chip {
+  background: rgba(255, 255, 255, 0.07);
+  color: #e2e8f0;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .btn-explore-family {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .btn-explore-family:hover {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+/* Recherche & Champs de saisie */
+[data-theme="dark"] .search-input-wrapper,
+[data-theme="dark"] .orientation-search-box,
+[data-theme="dark"] .form-control,
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: #162032;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .orientation-search-input {
+  background: #162032;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .orientation-search-input::placeholder {
+  color: #64748b;
+}
+
+[data-theme="dark"] .search-suggestions-dropdown,
+[data-theme="dark"] .notification-dropdown {
+  background: #131c2e;
+  border-color: #334155;
+  color: #f8fafc;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .search-suggestion-item {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .search-suggestion-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .btn-quick-nav {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .btn-quick-nav:hover,
+[data-theme="dark"] .btn-quick-nav.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+/* Onglets & Barre d'exploration de famille */
+[data-theme="dark"] .subdomain-chip,
+[data-theme="dark"] .domain-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .subdomain-chip:hover,
+[data-theme="dark"] .domain-pill:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .subdomain-chip.active,
+[data-theme="dark"] .domain-pill.active {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
+/* Barre collante (Sticky Toolbar) */
+[data-theme="dark"] .sticky-orientation-toolbar {
+  background: rgba(15, 23, 42, 0.94);
+  border-top-color: rgba(255, 255, 255, 0.1);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .sticky-btn-back,
+[data-theme="dark"] .sticky-btn-top {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .sticky-family-name {
+  color: #f8fafc;
+}
+
+/* Modale Fiche Métier */
+[data-theme="dark"] #job-dossier-overlay .dossier-modal {
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85);
+}
+
+[data-theme="dark"] #job-dossier-overlay .dossier-tabs {
+  background: #131c2e;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] #job-dossier-overlay .dossier-tab {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] #job-dossier-overlay .dossier-tab:hover {
+  color: #38bdf8;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="dark"] #job-dossier-overlay .dossier-tab.active {
+  color: #38bdf8;
+  background: #1e293b;
+  border-bottom-color: #38bdf8;
+}
+
+[data-theme="dark"] #job-dossier-overlay .dossier-body {
+  background: #0f172a;
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .dossier-section {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .dossier-section-title {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .dossier-simple-def-box {
+  background: rgba(30, 58, 138, 0.3) !important;
+  border-color: #1e40af !important;
+  color: #dbeafe !important;
+}
+
+[data-theme="dark"] .dossier-simple-def-box p {
+  color: #bfdbfe !important;
+}
+
+[data-theme="dark"] .dossier-documentary-note-box {
+  background: rgba(133, 77, 14, 0.3) !important;
+  border-color: #a16207 !important;
+  color: #fef08a !important;
+}
+
+[data-theme="dark"] .dossier-documentary-note-box p {
+  color: #fef9c3 !important;
+}
+
+[data-theme="dark"] .dossier-school-card,
+[data-theme="dark"] .dossier-path-step,
+[data-theme="dark"] .dossier-typical-slot {
+  background: #162032;
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .dossier-footer {
+  background: #131c2e;
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .dossier-footer .btn-dossier-close-footer {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+/* Notifications */
+[data-theme="dark"] .notification-bell-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .notif-dropdown-header,
+[data-theme="dark"] .notif-dropdown-footer {
+  background: #162032;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .notif-item {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .notif-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Footer & Sections Spéciales en Mode Sombre */
+[data-theme="dark"] .site-footer {
+  background: #080c14;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .footer-bottom {
+  border-top-color: rgba(255, 255, 255, 0.08);
+  color: #64748b;
+}
+
+[data-theme="dark"] .site-footer a {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .site-footer a:hover {
+  color: #38bdf8;
+}
+
+[data-theme="dark"] .section-alt {
+  background: #0d1322;
+}
+
+[data-theme="dark"] .reset-card,
+[data-theme="dark"] .modal-card,
+[data-theme="dark"] .login-container {
+  background: #131c2e !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .form-input {
+  background: #162032 !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .form-input:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
+}
+
+/* Transitions fluides au changement de thème */
+body,
+.site-header,
+.main-nav,
+.card,
+.job-card-modern,
+.family-card,
+.dossier-modal,
+.dossier-body,
+.notification-dropdown,
+.search-suggestions-dropdown,
+.theme-toggle-btn {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
