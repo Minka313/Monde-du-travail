@@ -81,9 +81,9 @@
       "dest": "/frontend/sw.js"
     },
     {
-      "src": "/logo.png",
+      "src": "/logo\\.(png|webp)",
       "headers": { "Cache-Control": "public, max-age=604800, stale-while-revalidate=2592000" },
-      "dest": "/frontend/logo.png"
+      "dest": "/frontend/logo.$1"
     },
     {
       "src": "^/(about|formations|job|blog|blog-post|forum|forum-topic|forum-create|login|reset-password)$",
