@@ -64,6 +64,13 @@
           s.src = 'js/notifications.js?v=2.3.0';
           document.body.appendChild(s);
         }
+        if (!window.LMTTheme && !document.querySelector('script[src*="theme-engine.js"]')) {
+          const s = document.createElement('script');
+          s.src = 'js/theme-engine.js?v=1.0.0';
+          document.head.appendChild(s);
+        } else if (window.LMTTheme && typeof window.LMTTheme.initButtons === 'function') {
+          window.LMTTheme.initButtons();
+        }
         document.dispatchEvent(new Event('layout:loaded'));
       });
     },

@@ -17,6 +17,7 @@
     <title>Orientation & Métiers - Le Monde du Travail</title>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="css/styles.css?v=2.3.8">
+    <script src="js/theme-engine.js"></script>
 </head>
 <body>
 <a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
@@ -29,7 +30,10 @@
             <span class="site-title">Le Monde du Travail</span>
         </a>
         <div class="header-actions">
-            <div class="header-auth-slot" id="headerAuthSlot">
+            <button type="button" class="theme-toggle-btn" id="headerThemeToggleBtn" aria-label="Changer de thème" title="Passer en Mode Sombre">
+                <span class="theme-toggle-icon">🌙</span>
+            </button>
+<div class="header-auth-slot" id="headerAuthSlot">
                 <a href="login.html" class="btn-cta" id="headerAuthBtn">Se connecter</a>
             </div>
             <button class="hamburger" aria-label="Menu" aria-expanded="false">
@@ -59,7 +63,11 @@
                 <a href="blog.html">Blog</a>
             </div>
             <div class="mobile-nav-footer" id="mobileNavFooter">
-                <a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
+                <button type="button" class="theme-toggle-btn theme-toggle-btn-mobile" id="mobileThemeToggleBtn" aria-label="Changer de thème">
+                    <span class="theme-toggle-icon">🌙</span>
+                    <span class="theme-toggle-label">Mode Sombre</span>
+                </button>
+<a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
             </div>
         </div>
     </div>
