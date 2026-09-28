@@ -56,6 +56,13 @@ const DEFAULT_SETTINGS = [
     label: 'Grandes étapes du Club (Page À Propos)',
     isSensitive: false
   },
+  // Réseaux Sociaux (Administrables depuis l'espace admin)
+  { key: 'social.twitter', value: 'https://x.com', category: 'reseaux', label: 'Lien X (Twitter)', isSensitive: false },
+  { key: 'social.linkedin', value: 'https://linkedin.com', category: 'reseaux', label: 'Lien LinkedIn', isSensitive: false },
+  { key: 'social.instagram', value: 'https://instagram.com', category: 'reseaux', label: 'Lien Instagram', isSensitive: false },
+  { key: 'social.facebook', value: 'https://facebook.com', category: 'reseaux', label: 'Lien Facebook', isSensitive: false },
+  { key: 'social.youtube', value: '', category: 'reseaux', label: 'Lien YouTube (optionnel)', isSensitive: false },
+  { key: 'social.tiktok', value: '', category: 'reseaux', label: 'Lien TikTok (optionnel)', isSensitive: false },
 ];
 
 class SettingsService {

@@ -71,10 +71,59 @@
         } else if (window.LMTTheme && typeof window.LMTTheme.initButtons === 'function') {
           window.LMTTheme.initButtons();
         }
+        initSocialLinks();
         document.dispatchEvent(new Event('layout:loaded'));
       });
     },
   };
+
+  async function initSocialLinks() {
+    try {
+      const apiUrl = (window.LMT_CONFIG && window.LMT_CONFIG.API_URL) ? window.LMT_CONFIG.API_URL : '/api';
+      const cacheKey = 'lmt_public_settings';
+      let settings = null;
+      try {
+        const cached = sessionStorage.getItem(cacheKey);
+        if (cached) settings = JSON.parse(cached);
+      } catch (_) {}
+
+      if (!settings) {
+        const res = await fetch(`${apiUrl}/settings/public`);
+        if (res.ok) {
+          const json = await res.json();
+          settings = json.data || [];
+          try {
+            sessionStorage.setItem(cacheKey, JSON.stringify(settings));
+          } catch (_) {}
+        }
+      }
+
+      if (Array.isArray(settings)) {
+        const socialMap = {
+          twitter: settings.find(s => s.key === 'social.twitter')?.value,
+          linkedin: settings.find(s => s.key === 'social.linkedin')?.value,
+          instagram: settings.find(s => s.key === 'social.instagram')?.value,
+          facebook: settings.find(s => s.key === 'social.facebook')?.value,
+          youtube: settings.find(s => s.key === 'social.youtube')?.value,
+          tiktok: settings.find(s => s.key === 'social.tiktok')?.value,
+        };
+
+        Object.entries(socialMap).forEach(([platform, url]) => {
+          const btn = document.querySelector(`.footer-social-btn[data-social="${platform}"]`);
+          if (btn) {
+            if (url && url.trim().length > 0) {
+              btn.href = url.trim();
+              btn.style.display = 'inline-flex';
+            } else if (platform === 'youtube' || platform === 'tiktok') {
+              btn.style.display = 'none';
+            }
+          }
+        });
+      }
+    } catch (_) {
+      // Ignorer silencieusement si hors-ligne
+    }
+  }
 
   // Gestionnaire global pour le bouton Retour en haut (Back to top)
   document.addEventListener('click', function(e) {
@@ -89,8 +138,12 @@
   });
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => window.Layout.init());
+    document.addEventListener('DOMContentLoaded', () => {
+      window.Layout.init();
+      initSocialLinks();
+    });
   } else {
     window.Layout.init();
+    initSocialLinks();
   }
 })();
