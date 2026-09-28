@@ -76,6 +76,18 @@
     },
   };
 
+  // Gestionnaire global pour le bouton Retour en haut (Back to top)
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.footer-back-to-top, #footerBackToTop');
+    if (btn) {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+  });
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => window.Layout.init());
   } else {
