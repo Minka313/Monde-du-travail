@@ -126,11 +126,11 @@
             background: var(--maint-surface);
             border: 1px solid var(--maint-border);
             border-radius: 1.5rem;
-            padding: 3rem 2.5rem;
-            box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.08), 0 0 1px rgba(0, 0, 0, 0.12);
+            padding: 3.25rem 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.1), 0 0 0 1px rgba(15, 23, 42, 0.05);
             text-align: center;
             position: relative;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
             animation: maintFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
@@ -203,22 +203,34 @@
             display: inline-flex;
             align-items: center;
             gap: 0.6rem;
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            padding: 0.4rem 1rem;
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 0.45rem 1.15rem;
             border-radius: 9999px;
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 700;
             letter-spacing: 0.02em;
             margin-bottom: 1.25rem;
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            border: 1px solid #fecaca;
             transition: all 0.3s ease;
         }
 
+        [data-theme="dark"] .maint-status-pill {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border-color: rgba(239, 68, 68, 0.35);
+        }
+
         .maint-status-pill.status-ready {
-            background: rgba(16, 185, 129, 0.12);
-            color: #10b981;
-            border-color: rgba(16, 185, 129, 0.3);
+            background: #ecfdf5;
+            color: #059669;
+            border-color: #a7f3d0;
+        }
+
+        [data-theme="dark"] .maint-status-pill.status-ready {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.35);
         }
 
         .maint-beacon {
@@ -243,7 +255,7 @@
 
         h1.maint-title {
             font-family: 'Playfair Display', serif;
-            font-size: 2.1rem;
+            font-size: 2.15rem;
             font-weight: 700;
             line-height: 1.25;
             margin: 0 0 1rem 0;
@@ -252,10 +264,15 @@
 
         .maint-message {
             font-size: 1.05rem;
-            line-height: 1.65;
-            color: var(--maint-muted);
+            line-height: 1.7;
+            color: #475569;
             margin: 0 auto 1.75rem auto;
             max-width: 540px;
+            font-weight: 450;
+        }
+
+        [data-theme="dark"] .maint-message {
+            color: #cbd5e1;
         }
 
         /* Estimate Box */
