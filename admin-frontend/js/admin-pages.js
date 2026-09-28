@@ -5270,7 +5270,7 @@
     settings.filter(s => s.category !== 'vitrine').forEach(s => {
       (byCategory[s.category] = byCategory[s.category] || []).push(s);
     });
-    const categoryLabels = { general: 'Général', membres: 'Membres', plateforme: 'Plateforme' };
+    const categoryLabels = { general: 'Général', membres: 'Membres', plateforme: 'Plateforme', reseaux: 'Réseaux Sociaux' };
 
     return `
       <div class="card">
