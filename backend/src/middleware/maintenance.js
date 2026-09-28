@@ -7,26 +7,53 @@ const RbacService = require('../services/rbacService');
 // Le paramètre est mis en cache 30 s pour éviter une requête SQL par appel.
 
 const CACHE_TTL_MS = 30 * 1000;
-let cache = { value: false, at: 0 };
+let cache = {
+  active: false,
+  message: 'Notre équipe effectue actuellement une mise à niveau technique programmée pour optimiser la plateforme. Nous serons de retour très rapidement !',
+  estimatedReturn: 'Bientôt de retour',
+  at: 0,
+};
 
-async function isMaintenanceActive() {
-  if (Date.now() - cache.at < CACHE_TTL_MS) return cache.value;
+async function getMaintenanceStatus() {
+  if (Date.now() - cache.at < CACHE_TTL_MS) return cache;
   try {
-    const setting = await prisma.setting.findUnique({
-      where: { key: 'platform.maintenanceMode' },
-      select: { value: true },
+    const settings = await prisma.setting.findMany({
+      where: {
+        key: {
+          in: [
+            'platform.maintenanceMode',
+            'platform.maintenanceMessage',
+            'platform.maintenanceEstimatedReturn',
+          ],
+        },
+      },
+      select: { key: true, value: true },
     });
-    cache = { value: setting?.value === 'true', at: Date.now() };
-    return cache.value;
+
+    const map = {};
+    for (const s of settings) {
+      map[s.key] = s.value;
+    }
+
+    cache = {
+      active: map['platform.maintenanceMode'] === 'true',
+      message: map['platform.maintenanceMessage'] || 'Notre équipe effectue actuellement une mise à niveau technique programmée pour optimiser la plateforme. Nous serons de retour très rapidement !',
+      estimatedReturn: map['platform.maintenanceEstimatedReturn'] || 'Bientôt de retour',
+      at: Date.now(),
+    };
+    return cache;
   } catch (error) {
     // En cas de réveil de base ou latence temporaire, repli gracieux sans 500
-    return cache.value || false;
+    return cache;
   }
 }
 
-// À appeler quand le paramètre change pour un effet immédiat
+// À appeler quand un paramètre de maintenance change pour un effet immédiat
 function resetMaintenanceCache() {
-  cache = { value: false, at: 0 };
+  cache = {
+    ...cache,
+    at: 0,
+  };
 }
 
 // Routes toujours accessibles (connexion et paramètres pour sortir du mode)
@@ -45,9 +72,10 @@ const maintenanceMode = async (req, res, next) => {
   }
 
   try {
-    if (!(await isMaintenanceActive())) return next();
+    const maint = await getMaintenanceStatus();
+    if (!maint.active) return next();
 
-    // Les administrateurs autorisés passent : ils doivent pouvoir intervenir
+    // Les administrateurs autorisés passent : ils doivent pouvoir tester et intervenir
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
@@ -70,10 +98,12 @@ const maintenanceMode = async (req, res, next) => {
     // Token invalide : traité comme visiteur
   }
 
+  const maint = await getMaintenanceStatus();
   return res.status(503).json({
     success: false,
     code: 'MAINTENANCE',
-    message: 'La plateforme est en cours de maintenance. Revenez bientôt !',
+    message: maint.message,
+    estimatedReturn: maint.estimatedReturn,
   });
 };
 
