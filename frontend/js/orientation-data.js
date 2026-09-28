@@ -2283,6 +2283,28 @@
                 if (apiJob.saviezVous) {
                   combined[existingIdx].saviezVous = apiJob.saviezVous;
                 }
+                if (apiJob.salary) {
+                  combined[existingIdx].salary = apiJob.salary;
+                }
+                if (apiJob.description) {
+                  combined[existingIdx].shortDescription = apiJob.description;
+                }
+                if (apiJob.content) {
+                  combined[existingIdx].longDescription = apiJob.content;
+                }
+                if (apiJob.location) {
+                  combined[existingIdx].location = apiJob.location;
+                }
+                if (apiJob.skills && Array.isArray(apiJob.skills) && apiJob.skills.length > 0) {
+                  const existingSkills = combined[existingIdx].skills;
+                  if (existingSkills && typeof existingSkills === 'object' && !Array.isArray(existingSkills)) {
+                    combined[existingIdx].skills = Object.assign({}, existingSkills, {
+                      technical: apiJob.skills
+                    });
+                  } else {
+                    combined[existingIdx].skills = apiJob.skills;
+                  }
+                }
                 if (apiJob.id) combined[existingIdx].backendId = apiJob.id;
               } else {
                 combined.push({

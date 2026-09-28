@@ -1579,14 +1579,38 @@
 
   // Filtres courants des listes de contenu (formations / métiers)
   const contentFilters = {
-    formations: { status: '', mine: false },
-    jobs: { status: '', mine: false },
+    formations: { status: '', mine: false, search: '', page: 1, pageSize: 25 },
+    jobs: { status: '', mine: false, search: '', domain: '', page: 1, pageSize: 25 },
   };
   // Derniers items chargés, pour préremplir la modale d'édition
   const contentCache = {
     formations: {},
     jobs: {},
   };
+
+  const ORIENTATION_FAMILIES = [
+    'Numérique, IA, Big Data & Cybersécurité',
+    'Finance, Banque, Assurance & FinTech',
+    'Commerce, Vente, Marketing & E-Commerce',
+    'Agriculture, Élevage & Agroalimentaire',
+    'Pêche, Aquaculture & Ressources Maritimes',
+    'BTP, Architecture & Construction',
+    'Énergie, Électricité & Transition Énergétique',
+    'Industrie, Électronique, Maintenance & Robotique',
+    'Transport, Logistique & Supply Chain',
+    'Santé, Soins & Paramédical',
+    'Biologie & Chimie',
+    'Enseignement, Éducation & Formation',
+    'Environnement, Écologie & Développement durable',
+    'Hôtellerie, Restauration & Hospitalité',
+    'Communication, Marketing, Médias & Création',
+    'Culture, Médias & Industries Créatives',
+    'Droit, Justice & Ressources Humaines',
+    'Lettres, Langues & Sciences Humaines',
+    'Sécurité, Défense & Protection Civile',
+    'Métiers Émergents & du Futur',
+    'Artisanat d\'Art, Mode & Design',
+  ];
 
   const JOB_CATEGORIES = ['TECH', 'ENERGIE', 'FINANCE', 'SECURITE', 'SANTE', 'EDUCATION', 'AUTRE'];
   const BLOG_CATEGORIES = ['CLUB', 'FORMATION', 'ATELIER', 'RENCONTRE', 'CONFERENCE', 'VISITE', 'PROJET', 'TEMOIGNAGE', 'ANNONCE'];
@@ -1615,9 +1639,12 @@
     const user = window.AdminApp.currentUser;
     const can = permission => window.AdminApp.hasPermission(user, permission);
     const btn = (action, label, style = '') =>
-      `<button class="btn btn-sm ${style}" data-content-module="${moduleKey}" data-content-action="${action}" data-content-id="${item.id}">${label}</button>`;
+      `<button class="btn btn-sm ${style}" data-content-module="${moduleKey}" data-content-action="${action}" data-content-id="${item.id}" style="margin-right:0.25rem;">${label}</button>`;
 
     let html = '';
+    if (moduleKey === 'jobs') {
+      html += `<a href="../frontend/job.html?job=${encodeURIComponent(item.id)}" target="_blank" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;margin-right:0.25rem;" title="Voir la fiche publique"><span>👁️</span> <span>Voir</span></a>`;
+    }
     if (can(`${permPrefix}.publish`)) {
       if (item.status === 'DRAFT' || item.status === 'ARCHIVED') html += btn('publish', 'Publier', 'btn-success');
       if (item.status === 'PUBLISHED') html += btn('unpublish', 'Dépublier', 'btn-warning');
@@ -1625,7 +1652,7 @@
       html += btn('submit', 'Soumettre à validation');
     }
     if (item.status === 'PENDING_REVIEW') {
-      html += '<span class="text-muted">En attente d\'approbation</span>';
+      html += '<span class="text-muted" style="margin-right:0.25rem;">En validation</span>';
     }
     if (can(`${permPrefix}.update`)) html += btn('edit', 'Modifier');
     if (can(`${permPrefix}.archive`) && item.status !== 'ARCHIVED') html += btn('archive', 'Archiver');
@@ -1634,12 +1661,18 @@
   }
 
   async function loadContentModule(moduleKey, config) {
+    const isJob = moduleKey === 'jobs';
     const filters = contentFilters[moduleKey] || {};
-    const client = moduleKey === 'formations' ? window.AdminApi.formations : window.AdminApi.jobs;
+    const client = isJob ? window.AdminApi.jobs : window.AdminApi.formations;
     let items = [];
     try {
       if (client && typeof client.getAdmin === 'function') {
-        const response = await client.getAdmin(filters);
+        const response = await client.getAdmin({
+          status: filters.status || undefined,
+          mine: filters.mine ? 'true' : undefined,
+          search: filters.search || undefined,
+          domain: filters.domain || undefined,
+        });
         items = response?.data || [];
       }
     } catch (err) {
@@ -1649,54 +1682,148 @@
     contentCache[moduleKey] = {};
     items.forEach(item => { contentCache[moduleKey][item.id] = item; });
 
+    // Filtrage complémentaire local pour une réactivité instantanée
+    let filtered = items;
+    if (filters.status) {
+      filtered = filtered.filter(i => i.status === filters.status);
+    }
+    if (filters.mine) {
+      const myId = window.AdminApp.currentUser?.id;
+      filtered = filtered.filter(i => i.createdById === myId);
+    }
+    if (isJob && filters.domain) {
+      filtered = filtered.filter(i => (i.domain || '').toLowerCase().includes(filters.domain.toLowerCase()));
+    }
+    if (filters.search) {
+      const q = filters.search.toLowerCase().trim();
+      filtered = filtered.filter(i => {
+        const t = (i.title || '').toLowerCase();
+        const d = (i.domain || i.category || '').toLowerCase();
+        const c = (i.description || i.content || '').toLowerCase();
+        const s = Array.isArray(i.skills) ? i.skills.join(' ').toLowerCase() : '';
+        return t.includes(q) || d.includes(q) || c.includes(q) || s.includes(q);
+      });
+    }
+
+    const totalCount = items.length;
+    const publishedCount = items.filter(i => i.status === 'PUBLISHED').length;
+    const filteredCount = filtered.length;
+
+    // Pagination (25 par page par défaut)
+    const pageSize = filters.pageSize || 25;
+    const totalPages = Math.max(1, Math.ceil(filteredCount / pageSize));
+    let currentPage = filters.page || 1;
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+    filters.page = currentPage;
+
+    const pageItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
     const statusOptions = ['', 'DRAFT', 'PENDING_REVIEW', 'PUBLISHED', 'ARCHIVED']
       .map(s => `<option value="${s}" ${filters.status === s ? 'selected' : ''}>${s ? STATUS_LABELS[s] : 'Tous les statuts'}</option>`)
       .join('');
 
-    const categoryCell = item => moduleKey === 'jobs'
+    // Domaines / Familles existants
+    const domainsSet = new Set(ORIENTATION_FAMILIES);
+    items.forEach(i => { if (i.domain && i.domain.trim()) domainsSet.add(i.domain.trim()); });
+    const allDomains = Array.from(domainsSet).sort();
+
+    const domainOptions = ['', ...allDomains]
+      .map(d => `<option value="${escapeHtml(d)}" ${filters.domain === d ? 'selected' : ''}>${d ? '📁 ' + escapeHtml(d) : 'Toutes les familles & domaines'}</option>`)
+      .join('');
+
+    const categoryCell = item => isJob
       ? (item.domain ? `<span style="font-weight:600;color:#1e293b;">📁 ${escapeHtml(item.domain)}</span> <span class="badge" style="font-size:0.7rem;margin-left:0.3rem;">${escapeHtml(item.category || '')}</span>` : escapeHtml(item.category || '—'))
       : (item.category ? `<span style="font-weight:600;color:#1e293b;">📁 ${escapeHtml(item.category)}</span>` : '—');
 
     return `
       <div class="card">
         <div class="card-header">
-          <h2>${config.title}</h2>
+          <div>
+            <h2 style="margin:0 0 0.25rem 0;">${config.title}</h2>
+            ${isJob ? `<p style="margin:0;font-size:0.85rem;color:#64748b;">Catalogue certifié & fiches métiers d'orientation en base de données Supabase.</p>` : ''}
+          </div>
           <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+            ${isJob ? `
+              <button class="btn btn-secondary" id="btn-sync-metiers-catalog" style="display:inline-flex;align-items:center;gap:0.4rem;" title="Synchroniser avec le catalogue d'orientation">
+                <span>🔄</span> <span>Resynchroniser</span>
+              </button>
+            ` : ''}
             <button class="btn btn-secondary" id="btn-export-${moduleKey}-csv" style="display:inline-flex;align-items:center;gap:0.4rem;">
               <span>📥</span> <span>Exporter CSV</span>
             </button>
             ${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? '<button class="btn btn-danger" id="btn-bulk-delete" style="display:none;">Supprimer la sélection (<span id="bulk-count">0</span>)</button>' : ''}
-            <button class="btn btn-primary" id="btn-create-content" data-content-module="${moduleKey}">${moduleKey === 'jobs' ? '+ Ajouter un métier' : '+ Ajouter une formation'}</button>
+            <button class="btn btn-primary" id="btn-create-content" data-content-module="${moduleKey}">${isJob ? '+ Ajouter un métier' : '+ Ajouter une formation'}</button>
           </div>
         </div>
+
+        <!-- Bannière KPI & Recherche rapide -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem;background:#f8fafc;padding:0.75rem 1rem;border-radius:8px;border:1px solid #e2e8f0;">
+          <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+            <span style="font-weight:600;color:#0f172a;display:inline-flex;align-items:center;gap:0.35rem;">
+              <span>💼</span> <span>${totalCount} métier${totalCount > 1 ? 's' : ''} au catalogue</span>
+            </span>
+            <span class="badge badge-success" style="font-size:0.75rem;">${publishedCount} publié${publishedCount > 1 ? 's' : ''}</span>
+            ${filteredCount !== totalCount ? `<span class="badge badge-primary" style="font-size:0.75rem;">${filteredCount} affiché${filteredCount > 1 ? 's' : ''}</span>` : ''}
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;flex:1;max-width:400px;">
+            <input type="search" id="content-search-filter" placeholder="🔍 Rechercher titre, mot-clé, compétence..." value="${escapeHtml(filters.search || '')}" style="width:100%;padding:0.45rem 0.75rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.88rem;background:#ffffff;">
+          </div>
+        </div>
+
+        <!-- Filtres par catégorie et créateur -->
         <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
-          <label>Statut&nbsp;
-            <select id="content-status-filter">${statusOptions}</select>
+          <label style="display:flex;align-items:center;gap:0.35rem;font-size:0.88rem;">Statut&nbsp;
+            <select id="content-status-filter" style="padding:0.35rem 0.6rem;border-radius:6px;border:1px solid #cbd5e1;">${statusOptions}</select>
           </label>
-          <label style="display:flex;align-items:center;gap:0.4rem;">
+          ${isJob ? `
+            <label style="display:flex;align-items:center;gap:0.35rem;font-size:0.88rem;">Famille / Domaine&nbsp;
+              <select id="content-domain-filter" style="max-width:320px;padding:0.35rem 0.6rem;border-radius:6px;border:1px solid #cbd5e1;">${domainOptions}</select>
+            </label>
+          ` : ''}
+          <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.88rem;">
             <input type="checkbox" id="content-mine-filter" ${filters.mine ? 'checked' : ''}>
             Mes créations uniquement
           </label>
+          ${(filters.search || filters.domain || filters.status || filters.mine) ? `
+            <button type="button" class="btn btn-sm btn-ghost" id="btn-reset-content-filters" style="font-size:0.8rem;color:#ef4444;">✕ Réinitialiser filtres</button>
+          ` : ''}
         </div>
+
         <div class="table-wrapper">
           <table>
             <thead><tr>${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? '<th style="width:40px;text-align:center;"><input type="checkbox" id="content-select-all" title="Tout sélectionner" style="cursor:pointer;"></th>' : ''}<th>Titre</th><th>Dossier / Catégorie</th><th>Statut</th><th>Auteur</th><th>Mise à jour</th><th>Actions</th></tr></thead>
             <tbody>
-              ${items.length === 0
-        ? `<tr><td colspan="7"><div class="empty-state">Aucun contenu</div></td></tr>`
-        : items.map(item => `
+              ${pageItems.length === 0
+        ? `<tr><td colspan="7"><div class="empty-state">Aucun contenu correspondant aux filtres</div></td></tr>`
+        : pageItems.map(item => `
                   <tr>
                     ${window.AdminApp.hasPermission(window.AdminApp.currentUser, `${config.permPrefix}.delete`) ? `<td style="text-align:center;"><input type="checkbox" class="content-select" value="${item.id}" style="cursor:pointer;"></td>` : ''}
-                    <td>${escapeHtml(item.title)}</td>
+                    <td>
+                      <div style="font-weight:600;color:#0f172a;">${escapeHtml(item.title)}</div>
+                      ${item.salary ? `<div style="font-size:0.75rem;color:#10b981;margin-top:2px;">💰 ${escapeHtml(item.salary)}</div>` : ''}
+                    </td>
                     <td>${categoryCell(item)}</td>
                     <td>${contentStatusBadge(item.status)}</td>
-                    <td>${escapeHtml(item.createdBy ? `${item.createdBy.firstName} ${item.createdBy.lastName}` : '—')}</td>
-                    <td>${new Date(item.updatedAt).toLocaleDateString('fr-FR')}</td>
+                    <td>${escapeHtml(item.createdBy ? `${item.createdBy.firstName} ${item.createdBy.lastName}` : 'Orientation LMT')}</td>
+                    <td>${new Date(item.updatedAt || item.createdAt).toLocaleDateString('fr-FR')}</td>
                     <td>${contentActionButtons(item, moduleKey, config.permPrefix)}</td>
                   </tr>
                 `).join('')}
             </tbody>
           </table>
+        </div>
+
+        <!-- Contrôles de pagination -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-top:0.75rem;border-top:1px solid #e2e8f0;flex-wrap:wrap;gap:0.75rem;">
+          <div style="font-size:0.85rem;color:#64748b;">
+            Affichage de <strong>${filteredCount === 0 ? 0 : (currentPage - 1) * pageSize + 1}</strong> à <strong>${Math.min(currentPage * pageSize, filteredCount)}</strong> sur <strong>${filteredCount}</strong> ${isJob ? 'métier(s)' : 'formation(s)'}
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <button type="button" class="btn btn-sm btn-secondary" id="content-page-prev" ${currentPage <= 1 ? 'disabled' : ''}>&larr; Précédent</button>
+            <span style="font-size:0.85rem;font-weight:600;padding:0 0.5rem;color:#1e293b;">Page ${currentPage} / ${totalPages}</span>
+            <button type="button" class="btn btn-sm btn-secondary" id="content-page-next" ${currentPage >= totalPages ? 'disabled' : ''}>Suivant &rarr;</button>
+          </div>
         </div>
       </div>
     `;
@@ -1720,6 +1847,9 @@
       } catch (e) {
         existingDomains = [];
       }
+      // Fusionner avec le référentiel des 21 familles certifiées d'orientation
+      const fullDomains = Array.from(new Set([...ORIENTATION_FAMILIES, ...existingDomains])).sort();
+      existingDomains = fullDomains;
       if (item?.domain && !existingDomains.includes(item.domain)) {
         existingDomains.unshift(item.domain);
       }
@@ -2140,6 +2270,18 @@
         if (domSelect.value === '__NEW__') {
           const inp = overlay.querySelector('#field-domain-new');
           if (inp) inp.focus();
+        } else if (domSelect.value) {
+          const catEl = overlay.querySelector('select[name="category"]');
+          if (catEl) {
+            const val = domSelect.value.toLowerCase();
+            if (val.includes('cyber') || val.includes('défense') || val.includes('securite')) catEl.value = 'SECURITE';
+            else if (val.includes('numérique') || val.includes('ia') || val.includes('tech') || val.includes('informatique')) catEl.value = 'TECH';
+            else if (val.includes('finance') || val.includes('banque') || val.includes('assurance')) catEl.value = 'FINANCE';
+            else if (val.includes('énergie') || val.includes('electricite') || val.includes('pétrole') || val.includes('gaz')) catEl.value = 'ENERGIE';
+            else if (val.includes('santé') || val.includes('soin') || val.includes('médical') || val.includes('biochimie')) catEl.value = 'SANTE';
+            else if (val.includes('éducation') || val.includes('enseignement') || val.includes('formation')) catEl.value = 'EDUCATION';
+            else catEl.value = 'AUTRE';
+          }
         }
       });
     }
@@ -5915,7 +6057,78 @@
       if (statusFilter) {
         statusFilter.addEventListener('change', () => {
           contentFilters[contentKey].status = statusFilter.value;
+          contentFilters[contentKey].page = 1;
           loadPage(reloadPage);
+        });
+      }
+
+      const domainFilter = document.getElementById('content-domain-filter');
+      if (domainFilter) {
+        domainFilter.addEventListener('change', () => {
+          contentFilters[contentKey].domain = domainFilter.value;
+          contentFilters[contentKey].page = 1;
+          loadPage(reloadPage);
+        });
+      }
+
+      const searchFilter = document.getElementById('content-search-filter');
+      if (searchFilter) {
+        let searchDebounce;
+        searchFilter.addEventListener('input', () => {
+          clearTimeout(searchDebounce);
+          searchDebounce = setTimeout(() => {
+            contentFilters[contentKey].search = searchFilter.value.trim();
+            contentFilters[contentKey].page = 1;
+            loadPage(reloadPage);
+          }, 350);
+        });
+      }
+
+      const resetFiltersBtn = document.getElementById('btn-reset-content-filters');
+      if (resetFiltersBtn) {
+        resetFiltersBtn.addEventListener('click', () => {
+          contentFilters[contentKey].search = '';
+          contentFilters[contentKey].domain = '';
+          contentFilters[contentKey].status = '';
+          contentFilters[contentKey].mine = false;
+          contentFilters[contentKey].page = 1;
+          loadPage(reloadPage);
+        });
+      }
+
+      const prevBtn = document.getElementById('content-page-prev');
+      if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+          if (contentFilters[contentKey].page > 1) {
+            contentFilters[contentKey].page--;
+            loadPage(reloadPage);
+          }
+        });
+      }
+
+      const nextBtn = document.getElementById('content-page-next');
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+          contentFilters[contentKey].page = (contentFilters[contentKey].page || 1) + 1;
+          loadPage(reloadPage);
+        });
+      }
+
+      const syncBtn = document.getElementById('btn-sync-metiers-catalog');
+      if (syncBtn) {
+        syncBtn.addEventListener('click', async () => {
+          syncBtn.disabled = true;
+          syncBtn.innerHTML = '<span>⏳</span> <span>Synchronisation...</span>';
+          showToast('Actualisation et synchronisation du catalogue...', 'info');
+          try {
+            await loadPage(reloadPage);
+            showToast('Catalogue des 535 métiers actualisé avec succès !', 'success');
+          } catch (err) {
+            showToast('Erreur : ' + err.message, 'error');
+          } finally {
+            syncBtn.disabled = false;
+            syncBtn.innerHTML = '<span>🔄</span> <span>Resynchroniser</span>';
+          }
         });
       }
 
@@ -5923,6 +6136,7 @@
       if (mineFilter) {
         mineFilter.addEventListener('change', () => {
           contentFilters[contentKey].mine = mineFilter.checked;
+          contentFilters[contentKey].page = 1;
           loadPage(reloadPage);
         });
       }
