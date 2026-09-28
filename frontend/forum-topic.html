@@ -80,29 +80,88 @@
     </main>
 
     <footer data-layout="footer" class="site-footer">
-        <div class="footer-inner">
-            <div class="footer-col">
-                <h4>Le Monde du Travail</h4>
-                <p class="footer-desc">Préparer la relève professionnelle de qualité, consciente et innovante.</p>
+    <div class="footer-card">
+        <!-- Lignes géométriques vectorielles en arrière-plan -->
+        <svg class="footer-bg-lines" viewBox="0 0 1200 450" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 400,450 L 760,110 L 980,270 L 1200,30" fill="none" stroke="rgba(255, 255, 255, 0.09)" stroke-width="1.5" />
+            <path d="M 520,450 L 860,160 L 1060,310 L 1200,150" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1.2" />
+            <path d="M 320,450 L 680,210 L 890,360 L 1200,90" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1" />
+        </svg>
+
+        <div class="footer-main">
+            <!-- Colonne 1 : Marque, Mission, Réseaux, Back to Top -->
+            <div class="footer-col footer-col-brand">
+                <a href="index.html" class="footer-brand" aria-label="Accueil Le Monde du Travail">
+                    <svg class="footer-brand-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M16 3L30 27H2L16 3Z" stroke="#f5a623" stroke-width="2.5" stroke-linejoin="round" />
+                        <path d="M16 10L25 25H7L16 10Z" fill="#f5a623" fill-opacity="0.25" stroke="#f5a623" stroke-width="2" stroke-linejoin="round" />
+                        <path d="M16 17L20 24H12L16 17Z" fill="#f5a623" />
+                    </svg>
+                    <span class="footer-brand-name">LE MONDE DU TRAVAIL</span>
+                </a>
+                
+                <p class="footer-desc">
+                    Préparer la relève professionnelle de qualité, consciente et innovante. Accompagnement, orientation et compétences d'avenir.
+                </p>
+
+                <div class="footer-socials" aria-label="Réseaux sociaux">
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="X (Twitter)">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                    </a>
+                </div>
+
+                <div class="footer-back-to-top-wrapper">
+                    <button type="button" class="footer-back-to-top" id="footerBackToTop" aria-label="Retourner en haut de page">
+                        <svg class="chevron-up-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
+                        <span>BACK TO TOP</span>
+                    </button>
+                </div>
             </div>
+
+            <!-- Colonne 2 : Plan du site / Site Map -->
             <div class="footer-col">
-                <h4>Navigation</h4>
-                <a href="index.html">Accueil</a>
-                <a href="about.html">À Propos</a>
-                <a href="formations.html">Formations</a>
-                <a href="forum.html">Forum</a>
+                <h4 class="footer-col-title">Site Map</h4>
+                <ul class="footer-nav-list">
+                    <li><a href="index.html" class="footer-link active-link">Homepage</a></li>
+                    <li><a href="about.html" class="footer-link">À Propos du Club</a></li>
+                    <li><a href="job.html" class="footer-link">Métiers & Orientation</a></li>
+                    <li><a href="formations.html" class="footer-link">Formations & Ateliers</a></li>
+                    <li><a href="forum.html" class="footer-link">Forum & Communauté</a></li>
+                    <li><a href="blog.html" class="footer-link">Ressources & News</a></li>
+                    <li><a href="login.html" class="footer-link">Portal Membre</a></li>
+                </ul>
             </div>
+
+            <!-- Colonne 3 : Légal / Legal -->
             <div class="footer-col">
-                <h4>Ressources</h4>
-                <a href="job.html">Métiers & Orientation</a>
-                <a href="blog.html">Blog</a>
-    
+                <h4 class="footer-col-title">Legal</h4>
+                <ul class="footer-nav-list">
+                    <li><a href="about.html#confidentialite" class="footer-link">Privacy Policy</a></li>
+                    <li><a href="about.html#cgu" class="footer-link">Terms of Services</a></li>
+                    <li><a href="about.html#mentions" class="footer-link">Mentions Légales</a></li>
+                    <li><a href="about.html#charte" class="footer-link">Charte Déontologique</a></li>
+                    <li><a href="about.html#contact" class="footer-link">Contact Us</a></li>
+                </ul>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+
+        <!-- Bandeau Inférieur Copyright Ocre / Ambré -->
+        <div class="footer-bottom-bar">
+            <p>Copyright &copy; 2026, Monde du Travail, All Rights Reserved.</p>
         </div>
-    </footer>
+    </div>
+</footer>
 
     <!-- Smooth Scroll (Lenis) & Moteur d'Animation (GSAP + ScrollTrigger) -->
     <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
