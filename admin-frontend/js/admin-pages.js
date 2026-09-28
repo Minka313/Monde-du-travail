@@ -612,8 +612,8 @@
               ${escapeHtml(formatUserRole(user))}
             </span>
             ${isUltraAdmin ? `
-              <button class="btn btn-sm" id="dash-toggle-maint" style="background:${isMaintenance ? '#16a34a' : 'rgba(255,255,255,0.15)'};color:#ffffff;border:none;cursor:pointer;">
-                ${isMaintenance ? 'Désactiver Maintenance' : 'Basculer Maintenance'}
+              <button class="btn btn-sm" id="dash-config-maint" style="background:${isMaintenance ? '#dc2626' : 'rgba(255,255,255,0.18)'};color:#ffffff;border:1px solid rgba(255,255,255,0.3);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:0.4rem;" title="Ouvrir le centre de pilotage de la maintenance">
+                <span>${isMaintenance ? '🔴' : '🛠️'}</span> <span>${isMaintenance ? 'Gérer Maintenance' : 'Mode Maintenance'}</span>
               </button>
             ` : ''}
             <button class="btn btn-sm" id="dash-refresh-btn" style="background:rgba(255,255,255,0.15);color:#ffffff;border:none;cursor:pointer;" title="Rafraîchir les métriques">
@@ -3663,6 +3663,136 @@
     }
   }
 
+  // Modale de contrôle centralisé du mode maintenance
+  async function openMaintenanceControlModal(onSuccess = null) {
+    const existing = document.getElementById('maintenance-control-overlay');
+    if (existing) existing.remove();
+
+    showTopLoader();
+    let settings = [];
+    try {
+      const res = await window.AdminApi.settings.getAll();
+      settings = res.data || [];
+    } catch (err) {
+      hideTopLoader();
+      showToast('Impossible de charger les paramètres de maintenance', 'error');
+      return;
+    }
+    hideTopLoader();
+
+    const maintMode = settings.find(s => s.key === 'platform.maintenanceMode')?.value === 'true';
+    const maintMsg = settings.find(s => s.key === 'platform.maintenanceMessage')?.value || 'Notre équipe effectue actuellement une mise à niveau technique programmée pour optimiser la plateforme. Nous serons de retour très rapidement !';
+    const maintReturn = settings.find(s => s.key === 'platform.maintenanceEstimatedReturn')?.value || 'Bientôt de retour';
+
+    const overlay = document.createElement('div');
+    overlay.id = 'maintenance-control-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1100;padding:1rem;';
+    overlay.innerHTML = `
+      <div class="card" style="max-width:620px;width:100%;padding:1.85rem;background:var(--bg-card, #fff);box-shadow:0 25px 50px -12px rgba(0,0,0,0.3);border-radius:14px;border:1px solid #e2e8f0;animation:dossierFadeIn 0.2s ease;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;border-bottom:1px solid #e2e8f0;padding-bottom:1rem;">
+          <div>
+            <span style="display:inline-block;padding:0.25rem 0.65rem;background:${maintMode ? '#fef2f2' : '#ecfdf5'};color:${maintMode ? '#dc2626' : '#059669'};font-size:0.75rem;font-weight:700;border-radius:999px;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.04em;">
+              ${maintMode ? '🔴 Maintenance en cours' : '🟢 Plateforme Opérationnelle'}
+            </span>
+            <h2 style="margin:0;font-size:1.35rem;color:#0f172a;font-weight:700;">Centre de Pilotage de la Maintenance</h2>
+            <p style="margin:0.25rem 0 0;font-size:0.88rem;color:#64748b;">Contrôlez la visibilité publique, le message d'annonce et la reprise du site.</p>
+          </div>
+          <button type="button" id="maint-modal-close-btn" style="border:none;background:transparent;font-size:1.5rem;cursor:pointer;color:#94a3b8;line-height:1;padding:0.25rem;">&times;</button>
+        </div>
+
+        <div style="background:${maintMode ? '#fff1f2' : '#f8fafc'};border:1px solid ${maintMode ? '#fecdd3' : '#e2e8f0'};border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.35rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+          <div>
+            <strong style="display:block;font-size:0.95rem;color:${maintMode ? '#9f1239' : '#1e293b'};">
+              Mode Maintenance Actif (Blocage Public)
+            </strong>
+            <span style="font-size:0.82rem;color:${maintMode ? '#e11d48' : '#64748b'};">
+              ${maintMode ? 'Le public est redirigé vers la page d\'attente. Seuls les administrateurs connectés peuvent naviguer.' : 'Le site est 100% accessible à tous les visiteurs et adhérents.'}
+            </span>
+          </div>
+          <label style="position:relative;display:inline-block;width:52px;height:28px;flex-shrink:0;cursor:pointer;">
+            <input type="checkbox" id="maint-modal-toggle" ${maintMode ? 'checked' : ''} style="opacity:0;width:0;height:0;">
+            <span style="position:absolute;top:0;left:0;right:0;bottom:0;background-color:${maintMode ? '#dc2626' : '#cbd5e1'};transition:0.3s;border-radius:28px;" id="maint-modal-switch-track"></span>
+            <span style="position:absolute;height:20px;width:20px;left:${maintMode ? '28px' : '4px'};bottom:4px;background-color:white;transition:0.3s;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,0.2);" id="maint-modal-switch-knob"></span>
+          </label>
+        </div>
+
+        <div style="margin-bottom:1.15rem;">
+          <label for="maint-modal-message" style="display:block;margin-bottom:0.45rem;font-size:0.88rem;font-weight:600;color:#1e293b;">
+            Message public affiché aux visiteurs :
+          </label>
+          <textarea id="maint-modal-message" rows="3" style="width:100%;box-sizing:border-box;padding:0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:0.88rem;line-height:1.5;color:#1e293b;resize:vertical;" placeholder="Expliquez la nature de l'intervention...">${escapeHtml(maintMsg)}</textarea>
+        </div>
+
+        <div style="margin-bottom:1.35rem;">
+          <label for="maint-modal-return" style="display:block;margin-bottom:0.45rem;font-size:0.88rem;font-weight:600;color:#1e293b;">
+            Heure de retour estimée (facultatif) :
+          </label>
+          <input type="text" id="maint-modal-return" value="${escapeHtml(maintReturn)}" style="width:100%;box-sizing:border-box;padding:0.65rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-family:inherit;font-size:0.88rem;color:#1e293b;" placeholder="Ex: Aujourd'hui à 15h30 GMT ou Bientôt de retour">
+        </div>
+
+        <div style="display:flex;gap:0.75rem;align-items:center;justify-content:space-between;margin-top:1.5rem;padding-top:1rem;border-top:1px solid #f1f5f9;flex-wrap:wrap;">
+          <a href="../frontend/maintenance.html?preview=1" target="_blank" class="btn btn-sm btn-ghost" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;color:#475569;">
+            <span>👁️</span> <span>Prévisualiser la page</span>
+          </a>
+          <div style="display:flex;gap:0.6rem;">
+            <button type="button" class="btn btn-ghost" id="maint-modal-cancel">Fermer</button>
+            <button type="button" class="btn btn-primary" id="maint-modal-save" style="font-weight:600;padding:0.6rem 1.25rem;">
+              💾 Enregistrer & Appliquer
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const toggle = document.getElementById('maint-modal-toggle');
+    const track = document.getElementById('maint-modal-switch-track');
+    const knob = document.getElementById('maint-modal-switch-knob');
+
+    toggle?.addEventListener('change', () => {
+      if (toggle.checked) {
+        track.style.backgroundColor = '#dc2626';
+        knob.style.left = '28px';
+      } else {
+        track.style.backgroundColor = '#cbd5e1';
+        knob.style.left = '4px';
+      }
+    });
+
+    const closeModal = () => overlay.remove();
+    document.getElementById('maint-modal-close-btn')?.addEventListener('click', closeModal);
+    document.getElementById('maint-modal-cancel')?.addEventListener('click', closeModal);
+
+    document.getElementById('maint-modal-save')?.addEventListener('click', async () => {
+      const isMaintNext = !!toggle?.checked;
+      const messageVal = document.getElementById('maint-modal-message')?.value?.trim() || '';
+      const returnVal = document.getElementById('maint-modal-return')?.value?.trim() || '';
+
+      const saveBtn = document.getElementById('maint-modal-save');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Enregistrement...';
+      }
+
+      try {
+        await window.AdminApi.settings.update('platform.maintenanceMessage', messageVal);
+        await window.AdminApi.settings.update('platform.maintenanceEstimatedReturn', returnVal);
+        await window.AdminApi.settings.update('platform.maintenanceMode', isMaintNext ? 'true' : 'false');
+
+        showToast(isMaintNext ? '🔴 Mode maintenance activé' : '🟢 Plateforme réouverte avec succès', 'success');
+        closeModal();
+        if (typeof onSuccess === 'function') onSuccess();
+      } catch (err) {
+        showToast(err.message || 'Erreur lors de la mise à jour de la maintenance', 'error');
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = '💾 Enregistrer & Appliquer';
+        }
+      }
+    });
+  }
+
   // Modale d'approbation d'adhésion avec mot de bienvenue personnalisable
   function openApproveMembershipModal(membershipId, candidateName = 'le candidat', onSuccess = null) {
     const existing = document.getElementById('membership-approve-overlay');
@@ -5425,6 +5555,7 @@
             <legend style="font-weight:600;">${categoryLabels[category] || category}</legend>
             ${items.map(s => {
       const isBool = s.value === 'true' || s.value === 'false';
+      const isLongText = s.key === 'platform.maintenanceMessage' || s.value.length > 70;
       return `
                 <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0.4rem 0;">
                   <span>
@@ -5432,9 +5563,18 @@
                     ${s.isSensitive ? ' <span class="badge badge-warning">sensible 🔒</span>' : ''}
                     <br><small class="text-muted">${escapeHtml(s.key)}</small>
                   </span>
-                  ${isBool
-          ? `<input type="checkbox" data-setting-key="${s.key}" data-setting-bool="true" ${s.value === 'true' ? 'checked' : ''}>`
-          : `<input type="text" data-setting-key="${s.key}" value="${escapeHtml(s.value)}" style="max-width:340px;">`}
+                  ${s.key === 'platform.maintenanceMode' ? `
+                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                      <a href="../frontend/maintenance.html?preview=1" target="_blank" class="btn btn-sm btn-ghost" style="text-decoration:none;font-size:0.8rem;padding:0.25rem 0.6rem;">
+                        👁️ Aperçu page
+                      </a>
+                      <input type="checkbox" data-setting-key="${s.key}" data-setting-bool="true" ${s.value === 'true' ? 'checked' : ''}>
+                    </div>
+                  ` : isBool
+                    ? `<input type="checkbox" data-setting-key="${s.key}" data-setting-bool="true" ${s.value === 'true' ? 'checked' : ''}>`
+                    : isLongText
+                      ? `<textarea data-setting-key="${s.key}" rows="2" style="width:100%;max-width:380px;box-sizing:border-box;padding:0.4rem 0.6rem;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:0.85rem;">${escapeHtml(s.value)}</textarea>`
+                      : `<input type="text" data-setting-key="${s.key}" value="${escapeHtml(s.value)}" style="max-width:340px;">`}
                 </label>
               `;
     }).join('')}
@@ -5887,27 +6027,10 @@
         loadPage('dashboard');
       });
 
-      // Bascule rapide du mode maintenance
-      document.getElementById('dash-toggle-maint')?.addEventListener('click', async () => {
-        try {
-          const settingsRes = await window.AdminApi.settings.getAll();
-          const maintSetting = (settingsRes.data || []).find(s => s.key === 'platform.maintenanceMode');
-          const isCurrentlyMaint = maintSetting?.value === 'true';
-          const nextVal = !isCurrentlyMaint;
-
-          const promptMsg = nextVal
-            ? 'Activer le mode maintenance ? Le public ne pourra plus accéder au site.'
-            : 'Désactiver le mode maintenance ? La plateforme sera de nouveau accessible à tous.';
-
-          if (!confirm(promptMsg)) return;
-
-          await window.AdminApi.settings.update('platform.maintenanceMode', nextVal ? 'true' : 'false');
-          showToast(nextVal ? 'Mode maintenance activé' : 'Plateforme réouverte avec succès', 'success');
-          loadPage('dashboard');
-        } catch (err) {
-          showToast(err.message || 'Impossible de modifier le mode maintenance', 'error');
-        }
-      });
+      // Gestion avancée du mode maintenance avec centre de pilotage
+      const handleOpenMaint = () => openMaintenanceControlModal(() => loadPage('dashboard'));
+      document.getElementById('dash-config-maint')?.addEventListener('click', handleOpenMaint);
+      document.getElementById('dash-toggle-maint')?.addEventListener('click', handleOpenMaint);
 
       // Approbation d'adhésion
       document.querySelectorAll('[data-approve-membership]').forEach(btn => {

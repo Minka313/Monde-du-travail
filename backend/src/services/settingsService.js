@@ -7,7 +7,9 @@ const DEFAULT_SETTINGS = [
   { key: 'site.description', value: 'Club de découverte et d\'accompagnement vers le monde professionnel', category: 'general', label: 'Description du site' },
   { key: 'site.contactEmail', value: 'contact@mondedutravail.com', category: 'general', label: 'Email de contact' },
   { key: 'memberships.allowRegistrations', value: 'true', category: 'membres', label: 'Autoriser les inscriptions' },
-  { key: 'platform.maintenanceMode', value: 'false', category: 'plateforme', label: 'Mode maintenance', isSensitive: true },
+  { key: 'platform.maintenanceMode', value: 'false', category: 'plateforme', label: 'Mode maintenance (Bloque l\'accès public)', isSensitive: true },
+  { key: 'platform.maintenanceMessage', value: 'Notre équipe effectue actuellement une mise à niveau technique programmée pour optimiser la plateforme. Nous serons de retour très rapidement !', category: 'plateforme', label: 'Message public de maintenance', isSensitive: false },
+  { key: 'platform.maintenanceEstimatedReturn', value: 'Bientôt de retour', category: 'plateforme', label: 'Heure de retour estimée (ex: Aujourd\'hui à 15h00 GMT)', isSensitive: false },
   { key: 'platform.allowRegistrations', value: 'true', category: 'plateforme', label: 'Inscriptions ouvertes (paramètre plateforme)', isSensitive: true },
   {
     key: 'home.featured_monthly',
@@ -103,10 +105,32 @@ class SettingsService {
         result[s.key] = s.value;
       }
     }
+
+    // Exposer explicitement l'état public de la maintenance pour le frontend
+    const maintSetting = await prisma.setting.findUnique({
+      where: { key: 'platform.maintenanceMode' },
+      select: { value: true },
+    });
+    result['platform.maintenanceMode'] = maintSetting?.value === 'true';
+    if (!result['platform.maintenanceMessage']) {
+      result['platform.maintenanceMessage'] = 'Notre équipe effectue actuellement une mise à niveau technique programmée pour optimiser la plateforme. Nous serons de retour très rapidement !';
+    }
+    if (!result['platform.maintenanceEstimatedReturn']) {
+      result['platform.maintenanceEstimatedReturn'] = 'Bientôt de retour';
+    }
+
     return result;
   }
 
   static async getPublicSetting(key) {
+    if (key === 'platform.maintenanceMode') {
+      const setting = await prisma.setting.findUnique({
+        where: { key: 'platform.maintenanceMode' },
+        select: { value: true },
+      });
+      return setting?.value === 'true';
+    }
+
     const setting = await prisma.setting.findUnique({
       where: { key },
       select: { key: true, value: true, isSensitive: true },
@@ -144,8 +168,8 @@ class SettingsService {
       data: { value },
     });
 
-    // Effet immédiat du basculement du mode maintenance
-    if (key === 'platform.maintenanceMode') {
+    // Effet immédiat du basculement ou de la modification des paramètres de maintenance
+    if (key.startsWith('platform.maintenance')) {
       const { resetMaintenanceCache } = require('../middleware/maintenance');
       resetMaintenanceCache();
     }

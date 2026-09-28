@@ -166,6 +166,17 @@ return headers;
       const duration = Math.round(performance.now() - startTime);
       NetLog.log(options.method || 'GET', endpoint, status, duration);
 
+      if (response.status === 503 || data.code === 'MAINTENANCE') {
+        if (!window.location.pathname.endsWith('maintenance.html')) {
+          try { sessionStorage.setItem('maintenance_return_url', window.location.href); } catch (_) {}
+          window.location.href = 'maintenance.html';
+        }
+        const err = new Error(data.message || 'La plateforme est actuellement en cours de maintenance.');
+        err.status = 503;
+        err.data = data;
+        throw err;
+      }
+
       if (!response.ok || !data.success) {
         const err = new Error(data.message || `Erreur HTTP ${response.status}`);
         err.status = response.status;
@@ -205,6 +216,17 @@ return headers;
         data = await response.json();
       } catch (_) {
         data = { success: false, message: response.status >= 500 ? 'Erreur interne du serveur' : `Erreur HTTP ${response.status}` };
+      }
+
+      if (response.status === 503 || data.code === 'MAINTENANCE') {
+        if (!window.location.pathname.endsWith('maintenance.html')) {
+          try { sessionStorage.setItem('maintenance_return_url', window.location.href); } catch (_) {}
+          window.location.href = 'maintenance.html';
+        }
+        const err = new Error(data.message || 'La plateforme est actuellement en cours de maintenance.');
+        err.status = 503;
+        err.data = data;
+        throw err;
       }
 
       if (response.status === 401 && !options._retry && !endpoint.includes('/auth/')) {
@@ -365,6 +387,12 @@ return headers;
       unpublish: (id) => apiRequestWithRefresh(`/blog/${id}/unpublish`, {
         method: 'POST',
       }),
+    },
+
+    // Paramètres publics et statut de la plateforme
+    settings: {
+      getPublic: () => apiRequest('/settings/public'),
+      getPublicByKey: (key) => apiRequest(`/settings/public/${encodeURIComponent(key)}`),
     },
 
     // Utilitaires

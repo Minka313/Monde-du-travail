@@ -71,13 +71,13 @@
         } else if (window.LMTTheme && typeof window.LMTTheme.initButtons === 'function') {
           window.LMTTheme.initButtons();
         }
-        initSocialLinks();
+        initPublicSettingsAndMaintenance();
         document.dispatchEvent(new Event('layout:loaded'));
       });
     },
   };
 
-  async function initSocialLinks() {
+  async function initPublicSettingsAndMaintenance() {
     try {
       const apiUrl = (window.LMT_CONFIG && window.LMT_CONFIG.API_URL) ? window.LMT_CONFIG.API_URL : '/api';
       const cacheKey = 'lmt_public_settings';
@@ -87,19 +87,63 @@
         if (cached) settings = JSON.parse(cached);
       } catch (_) {}
 
-      if (!settings) {
-        const res = await fetch(`${apiUrl}/settings/public`);
-        if (res.ok) {
-          const json = await res.json();
-          settings = json.data || [];
+      // Ne pas bloquer l'appel si on doit vérifier la maintenance fraîchement
+      const res = await fetch(`${apiUrl}/settings/public`, { cache: 'no-store' });
+      if (res.ok) {
+        const json = await res.json();
+        settings = json.data || {};
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify(settings));
+        } catch (_) {}
+      }
+
+      if (!settings) return;
+
+      // 1. Détection du mode maintenance
+      let isMaintenance = false;
+      if (Array.isArray(settings)) {
+        isMaintenance = settings.find(s => s.key === 'platform.maintenanceMode')?.value === 'true';
+      } else if (typeof settings === 'object') {
+        isMaintenance = settings['platform.maintenanceMode'] === true || settings['platform.maintenanceMode'] === 'true';
+      }
+
+      const isMaintenancePage = window.location.pathname.endsWith('maintenance.html');
+
+      if (isMaintenance && !isMaintenancePage) {
+        // Vérifier si l'utilisateur est un administrateur connecté
+        const adminToken = localStorage.getItem('adminAccessToken') || localStorage.getItem('accessToken');
+        let isAdmin = false;
+        if (adminToken) {
           try {
-            sessionStorage.setItem(cacheKey, JSON.stringify(settings));
+            const payload = JSON.parse(atob(adminToken.split('.')[1]));
+            if (payload && (payload.role === 'ADMIN' || payload.role === 'ULTRA_ADMIN' || payload.permissions?.includes('*') || payload.permissions?.includes('settings.manage'))) {
+              isAdmin = true;
+            }
           } catch (_) {}
+        }
+
+        if (!isAdmin) {
+          try {
+            sessionStorage.setItem('maintenance_return_url', window.location.href);
+          } catch (_) {}
+          window.location.href = 'maintenance.html';
+          return;
+        } else {
+          // Affichage d'un bandeau avertisseur pour l'administrateur
+          if (!document.getElementById('lmt-admin-maintenance-banner')) {
+            const banner = document.createElement('div');
+            banner.id = 'lmt-admin-maintenance-banner';
+            banner.style.cssText = 'background:#dc2626;color:#ffffff;text-align:center;padding:0.45rem 1rem;font-size:0.85rem;font-weight:600;position:sticky;top:0;z-index:99999;box-shadow:0 2px 10px rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;gap:0.75rem;';
+            banner.innerHTML = '<span>⚠️ <strong>Mode Maintenance Actif</strong> : Le site est actuellement masqué au public.</span> <a href="/admin-frontend/#settings" style="color:#ffffff;text-decoration:underline;font-weight:700;">Gérer dans l\'Admin</a>';
+            document.body.prepend(banner);
+          }
         }
       }
 
+      // 2. Initialisation des Réseaux Sociaux
+      let socialMap = {};
       if (Array.isArray(settings)) {
-        const socialMap = {
+        socialMap = {
           twitter: settings.find(s => s.key === 'social.twitter')?.value,
           linkedin: settings.find(s => s.key === 'social.linkedin')?.value,
           instagram: settings.find(s => s.key === 'social.instagram')?.value,
@@ -107,19 +151,28 @@
           youtube: settings.find(s => s.key === 'social.youtube')?.value,
           tiktok: settings.find(s => s.key === 'social.tiktok')?.value,
         };
-
-        Object.entries(socialMap).forEach(([platform, url]) => {
-          const btn = document.querySelector(`.footer-social-btn[data-social="${platform}"]`);
-          if (btn) {
-            if (url && url.trim().length > 0) {
-              btn.href = url.trim();
-              btn.style.display = 'inline-flex';
-            } else if (platform === 'youtube' || platform === 'tiktok') {
-              btn.style.display = 'none';
-            }
-          }
-        });
+      } else if (typeof settings === 'object') {
+        socialMap = {
+          twitter: settings['social.twitter'],
+          linkedin: settings['social.linkedin'],
+          instagram: settings['social.instagram'],
+          facebook: settings['social.facebook'],
+          youtube: settings['social.youtube'],
+          tiktok: settings['social.tiktok'],
+        };
       }
+
+      Object.entries(socialMap).forEach(([platform, url]) => {
+        const btn = document.querySelector(`.footer-social-btn[data-social="${platform}"]`);
+        if (btn) {
+          if (url && typeof url === 'string' && url.trim().length > 0) {
+            btn.href = url.trim();
+            btn.style.display = 'inline-flex';
+          } else if (platform === 'youtube' || platform === 'tiktok') {
+            btn.style.display = 'none';
+          }
+        }
+      });
     } catch (_) {
       // Ignorer silencieusement si hors-ligne
     }
@@ -140,10 +193,10 @@
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       window.Layout.init();
-      initSocialLinks();
+      initPublicSettingsAndMaintenance();
     });
   } else {
     window.Layout.init();
-    initSocialLinks();
+    initPublicSettingsAndMaintenance();
   }
 })();
