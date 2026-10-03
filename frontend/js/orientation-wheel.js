@@ -49,19 +49,22 @@
 
     initCanvasSize() {
       if (!this.canvas) return;
-      const rect = this.canvas.getBoundingClientRect();
-      const size = Math.min(rect.width || 360, window.innerWidth - 32, 420);
+      const parent = this.canvas.parentElement;
+      const parentWidth = parent ? parent.clientWidth : window.innerWidth;
+      const availableWidth = Math.min(parentWidth - 16, window.innerWidth - 32);
+      const size = Math.max(280, Math.min(availableWidth, 380));
 
       const dpr = window.devicePixelRatio || 1;
-      this.canvas.width = size * dpr;
-      this.canvas.height = size * dpr;
+      this.canvas.width = Math.round(size * dpr);
+      this.canvas.height = Math.round(size * dpr);
       this.canvas.style.width = `${size}px`;
       this.canvas.style.height = `${size}px`;
 
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
       this.ctx.scale(dpr, dpr);
       this.size = size;
       this.center = size / 2;
-      this.radius = (size / 2) - 18; // marge pour le contour et rivets
+      this.radius = (size / 2) - 16;
     }
 
     draw() {

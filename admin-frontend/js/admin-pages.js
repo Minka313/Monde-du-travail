@@ -83,10 +83,36 @@
 
   // ===== GESTION DU THÈME SOMBRE (DARK MODE) =====
   function initAdminTheme() {
-    const savedTheme = localStorage.getItem('lmt_admin_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    document.body.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+    const isValidTheme = (theme) => theme === 'dark' || theme === 'light';
+    const sharedTheme = localStorage.getItem('lmt-theme');
+    const legacyTheme = localStorage.getItem('lmt_admin_theme');
+    const mediaQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
+    const hasSavedTheme = isValidTheme(sharedTheme) || isValidTheme(legacyTheme);
+    const initialTheme = isValidTheme(sharedTheme)
+      ? sharedTheme
+      : isValidTheme(legacyTheme)
+        ? legacyTheme
+        : mediaQuery?.matches ? 'dark' : 'light';
+
+    const applyAdminTheme = (theme) => {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.body.setAttribute('data-theme', theme);
+      updateThemeIcon(theme);
+    };
+
+    applyAdminTheme(initialTheme);
+    if (!isValidTheme(sharedTheme) && isValidTheme(legacyTheme)) {
+      localStorage.setItem('lmt-theme', legacyTheme);
+    }
+
+    if (!hasSavedTheme && mediaQuery) {
+      const handleSystemThemeChange = (event) => applyAdminTheme(event.matches ? 'dark' : 'light');
+      if (typeof mediaQuery.addEventListener === 'function') {
+        mediaQuery.addEventListener('change', handleSystemThemeChange);
+      } else if (typeof mediaQuery.addListener === 'function') {
+        mediaQuery.addListener(handleSystemThemeChange);
+      }
+    }
 
     const toggleBtn = document.getElementById('admin-theme-toggle');
     const sidebarToggleBtn = document.getElementById('admin-sidebar-theme-toggle');
@@ -94,10 +120,8 @@
     const handleThemeToggle = () => {
       const current = document.body.getAttribute('data-theme') || 'light';
       const next = current === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      document.body.setAttribute('data-theme', next);
-      localStorage.setItem('lmt_admin_theme', next);
-      updateThemeIcon(next);
+      applyAdminTheme(next);
+      localStorage.setItem('lmt-theme', next);
       showToast(next === 'dark' ? 'Mode sombre activé' : 'Mode clair activé', 'info');
     };
 

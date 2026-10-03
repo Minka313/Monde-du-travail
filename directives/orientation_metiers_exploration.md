@@ -69,3 +69,17 @@ Chaque métier est représenté par une structure de données unique et typée :
 - Le module charge la base de données statique optimisée et s'hybride silencieusement avec les données dynamiques de l'API `/api/jobs` de Supabase si disponible.
 - Aucun changement dans le frontend ne nécessite de recompilation : l'ajout d'un métier se fait via une nouvelle entrée JSON ou via l'API d'administration.
 - Le cycle de vie d'affichage respecte les principes d'accessibilité WCAG et de performance (lazy loading, zero CLS).
+
+---
+
+## 6. Architecture Pleine Page Dédiée (`job-detail.html`) vs Modale
+Afin d'offrir une expérience utilisateur aérée, SEO-friendly et adaptée au standard **Mobile-First** :
+- Les fiches métiers ne s'ouvrent plus dans une fenêtre modale pop-up intrusive (`dossier-modal` dépréciée).
+- Chaque métier dispose d'une page complète dédiée `job-detail.html?slug={slug}` (réécrite en `/job-detail` et `/metier` sur Vercel).
+- **Navigation préservée** : l'utilisateur dispose d'un fil d'Ariane dynamique et d'un bouton de retour intelligent (`← Retour : [Famille]`).
+- **Fonctionnalités intégrées** :
+  - Ruban métrique responsive (Niveau, Salaire indicatif Sénégal en FCFA, Dynamique du marché, Temps de lecture).
+  - Onglets horizontaux fluides (Présentation & Missions, Compétences & Outils, Formations au Sénégal, Salaires & Carrière, Journée Type, Métiers Connexes).
+  - Actions immédiates : Partage natif / copie lien, mise en favoris localStorage (`member_favorite_jobs`), impression / export PDF, mentorat forum.
+  - Micro-sondage d'orientation avec analytics.
+
