@@ -57,6 +57,23 @@ htmlFiles.forEach(file => {
   }
 });
 
+const adminLoginPath = path.join(rootDir, 'admin-frontend/login.html');
+const adminLoginContent = fs.readFileSync(adminLoginPath, 'utf8');
+if (adminLoginContent.includes('../frontend/js/theme-engine.js') && adminLoginContent.includes('class="theme-toggle-btn"')) {
+  console.log('✅ Connexion admin reliée au moteur de thème partagé');
+} else {
+  console.error('❌ Connexion admin sans moteur ou bouton de thème partagé');
+  errors++;
+}
+
+const adminPagesContent = fs.readFileSync(path.join(rootDir, 'admin-frontend/js/admin-pages.js'), 'utf8');
+if (adminPagesContent.includes("localStorage.getItem('lmt-theme')") && adminPagesContent.includes("localStorage.setItem('lmt-theme', next)")) {
+  console.log('✅ Tableau admin persistant sur la préférence de thème partagée');
+} else {
+  console.error('❌ Tableau admin non relié à la préférence de thème partagée');
+  errors++;
+}
+
 // 4. Styles CSS
 const cssPath = path.join(frontendDir, 'css/styles.css');
 const cssContent = fs.readFileSync(cssPath, 'utf8');
@@ -79,7 +96,7 @@ checks.forEach(check => {
 });
 
 if (errors === 0) {
-  console.log('\n🎉 TOUS LES TESTS SONT AU VERT ! Système de mode sombre 100% opérationnel.');
+  console.log('\n🎉 Tous les contrôles structurels du thème sont au vert.');
   process.exit(0);
 } else {
   console.error(`\n⚠️ ${errors} erreur(s) détectée(s).`);
