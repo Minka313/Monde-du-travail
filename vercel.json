@@ -86,12 +86,16 @@
       "dest": "/frontend/logo.$1"
     },
     {
-      "src": "^/(about|formations|job|blog|blog-post|forum|forum-topic|forum-create|login|reset-password)$",
+      "src": "^/(about|formations|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password)$",
       "dest": "/frontend/$1.html"
     },
     {
-      "src": "^/(about|formations|job|blog|blog-post|forum|forum-topic|forum-create|login|reset-password)\\.html$",
+      "src": "^/(about|formations|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password)\\.html$",
       "dest": "/frontend/$1.html"
+    },
+    {
+      "src": "^/metier(\\.html)?$",
+      "dest": "/frontend/job-detail.html"
     },
     {
       "src": "^/(metiers|orientation)(\\.html)?$",

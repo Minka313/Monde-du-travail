@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" id="metaDescription" content="Explorez cette fiche métier complète : missions, compétences indispensables, formations au Sénégal, salaires et perspectives d'avenir.">
+    <meta name="keywords" content="métier, fiche métier, orientation professionnelle, compétences, salaire Sénégal, formations Afrique, débouchés">
+    <meta property="og:type" content="article">
+    <meta property="og:site_name" content="Le Monde du Travail">
+    <meta property="og:title" id="ogTitle" content="Fiche Métier — Le Monde du Travail">
+    <meta property="og:description" id="ogDescription" content="Découvrez les missions, compétences clés, parcours d'études au Sénégal et perspectives de carrière.">
+    <meta property="og:image" id="ogImage" content="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=1200&q=80">
+    <meta name="twitter:card" content="summary_large_image">
+    <title id="pageTitle">Fiche Métier - Le Monde du Travail</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="css/styles.css?v=2.4.0">
+    <script src="js/theme-engine.js"></script>
+</head>
+<body class="job-detail-page">
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<!-- Barre de progression de lecture -->
+<div id="scrollProgressBar" class="reading-progress-bar" aria-hidden="true"></div>
+
+<!-- En-tête officiel du site -->
+<header data-layout="header" class="site-header">
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.png" alt="Logo Le Monde du Travail" class="logo-img">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <button type="button" class="theme-toggle-btn" id="headerThemeToggleBtn" aria-label="Changer de thème" title="Passer en Mode Sombre">
+                <span class="theme-toggle-icon">🌙</span>
+            </button>
+            <div class="header-auth-slot" id="headerAuthSlot">
+                <a href="login.html" class="btn-cta" id="headerAuthBtn">Se connecter</a>
+            </div>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- Navigation principale mobile & desktop -->
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.png" alt="Logo Le Monde du Travail" class="mobile-nav-logo">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="job.html" class="active" aria-current="page">Métiers & Orientation</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="mobile-nav-footer" id="mobileNavFooter">
+                <button type="button" class="theme-toggle-btn theme-toggle-btn-mobile" id="mobileThemeToggleBtn" aria-label="Changer de thème">
+                    <span class="theme-toggle-icon">🌙</span>
+                    <span class="theme-toggle-label">Mode Sombre</span>
+                </button>
+                <a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main id="main-content">
+    <!-- Barre de retour et fil d'Ariane -->
+    <div class="job-detail-topbar-wrapper">
+        <div class="container">
+            <div class="job-detail-nav-header">
+                <a href="job.html" id="btnBackToOrientation" class="btn-back-clean" aria-label="Retour au catalogue des métiers">
+                    <span class="back-icon" aria-hidden="true">&larr;</span>
+                    <span class="back-label" id="backButtonLabel">Retour aux métiers</span>
+                </a>
+                <nav class="breadcrumb-container" id="jobDetailBreadcrumb" aria-label="Fil d'Ariane">
+                    <ol class="breadcrumb-list">
+                        <li><a href="index.html">Accueil</a></li>
+                        <li class="breadcrumb-sep" aria-hidden="true">/</li>
+                        <li><a href="job.html" id="breadcrumbFamilyLink">Métiers & Orientation</a></li>
+                        <li class="breadcrumb-sep" aria-hidden="true">/</li>
+                        <li class="breadcrumb-current" id="breadcrumbJobTitle" aria-current="page">Chargement...</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteneur principal injecté dynamiquement -->
+    <div id="jobDetailApp" class="job-detail-container">
+        <!-- État de chargement élégant -->
+        <div id="jobDetailSkeleton" class="container page-content">
+            <div class="job-detail-skeleton-hero">
+                <div class="skeleton-shimmer skeleton-badge-pill"></div>
+                <div class="skeleton-shimmer skeleton-title-lg"></div>
+                <div class="skeleton-shimmer skeleton-desc-line"></div>
+                <div class="skeleton-shimmer skeleton-desc-line" style="width: 70%;"></div>
+                <div class="skeleton-chips-row">
+                    <div class="skeleton-shimmer skeleton-chip-item"></div>
+                    <div class="skeleton-shimmer skeleton-chip-item"></div>
+                    <div class="skeleton-shimmer skeleton-chip-item"></div>
+                </div>
+            </div>
+            <div class="job-detail-skeleton-body">
+                <div class="skeleton-shimmer skeleton-card-box"></div>
+                <div class="skeleton-shimmer skeleton-card-box"></div>
+            </div>
+        </div>
+
+        <!-- Vue d'erreur si le métier n'est pas trouvé -->
+        <div id="jobNotFoundView" class="container page-content text-center" style="display:none; padding: 4rem 1rem;">
+            <div class="job-empty-card">
+                <div class="empty-icon" style="font-size:3.5rem; margin-bottom:1rem;">🧭</div>
+                <h2>Fiche Métier introuvable</h2>
+                <p class="text-muted" style="max-width: 540px; margin: 0.5rem auto 1.75rem auto;">
+                    Le métier demandé n'existe pas ou a été mis à jour dans notre référentiel. Explorez nos 21 grandes familles professionnelles pour trouver votre voie !
+                </p>
+                <a href="job.html" class="btn btn-primary btn-lg">
+                    <span>Explorer les 21 Grandes Familles</span>
+                    <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Contenu réel de la fiche métier -->
+        <div id="jobContentWrapper" style="display:none;">
+            <!-- HERO IMMERSIF MOBILE-FIRST -->
+            <section class="job-hero-section" id="jobHeroSection">
+                <div class="job-hero-media" id="jobHeroMedia">
+                    <img id="jobHeroImg" src="" alt="" loading="eager" fetchpriority="high">
+                    <div class="job-hero-backdrop-gradient"></div>
+                </div>
+                
+                <div class="container job-hero-inner">
+                    <div class="job-hero-content">
+                        <!-- Badges taxonomiques & certifications -->
+                        <div class="job-hero-badges-row" id="jobHeroBadgesRow">
+                            <!-- Injecté dynamiquement : Famille, Domaine, Statut Émergent, Sources ESD/ESA etc. -->
+                        </div>
+
+                        <!-- Titre Principal & Définition Simple -->
+                        <div class="job-hero-title-group">
+                            <span class="job-hero-icon" id="jobHeroIcon" aria-hidden="true">💼</span>
+                            <h1 class="job-hero-title" id="jobHeroTitle">Chargement du métier...</h1>
+                        </div>
+                        <p class="job-hero-headline" id="jobHeroHeadline"></p>
+
+                        <!-- Bandeau Métriques Clés (Mobile-First) -->
+                        <div class="job-metrics-ribbon" id="jobMetricsRibbon">
+                            <div class="metric-ribbon-card" id="metricCardLevel">
+                                <span class="metric-icon" aria-hidden="true">🎓</span>
+                                <div class="metric-text-group">
+                                    <span class="metric-label">Niveau d'études</span>
+                                    <strong class="metric-val" id="metricValLevel">-</strong>
+                                </div>
+                            </div>
+                            <div class="metric-ribbon-card" id="metricCardSalary">
+                                <span class="metric-icon" aria-hidden="true">💰</span>
+                                <div class="metric-text-group">
+                                    <span class="metric-label">Salaire indicatif (Sénégal)</span>
+                                    <strong class="metric-val metric-val-highlight" id="metricValSalary">-</strong>
+                                </div>
+                            </div>
+                            <div class="metric-ribbon-card" id="metricCardTension">
+                                <span class="metric-icon" aria-hidden="true">📈</span>
+                                <div class="metric-text-group">
+                                    <span class="metric-label">Dynamique du marché</span>
+                                    <strong class="metric-val" id="metricValTension">En plein essor</strong>
+                                </div>
+                            </div>
+                            <div class="metric-ribbon-card" id="metricCardReadingTime">
+                                <span class="metric-icon" aria-hidden="true">⏱️</span>
+                                <div class="metric-text-group">
+                                    <span class="metric-label">Temps de lecture</span>
+                                    <strong class="metric-val" id="metricValReadingTime">3 min</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Barre d'actions rapides (Partager, Favoris, Imprimer, Mentor) -->
+                        <div class="job-actions-bar">
+                            <button type="button" id="btnBookmarkJob" class="btn-job-tool" aria-label="Ajouter aux favoris">
+                                <span class="tool-icon" id="bookmarkIcon">⭐</span>
+                                <span class="tool-label" id="bookmarkLabel">Ajouter aux favoris</span>
+                            </button>
+                            <button type="button" id="btnShareJob" class="btn-job-tool" aria-label="Partager ce métier">
+                                <span class="tool-icon">🔗</span>
+                                <span class="tool-label">Partager</span>
+                            </button>
+                            <button type="button" id="btnPrintJob" class="btn-job-tool" aria-label="Imprimer la fiche métier">
+                                <span class="tool-icon">🖨️</span>
+                                <span class="tool-label">Imprimer / PDF</span>
+                            </button>
+                            <a href="forum.html" class="btn-job-tool btn-tool-mentor" aria-label="Poser des questions sur le forum">
+                                <span class="tool-icon">💬</span>
+                                <span class="tool-label">Questionner un mentor</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NAVIGATION DES ONGLETS / SECTIONS (STICKY MOBILE-FIRST) -->
+            <div class="job-tabs-sticky-wrapper" id="jobTabsStickyWrapper">
+                <div class="container">
+                    <nav class="job-tabs-track" role="tablist" aria-label="Sections du dossier métier">
+                        <button type="button" class="job-tab-btn active" role="tab" aria-selected="true" aria-controls="panelOverview" data-tab="overview">
+                            <span class="tab-icon">📌</span>
+                            <span class="tab-text">Missions & Présentation</span>
+                        </button>
+                        <button type="button" class="job-tab-btn" role="tab" aria-selected="false" aria-controls="panelSkills" data-tab="skills">
+                            <span class="tab-icon">🎯</span>
+                            <span class="tab-text">Compétences & Outils</span>
+                        </button>
+                        <button type="button" class="job-tab-btn" role="tab" aria-selected="false" aria-controls="panelStudies" data-tab="studies">
+                            <span class="tab-icon">🇸🇳</span>
+                            <span class="tab-text">Formations au Sénégal</span>
+                        </button>
+                        <button type="button" class="job-tab-btn" role="tab" aria-selected="false" aria-controls="panelCareer" data-tab="career">
+                            <span class="tab-icon">💰</span>
+                            <span class="tab-text">Salaires & Carrière</span>
+                        </button>
+                        <button type="button" class="job-tab-btn" role="tab" aria-selected="false" aria-controls="panelTypicalDay" data-tab="typicalDay">
+                            <span class="tab-icon">⏰</span>
+                            <span class="tab-text">Journée Type</span>
+                        </button>
+                        <button type="button" class="job-tab-btn" role="tab" aria-selected="false" aria-controls="panelRelated" data-tab="related">
+                            <span class="tab-icon">🧭</span>
+                            <span class="tab-text">Métiers Connexes</span>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- CONTENU DÉTAILLÉ DU MÉTIER (PANELS) -->
+            <div class="container job-main-content-layout">
+                <div class="job-panels-container">
+                    <!-- 1. VUE D'ENSEMBLE & MISSIONS -->
+                    <section id="panelOverview" class="job-tab-panel active" role="tabpanel" aria-labelledby="tab-overview">
+                        <!-- Définition simple & vulgarisée -->
+                        <div class="job-info-card job-highlight-card" id="simpleDefinitionCard">
+                            <div class="card-icon-badge">💡</div>
+                            <div class="card-content-block">
+                                <h2 class="card-section-title">En quoi consiste ce métier ?</h2>
+                                <p class="card-lead-text" id="jobSimpleDefinitionText"></p>
+                            </div>
+                        </div>
+
+                        <!-- Description approfondie -->
+                        <div class="job-info-card">
+                            <h2 class="card-section-title">Présentation générale & Enjeux d'avenir</h2>
+                            <div class="job-rich-text" id="jobLongDescriptionText"></div>
+                        </div>
+
+                        <!-- Environnement de travail -->
+                        <div class="job-info-card" id="workEnvironmentCard" style="display:none;">
+                            <h2 class="card-section-title">Cadre & Environnement de travail</h2>
+                            <div class="work-env-tags-grid" id="workEnvironmentTagsGrid"></div>
+                        </div>
+
+                        <!-- Missions principales (Cartes d'action) -->
+                        <div class="job-info-card" id="jobMissionsCard">
+                            <h2 class="card-section-title">Missions & Activités quotidiennes</h2>
+                            <div class="missions-checklist-grid" id="jobMissionsGrid"></div>
+                        </div>
+                    </section>
+
+                    <!-- 2. COMPÉTENCES & OUTILS -->
+                    <section id="panelSkills" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-skills" style="display:none;">
+                        <div class="skills-tri-columns">
+                            <!-- Compétences Techniques -->
+                            <div class="skills-column-card">
+                                <div class="skills-card-header">
+                                    <span class="skills-header-icon">💻</span>
+                                    <div>
+                                        <h2 class="skills-col-title">Compétences Techniques</h2>
+                                        <p class="skills-col-sub">Savoir-faire et expertises opérationnelles</p>
+                                    </div>
+                                </div>
+                                <ul class="skills-pills-list" id="skillsTechnicalList"></ul>
+                            </div>
+
+                            <!-- Qualités Humaines (Soft Skills) -->
+                            <div class="skills-column-card">
+                                <div class="skills-card-header">
+                                    <span class="skills-header-icon">🤝</span>
+                                    <div>
+                                        <h2 class="skills-col-title">Qualités Humaines</h2>
+                                        <p class="skills-col-sub">Savoir-être, adaptabilité et relations</p>
+                                    </div>
+                                </div>
+                                <ul class="skills-pills-list" id="skillsHumanList"></ul>
+                            </div>
+
+                            <!-- Outils & Logiciels -->
+                            <div class="skills-column-card">
+                                <div class="skills-card-header">
+                                    <span class="skills-header-icon">🛠️</span>
+                                    <div>
+                                        <h2 class="skills-col-title">Outils & Technologies</h2>
+                                        <p class="skills-col-sub">Écosystème matériel et logiciel phare</p>
+                                    </div>
+                                </div>
+                                <ul class="skills-pills-list" id="skillsToolsList"></ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 3. FORMATIONS & ÉTUDES AU SÉNÉGAL (CNOSP & VISION 2050) -->
+                    <section id="panelStudies" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-studies" style="display:none;">
+                        <div class="senegal-studies-card">
+                            <div class="studies-card-header">
+                                <span class="studies-flag-badge">🇸🇳</span>
+                                <div>
+                                    <h2 class="card-section-title" style="margin:0 0 0.25rem 0;">Parcours d'Orientation & Études au Sénégal</h2>
+                                    <p class="text-muted" style="margin:0; font-size:0.9rem;">Repères pédagogiques du CNOSP, formations d'excellence et vision prospective</p>
+                                </div>
+                            </div>
+
+                            <div class="studies-details-grid">
+                                <!-- Séries du Bac -->
+                                <div class="study-box">
+                                    <span class="study-box-label">Séries du Baccalauréat recommandées :</span>
+                                    <div class="study-tags-row" id="studyBacSeriesRow"></div>
+                                </div>
+
+                                <!-- Diplômes & Niveaux -->
+                                <div class="study-box">
+                                    <span class="study-box-label">Diplômes & Diplômes d'accès :</span>
+                                    <div class="study-diplomas-text" id="studyDiplomasText"></div>
+                                </div>
+
+                                <!-- Établissements & Universités au Sénégal -->
+                                <div class="study-box full-width">
+                                    <span class="study-box-label">Pôles Universitaires & Grandes Écoles au Sénégal :</span>
+                                    <div class="schools-grid" id="schoolsSenegalGrid"></div>
+                                </div>
+
+                                <!-- Certifications d'Excellence -->
+                                <div class="study-box full-width" id="certificationsContainer" style="display:none;">
+                                    <span class="study-box-label">Certifications professionnelles valorisées :</span>
+                                    <div class="certifications-pills-row" id="certificationsPillsRow"></div>
+                                </div>
+
+                                <!-- Pilier Sénégal 2050 -->
+                                <div class="study-box full-width" id="senegal2050Box" style="display:none;">
+                                    <div class="senegal-2050-banner">
+                                        <span class="senegal-2050-icon">🚀</span>
+                                        <div>
+                                            <strong style="color:#0f172a; display:block; font-size:1.02rem;">Contribution à la Transformation Nationale (Vision Sénégal 2050)</strong>
+                                            <p id="senegal2050Desc" style="margin:0.25rem 0 0 0; color:#475569; font-size:0.92rem;"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 4. SALAIRES & CARRIÈRE -->
+                    <section id="panelCareer" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-career" style="display:none;">
+                        <!-- Grille de rémunération -->
+                        <div class="job-info-card">
+                            <h2 class="card-section-title">Rémunération & Salaires indicatifs</h2>
+                            <p class="text-muted" style="margin-top:-0.35rem; margin-bottom:1.5rem; font-size:0.9rem;">
+                                Estimations brutes indicatives basées sur les conventions collectives, le marché ouest-africain (UEMOA) et international.
+                            </p>
+                            <div class="salary-scales-grid" id="salaryScalesGrid"></div>
+                        </div>
+
+                        <!-- Secteurs recruteurs & Débouchés -->
+                        <div class="job-info-card">
+                            <h2 class="card-section-title">Secteurs recruteurs & Types d'entreprises</h2>
+                            <div class="sectors-chips-row" id="recruitingSectorsRow"></div>
+                            
+                            <h3 class="mt-2" style="font-size:1.15rem; color:#0f172a;">Perspectives d'évolution & Passerelles</h3>
+                            <div class="job-rich-text" id="careerEvolutionText"></div>
+                        </div>
+                    </section>
+
+                    <!-- 5. JOURNÉE TYPE -->
+                    <section id="panelTypicalDay" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-typicalDay" style="display:none;">
+                        <div class="job-info-card">
+                            <h2 class="card-section-title">Une journée dans la vie de ce professionnel</h2>
+                            <p class="text-muted" style="margin-top:-0.35rem; margin-bottom:1.75rem; font-size:0.9rem;">
+                                Chronologie réaliste d'une journée de travail ordinaire pour mieux te projeter concrètement.
+                            </p>
+                            <div class="typical-day-timeline" id="typicalDayTimeline"></div>
+                        </div>
+                    </section>
+
+                    <!-- 6. MÉTIERS CONNEXES & PASSERELLES -->
+                    <section id="panelRelated" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-related" style="display:none;">
+                        <div class="job-info-card">
+                            <h2 class="card-section-title">Métiers proches & Passerelles de réorientation</h2>
+                            <p class="text-muted" style="margin-top:-0.35rem; margin-bottom:1.5rem; font-size:0.9rem;">
+                                Les métiers qui partagent des compétences communes, des passerelles directes ou un même univers professionnel.
+                            </p>
+                            <div class="related-jobs-grid" id="relatedJobsGrid"></div>
+                        </div>
+                    </section>
+
+                    <!-- RESSOURCES & VIDÉO (SI PRÉSENTES) -->
+                    <div class="job-info-card mt-2" id="jobVideoResourceCard" style="display:none;">
+                        <h2 class="card-section-title">Immersion Vidéo & Références officielles</h2>
+                        <div class="video-responsive-embed" id="videoResponsiveEmbed"></div>
+                    </div>
+
+                    <!-- MICRO-SONDAGE D'ORIENTATION -->
+                    <div class="job-satisfaction-survey-card mt-2" id="jobSatisfactionSurvey">
+                        <div class="survey-inner">
+                            <span class="survey-icon" aria-hidden="true">📊</span>
+                            <div class="survey-text-side">
+                                <h3 class="survey-title">Cette fiche métier vous aide-t-elle à clarifier votre orientation ?</h3>
+                                <p class="survey-desc">Votre avis nous permet d'améliorer en continu les fiches métiers du Club.</p>
+                            </div>
+                            <div class="survey-options-group" id="surveyButtonsGroup">
+                                <button type="button" class="btn-survey-vote" data-vote="yes">
+                                    <span>😍</span>
+                                    <span>Oui, beaucoup</span>
+                                </button>
+                                <button type="button" class="btn-survey-vote" data-vote="partial">
+                                    <span>🤔</span>
+                                    <span>En partie</span>
+                                </button>
+                                <button type="button" class="btn-survey-vote" data-vote="no">
+                                    <span>❌</span>
+                                    <span>Pas vraiment</span>
+                                </button>
+                            </div>
+                            <div class="survey-thank-you" id="surveyThankYou" style="display:none;">
+                                <span>🎉</span>
+                                <span>Merci pour votre retour précieux !</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SECTION D'ACCOMPAGNEMENT & MENTORAT -->
+                    <div class="job-mentor-cta-card mt-2">
+                        <div class="mentor-cta-content">
+                            <span class="mentor-icon">🎓</span>
+                            <div>
+                                <h3 style="margin:0 0 0.25rem 0; font-size:1.25rem; color:#0f172a;">Besoin d'un retour d'expérience d'un professionnel ?</h3>
+                                <p style="margin:0; color:#475569; font-size:0.92rem;">
+                                    Discutez directement avec des mentors et des diplômés du Club sur notre Forum pour affiner votre choix d'orientation.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mentor-cta-actions">
+                            <a href="forum.html" class="btn btn-primary">Échanger sur le Forum</a>
+                            <a href="formations.html" class="btn btn-outline-dark">Voir les Formations</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de notification (ex: lien copié) -->
+    <div id="jobDetailToast" class="job-detail-toast" role="status" aria-live="polite" style="display:none;">
+        <span id="toastIcon">✅</span>
+        <span id="toastMessage">Lien copié dans le presse-papier !</span>
+    </div>
+</main>
+
+<!-- PIED DE PAGE OFFICIEL -->
+<footer data-layout="footer" class="site-footer">
+    <div class="footer-card footer-card-centered">
+        <svg class="footer-bg-lines" viewBox="0 0 1200 450" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 300,450 L 600,120 L 800,280 L 1200,40" fill="none" stroke="rgba(245, 166, 35, 0.08)" stroke-width="1.5" />
+            <path d="M 150,450 L 500,170 L 700,320 L 1100,140" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1.2" />
+            <path d="M 450,450 L 720,200 L 950,350 L 1200,90" fill="none" stroke="rgba(245, 166, 35, 0.05)" stroke-width="1" />
+        </svg>
+
+        <div class="footer-centered-content">
+            <div class="footer-brand-header">
+                <a href="index.html" class="footer-brand-logo" aria-label="Accueil Le Monde du Travail">
+                    <img src="logo.webp" alt="Logo Le Monde du Travail" class="footer-logo-img" width="56" height="56" onerror="this.onerror=null; this.src='logo.png';">
+                    <span class="footer-site-title">Le Monde du Travail</span>
+                </a>
+                <p class="footer-mission-desc">
+                    Préparer une relève professionnelle de qualité, consciente et innovante. Accompagnement, orientation et compétences d'avenir pour bâtir demain.
+                </p>
+                <div class="footer-socials footer-socials-centered" id="footerSocialsContainer" aria-label="Réseaux sociaux">
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="twitter" aria-label="X (Twitter)">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="linkedin" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="instagram" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="facebook" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-links-grid">
+                <div class="footer-link-group">
+                    <h4 class="footer-group-title">Navigation</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="index.html" class="footer-link">Accueil</a></li>
+                        <li><a href="about.html" class="footer-link">À Propos</a></li>
+                        <li><a href="formations.html" class="footer-link">Formations</a></li>
+                        <li><a href="forum.html" class="footer-link">Forum & Entraide</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-link-group">
+                    <h4 class="footer-group-title">Ressources</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="job.html" class="footer-link">Métiers & Orientation</a></li>
+                        <li><a href="blog.html" class="footer-link">Actualités & Blog</a></li>
+                        <li><a href="login.html" class="footer-link">Espace Membre</a></li>
+                        <li><a href="about.html#contact" class="footer-link">Contact & Partenariats</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-link-group">
+                    <h4 class="footer-group-title">Légal & Éthique</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="about.html#charte" class="footer-link">Charte d'Orientation</a></li>
+                        <li><a href="about.html#confidentialite" class="footer-link">Politique de Confidentialité</a></li>
+                        <li><a href="about.html#cgu" class="footer-link">Conditions d'Utilisation</a></li>
+                        <li><a href="about.html#mentions" class="footer-link">Mentions Légales</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-back-to-top-container">
+                <button type="button" class="footer-back-to-top footer-back-to-top-centered" id="footerBackToTop" aria-label="Retourner en haut de page">
+                    <svg class="chevron-up-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    <span>RETOUR EN HAUT</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </div>
+</footer>
+
+<!-- SCRIPTS DE DONNÉES & MOTEURS -->
+<script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script defer src="js/config.js"></script>
+<script defer src="js/frontend-api.js"></script>
+<script defer src="js/analytics-tracker.js"></script>
+<script defer src="js/orientation-digital-data.js"></script>
+<script defer src="js/orientation-finance-data.js"></script>
+<script defer src="js/orientation-agri-data.js"></script>
+<script defer src="js/orientation-energy-data.js"></script>
+<script defer src="js/orientation-btp-data.js"></script>
+<script defer src="js/orientation-llsh-data.js"></script>
+<script defer src="js/orientation-industry-data.js"></script>
+<script defer src="js/orientation-geosciences-data.js"></script>
+<script defer src="js/orientation-health-data.js"></script>
+<script defer src="js/orientation-biochimie-data.js"></script>
+<script defer src="js/orientation-education-data.js"></script>
+<script defer src="js/orientation-environment-data.js"></script>
+<script defer src="js/orientation-hospitality-data.js"></script>
+<script defer src="js/orientation-communication-data.js"></script>
+<script defer src="js/orientation-data.js"></script>
+<script defer src="js/job-detail.js?v=20261003-1"></script>
+<script defer src="js/notifications.js?v=2.3.1"></script>
+<script defer src="js/layout.js?v=2.3.1"></script>
+<script defer src="js/main.js"></script>
+</body>
+</html>

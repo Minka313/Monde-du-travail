@@ -47,9 +47,10 @@ htmlFiles.forEach(file => {
   const hasScript = c.includes('theme-engine.js');
   const hasHeaderBtn = c.includes('headerThemeToggleBtn');
   const hasMobileBtn = c.includes('mobileThemeToggleBtn');
+  const hasMaintenanceBtn = file === 'maintenance.html' && c.includes('maintThemeToggleBtn') && c.includes('theme-toggle-btn');
 
-  if (hasScript && hasHeaderBtn && hasMobileBtn) {
-    console.log(`✅ [${file}] <head> script + desktop button + mobile button OK`);
+  if (hasScript && ((hasHeaderBtn && hasMobileBtn) || hasMaintenanceBtn)) {
+    console.log(`✅ [${file}] <head> script + theme toggle OK`);
   } else {
     console.error(`❌ [${file}] Manquant: ${!hasScript ? 'script ' : ''}${!hasHeaderBtn ? 'headerBtn ' : ''}${!hasMobileBtn ? 'mobileBtn' : ''}`);
     errors++;

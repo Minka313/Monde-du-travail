@@ -24,6 +24,19 @@
   --color-gray-800: #1e293b;
   --color-gray-900: #0f172a;
 
+  --surface-raised: #ffffff;
+  --surface-soft: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-subtle: #e2e8f0;
+  --accent-surface: #e0f2fe;
+  --accent-text: #0284c7;
+  --success-text: #16a34a;
+  --error-surface: #fef2f2;
+  --error-border: #fecaca;
+  --error-text: #991b1b;
+
   /* Typographie */
   --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
@@ -12939,6 +12952,19 @@ textarea {
   --color-gray-700: #e2e8f0;
   --color-gray-800: #f1f5f9;
   --color-gray-900: #ffffff;
+
+  --surface-raised: #131c2e;
+  --surface-soft: #162032;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #cbd5e1;
+  --border-subtle: #334155;
+  --accent-surface: rgba(56, 189, 248, 0.16);
+  --accent-text: #7dd3fc;
+  --success-text: #4ade80;
+  --error-surface: rgba(239, 68, 68, 0.15);
+  --error-border: rgba(248, 113, 113, 0.4);
+  --error-text: #fca5a5;
 }
 
 [data-theme="dark"] body {
@@ -13307,6 +13333,18 @@ textarea {
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2) !important;
 }
 
+[data-theme="dark"] .btn-outline-dark {
+  background: #1e293b !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+
+[data-theme="dark"] .btn-outline-dark:hover {
+  background: #26364f !important;
+  border-color: #38bdf8 !important;
+  color: #7dd3fc !important;
+}
+
 /* Transitions fluides au changement de thème */
 body,
 .site-header,
@@ -13320,4 +13358,1403 @@ body,
 .search-suggestions-dropdown,
 .theme-toggle-btn {
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+/* ==========================================================================
+   PAGE COMPLÈTE : FICHE MÉTIER DÉDIÉE (MOBILE FIRST & RESPONSIVE DESIGN)
+   ========================================================================== */
+
+.job-detail-page {
+  background-color: var(--color-bg, #f8fafc);
+  color: var(--color-text, #0f172a);
+  min-height: 100vh;
+}
+
+[data-theme="dark"] .job-detail-page {
+  background-color: #0b1120;
+  color: #f8fafc;
+}
+
+/* 1. Barre de navigation supérieure (Fil d'Ariane & Bouton Retour) */
+.job-detail-topbar-wrapper {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.85rem 0;
+  position: relative;
+  z-index: 20;
+}
+
+[data-theme="dark"] .job-detail-topbar-wrapper {
+  background: #0f172a;
+  border-color: #1e293b;
+}
+
+.job-detail-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.btn-back-clean {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 1.15rem;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-size: 0.88rem;
+  font-weight: 650;
+  border-radius: 9999px;
+  border: 1px solid #cbd5e1;
+  text-decoration: none;
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.btn-back-clean:hover {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  transform: translateX(-3px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+[data-theme="dark"] .btn-back-clean {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .btn-back-clean:hover {
+  background: #38bdf8;
+  color: #0f172a;
+  border-color: #38bdf8;
+}
+
+/* 2. Hero Section Immersif */
+.job-hero-section {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2.5rem, 5vw, 4.5rem) 0 2.5rem 0;
+  background-color: #0f172a;
+}
+
+.job-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.job-hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.22) saturate(1.2);
+}
+
+[data-theme="dark"] .job-hero-media img {
+  filter: brightness(0.16) saturate(1.1);
+}
+
+.job-hero-backdrop-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.82) 0%, rgba(15, 23, 42, 0.98) 100%);
+}
+
+.job-hero-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.job-hero-content {
+  max-width: 960px;
+}
+
+.job-hero-badges-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+}
+
+.job-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.2;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.pill-family {
+  background: rgba(59, 130, 246, 0.2);
+  color: #bfdbfe;
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+.pill-subdomain {
+  background: rgba(14, 165, 233, 0.2);
+  color: #bae6fd;
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.pill-domain {
+  background: rgba(168, 85, 247, 0.2);
+  color: #e9d5ff;
+  border-color: rgba(192, 132, 252, 0.35);
+}
+
+.pill-emerging {
+  background: rgba(245, 158, 11, 0.25);
+  color: #fef3c7;
+  border-color: rgba(251, 191, 36, 0.45);
+}
+
+.pill-source {
+  background: rgba(16, 185, 129, 0.2);
+  color: #a7f3d0;
+  border-color: rgba(52, 211, 153, 0.35);
+}
+
+.job-hero-title-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.job-hero-icon {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+.job-hero-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: clamp(1.85rem, 4.8vw, 3.1rem);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.15;
+  margin: 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.job-hero-headline {
+  font-size: clamp(0.98rem, 2.2vw, 1.15rem);
+  color: #cbd5e1;
+  line-height: 1.65;
+  margin-bottom: 1.85rem;
+  max-width: 840px;
+}
+
+/* 3. Bandeau Métriques Clés (Mobile First Grid) */
+.job-metrics-ribbon {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 540px) {
+  .job-metrics-ribbon {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metric-ribbon-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0.9rem 1.15rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  color: #ffffff;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.metric-ribbon-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+.metric-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.metric-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metric-label {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.metric-val {
+  font-size: 0.96rem;
+  font-weight: 750;
+  color: #f8fafc;
+}
+
+.metric-val-highlight {
+  color: #38bdf8;
+}
+
+/* 4. Barre d'outils et d'actions rapides */
+.job-actions-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-job-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.65rem 1.25rem;
+  min-height: 44px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-weight: 650;
+  font-size: 0.88rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+  text-decoration: none;
+}
+
+.btn-job-tool:hover {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.btn-job-tool.is-active {
+  background: #f59e0b;
+  color: #0f172a;
+  border-color: #f59e0b;
+  font-weight: 750;
+}
+
+.btn-tool-mentor {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border-color: #38bdf8;
+}
+
+.btn-tool-mentor:hover {
+  background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+  color: #0f172a;
+}
+
+/* 5. Onglets Collants / Sticky Mobile-First */
+.job-tabs-sticky-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="dark"] .job-tabs-sticky-wrapper {
+  background: rgba(15, 23, 42, 0.92);
+  border-color: #1e293b;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.job-tabs-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 0.75rem 0;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.job-tabs-track::-webkit-scrollbar {
+  display: none;
+}
+
+.job-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.65rem 1.15rem;
+  min-height: 44px;
+  white-space: nowrap;
+  border-radius: 9999px;
+  background: transparent;
+  color: #64748b;
+  font-weight: 650;
+  font-size: 0.88rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.job-tab-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.job-tab-btn.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.18);
+}
+
+[data-theme="dark"] .job-tab-btn {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .job-tab-btn:hover {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .job-tab-btn.active {
+  background: #38bdf8;
+  color: #0f172a;
+  border-color: #38bdf8;
+  box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+}
+
+/* 6. Mise en page du contenu & Cartes d'information */
+.job-main-content-layout {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.job-info-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+  transition: border-color 0.2s;
+}
+
+[data-theme="dark"] .job-info-card {
+  background: #111827;
+  border-color: #1f2937;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.job-highlight-card {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+  border: 1.5px solid #bae6fd;
+}
+
+[data-theme="dark"] .job-highlight-card {
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.25) 0%, rgba(12, 74, 110, 0.3) 100%);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.card-icon-badge {
+  font-size: 1.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.card-section-title {
+  font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+  font-weight: 750;
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 0.85rem;
+}
+
+[data-theme="dark"] .card-section-title {
+  color: #f8fafc;
+}
+
+.card-lead-text {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: #1e293b;
+  margin: 0;
+  font-weight: 550;
+}
+
+[data-theme="dark"] .card-lead-text {
+  color: #e2e8f0;
+}
+
+.job-rich-text p {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  color: #334155;
+  margin-bottom: 1rem;
+}
+
+.job-rich-text p:last-child {
+  margin-bottom: 0;
+}
+
+[data-theme="dark"] .job-rich-text p {
+  color: #cbd5e1;
+}
+
+/* Environnement de travail */
+.work-env-tags-grid {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.work-env-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.5rem 0.95rem;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .work-env-item {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+.env-bullet {
+  color: #059669;
+  font-weight: 800;
+}
+
+/* Missions principales */
+.missions-checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.mission-item-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 1.15rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.mission-item-card:hover {
+  transform: translateY(-2px);
+  border-color: #0284c7;
+}
+
+[data-theme="dark"] .mission-item-card {
+  background: #1a2234;
+  border-color: #27354f;
+}
+
+.mission-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #0284c7;
+  color: #ffffff;
+  font-weight: 750;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mission-text {
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: #1e293b;
+}
+
+[data-theme="dark"] .mission-text {
+  color: #e2e8f0;
+}
+
+/* 7. Compétences & Outils (3 Colonnes) */
+.skills-tri-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.skills-column-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
+}
+
+[data-theme="dark"] .skills-column-card {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.skills-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+[data-theme="dark"] .skills-card-header {
+  border-color: #1f2937;
+}
+
+.skills-header-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.skills-col-title {
+  font-size: 1.1rem;
+  font-weight: 750;
+  color: #0f172a;
+  margin: 0 0 2px 0;
+}
+
+[data-theme="dark"] .skills-col-title {
+  color: #f8fafc;
+}
+
+.skills-col-sub {
+  font-size: 0.82rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.skills-pills-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skills-pills-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.92rem;
+  color: #334155;
+  line-height: 1.45;
+}
+
+[data-theme="dark"] .skills-pills-list li {
+  color: #cbd5e1;
+}
+
+.skill-check {
+  color: #059669;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+/* 8. Formations au Sénégal (CNOSP & Vision 2050) */
+.senegal-studies-card {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 16px;
+  padding: clamp(1.25rem, 3vw, 2.25rem);
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="dark"] .senegal-studies-card {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.studies-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+[data-theme="dark"] .studies-card-header {
+  border-color: #1f2937;
+}
+
+.studies-flag-badge {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.studies-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.study-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.study-box.full-width {
+  grid-column: 1 / -1;
+}
+
+[data-theme="dark"] .study-box {
+  background: #1a2234;
+  border-color: #27354f;
+}
+
+.study-box-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  margin-bottom: 0.75rem;
+}
+
+[data-theme="dark"] .study-box-label {
+  color: #94a3b8;
+}
+
+.study-tags-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bac-pill {
+  padding: 0.35rem 0.8rem;
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  font-weight: 750;
+  font-size: 0.85rem;
+}
+
+[data-theme="dark"] .bac-pill {
+  background: #0c4a6e;
+  color: #7dd3fc;
+  border-color: #0284c7;
+}
+
+.schools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.school-card-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+[data-theme="dark"] .school-card-item {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.school-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.school-name {
+  display: block;
+  font-size: 0.94rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .school-name {
+  color: #f8fafc;
+}
+
+.school-desc {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.certifications-pills-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.certification-badge {
+  padding: 0.4rem 0.85rem;
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 650;
+}
+
+[data-theme="dark"] .certification-badge {
+  background: #78350f;
+  color: #fef3c7;
+  border-color: #b45309;
+}
+
+.senegal-2050-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #fef3c7 0%, #ffedd5 100%);
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+}
+
+[data-theme="dark"] .senegal-2050-banner {
+  background: linear-gradient(135deg, rgba(120, 53, 15, 0.3) 0%, rgba(154, 52, 18, 0.3) 100%);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.senegal-2050-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+/* 9. Grilles de Salaires & Secteurs */
+.salary-scales-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.salary-card {
+  padding: 1.5rem;
+  border-radius: 14px;
+  border: 1.5px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #f8fafc;
+  transition: transform 0.2s;
+}
+
+.salary-card:hover {
+  transform: translateY(-2px);
+}
+
+[data-theme="dark"] .salary-card {
+  background: #1a2234;
+  border-color: #27354f;
+}
+
+.salary-step {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+}
+
+.salary-figure {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .salary-figure {
+  color: #f8fafc;
+}
+
+.salary-note {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.sectors-chips-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 0.5rem;
+}
+
+.sector-badge {
+  padding: 0.4rem 0.9rem;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+[data-theme="dark"] .sector-badge {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+/* 10. Journée Type Timeline */
+.typical-day-timeline {
+  position: relative;
+  padding-left: 28px;
+  border-left: 2px solid #e2e8f0;
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+[data-theme="dark"] .typical-day-timeline {
+  border-color: #334155;
+}
+
+.timeline-step {
+  position: relative;
+}
+
+.timeline-badge {
+  position: absolute;
+  left: -35px;
+  top: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #0284c7;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 2px #0284c7;
+}
+
+[data-theme="dark"] .timeline-badge {
+  border-color: #0b1120;
+}
+
+.timeline-time {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #0284c7;
+  margin-bottom: 2px;
+}
+
+[data-theme="dark"] .timeline-time {
+  color: #38bdf8;
+}
+
+.timeline-title {
+  display: block;
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+[data-theme="dark"] .timeline-title {
+  color: #f8fafc;
+}
+
+.timeline-desc {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: #475569;
+  margin: 0;
+}
+
+[data-theme="dark"] .timeline-desc {
+  color: #94a3b8;
+}
+
+/* 11. Métiers Connexes Grille */
+.related-jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.related-job-card {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.related-job-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  border-color: #38bdf8;
+}
+
+[data-theme="dark"] .related-job-card {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.related-card-media {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+}
+
+.related-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.related-job-card:hover .related-card-media img {
+  transform: scale(1.05);
+}
+
+.related-card-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(6px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.related-card-body {
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.related-card-family {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #0284c7;
+  margin-bottom: 4px;
+}
+
+[data-theme="dark"] .related-card-family {
+  color: #38bdf8;
+}
+
+.related-card-title {
+  font-size: 1.05rem;
+  font-weight: 750;
+  color: #0f172a;
+  margin: 0 0 0.85rem 0;
+  line-height: 1.35;
+}
+
+[data-theme="dark"] .related-card-title {
+  color: #f8fafc;
+}
+
+.related-card-cta {
+  margin-top: auto;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #0284c7;
+}
+
+[data-theme="dark"] .related-card-cta {
+  color: #38bdf8;
+}
+
+/* 12. Micro-Sondage d'orientation */
+.job-satisfaction-survey-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1.5px solid #cbd5e1;
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+[data-theme="dark"] .job-satisfaction-survey-card {
+  background: linear-gradient(135deg, #131c2e 0%, #1a243a 100%);
+  border-color: #27354f;
+}
+
+.survey-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.survey-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.survey-text-side {
+  flex: 1 1 300px;
+}
+
+.survey-title {
+  font-size: 1.15rem;
+  font-weight: 750;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+}
+
+[data-theme="dark"] .survey-title {
+  color: #f8fafc;
+}
+
+.survey-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.survey-options-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-survey-vote {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.65rem 1.15rem;
+  min-height: 44px;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  font-weight: 650;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.btn-survey-vote:hover {
+  border-color: #0284c7;
+  color: #0284c7;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dark"] .btn-survey-vote {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .btn-survey-vote:hover {
+  border-color: #38bdf8;
+  color: #38bdf8;
+}
+
+.survey-thank-you {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 750;
+  color: #059669;
+  font-size: 1.05rem;
+}
+
+/* 13. Bannière d'accompagnement & Mentorat */
+.job-mentor-cta-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="dark"] .job-mentor-cta-card {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.mentor-cta-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1 1 340px;
+}
+
+.mentor-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mentor-cta-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* 14. Toast Feedback */
+.job-detail-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 0.85rem 1.4rem;
+  border-radius: 9999px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 650;
+  font-size: 0.9rem;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.job-detail-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 15. Vidéo Responsive Embed */
+.video-responsive-embed {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.video-responsive-embed iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* 16. Skeleton Loading */
+.job-detail-skeleton-hero {
+  padding: 3rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+[data-theme="dark"] .skeleton-shimmer {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 200% 100%;
+}
+
+.skeleton-badge-pill {
+  width: 140px;
+  height: 28px;
+  border-radius: 9999px;
+}
+
+.skeleton-title-lg {
+  width: 60%;
+  height: 44px;
+}
+
+.skeleton-desc-line {
+  width: 90%;
+  height: 20px;
+}
+
+.skeleton-chips-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 1rem;
+}
+
+.skeleton-chip-item {
+  width: 120px;
+  height: 38px;
+  border-radius: 9999px;
+}
+
+.skeleton-card-box {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 1.5rem;
+  border-radius: 16px;
+}
+
+@keyframes fadeInPanel {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================================================
+   PERFECTIONNEMENTS MOBILE-FIRST SUR LE CATALOGUE (JOB.HTML)
+   ========================================================================== */
+
+/* Actions rapides du Hero sur smartphone */
+@media (max-width: 640px) {
+  .orientation-quick-actions {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .btn-quick-nav {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    font-size: 0.94rem;
+  }
+
+  .orientation-search-box {
+    width: 100%;
+  }
+
+  .search-input-wrapper {
+    min-height: 50px;
+  }
+
+  .search-suggestions-dropdown {
+    max-height: 60vh;
+  }
+}
+
+/* Cartes métiers épurées et tactiles */
+.job-card-modern {
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.job-card-modern:active {
+  transform: scale(0.985);
+}
+
+.job-card-modern .btn-job-action {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 650;
+  text-decoration: none;
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.job-card-modern:hover .btn-job-action {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+[data-theme="dark"] .job-card-modern .btn-job-action {
+  background: #1e293b;
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .job-card-modern:hover .btn-job-action {
+  background: #38bdf8;
+  color: #0f172a;
+  border-color: #38bdf8;
+}
+
+/* Piste de défilement des sous-domaines */
+.subdomains-bar-track {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.subdomains-bar-track::-webkit-scrollbar {
+  display: none;
 }
