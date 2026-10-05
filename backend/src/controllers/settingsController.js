@@ -8,6 +8,7 @@ class SettingsController {
   static async getPublicSettings(req, res, next) {
     try {
       const publicSettings = await settingsService.getPublicSettings();
+      res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=600');
       res.json({ success: true, data: publicSettings });
     } catch (error) {
       next(error);
@@ -17,6 +18,7 @@ class SettingsController {
   static async getPublicSettingByKey(req, res, next) {
     try {
       const data = await settingsService.getPublicSetting(req.params.key);
+      res.setHeader('Cache-Control', 'public, max-age=60, s-maxage=120, stale-while-revalidate=600');
       res.json({ success: true, data });
     } catch (error) {
       next(error);

@@ -99,7 +99,6 @@ class AnalyticsService {
       }
 
       const log = await logPromise;
-      this.invalidateCache();
       return log;
     } catch (error) {
       logger.error('Erreur lors du suivi de la visite (AnalyticsService.trackVisit):', error);
@@ -124,13 +123,15 @@ class AnalyticsService {
       const sevenDaysAgo = new Date(nowMs - 7 * 24 * 60 * 60 * 1000);
       const thirtyDaysAgo = new Date(nowMs - 30 * 24 * 60 * 60 * 1000);
 
-      // Récupération des visites récentes et des totaux réels
+      // Récupération des visites récentes bornées (max 1000 entrées sur 30 jours) et des totaux réels
       const [recentLogs, totalVisitLogs, totalLoginLogsCount] = await Promise.all([
         prisma.auditLog.findMany({
           where: {
             module: 'analytics',
             action: 'site.visit',
+            createdAt: { gte: thirtyDaysAgo },
           },
+          take: 1000,
           select: {
             createdAt: true,
             resource: true,

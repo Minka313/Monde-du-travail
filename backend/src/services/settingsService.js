@@ -67,15 +67,36 @@ const DEFAULT_SETTINGS = [
   { key: 'social.tiktok', value: '', category: 'reseaux', label: 'Lien TikTok (optionnel)', isSensitive: false },
 ];
 
+let defaultsEnsured = false;
+let cachedPublicSettings = null;
+let cachedPublicSettingsTime = 0;
+const PUBLIC_SETTINGS_CACHE_TTL_MS = 60 * 1000; // 60s cache mémoire
+
 class SettingsService {
-  // Crée les paramètres manquants (idempotent, ne touche pas aux valeurs existantes)
-  static async ensureDefaults() {
-    for (const setting of DEFAULT_SETTINGS) {
-      await prisma.setting.upsert({
-        where: { key: setting.key },
-        update: {},
-        create: setting,
-      });
+  static invalidatePublicCache() {
+    cachedPublicSettings = null;
+    cachedPublicSettingsTime = 0;
+  }
+
+  // Crée les paramètres manquants (idempotent, ne s'exécute qu'au besoin pour ne pas saturer la DB)
+  static async ensureDefaults(force = false) {
+    if (defaultsEnsured && !force) return;
+    try {
+      const count = await prisma.setting.count();
+      if (count >= DEFAULT_SETTINGS.length && !force) {
+        defaultsEnsured = true;
+        return;
+      }
+      for (const setting of DEFAULT_SETTINGS) {
+        await prisma.setting.upsert({
+          where: { key: setting.key },
+          update: {},
+          create: setting,
+        });
+      }
+      defaultsEnsured = true;
+    } catch (e) {
+      logger.warn('Initialisation des paramètres par défaut reportée:', e.message);
     }
   }
 
@@ -87,9 +108,14 @@ class SettingsService {
   }
 
   /**
-   * Retourne les paramètres publics pour le frontend public
+   * Retourne les paramètres publics pour le frontend public avec mise en cache mémoire
    */
   static async getPublicSettings() {
+    const now = Date.now();
+    if (cachedPublicSettings && (now - cachedPublicSettingsTime < PUBLIC_SETTINGS_CACHE_TTL_MS)) {
+      return cachedPublicSettings;
+    }
+
     await this.ensureDefaults();
     const settings = await prisma.setting.findMany({
       where: { isSensitive: false },
@@ -119,6 +145,8 @@ class SettingsService {
       result['platform.maintenanceEstimatedReturn'] = 'Bientôt de retour';
     }
 
+    cachedPublicSettings = result;
+    cachedPublicSettingsTime = now;
     return result;
   }
 
@@ -169,6 +197,7 @@ class SettingsService {
     });
 
     // Effet immédiat du basculement ou de la modification des paramètres de maintenance
+    this.invalidatePublicCache();
     if (key.startsWith('platform.maintenance')) {
       const { resetMaintenanceCache } = require('../middleware/maintenance');
       resetMaintenanceCache();

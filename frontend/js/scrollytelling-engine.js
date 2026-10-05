@@ -73,16 +73,28 @@
       .home-topic-card, .testimonial-card, .scrolly-step-card
     `);
 
-    allRevealElements.forEach((el) => {
-      // Si l'élément a déjà été animé ou s'il est au-dessus/dans le viewport
-      const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight;
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.classList.add('is-revealed', 'revealed');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '120px 0px' });
 
-      if (rect.top < vh + 100) {
-        el.style.opacity = '1';
-        el.classList.add('is-revealed', 'revealed');
-      }
-    });
+      allRevealElements.forEach((el) => observer.observe(el));
+    } else {
+      allRevealElements.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        if (rect.top < vh + 100) {
+          el.style.opacity = '1';
+          el.classList.add('is-revealed', 'revealed');
+        }
+      });
+    }
   }
 
   /**
