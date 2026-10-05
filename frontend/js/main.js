@@ -400,7 +400,7 @@
       const img = e.target;
       if (img.dataset.fallbackApplied) return;
       img.dataset.fallbackApplied = 'true';
-      img.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80';
+      img.src = 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format,compress&fit=crop&q=65';
     }
   }, true);
 
@@ -1086,7 +1086,6 @@
             </div>
           `).join('');
         }
-      }
     } catch (_) {}
 
     const newsletterForm = document.getElementById('homeNewsletterForm');

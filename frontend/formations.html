@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&auto=format,compress&fit=crop&q=65" fetchpriority="high">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,7 +80,12 @@
 
     <main id="main-content">
         <section class="hero hero-visual scene" id="scene-formations-hero">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1100&auto=format&fit=crop&q=75" alt="Formations et compétences" fetchpriority="high">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&auto=format,compress&fit=crop&q=65"
+                 srcset="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=480&auto=format,compress&fit=crop&q=60 480w,
+                         https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&auto=format,compress&fit=crop&q=65 960w,
+                         https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&auto=format,compress&fit=crop&q=65 1200w"
+                 sizes="(max-width: 768px) 100vw, 1100px"
+                 alt="Formations et compétences" fetchpriority="high" decoding="async" width="1100" height="600" data-scrolly-scale="true">
             <div class="hero-aurora" aria-hidden="true"></div>
             <div class="hero-inner">
                 <div class="hero-content">
@@ -344,13 +350,30 @@
         const formationsMap = {};
 
         const formationImages = {
-          'Énergies renouvelables': 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&q=80',
-          'Prise de parole en public': 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&q=80',
-          'Leadership & Management': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&q=80',
-          'Développement personnel': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&q=80',
-          'Entrepreneuriat': 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&q=80',
-          'Communication efficace': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80',
+          'Énergies renouvelables': 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&auto=format,compress&fit=crop&q=65',
+          'Prise de parole en public': 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=600&auto=format,compress&fit=crop&q=65',
+          'Leadership & Management': 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=600&auto=format,compress&fit=crop&q=65',
+          'Développement personnel': 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=600&auto=format,compress&fit=crop&q=65',
+          'Entrepreneuriat': 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&auto=format,compress&fit=crop&q=65',
+          'Communication efficace': 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format,compress&fit=crop&q=65',
         };
+
+        function optimizeFormationImg(url, width = 600, quality = 65) {
+          if (!url || typeof url !== 'string') return '';
+          if (url.includes('images.unsplash.com')) {
+            try {
+              const u = new URL(url);
+              u.searchParams.set('w', String(width));
+              u.searchParams.set('auto', 'format,compress');
+              u.searchParams.set('fit', 'crop');
+              u.searchParams.set('q', String(quality));
+              return u.toString();
+            } catch (_) {
+              return url;
+            }
+          }
+          return url;
+        }
 
         function getYoutubeEmbedUrl(url) {
           if (!url) return null;
@@ -368,7 +391,7 @@
           const existing = document.getElementById('formation-dossier-overlay');
           if (existing) existing.remove();
 
-          const img = safeUrl(f.image || formationImages[f.title] || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80');
+          const img = optimizeFormationImg(safeUrl(f.image || formationImages[f.title] || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format,compress&fit=crop&q=65'), 600, 65);
           const embedUrl = getYoutubeEmbedUrl(f.videoUrl);
 
           // Normalize syllabus if string or object
@@ -833,7 +856,8 @@
           }
 
           container.innerHTML = filtered.map(formation => {
-            const img = safeUrl(formation.image || formationImages[formation.title] || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&q=80');
+            const rawImg = safeUrl(formation.image || formationImages[formation.title] || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format,compress&fit=crop&q=65');
+            const img = optimizeFormationImg(rawImg, 500, 65);
             const metaBadges = [];
             if (formation.category) metaBadges.push(`<span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.75rem;padding:0.2rem 0.5rem;border-radius:4px;font-weight:600;">${escapeHtml(formation.category)}</span>`);
             if (formation.duration) metaBadges.push(`<span class="badge" style="background:#f1f5f9;color:#475569;font-size:0.75rem;padding:0.2rem 0.5rem;border-radius:4px;"><i class="fas fa-clock"></i> ${escapeHtml(formation.duration)}</span>`);
@@ -843,7 +867,7 @@
               <article class="card formation-card" style="display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;transition:transform 0.2s ease, box-shadow 0.2s ease;" data-id="${formation.id}">
                 <div>
                   <div class="card-image-wrap" style="position:relative;">
-                    <img src="${escapeHtml(img)}" alt="${escapeHtml(formation.title)}" loading="lazy">
+                    <img src="${escapeHtml(img)}" alt="${escapeHtml(formation.title)}" loading="lazy" decoding="async" width="400" height="225">
                     <div class="card-image-overlay"></div>
                     ${formation.category ? `
                       <span style="position:absolute;top:10px;left:10px;background:rgba(15,23,42,0.85);color:#f8fafc;font-size:0.72rem;font-weight:600;padding:0.25rem 0.55rem;border-radius:4px;backdrop-filter:blur(4px);">

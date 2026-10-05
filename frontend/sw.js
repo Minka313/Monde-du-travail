@@ -4,7 +4,7 @@
  * 2. Gestionnaire des notifications Push natives (W3C Push API)
  */
 
-const CACHE_NAME = 'lmt-static-v2.4.0';
+const CACHE_NAME = 'lmt-static-v2.4.1';
 
 // Assets critiques pré-mis en cache
 const PRECACHE_ASSETS = [
@@ -42,7 +42,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Interception des requêtes HTTP (Stratégie Stale-While-Revalidate pour assets statiques)
+// Interception des requêtes HTTP (Stratégie Stale-While-Revalidate pour assets statiques & images)
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
@@ -52,14 +52,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2. Traitement des assets statiques éligibles (CSS, JS, images locales, polices Google Fonts)
+  // 2. Traitement des assets statiques éligibles (CSS, JS, images locales, images Unsplash, polices Google Fonts)
   const isStaticAsset =
     url.pathname.endsWith('.css') ||
     url.pathname.endsWith('.js') ||
     url.pathname.endsWith('.webp') ||
     url.pathname.endsWith('.png') ||
     url.pathname.endsWith('.jpg') ||
+    url.pathname.endsWith('.jpeg') ||
     url.pathname.endsWith('.svg') ||
+    url.hostname === 'images.unsplash.com' ||
     url.hostname === 'fonts.gstatic.com' ||
     url.hostname === 'fonts.googleapis.com';
 
@@ -70,7 +72,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(req).then((cachedResponse) => {
       const fetchPromise = fetch(req).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
+        if (networkResponse && (networkResponse.status === 200 || networkResponse.type === 'opaque')) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(req, responseToCache);
