@@ -75,7 +75,7 @@ async function runBenchmarkAndVerification() {
     assert(Array.isArray(vercelConfig.regions) && vercelConfig.regions.includes('lhr1'), 'vercel.json configuré en région lhr1 (Londres)');
 
     const swContent = fs.readFileSync(path.resolve(__dirname, '../frontend/sw.js'), 'utf-8');
-    assert(swContent.includes('lmt-static-v2.4.0'), 'sw.js contient la nouvelle version du cache statique');
+    assert(swContent.includes('lmt-static-v2.4.1'), 'sw.js contient la nouvelle version du cache statique v2.4.1');
 
     console.log(`\n=== RÉSULTATS : ${passed}/${total} VÉRIFICATIONS RÉUSSIES ===`);
   } catch (error) {

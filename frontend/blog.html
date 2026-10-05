@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&auto=format,compress&fit=crop&q=65" fetchpriority="high">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,7 +80,12 @@
 
     <main id="main-content">
         <section class="hero hero-visual hero-scene scene" data-scene="blog-hero">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1100&auto=format&fit=crop&q=75" alt="Blog et actualités du club" fetchpriority="high">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&auto=format,compress&fit=crop&q=65"
+                 srcset="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=480&auto=format,compress&fit=crop&q=60 480w,
+                         https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&auto=format,compress&fit=crop&q=65 960w,
+                         https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&auto=format,compress&fit=crop&q=65 1200w"
+                 sizes="(max-width: 768px) 100vw, 1100px"
+                 alt="Blog et actualités du club" fetchpriority="high" decoding="async" width="1100" height="600" data-scrolly-scale="true">
             <div class="hero-aurora" aria-hidden="true"></div>
             <div class="hero-inner">
                 <div class="hero-content reveal-up">
@@ -264,16 +270,33 @@
         };
 
         const defaultImages = {
-          CLUB: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
-          FORMATION: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&q=80',
-          ATELIER: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80',
-          RENCONTRE: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80',
-          CONFERENCE: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=800&q=80',
-          VISITE: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',
-          PROJET: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
-          TEMOIGNAGE: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
-          ANNONCE: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80'
+          CLUB: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format,compress&fit=crop&q=65',
+          FORMATION: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format,compress&fit=crop&q=65',
+          ATELIER: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&auto=format,compress&fit=crop&q=65',
+          RENCONTRE: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&auto=format,compress&fit=crop&q=65',
+          CONFERENCE: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=600&auto=format,compress&fit=crop&q=65',
+          VISITE: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&auto=format,compress&fit=crop&q=65',
+          PROJET: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format,compress&fit=crop&q=65',
+          TEMOIGNAGE: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&auto=format,compress&fit=crop&q=65',
+          ANNONCE: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&auto=format,compress&fit=crop&q=65'
         };
+
+        function optimizeBlogImg(url, width = 600, quality = 65) {
+          if (!url || typeof url !== 'string') return '';
+          if (url.includes('images.unsplash.com')) {
+            try {
+              const u = new URL(url);
+              u.searchParams.set('w', String(width));
+              u.searchParams.set('auto', 'format,compress');
+              u.searchParams.set('fit', 'crop');
+              u.searchParams.set('q', String(quality));
+              return u.toString();
+            } catch (_) {
+              return url;
+            }
+          }
+          return url;
+        }
 
         let currentCategory = '';
         let currentSearch = '';
@@ -295,14 +318,15 @@
             return;
           }
 
-          const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
+          const rawImg = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
+          const img = optimizeBlogImg(rawImg, 800, 70);
           const categoryLabel = categoryLabels[post.category] || post.category;
           const categoryIcon = categoryIcons[post.category] || '📄';
 
           featuredContainer.innerHTML = `
             <article class="blog-featured-card">
               <div class="blog-featured-image">
-                <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="eager">
+                <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="eager" decoding="async" width="800" height="450">
                 <div class="blog-featured-overlay"></div>
               </div>
               <div class="blog-featured-content">
@@ -398,14 +422,15 @@
             }
 
             container.innerHTML = posts.map((post, idx) => {
-              const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
+              const rawImg = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
+              const img = optimizeBlogImg(rawImg, 450, 65);
               const categoryLabel = categoryLabels[post.category] || post.category;
               const categoryIcon = categoryIcons[post.category] || '📄';
 
               return `
                 <article class="card stagger-item" data-blog-post-id="${post.id}" style="--stagger-idx: ${idx};">
                   <div class="card-image-wrap">
-                    <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy">
+                    <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy" decoding="async" width="400" height="240">
                     <div class="card-image-overlay"></div>
                   </div>
                   <div class="card-body">
@@ -434,7 +459,7 @@
                   title: 'Lancement officiel du Club Le Monde du Travail',
                   excerpt: 'Retour sur la cérémonie de lancement du club et les ambitions qui animent notre communauté de jeunes professionnels.',
                   category: 'CLUB',
-                  coverImage: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
+                  coverImage: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format,compress&fit=crop&q=65',
                   publishedAt: '2026-08-01',
                   author: { firstName: 'Khadimoul', lastName: 'Barham' }
                 },
@@ -443,7 +468,7 @@
                   title: 'Conférence : Les métiers de demain en Afrique',
                   excerpt: 'Quels sont les secteurs qui recruteront le plus dans les 10 prochaines années sur le continent africain ?',
                   category: 'CONFERENCE',
-                  coverImage: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=800&q=80',
+                  coverImage: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=600&auto=format,compress&fit=crop&q=65',
                   publishedAt: '2026-08-25',
                   author: { firstName: 'Khadimoul', lastName: 'Barham' }
                 },
@@ -452,7 +477,7 @@
                   title: 'Témoignage : « Le club a changé ma vision du travail »',
                   excerpt: 'Fatou, membre depuis 6 mois, raconte comment le club a transformé son approche professionnelle.',
                   category: 'TEMOIGNAGE',
-                  coverImage: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800&q=80',
+                  coverImage: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&auto=format,compress&fit=crop&q=65',
                   publishedAt: '2026-09-05',
                   author: { firstName: 'Khadimoul', lastName: 'Barham' }
                 }

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=960&auto=format,compress&fit=crop&q=65" fetchpriority="high">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,7 +80,12 @@
 
     <main id="main-content">
         <section class="hero hero-visual hero-scene scene" data-scene="about-hero">
-            <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1100&auto=format&fit=crop&q=75" alt="Équipe et collaboration" fetchpriority="high">
+            <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=960&auto=format,compress&fit=crop&q=65"
+                 srcset="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=480&auto=format,compress&fit=crop&q=60 480w,
+                         https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=960&auto=format,compress&fit=crop&q=65 960w,
+                         https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1200&auto=format,compress&fit=crop&q=65 1200w"
+                 sizes="(max-width: 768px) 100vw, 1100px"
+                 alt="Équipe et collaboration" fetchpriority="high" decoding="async" width="1100" height="600" data-scrolly-scale="true">
             <div class="hero-aurora" aria-hidden="true"></div>
             <div class="hero-inner">
                 <div class="hero-content reveal-up">
@@ -156,7 +162,7 @@
                         </div>
                     </div>
                     <div class="split-image-wrap reveal-scale">
-                        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=900&auto=format&fit=crop&q=75" alt="Équipe et collaboration" loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=800&auto=format,compress&fit=crop&q=65" alt="Équipe et collaboration" loading="lazy" decoding="async" width="550" height="360">
                     </div>
                 </div>
 
@@ -180,7 +186,7 @@
                         </div>
                     </div>
                     <div class="split-image-wrap reveal-scale">
-                        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&q=80" alt="Mission et motivations" loading="lazy">
+                        <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&auto=format,compress&fit=crop&q=65" alt="Mission et motivations" loading="lazy" decoding="async" width="550" height="360">
                     </div>
                 </div>
             </div>
@@ -295,7 +301,7 @@
                 <div class="cards-grid stagger-group">
                     <div class="card stagger-item reveal-scale">
                         <div class="card-image-wrap">
-                            <img src="images/innovation.jpg" alt="Innovation et technologie" loading="lazy">
+                            <img src="images/innovation.webp" alt="Innovation et technologie" loading="lazy" decoding="async" width="400" height="260">
                             <div class="card-image-overlay"></div>
                         </div>
                         <div class="card-body">
@@ -305,7 +311,7 @@
                     </div>
                     <div class="card stagger-item reveal-scale">
                         <div class="card-image-wrap">
-                            <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=500&auto=format&fit=crop&q=75" alt="Éthique et responsabilité" loading="lazy">
+                            <img src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=500&auto=format,compress&fit=crop&q=65" alt="Éthique et responsabilité" loading="lazy" decoding="async" width="400" height="260">
                             <div class="card-image-overlay"></div>
                         </div>
                         <div class="card-body">
@@ -315,7 +321,7 @@
                     </div>
                     <div class="card stagger-item reveal-scale">
                         <div class="card-image-wrap">
-                            <img src="images/citoyennete.jpg" alt="Citoyenneté et engagement" loading="lazy">
+                            <img src="images/citoyennete.webp" alt="Citoyenneté et engagement" loading="lazy" decoding="async" width="400" height="260">
                             <div class="card-image-overlay"></div>
                         </div>
                         <div class="card-body">
