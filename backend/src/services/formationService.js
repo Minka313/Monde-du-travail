@@ -28,17 +28,14 @@ class FormationService {
     });
   }
 
-  // Catégories distinctes existantes
+  // Catégories distinctes existantes via SQL distinct
   static async getCategories() {
     const formations = await prisma.formation.findMany({
-      where: { status: 'PUBLISHED' },
+      where: { status: 'PUBLISHED', category: { not: null } },
+      distinct: ['category'],
       select: { category: true },
     });
-    const categories = new Set();
-    formations.forEach(f => {
-      if (f.category && f.category.trim()) categories.add(f.category.trim());
-    });
-    return Array.from(categories);
+    return formations.map(f => f.category.trim()).filter(Boolean);
   }
 
   // Liste admin : filtres par statut, auteur (« mes créations »), recherche

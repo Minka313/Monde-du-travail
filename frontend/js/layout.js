@@ -81,20 +81,28 @@
     try {
       const apiUrl = (window.LMT_CONFIG && window.LMT_CONFIG.API_URL) ? window.LMT_CONFIG.API_URL : '/api';
       const cacheKey = 'lmt_public_settings';
+      const cacheTimeKey = 'lmt_public_settings_time';
       let settings = null;
       try {
         const cached = sessionStorage.getItem(cacheKey);
-        if (cached) settings = JSON.parse(cached);
+        const cachedTime = parseInt(sessionStorage.getItem(cacheTimeKey) || '0', 10);
+        if (cached && (Date.now() - cachedTime < 60000)) {
+          settings = JSON.parse(cached);
+          window.__LMT_PUBLIC_SETTINGS__ = settings;
+        }
       } catch (_) {}
 
-      // Ne pas bloquer l'appel si on doit vérifier la maintenance fraîchement
-      const res = await fetch(`${apiUrl}/settings/public`, { cache: 'no-store' });
-      if (res.ok) {
-        const json = await res.json();
-        settings = json.data || {};
-        try {
-          sessionStorage.setItem(cacheKey, JSON.stringify(settings));
-        } catch (_) {}
+      if (!settings) {
+        const res = await fetch(`${apiUrl}/settings/public`);
+        if (res.ok) {
+          const json = await res.json();
+          settings = json.data || {};
+          window.__LMT_PUBLIC_SETTINGS__ = settings;
+          try {
+            sessionStorage.setItem(cacheKey, JSON.stringify(settings));
+            sessionStorage.setItem(cacheTimeKey, String(Date.now()));
+          } catch (_) {}
+        }
       }
 
       if (!settings) return;

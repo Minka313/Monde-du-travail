@@ -1023,13 +1023,25 @@
 
     // Hydratation dynamique de la vitrine ("À la Une ce mois-ci" et "Les Grandes Étapes du Club")
     try {
-      const res = await fetch((window.Api?.API_BASE || '/api') + '/settings/public');
-      if (res.ok) {
-        const json = await res.json();
-        const settings = json.data || {};
+      let settings = window.__LMT_PUBLIC_SETTINGS__;
+      if (!settings) {
+        try {
+          const cached = sessionStorage.getItem('lmt_public_settings');
+          if (cached) settings = JSON.parse(cached);
+        } catch (_) {}
+      }
+      if (!settings) {
+        const res = await fetch((window.Api?.API_BASE || '/api') + '/settings/public');
+        if (res.ok) {
+          const json = await res.json();
+          settings = json.data || {};
+          window.__LMT_PUBLIC_SETTINGS__ = settings;
+        }
+      }
+      if (!settings) return;
 
-        // 1. "À la Une ce mois-ci" (Accueil)
-        const featCard = document.querySelector('#scene-featured .home-featured-card');
+      // 1. "À la Une ce mois-ci" (Accueil)
+      const featCard = document.querySelector('#scene-featured .home-featured-card');
         if (featCard && settings['home.featured_monthly']) {
           const feat = settings['home.featured_monthly'];
           const tagEl = featCard.querySelector('.featured-tag');

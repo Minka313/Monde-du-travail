@@ -2488,9 +2488,6 @@
       });
     }
 
-    // Préchargement de la base de données
-    await window.OrientationData.getAllJobs();
-
     // Analyse des paramètres d'URL (Deep Linking)
     const urlParams = new URLSearchParams(window.location.search);
     const familyParam = urlParams.get('family');
@@ -2505,11 +2502,13 @@
     }
 
     if (familyParam) {
+      await window.OrientationData.getAllJobs();
       setView('FAMILY_DRILLDOWN', { familyId: familyParam, domain: domainParam || 'all', subdomain: subdomainParam || 'all' });
       setTimeout(() => {
         scrollToElement(dom.familyDrilldownContainer || dom.explorerSection || 200, -80);
       }, 150);
     } else if (searchParam) {
+      await window.OrientationData.getAllJobs();
       if (dom.heroSearchInput) dom.heroSearchInput.value = searchParam;
       AppState.searchQuery = searchParam;
       setView('SEARCH');
@@ -2521,8 +2520,20 @@
       setTimeout(() => {
         scrollToElement(dom.interestExplorerWrap || dom.interestExplorerBox || dom.explorerSection || 200, -80);
       }, 150);
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => window.OrientationData.getAllJobs());
+      } else {
+        setTimeout(() => window.OrientationData.getAllJobs(), 800);
+      }
     } else {
+      // Affichage instantané du niveau 1 (23 Grandes Familles) sans bloquer
       setView('FAMILIES');
+      // Préchargement progressif non bloquant en arrière-plan
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => window.OrientationData.getAllJobs());
+      } else {
+        setTimeout(() => window.OrientationData.getAllJobs(), 1200);
+      }
     }
   });
 

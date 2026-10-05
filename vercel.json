@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "regions": ["lhr1"],
   "builds": [
     {
       "src": "api/index.js",
@@ -50,6 +51,11 @@
     {
       "src": "/admin-frontend/(.*)",
       "dest": "/admin-frontend/$1"
+    },
+    {
+      "src": "/css/styles\\.css",
+      "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800" },
+      "dest": "/frontend/css/styles.min.css"
     },
     {
       "src": "/css/(.*)",

@@ -29,17 +29,14 @@ class JobService {
     });
   }
 
-  // Obtenir la liste distincte des domaines / catalogues
+  // Obtenir la liste distincte des domaines / catalogues via SQL distinct
   static async getDomains() {
     const jobs = await prisma.job.findMany({
-      where: { status: 'PUBLISHED' },
-      select: { domain: true, category: true },
+      where: { status: 'PUBLISHED', domain: { not: null } },
+      distinct: ['domain'],
+      select: { domain: true },
     });
-    const domains = new Set();
-    jobs.forEach(j => {
-      if (j.domain && j.domain.trim()) domains.add(j.domain.trim());
-    });
-    return Array.from(domains);
+    return jobs.map(j => j.domain.trim()).filter(Boolean);
   }
 
   // Liste admin : filtres par statut, auteur (« mes créations »), recherche
