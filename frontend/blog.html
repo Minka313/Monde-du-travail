@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     <link rel="dns-prefetch" href="https://images.unsplash.com">
-    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&auto=format,compress&fit=crop&q=65" fetchpriority="high">
+    <link rel="preload" as="image" href="images/hero_senegalese_youth_960.webp" fetchpriority="high">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@
     <meta property="og:site_name" content="Le Monde du Travail">
     <meta property="og:title" content="Blog & Actualités — Le Monde du Travail">
     <meta property="og:description" content="Articles, retours d'expérience, conseils carrière et rétrospectives d'événements du club.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&q=80">
+    <meta property="og:image" content="images/hero_senegalese_youth.webp">
     <meta name="twitter:card" content="summary_large_image">
     <title>Blog - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
@@ -80,12 +80,12 @@
 
     <main id="main-content">
         <section class="hero hero-visual hero-scene scene" data-scene="blog-hero">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&auto=format,compress&fit=crop&q=65"
-                 srcset="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=480&auto=format,compress&fit=crop&q=60 480w,
-                         https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=960&auto=format,compress&fit=crop&q=65 960w,
-                         https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&auto=format,compress&fit=crop&q=65 1200w"
+            <img src="images/hero_senegalese_youth_960.webp"
+                 srcset="images/hero_senegalese_youth_480.webp 480w,
+                         images/hero_senegalese_youth_960.webp 960w,
+                         images/hero_senegalese_youth.webp 1200w"
                  sizes="(max-width: 768px) 100vw, 1100px"
-                 alt="Blog et actualités du club" fetchpriority="high" decoding="async" width="1100" height="600" data-scrolly-scale="true">
+                 alt="Événements, initiatives et actualités de la jeunesse au Sénégal" fetchpriority="high" decoding="async" width="1200" height="675" data-scrolly-scale="true">
             <div class="hero-aurora" aria-hidden="true"></div>
             <div class="hero-inner">
                 <div class="hero-content reveal-up">
@@ -270,15 +270,15 @@
         };
 
         const defaultImages = {
-          CLUB: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format,compress&fit=crop&q=65',
-          FORMATION: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format,compress&fit=crop&q=65',
-          ATELIER: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&auto=format,compress&fit=crop&q=65',
-          RENCONTRE: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&auto=format,compress&fit=crop&q=65',
-          CONFERENCE: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=600&auto=format,compress&fit=crop&q=65',
-          VISITE: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&auto=format,compress&fit=crop&q=65',
-          PROJET: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format,compress&fit=crop&q=65',
-          TEMOIGNAGE: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&auto=format,compress&fit=crop&q=65',
-          ANNONCE: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=600&auto=format,compress&fit=crop&q=65'
+          CLUB: 'images/hero_senegalese_youth_960.webp',
+          FORMATION: 'images/formations_hero_960.webp',
+          ATELIER: 'images/about_team.webp',
+          RENCONTRE: 'images/leadership.webp',
+          CONFERENCE: 'images/communication.webp',
+          VISITE: 'images/citoyennete.webp',
+          PROJET: 'images/about_mission.webp',
+          TEMOIGNAGE: 'images/orientation.webp',
+          ANNONCE: 'images/innovation.webp'
         };
 
         function optimizeBlogImg(url, width = 600, quality = 65) {
@@ -459,7 +459,7 @@
                   title: 'Lancement officiel du Club Le Monde du Travail',
                   excerpt: 'Retour sur la cérémonie de lancement du club et les ambitions qui animent notre communauté de jeunes professionnels.',
                   category: 'CLUB',
-                  coverImage: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&auto=format,compress&fit=crop&q=65',
+                  coverImage: 'images/hero_senegalese_youth_960.webp',
                   publishedAt: '2026-08-01',
                   author: { firstName: 'Khadimoul', lastName: 'Barham' }
                 },
@@ -468,7 +468,7 @@
                   title: 'Conférence : Les métiers de demain en Afrique',
                   excerpt: 'Quels sont les secteurs qui recruteront le plus dans les 10 prochaines années sur le continent africain ?',
                   category: 'CONFERENCE',
-                  coverImage: 'https://images.unsplash.com/photo-1544531585-9847b68c8c86?w=600&auto=format,compress&fit=crop&q=65',
+                  coverImage: 'images/communication.webp',
                   publishedAt: '2026-08-25',
                   author: { firstName: 'Khadimoul', lastName: 'Barham' }
                 },
@@ -477,7 +477,7 @@
                   title: 'Témoignage : « Le club a changé ma vision du travail »',
                   excerpt: 'Fatou, membre depuis 6 mois, raconte comment le club a transformé son approche professionnelle.',
                   category: 'TEMOIGNAGE',
-                  coverImage: 'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&auto=format,compress&fit=crop&q=65',
+                  coverImage: 'images/orientation.webp',
                   publishedAt: '2026-09-05',
                   author: { firstName: 'Khadimoul', lastName: 'Barham' }
                 }

@@ -18,7 +18,7 @@
       aliases: ['cybersecurite-reseaux', 'data-decision', 'cybersecurite', 'data', 'numerique-informatique-ia'],
       icon: '💻',
       color: '#3b82f6', // Bleu vibrant
-      image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=450&auto=format&fit=crop&q=65',
+      image: 'images/innovation.webp',
       description: 'Concevoir les logiciels, architectures cloud, solutions d’intelligence artificielle, valoriser les données massives (Big Data) et sécuriser les réseaux et infrastructures critiques.',
       stats: { jobsEstimate: '100+ métiers', subdomainsCount: 28 },
       representativeJobs: ['Ingénieur IA & ML', 'Expert Cybersécurité / SOC', 'Data Scientist / Analyst', 'Développeur Full-Stack', 'Cloud Architect', 'Pentester'],
