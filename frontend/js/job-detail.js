@@ -165,7 +165,7 @@
     // 3. Hero Visual & Badges
     const heroImg = document.getElementById('jobHeroImg');
     if (heroImg) {
-      const rawImg = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=900&auto=format&fit=crop&q=75');
+      const rawImg = safeUrl(job.image, 'images/orientation.webp');
       heroImg.src = optimizeImageUrl(rawImg, 1100, 75);
       heroImg.alt = job.title;
     }
@@ -686,7 +686,7 @@
 
     relatedGrid.innerHTML = relatedList.slice(0, 6).map(rel => {
       const relSlug = rel.slug || rel.id;
-      const rawImg = safeUrl(rel.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400&auto=format&fit=crop&q=70');
+      const rawImg = safeUrl(rel.image, 'images/orientation.webp');
       const img = optimizeImageUrl(rawImg, 400, 70);
 
       return `

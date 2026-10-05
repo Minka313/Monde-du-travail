@@ -4,7 +4,7 @@
  * 2. Gestionnaire des notifications Push natives (W3C Push API)
  */
 
-const CACHE_NAME = 'lmt-static-v2.4.1';
+const CACHE_NAME = 'lmt-static-v2.5.0';
 
 // Assets critiques pré-mis en cache
 const PRECACHE_ASSETS = [

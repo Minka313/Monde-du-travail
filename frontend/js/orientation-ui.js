@@ -658,7 +658,7 @@
 
     dom.familiesGridContainer.innerHTML = families.map((family, idx) => {
       const sampleJobs = (family.representativeJobs || []).slice(0, 3);
-      const rawImg = safeUrl(family.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=420&auto=format&fit=crop&q=65');
+      const rawImg = safeUrl(family.image, 'images/orientation.webp');
       const img = optimizeImageUrl(rawImg, 420, 65);
 
       return `
@@ -1133,7 +1133,7 @@
     const visibleJobs = listToDisplay.slice(0, displayedCount);
 
     dom.jobsGridContainer.innerHTML = visibleJobs.map((job, idx) => {
-      const rawImg = safeUrl(job.image, 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=420&auto=format&fit=crop&q=65');
+      const rawImg = safeUrl(job.image, 'images/orientation.webp');
       const img = optimizeImageUrl(rawImg, 420, 65);
       const techSkills = job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.slice(0, 3) : [];
       const totalSkillsCount = (job.skills && Array.isArray(job.skills.technical) ? job.skills.technical.length : 0);
