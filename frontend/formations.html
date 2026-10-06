@@ -1357,30 +1357,42 @@
           initSimulator();
           renderCards();
 
-          // Check if URL search query is present
-          const urlParams = new URLSearchParams(window.location.search);
-          const searchParam = urlParams.get('search');
-          const catParam = urlParams.get('category');
+          function checkInitialUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search');
+            const catParam = urlParams.get('category');
+            const idParam = urlParams.get('id') || urlParams.get('formation') || (window.location.hash ? window.location.hash.replace(/^#/, '') : null);
 
-          if (catParam) {
-            currentCategory = catParam;
-            if (categoryPillsContainer) {
-              const targetPill = Array.from(categoryPillsContainer.querySelectorAll('.domain-pill')).find(p => p.getAttribute('data-category') === catParam);
-              if (targetPill) {
-                categoryPillsContainer.querySelectorAll('.domain-pill').forEach(b => b.classList.remove('active'));
-                targetPill.classList.add('active');
+            if (catParam) {
+              currentCategory = catParam;
+              if (categoryPillsContainer) {
+                const targetPill = Array.from(categoryPillsContainer.querySelectorAll('.domain-pill')).find(p => p.getAttribute('data-category') === catParam);
+                if (targetPill) {
+                  categoryPillsContainer.querySelectorAll('.domain-pill').forEach(b => b.classList.remove('active'));
+                  targetPill.classList.add('active');
+                }
+              }
+              renderCards();
+            }
+
+            if (idParam) {
+              const matchedById = allFormations.find(f => f.id === idParam);
+              if (matchedById) {
+                openFormationDetailModal(matchedById);
+                return;
               }
             }
-            renderCards();
-          }
 
-          if (searchParam) {
-            const q = searchParam.toLowerCase();
-            const matched = allFormations.find(f => f.title.toLowerCase().includes(q) || (f.category && f.category.toLowerCase().includes(q)));
-            if (matched) {
-              openFormationDetailModal(matched);
+            if (searchParam) {
+              const q = searchParam.toLowerCase();
+              const matched = allFormations.find(f => f.title.toLowerCase().includes(q) || (f.category && f.category.toLowerCase().includes(q)));
+              if (matched) {
+                openFormationDetailModal(matched);
+              }
             }
           }
+
+          checkInitialUrlParams();
 
         } catch (error) {
           console.warn('API non disponible, affichage des formations de secours :', error);
@@ -1391,6 +1403,7 @@
             initSearchInput();
             initSimulator();
             renderCards();
+            checkInitialUrlParams();
           }
         }
       });
