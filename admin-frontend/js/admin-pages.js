@@ -1670,6 +1670,7 @@
       html += `<a href="../frontend/job.html?job=${encodeURIComponent(item.id)}" target="_blank" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;margin-right:0.25rem;" title="Voir la fiche publique"><span>👁️</span> <span>Voir</span></a>`;
     }
     if (moduleKey === 'formations') {
+      html += `<a href="../frontend/formations.html?id=${encodeURIComponent(item.id)}" target="_blank" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;margin-right:0.25rem;" title="Voir la formation sur le site public"><span>👁️</span> <span>Voir</span></a>`;
       html += `<button type="button" class="btn btn-sm btn-info btn-formation-registrations" data-formation-id="${item.id}" data-formation-title="${encodeURIComponent(item.title || '')}" style="margin-right:0.25rem;display:inline-flex;align-items:center;gap:0.25rem;" title="Consulter la liste des inscrits et candidats"><span>👥</span> <span>Inscrits</span></button>`;
       html += `<button type="button" class="btn btn-sm btn-outline btn-formation-visio" data-formation-id="${item.id}" data-formation-title="${encodeURIComponent(item.title || '')}" style="margin-right:0.25rem;display:inline-flex;align-items:center;gap:0.25rem;border-color:#0284c7;color:#0284c7;" title="Lancer ou gérer la visioconférence Jitsi Meet"><span>🎥</span> <span>Visio Live</span></button>`;
     }
