@@ -1603,7 +1603,7 @@
 
   // Filtres courants des listes de contenu (formations / métiers)
   const contentFilters = {
-    formations: { status: '', mine: false, search: '', page: 1, pageSize: 25 },
+    formations: { status: '', mine: false, search: '', category: '', page: 1, pageSize: 25 },
     jobs: { status: '', mine: false, search: '', domain: '', page: 1, pageSize: 25 },
   };
   // Derniers items chargés, pour préremplir la modale d'édition
@@ -1723,6 +1723,9 @@
     if (isJob && filters.domain) {
       filtered = filtered.filter(i => (i.domain || '').toLowerCase().includes(filters.domain.toLowerCase()));
     }
+    if (!isJob && filters.category) {
+      filtered = filtered.filter(i => (i.category || '').toLowerCase() === filters.category.toLowerCase());
+    }
     if (filters.search) {
       const q = filters.search.toLowerCase().trim();
       filtered = filtered.filter(i => {
@@ -1752,13 +1755,22 @@
       .map(s => `<option value="${s}" ${filters.status === s ? 'selected' : ''}>${s ? STATUS_LABELS[s] : 'Tous les statuts'}</option>`)
       .join('');
 
-    // Domaines / Familles existants
+    // Domaines / Familles existants (métiers)
     const domainsSet = new Set(ORIENTATION_FAMILIES);
     items.forEach(i => { if (i.domain && i.domain.trim()) domainsSet.add(i.domain.trim()); });
     const allDomains = Array.from(domainsSet).sort();
 
     const domainOptions = ['', ...allDomains]
       .map(d => `<option value="${escapeHtml(d)}" ${filters.domain === d ? 'selected' : ''}>${d ? '📁 ' + escapeHtml(d) : 'Toutes les familles & domaines'}</option>`)
+      .join('');
+
+    // Filières / Catégories existantes (formations)
+    const categoriesSet = new Set();
+    items.forEach(i => { if (i.category && i.category.trim()) categoriesSet.add(i.category.trim()); });
+    const allCategories = Array.from(categoriesSet).sort();
+
+    const categoryOptions = ['', ...allCategories]
+      .map(c => `<option value="${escapeHtml(c)}" ${filters.category === c ? 'selected' : ''}>${c ? '📁 ' + escapeHtml(c) : 'Toutes les filières & catégories'}</option>`)
       .join('');
 
     const categoryCell = item => isJob
@@ -1770,7 +1782,7 @@
         <div class="card-header">
           <div>
             <h2 style="margin:0 0 0.25rem 0;">${config.title}</h2>
-            ${isJob ? `<p style="margin:0;font-size:0.85rem;color:#64748b;">Catalogue certifié & fiches métiers d'orientation en base de données Supabase.</p>` : ''}
+            ${isJob ? `<p style="margin:0;font-size:0.85rem;color:#64748b;">Catalogue certifié & fiches métiers d'orientation en base de données Supabase.</p>` : `<p style="margin:0;font-size:0.85rem;color:#64748b;">Catalogue certifié des programmes & formations pratiques en base de données Supabase.</p>`}
           </div>
           <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
             ${isJob ? `
@@ -1790,7 +1802,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem;background:#f8fafc;padding:0.75rem 1rem;border-radius:8px;border:1px solid #e2e8f0;">
           <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
             <span style="font-weight:600;color:#0f172a;display:inline-flex;align-items:center;gap:0.35rem;">
-              <span>💼</span> <span>${totalCount} métier${totalCount > 1 ? 's' : ''} au catalogue</span>
+              <span>${isJob ? '💼' : '📚'}</span> <span>${totalCount} ${isJob ? 'métier' : 'formation'}${totalCount > 1 ? 's' : ''} au catalogue</span>
             </span>
             <span class="badge badge-success" style="font-size:0.75rem;">${publishedCount} publié${publishedCount > 1 ? 's' : ''}</span>
             ${filteredCount !== totalCount ? `<span class="badge badge-primary" style="font-size:0.75rem;">${filteredCount} affiché${filteredCount > 1 ? 's' : ''}</span>` : ''}
@@ -1809,12 +1821,16 @@
             <label style="display:flex;align-items:center;gap:0.35rem;font-size:0.88rem;">Famille / Domaine&nbsp;
               <select id="content-domain-filter" style="max-width:320px;padding:0.35rem 0.6rem;border-radius:6px;border:1px solid #cbd5e1;">${domainOptions}</select>
             </label>
-          ` : ''}
+          ` : `
+            <label style="display:flex;align-items:center;gap:0.35rem;font-size:0.88rem;">Filière&nbsp;
+              <select id="content-category-filter" style="max-width:320px;padding:0.35rem 0.6rem;border-radius:6px;border:1px solid #cbd5e1;">${categoryOptions}</select>
+            </label>
+          `}
           <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.88rem;">
             <input type="checkbox" id="content-mine-filter" ${filters.mine ? 'checked' : ''}>
             Mes créations uniquement
           </label>
-          ${(filters.search || filters.domain || filters.status || filters.mine) ? `
+          ${(filters.search || filters.domain || filters.category || filters.status || filters.mine) ? `
             <button type="button" class="btn btn-sm btn-ghost" id="btn-reset-content-filters" style="font-size:0.8rem;color:#ef4444;">✕ Réinitialiser filtres</button>
           ` : ''}
         </div>
@@ -6584,6 +6600,15 @@
         });
       }
 
+      const categoryFilter = document.getElementById('content-category-filter');
+      if (categoryFilter) {
+        categoryFilter.addEventListener('change', () => {
+          contentFilters[contentKey].category = categoryFilter.value;
+          contentFilters[contentKey].page = 1;
+          loadPage(reloadPage);
+        });
+      }
+
       const searchFilter = document.getElementById('content-search-filter');
       if (searchFilter) {
         let searchDebounce;
@@ -6602,6 +6627,7 @@
         resetFiltersBtn.addEventListener('click', () => {
           contentFilters[contentKey].search = '';
           contentFilters[contentKey].domain = '';
+          contentFilters[contentKey].category = '';
           contentFilters[contentKey].status = '';
           contentFilters[contentKey].mine = false;
           contentFilters[contentKey].page = 1;
