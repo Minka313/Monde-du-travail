@@ -150,22 +150,28 @@ model Post {
 }
 
 model Topic {
-  id             String   @id @default(cuid())
+  id             String        @id @default(cuid())
   title          String
   content        String
   category       String
-  replyCount     Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  replyCount     Int           @default(0)
+  likeCount      Int           @default(0)
+  views          Int           @default(0)
+  bestReplyId    String?
+  isLocked       Boolean       @default(false)
+  isPinned       Boolean       @default(false)
+  isResolved     Boolean       @default(false)
+  isEdited       Boolean       @default(false)
+  editedAt       DateTime?
+  lastActivityAt DateTime      @default(now())
+  tags           String[]      @default([])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   authorId       String
-  isLocked       Boolean  @default(false)
-  isPinned       Boolean  @default(false)
-  isResolved     Boolean  @default(false)
-  lastActivityAt DateTime @default(now())
-  tags           String[] @default([])
-  views          Int      @default(0)
+  author         User          @relation(fields: [authorId], references: [id])
   replies        Reply[]
-  author         User     @relation(fields: [authorId], references: [id])
+  likes          TopicLike[]
+  reports        ForumReport[]
 
   @@index([category])
   @@index([isPinned])
@@ -174,16 +180,73 @@ model Topic {
 }
 
 model Reply {
-  id        String   @id @default(cuid())
-  content   String
-  createdAt DateTime @default(now())
-  topicId   String
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
-  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  id         String        @id @default(cuid())
+  content    String
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  isSolution Boolean       @default(false)
+  isEdited   Boolean       @default(false)
+  editedAt   DateTime?
+  likeCount  Int           @default(0)
+  topicId    String
+  authorId   String
+  author     User          @relation(fields: [authorId], references: [id])
+  topic      Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  likes      ReplyLike[]
+  reports    ForumReport[]
 
   @@index([topicId])
+  @@index([isSolution])
   @@map("replies")
+}
+
+model TopicLike {
+  id        String   @id @default(cuid())
+  topicId   String
+  userId    String
+  createdAt DateTime @default(now())
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserTopicLikes", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([topicId, userId])
+  @@index([topicId])
+  @@index([userId])
+  @@map("topic_likes")
+}
+
+model ReplyLike {
+  id        String   @id @default(cuid())
+  replyId   String
+  userId    String
+  createdAt DateTime @default(now())
+  reply     Reply    @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserReplyLikes", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([replyId, userId])
+  @@index([replyId])
+  @@index([userId])
+  @@map("reply_likes")
+}
+
+model ForumReport {
+  id         String            @id @default(cuid())
+  reason     String
+  details    String?
+  status     ForumReportStatus @default(PENDING)
+  reporterId String
+  topicId    String?
+  replyId    String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  reporter   User              @relation("UserForumReports", fields: [reporterId], references: [id], onDelete: Cascade)
+  topic      Topic?            @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  reply      Reply?            @relation(fields: [replyId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([topicId])
+  @@index([replyId])
+  @@index([reporterId])
+  @@map("forum_reports")
 }
 
 model AdminRole {
@@ -281,6 +344,9 @@ model User {
   pushSubscriptions  PushSubscription[]  @relation("UserPushSubscriptions")
   analyticsEvents    AnalyticsEvent[]    @relation("UserAnalyticsEvents")
   formationRegistrations FormationRegistration[] @relation("UserFormationRegistrations")
+  topicLikes         TopicLike[]         @relation("UserTopicLikes")
+  replyLikes         ReplyLike[]         @relation("UserReplyLikes")
+  forumReports       ForumReport[]       @relation("UserForumReports")
 
   @@map("users")
 }
@@ -496,6 +562,12 @@ enum NotificationType {
   ANNOUNCEMENT
   MEMBERSHIP
   SYSTEM
+}
+
+enum ForumReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
 }
 
 model Notification {

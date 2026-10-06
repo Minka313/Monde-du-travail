@@ -14,6 +14,7 @@
     <title>Sujet - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css">
+    <link rel="stylesheet" href="css/forum-advanced.css">
     <script src="js/theme-engine.js"></script>
 </head>
 <body>
@@ -73,11 +74,77 @@
         <section class="section">
             <div class="container">
                 <div id="topicContainer">
-                    <p class="text-muted">Chargement...</p>
+                    <p class="text-muted">Chargement de la discussion...</p>
+                </div>
+
+                <div id="similarTopicsContainer" class="similar-topics-section" style="display: none;">
+                    <h3>Discussions similaires recommandées</h3>
+                    <div id="similarTopicsGrid" class="similar-topics-grid"></div>
                 </div>
             </div>
         </section>
     </main>
+
+    <!-- Modale de Signalement -->
+    <div id="reportModal" class="forum-modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle">
+        <div class="forum-modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <h3 id="reportModalTitle" style="margin: 0;">🚩 Signaler ce message</h3>
+                <button type="button" class="btn-close-modal" id="btnCloseReportX" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--forum-muted);">&times;</button>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--forum-muted); margin-bottom: 1.25rem;">
+                Aidez-nous à préserver la qualité de la communauté. Les modérateurs examineront ce contenu avec attention.
+            </p>
+            <form id="reportForm">
+                <input type="hidden" id="reportTargetType" value="">
+                <input type="hidden" id="reportTargetId" value="">
+                <div style="margin-bottom: 1rem;">
+                    <label for="reportReason" style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Motif du signalement</label>
+                    <select id="reportReason" required style="width: 100%; padding: 0.65rem; border-radius: 8px; border: 1px solid var(--forum-border); background: var(--forum-card-bg); color: var(--forum-text);">
+                        <option value="SPAM">Spam ou sollicitation commerciale</option>
+                        <option value="INAPPROPRIATE">Propos injurieux, haineux ou inappropriés</option>
+                        <option value="HARASSMENT">Harcèlement ou dénigrement</option>
+                        <option value="OFF_TOPIC">Hors-sujet / message indésirable</option>
+                        <option value="OTHER">Autre motif</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label for="reportDetails" style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Précisions pour la modération (optionnel)</label>
+                    <textarea id="reportDetails" rows="3" placeholder="Donnez plus de contexte pour aider nos modérateurs..." style="width: 100%; padding: 0.65rem; border-radius: 8px; border: 1px solid var(--forum-border); background: var(--forum-card-bg); color: var(--forum-text);"></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn btn-ghost" id="btnCancelReport">Annuler</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitReport">Envoyer le signalement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modale d'Édition -->
+    <div id="editModal" class="forum-modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+        <div class="forum-modal-content" style="max-width: 620px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <h3 id="editModalTitle" style="margin: 0;">✎ Modifier</h3>
+                <button type="button" class="btn-close-modal" id="btnCloseEditX" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--forum-muted);">&times;</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editTargetType" value="">
+                <input type="hidden" id="editTargetId" value="">
+                <div id="editTitleGroup" style="margin-bottom: 1rem; display: none;">
+                    <label for="editTitleInput" style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Titre</label>
+                    <input type="text" id="editTitleInput" style="width: 100%; padding: 0.65rem; border-radius: 8px; border: 1px solid var(--forum-border); background: var(--forum-card-bg); color: var(--forum-text);">
+                </div>
+                <div style="margin-bottom: 1.5rem;">
+                    <label for="editContentInput" style="display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.4rem;">Contenu du message</label>
+                    <textarea id="editContentInput" rows="7" required style="width: 100%; padding: 0.65rem; border-radius: 8px; border: 1px solid var(--forum-border); background: var(--forum-card-bg); color: var(--forum-text); line-height: 1.5; font-family: inherit;"></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                    <button type="button" class="btn btn-ghost" id="btnCancelEdit">Annuler</button>
+                    <button type="submit" class="btn btn-primary" id="btnSubmitEdit">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <footer data-layout="footer" class="site-footer">
     <div class="footer-card footer-card-centered">
@@ -112,12 +179,6 @@
                     </a>
                     <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="facebook" aria-label="Facebook">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
-                    </a>
-                    <a href="" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="youtube" aria-label="YouTube" style="display: none;">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                    </a>
-                    <a href="" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="tiktok" aria-label="TikTok" style="display: none;">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-1.01-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.89 3.5 2.72 1.36-.07 2.59-.97 3.03-2.27.2-.55.26-1.14.25-1.73.02-4.91.01-9.83.01-14.74z"/></svg>
                     </a>
                 </div>
             </div>
@@ -155,7 +216,6 @@
                 </div>
             </div>
 
-            <!-- 3. Bouton Retour en Haut Centré -->
             <div class="footer-back-to-top-container">
                 <button type="button" class="footer-back-to-top footer-back-to-top-centered" id="footerBackToTop" aria-label="Retourner en haut de page">
                     <svg class="chevron-up-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -166,14 +226,12 @@
             </div>
         </div>
 
-        <!-- 4. Bandeau Inférieur Copyright Ocre / Ambré Centré -->
         <div class="footer-bottom-bar">
             <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
         </div>
     </div>
 </footer>
 
-    <!-- Smooth Scroll (Lenis) & Moteur d'Animation (GSAP + ScrollTrigger) -->
     <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -186,12 +244,34 @@
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('topicContainer');
+        const similarContainer = document.getElementById('similarTopicsContainer');
+        const similarGrid = document.getElementById('similarTopicsGrid');
         const params = new URLSearchParams(window.location.search);
         const topicId = params.get('id');
+
+        // Modales
+        const reportModal = document.getElementById('reportModal');
+        const reportForm = document.getElementById('reportForm');
+        const editModal = document.getElementById('editModal');
+        const editForm = document.getElementById('editForm');
 
         if (!topicId) {
           container.innerHTML = '<div class="forum-empty"><p>Sujet introuvable.</p></div>';
           return;
+        }
+
+        let currentTopicData = null;
+
+        function getCurrentUser() {
+          const token = window.Api.getToken();
+          if (!token) return null;
+          try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            return JSON.parse(decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')));
+          } catch (_) {
+            return null;
+          }
         }
 
         function escapeHtml(text) {
@@ -204,36 +284,176 @@
             .replace(/'/g, '&#039;');
         }
 
+        function parseMarkdown(text) {
+          if (!text) return '';
+          let escaped = escapeHtml(text);
+
+          // Code blocks ``` ... ```
+          escaped = escaped.replace(/```([\s\S]*?)```/g, (_, code) => `<pre><code>${code.trim()}</code></pre>`);
+
+          // Inline code `...`
+          escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+          // Citations blockquotes (> text)
+          escaped = escaped.replace(/(?:^|\n)&gt;\s?(.*)/g, '<blockquote>$1</blockquote>');
+
+          // Titres ###
+          escaped = escaped.replace(/^### (.*$)/gim, '<h4 style="margin: 0.75rem 0 0.4rem; font-size: 1.1rem;">$1</h4>');
+          escaped = escaped.replace(/^## (.*$)/gim, '<h3 style="margin: 0.85rem 0 0.5rem; font-size: 1.25rem;">$1</h3>');
+
+          // Gras et italique
+          escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+          escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+          // Liens [texte](url)
+          escaped = escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+          // Retours à la ligne
+          return escaped.replace(/\n/g, '<br>');
+        }
+
         function formatDate(dateString) {
           if (!dateString) return '';
-          return new Date(dateString).toLocaleString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+          return new Date(dateString).toLocaleString('fr-FR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+        }
+
+        function renderAuthorBadge(author) {
+          if (!author) return '';
+          if (author.adminRoles && author.adminRoles.length > 0) {
+            return '<span class="role-badge role-badge--admin">🛡️ Équipe</span>';
+          }
+          if (author.role === 'ADMIN' || author.role === 'ULTRA_ADMIN') {
+            return '<span class="role-badge role-badge--admin">🛡️ Admin</span>';
+          }
+          if (author.role === 'MENTOR') {
+            return '<span class="role-badge role-badge--mentor">🌟 Mentor</span>';
+          }
+          if (author.role === 'PRO') {
+            return '<span class="role-badge role-badge--pro">💼 Pro</span>';
+          }
+          return '';
         }
 
         function renderBadges(topic) {
           const badges = [];
-          if (topic.isPinned) badges.push('<span class="forum-badge forum-badge--pinned">Épinglé</span>');
-          if (topic.isResolved) badges.push('<span class="forum-badge forum-badge--resolved">Résolu</span>');
-          if (topic.isLocked) badges.push('<span class="forum-badge forum-badge--locked">Verrouillé</span>');
+          if (topic.isPinned) badges.push('<span class="forum-badge forum-badge--pinned">📌 Épinglé</span>');
+          if (topic.bestReplyId || topic.isResolved) badges.push('<span class="forum-badge forum-badge--resolved">✓ Solution trouvée</span>');
+          if (topic.isLocked) badges.push('<span class="forum-badge forum-badge--locked">🔒 Verrouillé</span>');
           if (topic.category) badges.push(`<span class="forum-badge forum-badge--category">${escapeHtml(topic.category)}</span>`);
           if (topic.tags && topic.tags.length) {
-            topic.tags.slice(0, 5).forEach(tag => badges.push(`<span class="forum-badge">#${escapeHtml(tag)}</span>`));
+            topic.tags.forEach(tag => badges.push(`<span class="forum-badge">#${escapeHtml(tag)}</span>`));
           }
           return badges.join('');
         }
 
-        function renderReply(reply, isAuthor = false) {
-          const authorName = reply.author ? `${escapeHtml(reply.author.firstName)} ${escapeHtml(reply.author.lastName)}` : 'Utilisateur';
+        function renderReply(reply, currentUser, isTopicAuthor) {
+          const authorName = reply.author ? `${escapeHtml(reply.author.firstName)} ${escapeHtml(reply.author.lastName)}` : 'Membre';
+          const authorBadge = renderAuthorBadge(reply.author);
+          const isReplyAuthor = currentUser && reply.authorId === currentUser.id;
+          const isStaff = currentUser && ['ADMIN', 'ULTRA_ADMIN'].includes(currentUser.role);
+          const isSolution = reply.isSolution || (currentTopicData && currentTopicData.bestReplyId === reply.id);
+          const editedNotice = reply.isEdited ? '<span class="edited-notice">(modifié)</span>' : '';
+
           return `
-            <div class="forum-reply">
-              <div class="forum-reply-header">
-                <div>
-                  <div class="forum-reply-author">${escapeHtml(authorName)}</div>
-                  <div class="forum-reply-date">${formatDate(reply.createdAt)}</div>
+            <div class="forum-reply ${isSolution ? 'forum-solution-card' : ''}" id="reply-${reply.id}">
+              ${isSolution ? `
+                <div class="forum-solution-header">
+                  <span>✓ SOLUTION VALIDÉE PAR L'AUTEUR</span>
+                </div>
+              ` : ''}
+              <div style="padding: 1.25rem;">
+                <div class="forum-reply-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                  <div>
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                      <span class="forum-reply-author" style="font-weight: 700;">${authorName}</span>
+                      ${authorBadge}
+                      ${isReplyAuthor ? '<span class="role-badge role-badge--author">Vous</span>' : ''}
+                    </div>
+                    <div class="forum-reply-date" style="font-size: 0.82rem; color: var(--forum-muted);">
+                      ${formatDate(reply.createdAt)} ${editedNotice}
+                    </div>
+                  </div>
+
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <button type="button" class="forum-upvote-btn ${reply.hasLiked ? 'active' : ''}" data-reply-id="${reply.id}" title="Voter pour cette réponse utile">
+                      <span class="upvote-icon">▲</span>
+                      <span class="upvote-count">${reply.likeCount || 0}</span>
+                    </button>
+
+                    ${(isTopicAuthor || isStaff) ? `
+                      <button type="button" class="btn-mark-solution ${isSolution ? 'is-solution' : ''}" data-reply-id="${reply.id}">
+                        ${isSolution ? '✓ Solution active' : 'Marquer comme solution'}
+                      </button>
+                    ` : ''}
+                  </div>
+                </div>
+
+                <div class="forum-reply-body" style="line-height: 1.65; color: var(--forum-text);">
+                  ${parseMarkdown(reply.content)}
+                </div>
+
+                <div class="forum-msg-actions">
+                  ${currentUser ? `
+                    <button type="button" class="forum-action-link btn-quote-reply" data-author="${escapeHtml(authorName)}" data-id="${reply.id}">
+                      ❝ Citer
+                    </button>
+                  ` : ''}
+
+                  ${(isReplyAuthor || isStaff) ? `
+                    <button type="button" class="forum-action-link btn-edit-reply" data-id="${reply.id}">
+                      ✎ Modifier
+                    </button>
+                    <button type="button" class="forum-action-link danger btn-delete-reply" data-id="${reply.id}">
+                      🗑 Supprimer
+                    </button>
+                  ` : ''}
+
+                  ${currentUser && !isReplyAuthor ? `
+                    <button type="button" class="forum-action-link btn-report-msg" data-type="reply" data-id="${reply.id}">
+                      🚩 Signaler
+                    </button>
+                  ` : ''}
+
+                  <button type="button" class="forum-action-link btn-copy-link" data-id="${reply.id}">
+                    🔗 Copier le lien
+                  </button>
                 </div>
               </div>
-              <div class="forum-reply-body">${escapeHtml(reply.content)}</div>
             </div>
           `;
+        }
+
+        async function loadSimilarTopics() {
+          try {
+            const res = await window.Api.forum.getSimilar(topicId);
+            const items = res.data || [];
+            if (!items.length) {
+              similarContainer.style.display = 'none';
+              return;
+            }
+
+            similarContainer.style.display = 'block';
+            similarGrid.innerHTML = items.map(sim => `
+              <a href="forum-topic.html?id=${sim.id}" class="similar-topic-card">
+                <div>
+                  <span class="forum-badge forum-badge--category" style="margin-bottom: 0.4rem;">${escapeHtml(sim.category)}</span>
+                  <div class="similar-topic-title">${escapeHtml(sim.title)}</div>
+                </div>
+                <div class="similar-topic-meta">
+                  <span>💬 ${sim.replyCount || 0} réponse${sim.replyCount > 1 ? 's' : ''}</span>
+                  ${sim.isResolved ? '<span style="color: var(--forum-emerald); font-weight:600;">✓ Résolu</span>' : ''}
+                </div>
+              </a>
+            `).join('');
+          } catch (e) {
+            similarContainer.style.display = 'none';
+          }
         }
 
         async function loadTopic() {
@@ -242,95 +462,459 @@
             const topic = response.data;
 
             if (!topic) {
-              container.innerHTML = '<div class="forum-empty"><p>Sujet non trouvé.</p></div>';
+              container.innerHTML = '<div class="forum-empty"><p>Sujet non trouvé ou supprimé.</p></div>';
               return;
             }
 
-            const authorName = topic.author ? `${escapeHtml(topic.author.firstName)} ${escapeHtml(topic.author.lastName)}` : 'Utilisateur';
+            currentTopicData = topic;
+            const currentUser = getCurrentUser();
+            const authorName = topic.author ? `${escapeHtml(topic.author.firstName)} ${escapeHtml(topic.author.lastName)}` : 'Membre';
+            const authorBadge = renderAuthorBadge(topic.author);
+            const isTopicAuthor = currentUser && topic.authorId === currentUser.id;
+            const isStaff = currentUser && ['ADMIN', 'ULTRA_ADMIN'].includes(currentUser.role);
             const token = window.Api.getToken();
             const canReply = token && !topic.isLocked;
+            const editedNotice = topic.isEdited ? '<span class="edited-notice">(modifié)</span>' : '';
 
             container.innerHTML = `
               <div class="forum-topic-detail">
                 <div class="forum-topic-header">
                   <div class="forum-badges">${renderBadges(topic)}</div>
-                  <h1 style="margin-top: var(--space-4);">${escapeHtml(topic.title)}</h1>
-                  <div class="forum-topic-meta">
-                    <span class="author">Par ${escapeHtml(authorName)}</span>
+                  <h1 style="margin-top: var(--space-4); margin-bottom: var(--space-3); font-size: 1.85rem;">
+                    ${escapeHtml(topic.title)}
+                  </h1>
+                  <div class="forum-topic-meta" style="margin-bottom: 1rem;">
+                    <span class="author">Par <strong>${authorName}</strong></span>
+                    ${authorBadge}
                     <span>·</span>
                     <span>${formatDate(topic.createdAt)}</span>
+                    ${editedNotice}
                     <span>·</span>
-                    <span>${topic.views || 0} vue${(topic.views || 0) > 1 ? 's' : ''}</span>
+                    <span>👁️ ${topic.views || 0} vue${(topic.views || 0) > 1 ? 's' : ''}</span>
                     <span>·</span>
-                    <span>${topic.replyCount || 0} réponse${(topic.replyCount || 0) > 1 ? 's' : ''}</span>
+                    <span>💬 ${topic.replyCount || 0} réponse${(topic.replyCount || 0) > 1 ? 's' : ''}</span>
                   </div>
-                  <div class="forum-topic-actions">
-                    <a class="btn btn-outline btn-sm" href="forum.html">← Retour au forum</a>
-                    ${token ? `<a class="btn btn-primary btn-sm" href="forum-create.html?category=${encodeURIComponent(topic.category || '')}">+ Nouvelle discussion</a>` : ''}
+
+                  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--forum-border); padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                      <button type="button" class="forum-upvote-btn ${topic.hasLiked ? 'active' : ''}" id="btnUpvoteTopic">
+                        <span class="upvote-icon">▲</span>
+                        <span class="upvote-count">${topic.likeCount || 0}</span>
+                        <span>Utile</span>
+                      </button>
+
+                      <button type="button" class="forum-action-link" id="btnShareTopic">
+                        🔗 Partager
+                      </button>
+
+                      ${currentUser && !isTopicAuthor ? `
+                        <button type="button" class="forum-action-link btn-report-msg" data-type="topic" data-id="${topic.id}">
+                          🚩 Signaler
+                        </button>
+                      ` : ''}
+                    </div>
+
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                      ${(isTopicAuthor || isStaff) ? `
+                        <button type="button" class="forum-action-link" id="btnEditTopic">
+                          ✎ Modifier
+                        </button>
+                        <button type="button" class="forum-action-link danger" id="btnDeleteTopic">
+                          🗑 Supprimer
+                        </button>
+                      ` : ''}
+                      <a class="btn btn-outline btn-sm" href="forum.html">← Retour au forum</a>
+                    </div>
                   </div>
                 </div>
-                <div class="forum-topic-body">${escapeHtml(topic.content)}</div>
+
+                <div class="forum-topic-body" style="font-size: 1.05rem; line-height: 1.7; color: var(--forum-text); margin-bottom: 2rem;">
+                  ${parseMarkdown(topic.content)}
+                </div>
               </div>
 
-              <div class="forum-section-title">
+              <div class="forum-section-title" style="margin-top: 2.5rem; margin-bottom: 1.25rem;">
                 <h2>Réponses (${topic.replyCount || 0})</h2>
               </div>
 
-              <div id="repliesContainer" class="forum-replies">
-                ${topic.replies && topic.replies.length ? topic.replies.map(reply => renderReply(reply)).join('') : '<p class="text-muted">Aucune réponse pour le moment.</p>'}
+              <div id="repliesContainer" class="forum-replies" style="display: flex; flex-direction: column; gap: 1rem;">
+                ${topic.replies && topic.replies.length
+                  ? topic.replies.map(reply => renderReply(reply, currentUser, isTopicAuthor)).join('')
+                  : '<p class="text-muted" style="padding: 1.5rem; background: var(--forum-card-bg); border-radius: 8px; border: 1px dashed var(--forum-border);">Aucune réponse pour le moment. Soyez le premier à éclairer cette discussion !</p>'}
               </div>
 
               ${canReply ? `
-                <div class="forum-reply-form">
-                  <h3>Ajouter une réponse</h3>
+                <div class="forum-reply-form" style="margin-top: 3rem;">
+                  <h3>Votre contribution</h3>
                   <form id="replyForm">
-                    <div class="forum-form-group">
-                      <label for="replyContent">Ta réponse</label>
-                      <textarea id="replyContent" required minlength="1" placeholder="Rédige ta réponse..."></textarea>
+                    <div class="forum-editor-container">
+                      <div class="forum-editor-header">
+                        <div class="forum-editor-tabs">
+                          <button type="button" class="forum-editor-tab active" data-tab="write">✏️ Écrire</button>
+                          <button type="button" class="forum-editor-tab" data-tab="preview">👁️ Aperçu en direct</button>
+                        </div>
+                        <div class="forum-editor-tools">
+                          <button type="button" class="editor-tool-btn" data-syntax="**" title="Gras">B</button>
+                          <button type="button" class="editor-tool-btn" data-syntax="*" title="Italique">I</button>
+                          <button type="button" class="editor-tool-btn" data-syntax="> " title="Citation">❝</button>
+                          <button type="button" class="editor-tool-btn" data-syntax="` + "`" + `" title="Code">&lt;/&gt;</button>
+                        </div>
+                      </div>
+
+                      <div id="editorWriteTab">
+                        <textarea id="replyContent" required minlength="2" placeholder="Partagez vos conseils, retours d'expérience ou solutions... (Formatage Markdown supporté)" style="width: 100%; min-height: 140px; padding: 1rem; border: none; outline: none; background: transparent; color: var(--forum-text); font-family: inherit; font-size: 0.95rem; line-height: 1.6;"></textarea>
+                      </div>
+
+                      <div id="editorPreviewTab" style="display: none;">
+                        <div class="markdown-preview-area" id="replyPreviewContent">
+                          <p class="text-muted">Rien à prévisualiser pour l'instant...</p>
+                        </div>
+                      </div>
                     </div>
-                    <div class="forum-form-actions">
-                      <button type="submit" class="btn btn-primary">Publier la réponse</button>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                      <button type="submit" class="btn btn-primary" id="btnSubmitReply">Publier ma réponse</button>
                     </div>
                   </form>
                 </div>
               ` : !token ? `
-                <div class="forum-login-prompt">
-                  <p>Tu dois être <a href="login.html">connecté</a> pour répondre à cette discussion.</p>
+                <div class="forum-login-prompt" style="margin-top: 2.5rem; padding: 1.5rem; text-align: center; background: var(--forum-card-bg); border: 1px solid var(--forum-border); border-radius: 10px;">
+                  <p style="margin: 0;">Rejoignez la discussion ! Vous devez être <a href="login.html" style="font-weight: 700; color: var(--forum-accent);">connecté</a> pour répondre.</p>
                 </div>
               ` : `
-                <div class="forum-login-prompt">
-                  <p>Ce sujet est verrouillé. Les réponses ne sont plus acceptées.</p>
+                <div class="forum-login-prompt" style="margin-top: 2.5rem; padding: 1.5rem; text-align: center; background: var(--forum-card-bg); border: 1px solid var(--forum-border); border-radius: 10px;">
+                  <p style="margin: 0; color: var(--forum-muted);">🔒 Cette discussion est verrouillée par les modérateurs. Les réponses ne sont plus acceptées.</p>
                 </div>
               `}
             `;
 
-            const replyForm = document.getElementById('replyForm');
-            if (replyForm) {
-              replyForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const content = document.getElementById('replyContent').value.trim();
-                if (!content) return;
-
-                const submitBtn = replyForm.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Publication...';
-
-                try {
-                  await window.Api.forum.createReply(topicId, content);
-                  document.getElementById('replyContent').value = '';
-                  loadTopic();
-                } catch (error) {
-                  alert(error.message || 'Erreur lors de la publication de la réponse.');
-                } finally {
-                  submitBtn.disabled = false;
-                  submitBtn.textContent = 'Publier la réponse';
-                }
-              });
-            }
+            // Attacher les gestionnaires d'événements
+            attachTopicEvents(topic, currentUser);
+            loadSimilarTopics();
           } catch (error) {
-            container.innerHTML = '<div class="forum-empty"><p>Erreur lors du chargement du sujet.</p></div>';
+            container.innerHTML = `<div class="forum-empty"><p>Erreur lors du chargement : ${escapeHtml(error.message)}</p></div>`;
           }
         }
+
+        function attachTopicEvents(topic, currentUser) {
+          // Upvote Topic
+          const btnUpvoteTopic = document.getElementById('btnUpvoteTopic');
+          if (btnUpvoteTopic) {
+            btnUpvoteTopic.addEventListener('click', async () => {
+              if (!window.Api.getToken()) {
+                window.location.href = 'login.html';
+                return;
+              }
+              try {
+                const res = await window.Api.forum.toggleTopicLike(topic.id);
+                btnUpvoteTopic.classList.toggle('active', res.data.liked);
+                btnUpvoteTopic.querySelector('.upvote-count').textContent = res.data.likeCount;
+              } catch (e) {
+                alert(e.message || 'Action impossible');
+              }
+            });
+          }
+
+          // Partager Topic
+          const btnShareTopic = document.getElementById('btnShareTopic');
+          if (btnShareTopic) {
+            btnShareTopic.addEventListener('click', () => {
+              navigator.clipboard.writeText(window.location.href).then(() => {
+                const orig = btnShareTopic.innerHTML;
+                btnShareTopic.innerHTML = '✓ Lien copié !';
+                setTimeout(() => { btnShareTopic.innerHTML = orig; }, 2000);
+              });
+            });
+          }
+
+          // Modifier Topic
+          const btnEditTopic = document.getElementById('btnEditTopic');
+          if (btnEditTopic) {
+            btnEditTopic.addEventListener('click', () => {
+              openEditModal('topic', topic.id, topic.title, topic.content);
+            });
+          }
+
+          // Supprimer Topic
+          const btnDeleteTopic = document.getElementById('btnDeleteTopic');
+          if (btnDeleteTopic) {
+            btnDeleteTopic.addEventListener('click', async () => {
+              if (confirm('Êtes-vous sûr de vouloir supprimer définitivement cette discussion ?')) {
+                try {
+                  await window.Api.forum.deleteTopic(topic.id);
+                  alert('Sujet supprimé.');
+                  window.location.href = 'forum.html';
+                } catch (e) {
+                  alert(e.message || 'Erreur lors de la suppression');
+                }
+              }
+            });
+          }
+
+          // Actions sur les réponses
+          document.querySelectorAll('.forum-upvote-btn[data-reply-id]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              if (!window.Api.getToken()) {
+                window.location.href = 'login.html';
+                return;
+              }
+              const replyId = btn.getAttribute('data-reply-id');
+              try {
+                const res = await window.Api.forum.toggleReplyLike(replyId);
+                btn.classList.toggle('active', res.data.liked);
+                btn.querySelector('.upvote-count').textContent = res.data.likeCount;
+              } catch (e) {
+                alert(e.message || 'Action impossible');
+              }
+            });
+          });
+
+          // Valider comme Solution
+          document.querySelectorAll('.btn-mark-solution').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const replyId = btn.getAttribute('data-reply-id');
+              try {
+                await window.Api.forum.toggleSolution(topic.id, replyId);
+                loadTopic();
+              } catch (e) {
+                alert(e.message || 'Erreur lors de la validation de la solution');
+              }
+            });
+          });
+
+          // Citer une réponse
+          document.querySelectorAll('.btn-quote-reply').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const replyId = btn.getAttribute('data-id');
+              const author = btn.getAttribute('data-author');
+              const replyEl = document.getElementById(`reply-${replyId}`);
+              const bodyEl = replyEl ? replyEl.querySelector('.forum-reply-body') : null;
+              const text = bodyEl ? bodyEl.innerText.trim().slice(0, 300) : '';
+
+              const textarea = document.getElementById('replyContent');
+              if (textarea) {
+                textarea.value += `\n> **${author} a écrit :**\n> ${text.replace(/\n/g, '\n> ')}\n\n`;
+                // Basculer sur l'onglet écrire si besoin
+                document.querySelector('.forum-editor-tab[data-tab="write"]')?.click();
+                textarea.focus();
+                textarea.scrollIntoView({ behavior: 'smooth' });
+              }
+            });
+          });
+
+          // Modifier une réponse
+          document.querySelectorAll('.btn-edit-reply').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const replyId = btn.getAttribute('data-id');
+              const reply = (topic.replies || []).find(r => r.id === replyId);
+              if (reply) {
+                openEditModal('reply', replyId, null, reply.content);
+              }
+            });
+          });
+
+          // Supprimer une réponse
+          document.querySelectorAll('.btn-delete-reply').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const replyId = btn.getAttribute('data-id');
+              if (confirm('Êtes-vous sûr de vouloir supprimer votre réponse ?')) {
+                try {
+                  await window.Api.forum.deleteReply(replyId);
+                  loadTopic();
+                } catch (e) {
+                  alert(e.message || 'Erreur lors de la suppression');
+                }
+              }
+            });
+          });
+
+          // Signaler un contenu
+          document.querySelectorAll('.btn-report-msg').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const type = btn.getAttribute('data-type');
+              const id = btn.getAttribute('data-id');
+              openReportModal(type, id);
+            });
+          });
+
+          // Copier lien direct de la réponse
+          document.querySelectorAll('.btn-copy-link').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const replyId = btn.getAttribute('data-id');
+              const url = `${window.location.origin}${window.location.pathname}?id=${topic.id}#reply-${replyId}`;
+              navigator.clipboard.writeText(url).then(() => {
+                const orig = btn.innerText;
+                btn.innerText = '✓ Copié !';
+                setTimeout(() => { btn.innerText = orig; }, 2000);
+              });
+            });
+          });
+
+          // Formulaire de réponse et Éditeur
+          const replyForm = document.getElementById('replyForm');
+          const replyTextarea = document.getElementById('replyContent');
+          if (replyForm && replyTextarea) {
+            // Onglets Écrire / Aperçu
+            const tabs = replyForm.querySelectorAll('.forum-editor-tab');
+            const writeTab = document.getElementById('editorWriteTab');
+            const previewTab = document.getElementById('editorPreviewTab');
+            const previewArea = document.getElementById('replyPreviewContent');
+
+            tabs.forEach(tab => {
+              tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                if (tab.getAttribute('data-tab') === 'preview') {
+                  writeTab.style.display = 'none';
+                  previewTab.style.display = 'block';
+                  const val = replyTextarea.value.trim();
+                  previewArea.innerHTML = val ? parseMarkdown(val) : '<p class="text-muted">Rien à prévisualiser pour l\'instant.</p>';
+                } else {
+                  previewTab.style.display = 'none';
+                  writeTab.style.display = 'block';
+                }
+              });
+            });
+
+            // Barre d'outils
+            replyForm.querySelectorAll('.editor-tool-btn').forEach(toolBtn => {
+              toolBtn.addEventListener('click', () => {
+                const syntax = toolBtn.getAttribute('data-syntax');
+                const start = replyTextarea.selectionStart;
+                const end = replyTextarea.selectionEnd;
+                const text = replyTextarea.value;
+                const selected = text.substring(start, end) || 'texte';
+
+                if (syntax === '> ') {
+                  replyTextarea.value = text.substring(0, start) + `\n> ${selected}\n` + text.substring(end);
+                } else {
+                  replyTextarea.value = text.substring(0, start) + `${syntax}${selected}${syntax}` + text.substring(end);
+                }
+                replyTextarea.focus();
+              });
+            });
+
+            // Soumission
+            replyForm.addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const content = replyTextarea.value.trim();
+              if (!content) return;
+
+              const submitBtn = document.getElementById('btnSubmitReply');
+              submitBtn.disabled = true;
+              submitBtn.textContent = 'Publication en cours...';
+
+              try {
+                await window.Api.forum.createReply(topic.id, content);
+                replyTextarea.value = '';
+                loadTopic();
+              } catch (error) {
+                alert(error.message || 'Erreur lors de la publication de la réponse.');
+              } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Publier ma réponse';
+              }
+            });
+          }
+        }
+
+        // Gestion de la modale de signalement
+        function openReportModal(type, targetId) {
+          document.getElementById('reportTargetType').value = type;
+          document.getElementById('reportTargetId').value = targetId;
+          document.getElementById('reportDetails').value = '';
+          reportModal.style.display = 'flex';
+        }
+
+        function closeReportModal() {
+          reportModal.style.display = 'none';
+        }
+
+        document.getElementById('btnCancelReport')?.addEventListener('click', closeReportModal);
+        document.getElementById('btnCloseReportX')?.addEventListener('click', closeReportModal);
+        reportModal.addEventListener('click', (e) => {
+          if (e.target === reportModal) closeReportModal();
+        });
+
+        reportForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const targetType = document.getElementById('reportTargetType').value;
+          const targetId = document.getElementById('reportTargetId').value;
+          const reason = document.getElementById('reportReason').value;
+          const details = document.getElementById('reportDetails').value.trim();
+
+          const payload = {
+            reason,
+            details,
+            topicId: targetType === 'topic' ? targetId : undefined,
+            replyId: targetType === 'reply' ? targetId : undefined,
+          };
+
+          const submitBtn = document.getElementById('btnSubmitReport');
+          submitBtn.disabled = true;
+          try {
+            await window.Api.forum.createReport(payload);
+            alert('Merci ! Votre signalement a bien été transmis aux modérateurs.');
+            closeReportModal();
+          } catch (err) {
+            alert(err.message || 'Erreur lors de l\'envoi du signalement');
+          } finally {
+            submitBtn.disabled = false;
+          }
+        });
+
+        // Gestion de la modale d'édition
+        function openEditModal(type, targetId, title, content) {
+          document.getElementById('editTargetType').value = type;
+          document.getElementById('editTargetId').value = targetId;
+          document.getElementById('editContentInput').value = content || '';
+
+          const titleGroup = document.getElementById('editTitleGroup');
+          const titleInput = document.getElementById('editTitleInput');
+          if (type === 'topic') {
+            titleGroup.style.display = 'block';
+            titleInput.value = title || '';
+          } else {
+            titleGroup.style.display = 'none';
+          }
+
+          editModal.style.display = 'flex';
+        }
+
+        function closeEditModal() {
+          editModal.style.display = 'none';
+        }
+
+        document.getElementById('btnCancelEdit')?.addEventListener('click', closeEditModal);
+        document.getElementById('btnCloseEditX')?.addEventListener('click', closeEditModal);
+        editModal.addEventListener('click', (e) => {
+          if (e.target === editModal) closeEditModal();
+        });
+
+        editForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const type = document.getElementById('editTargetType').value;
+          const targetId = document.getElementById('editTargetId').value;
+          const content = document.getElementById('editContentInput').value.trim();
+          const title = document.getElementById('editTitleInput').value.trim();
+
+          const submitBtn = document.getElementById('btnSubmitEdit');
+          submitBtn.disabled = true;
+
+          try {
+            if (type === 'topic') {
+              await window.Api.forum.updateTopic(targetId, { title, content });
+            } else {
+              await window.Api.forum.updateReply(targetId, content);
+            }
+            closeEditModal();
+            loadTopic();
+          } catch (err) {
+            alert(err.message || 'Erreur lors de la modification');
+          } finally {
+            submitBtn.disabled = false;
+          }
+        });
 
         loadTopic();
       });

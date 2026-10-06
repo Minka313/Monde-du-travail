@@ -338,6 +338,7 @@ return headers;
         if (params.page) query.set('page', params.page);
         if (params.limit) query.set('limit', params.limit);
         if (params.category) query.set('category', params.category);
+        if (params.tag) query.set('tag', params.tag);
         if (params.search) query.set('search', params.search);
         if (params.status) query.set('status', params.status);
         if (params.sort) query.set('sort', params.sort);
@@ -345,14 +346,43 @@ return headers;
         return apiRequestWithRefresh(`/forum${qs ? `?${qs}` : ''}`);
       },
       getCategories: () => apiRequestWithRefresh('/forum/categories'),
+      getPopularTags: () => apiRequestWithRefresh('/forum/tags/popular'),
       getById: (id) => apiRequestWithRefresh(`/forum/${id}`),
+      getSimilar: (id) => apiRequestWithRefresh(`/forum/${id}/similar`),
       createTopic: (data) => apiRequestWithRefresh('/forum', {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+      updateTopic: (id, data) => apiRequestWithRefresh(`/forum/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+      deleteTopic: (id) => apiRequestWithRefresh(`/forum/${id}`, {
+        method: 'DELETE',
+      }),
       createReply: (topicId, content) => apiRequestWithRefresh(`/forum/${topicId}/replies`, {
         method: 'POST',
         body: JSON.stringify({ content }),
+      }),
+      updateReply: (replyId, content) => apiRequestWithRefresh(`/forum/replies/${replyId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ content }),
+      }),
+      deleteReply: (replyId) => apiRequestWithRefresh(`/forum/replies/${replyId}`, {
+        method: 'DELETE',
+      }),
+      toggleTopicLike: (id) => apiRequestWithRefresh(`/forum/${id}/like`, {
+        method: 'POST',
+      }),
+      toggleReplyLike: (replyId) => apiRequestWithRefresh(`/forum/replies/${replyId}/like`, {
+        method: 'POST',
+      }),
+      toggleSolution: (topicId, replyId) => apiRequestWithRefresh(`/forum/${topicId}/solution/${replyId}`, {
+        method: 'PUT',
+      }),
+      createReport: (data) => apiRequestWithRefresh('/forum/reports', {
+        method: 'POST',
+        body: JSON.stringify(data),
       }),
       togglePin: (id) => apiRequestWithRefresh(`/forum/${id}/pin`, { method: 'PUT' }),
       toggleResolved: (id) => apiRequestWithRefresh(`/forum/${id}/resolve`, { method: 'PUT' }),

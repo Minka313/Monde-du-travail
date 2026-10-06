@@ -14,6 +14,7 @@
     <title>Nouvelle discussion - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css">
+    <link rel="stylesheet" href="css/forum-advanced.css">
     <script src="js/theme-engine.js"></script>
 </head>
 <body>
@@ -95,25 +96,49 @@
 
                         <div class="forum-form-group">
                             <label for="topicTags">Tags <span style="font-weight: 400; color: var(--color-gray-500);">(séparés par des virgules)</span></label>
-                            <input type="text" id="topicTags" placeholder="Ex : alternance, candidature, CV">
-                            <small style="color: var(--color-gray-500);">Optionnel. Ajoute des mots-clés pour faciliter la recherche.</small>
+                            <input type="text" id="topicTags" placeholder="Ex : alternance, candidature, CV, entretien">
+                            <div style="margin-top: 0.5rem; display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center;">
+                                <span style="font-size: 0.8rem; color: var(--forum-muted);">Suggestions rapides :</span>
+                                <button type="button" class="btn-tag-suggest forum-tag-pill" data-tag="orientation">#orientation</button>
+                                <button type="button" class="btn-tag-suggest forum-tag-pill" data-tag="stage">#stage</button>
+                                <button type="button" class="btn-tag-suggest forum-tag-pill" data-tag="alternance">#alternance</button>
+                                <button type="button" class="btn-tag-suggest forum-tag-pill" data-tag="cv">#cv</button>
+                                <button type="button" class="btn-tag-suggest forum-tag-pill" data-tag="entretien">#entretien</button>
+                                <button type="button" class="btn-tag-suggest forum-tag-pill" data-tag="formation">#formation</button>
+                            </div>
                         </div>
 
                         <div class="forum-form-group">
-                            <label for="topicContent">Contenu</label>
-                            <div class="markdown-toolbar" id="markdownToolbar">
-                                <button type="button" class="md-btn" data-tag="bold" title="Gras"><strong>B</strong></button>
-                                <button type="button" class="md-btn" data-tag="italic" title="Italique"><em>I</em></button>
-                                <button type="button" class="md-btn" data-tag="quote" title="Citation">❝❞ Citation</button>
-                                <button type="button" class="md-btn" data-tag="list" title="Liste à puces">• Liste</button>
-                                <button type="button" class="md-btn" data-tag="link" title="Lien hypertexte">🔗 Lien</button>
+                            <label for="topicContent">Contenu du sujet</label>
+                            <div class="forum-editor-container">
+                                <div class="forum-editor-header">
+                                    <div class="forum-editor-tabs">
+                                        <button type="button" class="forum-editor-tab active" id="tabCreateWrite">✏️ Rédiger</button>
+                                        <button type="button" class="forum-editor-tab" id="tabCreatePreview">👁️ Aperçu en direct</button>
+                                    </div>
+                                    <div class="forum-editor-tools">
+                                        <button type="button" class="editor-tool-btn" data-syntax="**" title="Gras">B</button>
+                                        <button type="button" class="editor-tool-btn" data-syntax="*" title="Italique">I</button>
+                                        <button type="button" class="editor-tool-btn" data-syntax="> " title="Citation">❝</button>
+                                        <button type="button" class="editor-tool-btn" data-syntax="`" title="Code">&lt;/&gt;</button>
+                                    </div>
+                                </div>
+
+                                <div id="createWriteArea">
+                                    <textarea id="topicContent" required minlength="10" placeholder="Décris ta question, ta réflexion ou ton expérience en détail... (Le formatage Markdown est supporté)" style="width: 100%; min-height: 220px; padding: 1rem; border: none; outline: none; background: transparent; color: var(--forum-text); font-family: inherit; font-size: 0.95rem; line-height: 1.6;"></textarea>
+                                </div>
+
+                                <div id="createPreviewArea" style="display: none;">
+                                    <div class="markdown-preview-area" id="createPreviewContent">
+                                        <p class="text-muted">Commencez à rédiger pour prévisualiser le rendu final...</p>
+                                    </div>
+                                </div>
                             </div>
-                            <textarea id="topicContent" class="with-toolbar" required minlength="10" placeholder="Décris ta question ou ton sujet en détail..."></textarea>
                         </div>
 
-                        <div class="forum-form-actions">
+                        <div class="forum-form-actions" style="margin-top: 1.5rem;">
                             <a class="btn btn-ghost" href="forum.html">Annuler</a>
-                            <button type="submit" class="btn btn-primary">Publier la discussion</button>
+                            <button type="submit" class="btn btn-primary btn-lg">Publier la discussion</button>
                         </div>
                     </form>
                 </div>
@@ -229,6 +254,8 @@
       document.addEventListener('DOMContentLoaded', () => {
         const form = document.getElementById('topicForm');
         const categorySelect = document.getElementById('topicCategory');
+        const topicTextarea = document.getElementById('topicContent');
+        const tagsInput = document.getElementById('topicTags');
         const params = new URLSearchParams(window.location.search);
         const categoryParam = params.get('category');
 
@@ -241,33 +268,92 @@
           categorySelect.value = categoryParam;
         }
 
-        // Markdown toolbar logic
-        const topicTextarea = document.getElementById('topicContent');
-        document.querySelectorAll('.md-btn').forEach(btn => {
+        // Suggestions de tags
+        document.querySelectorAll('.btn-tag-suggest').forEach(btn => {
           btn.addEventListener('click', () => {
             const tag = btn.getAttribute('data-tag');
+            const current = tagsInput.value.split(',').map(t => t.trim()).filter(Boolean);
+            if (!current.includes(tag)) {
+              current.push(tag);
+              tagsInput.value = current.join(', ');
+            }
+          });
+        });
+
+        // Parseur Markdown pour l'aperçu
+        function escapeHtml(text) {
+          if (text == null) return '';
+          return String(text)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+        }
+
+        function parseMarkdown(text) {
+          if (!text) return '';
+          let escaped = escapeHtml(text);
+          escaped = escaped.replace(/```([\s\S]*?)```/g, (_, code) => `<pre><code>${code.trim()}</code></pre>`);
+          escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+          escaped = escaped.replace(/(?:^|\n)&gt;\s?(.*)/g, '<blockquote>$1</blockquote>');
+          escaped = escaped.replace(/^### (.*$)/gim, '<h4 style="margin: 0.75rem 0 0.4rem; font-size: 1.1rem;">$1</h4>');
+          escaped = escaped.replace(/^## (.*$)/gim, '<h3 style="margin: 0.85rem 0 0.5rem; font-size: 1.25rem;">$1</h3>');
+          escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+          escaped = escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+          escaped = escaped.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+          return escaped.replace(/\n/g, '<br>');
+        }
+
+        // Onglets Rédiger / Aperçu
+        const tabWrite = document.getElementById('tabCreateWrite');
+        const tabPreview = document.getElementById('tabCreatePreview');
+        const writeArea = document.getElementById('createWriteArea');
+        const previewArea = document.getElementById('createPreviewArea');
+        const previewContent = document.getElementById('createPreviewContent');
+
+        tabWrite.addEventListener('click', () => {
+          tabWrite.classList.add('active');
+          tabPreview.classList.remove('active');
+          writeArea.style.display = 'block';
+          previewArea.style.display = 'none';
+        });
+
+        tabPreview.addEventListener('click', () => {
+          tabPreview.classList.add('active');
+          tabWrite.classList.remove('active');
+          writeArea.style.display = 'none';
+          previewArea.style.display = 'block';
+          const val = topicTextarea.value.trim();
+          previewContent.innerHTML = val ? parseMarkdown(val) : '<p class="text-muted">Rien à prévisualiser pour l\'instant...</p>';
+        });
+
+        // Outils de formatage
+        document.querySelectorAll('.editor-tool-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const syntax = btn.getAttribute('data-syntax');
             const start = topicTextarea.selectionStart;
             const end = topicTextarea.selectionEnd;
             const val = topicTextarea.value;
-            const selected = val.substring(start, end);
-            let replacement = '';
-            if (tag === 'bold') replacement = `**${selected || 'texte en gras'}**`;
-            else if (tag === 'italic') replacement = `*${selected || 'texte en italique'}*`;
-            else if (tag === 'quote') replacement = `\n> ${selected || 'citation'}\n`;
-            else if (tag === 'list') replacement = `\n- ${selected || 'élément'}\n`;
-            else if (tag === 'link') replacement = `[${selected || 'titre du lien'}](https://)`;
-            topicTextarea.setRangeText(replacement, start, end, 'select');
+            const selected = val.substring(start, end) || 'texte';
+
+            if (syntax === '> ') {
+              topicTextarea.value = val.substring(0, start) + `\n> ${selected}\n` + val.substring(end);
+            } else {
+              topicTextarea.value = val.substring(0, start) + `${syntax}${selected}${syntax}` + val.substring(end);
+            }
             topicTextarea.focus();
           });
         });
 
+        // Soumission
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
 
           const title = document.getElementById('topicTitle').value.trim();
           const category = categorySelect.value;
-          const content = document.getElementById('topicContent').value.trim();
-          const tagsRaw = document.getElementById('topicTags').value.trim();
+          const content = topicTextarea.value.trim();
+          const tagsRaw = tagsInput.value.trim();
           const tags = tagsRaw ? tagsRaw.split(',').map(t => t.trim()).filter(Boolean) : [];
 
           if (!title || !category || !content) {
@@ -277,11 +363,15 @@
 
           const submitBtn = form.querySelector('button[type="submit"]');
           submitBtn.disabled = true;
-          submitBtn.textContent = 'Publication...';
+          submitBtn.textContent = 'Publication en cours...';
 
           try {
-            await window.Api.forum.createTopic({ title, category, content, tags });
-            window.location.href = 'forum.html';
+            const res = await window.Api.forum.createTopic({ title, category, content, tags });
+            if (res.data && res.data.id) {
+              window.location.href = `forum-topic.html?id=${res.data.id}`;
+            } else {
+              window.location.href = 'forum.html';
+            }
           } catch (error) {
             alert(error.message || 'Erreur lors de la création du sujet.');
           } finally {
