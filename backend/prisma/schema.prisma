@@ -93,6 +93,13 @@ model Formation {
 
   registrations  FormationRegistration[]
 
+  // Salle Virtuelle (Visioconférence Jitsi Meet)
+  visioEnabled       Boolean       @default(false)
+  visioRoomId        String?
+  visioStatus        String        @default("INACTIVE")
+  visioScheduledAt   DateTime?
+  visioRecordingUrl  String?
+
   @@index([status])
   @@index([category])
   @@map("formations")

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Salle Virtuelle & Visioconférence — Le Monde du Travail</title>
+    <meta name="description" content="Rejoins la salle de classe virtuelle et participe aux ateliers pratiques et formations en direct du club Le Monde du Travail.">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/visio.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="visio-body">
+    <!-- Barre Supérieure de la Salle Virtuelle -->
+    <header class="visio-header">
+        <div class="visio-header-left">
+            <a href="formations.html" class="visio-back-btn" title="Retourner aux formations">
+                <span>&larr;</span>
+                <span class="visio-back-text">Quitter la salle</span>
+            </a>
+            <div class="visio-brand-divider"></div>
+            <div class="visio-formation-info">
+                <div class="visio-status-badge" id="visioStatusBadge">
+                    <span class="live-dot"></span>
+                    <span id="visioStatusLabel">EN DIRECT</span>
+                </div>
+                <h1 class="visio-room-title" id="visioFormationTitle">Chargement de la formation...</h1>
+            </div>
+        </div>
+
+        <div class="visio-header-right">
+            <!-- Bouton Mode Économie de Données (Optimisé 4G Afrique) -->
+            <button type="button" class="btn-data-saver" id="btnDataSaver" title="Réduire la consommation de données mobiles (Audio-only)">
+                <span class="data-saver-icon">📶</span>
+                <span class="data-saver-text">Mode Éco-Data : <strong id="dataSaverState">OFF</strong></span>
+            </button>
+
+            <!-- Bouton Panneau Pédagogique (Programme & Notes) -->
+            <button type="button" class="btn-toggle-sidebar" id="btnToggleSidebar" aria-label="Afficher le panneau pédagogique" title="Programme & Bloc-notes">
+                <span>📋</span>
+                <span class="sidebar-btn-text">Atelier & Notes</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Conteneur Principal -->
+    <div class="visio-workspace" id="visioWorkspace">
+        <!-- Zone Vidéo / Jitsi Meet -->
+        <main class="visio-stream-area" id="visioStreamArea">
+            <!-- Loader initial -->
+            <div class="visio-loading-screen" id="visioLoadingScreen">
+                <div class="visio-loading-card">
+                    <div class="visio-spinner"></div>
+                    <h2 style="font-size: 1.25rem; margin: 0 0 0.5rem 0; color: #f8fafc;">Connexion à la salle virtuelle...</h2>
+                    <p style="font-size: 0.9rem; color: #94a3b8; margin: 0 0 1.25rem 0;" id="visioLoadingDesc">
+                        Préparation du flux WebRTC haute performance.
+                    </p>
+                    <div class="visio-quick-tips">
+                        <span>💡 <strong>Astuce :</strong> Autorise l'accès à ton micro et ta caméra lorsqu'ils te seront demandés.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conteneur Iframe de Jitsi -->
+            <div id="meetContainer" class="meet-container"></div>
+        </main>
+
+        <!-- Sidebar Pédagogique & Interactive (Collapsible) -->
+        <aside class="visio-sidebar" id="visioSidebar">
+            <div class="visio-sidebar-header">
+                <div class="sidebar-tabs" role="tablist">
+                    <button type="button" class="sidebar-tab active" data-tab="tab-syllabus" role="tab">
+                        <span>📚</span> Programme
+                    </button>
+                    <button type="button" class="sidebar-tab" data-tab="tab-jobs" role="tab">
+                        <span>💼</span> Métiers
+                    </button>
+                    <button type="button" class="sidebar-tab" data-tab="tab-notes" role="tab">
+                        <span>📝</span> Mes Notes
+                    </button>
+                </div>
+                <button type="button" class="sidebar-close-btn" id="btnCloseSidebar" aria-label="Fermer le panneau">&times;</button>
+            </div>
+
+            <div class="visio-sidebar-content">
+                <!-- Onglet 1 : Programme & Objectifs -->
+                <div class="sidebar-pane active" id="tab-syllabus">
+                    <div class="pane-section">
+                        <h3 class="pane-title">🎯 Objectifs de l'atelier</h3>
+                        <div class="pane-card" id="visioObjectivesContent">
+                            Chargement des objectifs de la session...
+                        </div>
+                    </div>
+
+                    <div class="pane-section">
+                        <h3 class="pane-title">⏱️ Détails & Durée</h3>
+                        <div class="pane-info-grid">
+                            <div class="info-pill">
+                                <span class="pill-icon">⏱️</span>
+                                <span id="visioDuration">Programme intensif</span>
+                            </div>
+                            <div class="info-pill">
+                                <span class="pill-icon">📍</span>
+                                <span id="visioLocation">Dakar / En ligne</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pane-section">
+                        <h3 class="pane-title">📖 Déroulé des Modules</h3>
+                        <div id="visioSyllabusList" class="visio-syllabus-list">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet 2 : Fiches Métiers Associées -->
+                <div class="sidebar-pane" id="tab-jobs">
+                    <div class="pane-section">
+                        <h3 class="pane-title">🚀 Débouchés & Passerelles de Carrière</h3>
+                        <p style="font-size: 0.85rem; color: #94a3b8; margin: 0 0 1rem 0;">
+                            Les compétences acquises lors de cet atelier sont directement mobilisables dans ces postes clés :
+                        </p>
+                        <div id="visioRelatedJobsList" class="visio-jobs-grid">
+                            <!-- Rempli dynamiquement -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet 3 : Bloc-notes Personnel -->
+                <div class="sidebar-pane" id="tab-notes">
+                    <div class="pane-section" style="height: 100%; display: flex; flex-direction: column;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <h3 class="pane-title" style="margin: 0;">📝 Prise de notes en direct</h3>
+                            <span id="notesSavedIndicator" style="font-size: 0.75rem; color: #10b981;">✓ Enregistré</span>
+                        </div>
+                        <p style="font-size: 0.82rem; color: #94a3b8; margin: 0 0 0.75rem 0;">
+                            Vos notes sont automatiquement sauvegardées sur cet appareil.
+                        </p>
+                        <textarea id="visioNotesInput" class="visio-notes-textarea" placeholder="Notez ici les concepts clés, conseils du formateur et questions à poser..."></textarea>
+                        <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem;">
+                            <button type="button" class="btn btn-sm btn-outline" id="btnDownloadNotes" style="width: 100%; justify-content: center; color: #f8fafc; border-color: #475569;">
+                                📥 Télécharger mes notes (.txt)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/frontend-api.js"></script>
+    <script src="js/visio.js"></script>
+</body>
+</html>

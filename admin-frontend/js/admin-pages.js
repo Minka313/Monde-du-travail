@@ -1671,6 +1671,7 @@
     }
     if (moduleKey === 'formations') {
       html += `<button type="button" class="btn btn-sm btn-info btn-formation-registrations" data-formation-id="${item.id}" data-formation-title="${encodeURIComponent(item.title || '')}" style="margin-right:0.25rem;display:inline-flex;align-items:center;gap:0.25rem;" title="Consulter la liste des inscrits et candidats"><span>👥</span> <span>Inscrits</span></button>`;
+      html += `<button type="button" class="btn btn-sm btn-outline btn-formation-visio" data-formation-id="${item.id}" data-formation-title="${encodeURIComponent(item.title || '')}" style="margin-right:0.25rem;display:inline-flex;align-items:center;gap:0.25rem;border-color:#0284c7;color:#0284c7;" title="Lancer ou gérer la visioconférence Jitsi Meet"><span>🎥</span> <span>Visio Live</span></button>`;
     }
     if (can(`${permPrefix}.publish`)) {
       if (item.status === 'DRAFT' || item.status === 'ARCHIVED') html += btn('publish', 'Publier', 'btn-success');
@@ -2783,6 +2784,161 @@
       `;
       bodyEl.querySelector('#btn-reg-retry')?.addEventListener('click', () => {
         openFormationRegistrationsModal(formationId, formationTitle);
+      });
+    }
+  }
+
+  // Modale de pilotage de la visioconférence (Jitsi Meet)
+  async function openFormationVisioModal(formationId, formationTitle) {
+    const existing = document.getElementById('formation-visio-modal-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'formation-visio-modal-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.7);display:flex;align-items:center;justify-content:center;z-index:1050;padding:1rem;backdrop-filter:blur(4px);';
+    overlay.innerHTML = `
+      <div class="card" style="max-width:680px;width:100%;padding:1.75rem;max-height:92vh;overflow-y:auto;background:var(--bg-card, #fff);box-shadow:0 20px 50px rgba(0,0,0,0.3);border-radius:12px;">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;border-bottom:1px solid #e2e8f0;padding-bottom:0.85rem;">
+          <div>
+            <div style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.8rem;font-weight:700;color:#0284c7;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem;">
+              <span>🎥</span> Salle Virtuelle & Visio Live
+            </div>
+            <h2 style="margin:0;font-size:1.3rem;color:#0f172a;">${escapeHtml(formationTitle || 'Formation')}</h2>
+            <p style="margin:0.25rem 0 0 0;font-size:0.85rem;color:#64748b;">Pilotage de la masterclass en direct, accès formateur et lien d'invitation.</p>
+          </div>
+          <button type="button" id="visio-modal-close-btn" style="border:none;background:transparent;font-size:1.6rem;cursor:pointer;line-height:1;color:#64748b;">&times;</button>
+        </div>
+
+        <div id="visio-modal-loading" style="text-align:center;padding:2.5rem;color:#64748b;">
+          <div class="spinner" style="margin:0 auto 1rem auto;"></div>
+          <p>Récupération de la session de visioconférence...</p>
+        </div>
+
+        <div id="visio-modal-body" style="display:none;"></div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+    overlay.querySelector('#visio-modal-close-btn')?.addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    const loadingEl = overlay.querySelector('#visio-modal-loading');
+    const bodyEl = overlay.querySelector('#visio-modal-body');
+
+    try {
+      const res = await window.AdminApi.formations.getVisio(formationId);
+      const session = res?.data || {};
+
+      loadingEl.style.display = 'none';
+      bodyEl.style.display = 'block';
+
+      const isLive = session.visioStatus === 'LIVE';
+      const roomId = session.roomId || `lmdt-formation-${formationId}`;
+      const statusBadge = isLive
+        ? '<span class="badge badge-success" style="font-size:0.85rem;padding:0.35rem 0.75rem;">🔴 EN DIRECT</span>'
+        : '<span class="badge badge-muted" style="font-size:0.85rem;padding:0.35rem 0.75rem;">⚪ Salle en attente</span>';
+
+      const appBaseUrl = window.location.origin.includes('localhost') 
+        ? window.location.origin 
+        : 'https://monde-du-travail.vercel.app';
+      const learnerUrl = `${appBaseUrl}/frontend/visio.html?formation=${encodeURIComponent(formationId)}`;
+      const trainerUrl = `../frontend/visio.html?formation=${encodeURIComponent(formationId)}&role=moderator`;
+
+      bodyEl.innerHTML = `
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:1.25rem;margin-bottom:1.5rem;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+            <span style="font-size:0.85rem;font-weight:700;color:#334155;text-transform:uppercase;">Statut actuel :</span>
+            <div id="visio-status-wrap">${statusBadge}</div>
+          </div>
+          <div style="font-size:0.9rem;color:#475569;margin-bottom:0.5rem;">
+            <strong>Identifiant de salle Jitsi :</strong> <code style="background:#e2e8f0;padding:0.2rem 0.4rem;border-radius:4px;color:#0f172a;">${escapeHtml(roomId)}</code>
+          </div>
+          <div style="font-size:0.85rem;color:#64748b;">
+            💡 Les formateurs disposent automatiquement des droits de modération (gestion des micros, verrouillage, enregistrement).
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:0.85rem;margin-bottom:1.5rem;">
+          <!-- Bouton Démarrer Formateur -->
+          <a href="${trainerUrl}" target="_blank" class="btn btn-primary" id="btn-start-trainer-visio" style="padding:0.85rem 1.25rem;display:flex;align-items:center;justify-content:center;gap:0.5rem;font-size:1rem;font-weight:700;text-decoration:none;">
+            <span>🚀</span>
+            <span>Démarrer / Rejoindre en tant que Formateur (Modérateur)</span>
+          </a>
+
+          <!-- Copier le lien Apprenant -->
+          <div style="background:#f1f5f9;border:1px solid #cbd5e1;border-radius:8px;padding:0.75rem;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+            <input type="text" readonly value="${learnerUrl}" id="visio-learner-link" style="border:none;background:transparent;width:100%;font-size:0.85rem;color:#334155;outline:none;">
+            <button type="button" class="btn btn-sm btn-outline" id="btn-copy-learner-link" style="white-space:nowrap;">
+              📋 Copier le lien Apprenant
+            </button>
+          </div>
+        </div>
+
+        <!-- Clôturer la session -->
+        <div style="border-top:1px solid #e2e8f0;padding-top:1rem;display:flex;justify-content:flex-end;gap:0.75rem;">
+          <button type="button" class="btn btn-sm btn-danger" id="btn-stop-visio">
+            ⏹️ Clôturer la session
+          </button>
+          <button type="button" class="btn btn-sm btn-ghost" id="btn-close-visio-dialog">
+            Fermer
+          </button>
+        </div>
+      `;
+
+      // Event listener démarrer formateur (notifie l'API)
+      bodyEl.querySelector('#btn-start-trainer-visio')?.addEventListener('click', async () => {
+        try {
+          await window.AdminApi.formations.startVisio(formationId);
+          const stWrap = bodyEl.querySelector('#visio-status-wrap');
+          if (stWrap) stWrap.innerHTML = '<span class="badge badge-success" style="font-size:0.85rem;padding:0.35rem 0.75rem;">🔴 EN DIRECT</span>';
+          showToast('Session Visio initialisée avec succès !', 'success');
+        } catch (e) {
+          console.warn('[Visio] Erreur démarrage :', e);
+        }
+      });
+
+      // Event listener copier le lien
+      bodyEl.querySelector('#btn-copy-learner-link')?.addEventListener('click', () => {
+        const input = bodyEl.querySelector('#visio-learner-link');
+        if (input) {
+          navigator.clipboard.writeText(input.value).then(() => {
+            showToast('Lien d\'accès apprenant copié !', 'success');
+          }).catch(() => {
+            input.select();
+            document.execCommand('copy');
+            showToast('Lien d\'accès copié !', 'success');
+          });
+        }
+      });
+
+      // Event listener clôturer la session
+      bodyEl.querySelector('#btn-stop-visio')?.addEventListener('click', async () => {
+        if (!confirm('Clôturer cette session de visioconférence ?')) return;
+        try {
+          await window.AdminApi.formations.stopVisio(formationId);
+          const stWrap = bodyEl.querySelector('#visio-status-wrap');
+          if (stWrap) stWrap.innerHTML = '<span class="badge badge-muted" style="font-size:0.85rem;padding:0.35rem 0.75rem;">⚪ Session clôturée</span>';
+          showToast('Session Visio clôturée.', 'info');
+        } catch (err) {
+          showToast('Erreur : ' + err.message, 'error');
+        }
+      });
+
+      bodyEl.querySelector('#btn-close-visio-dialog')?.addEventListener('click', close);
+
+    } catch (err) {
+      loadingEl.style.display = 'none';
+      bodyEl.style.display = 'block';
+      bodyEl.innerHTML = `
+        <div style="padding:2rem;text-align:center;color:#ef4444;">
+          <p>⚠️ Erreur lors de la récupération de la session : ${escapeHtml(err.message)}</p>
+          <button type="button" class="btn btn-sm btn-outline" id="btn-visio-retry">Réessayer</button>
+        </div>
+      `;
+      bodyEl.querySelector('#btn-visio-retry')?.addEventListener('click', () => {
+        openFormationVisioModal(formationId, formationTitle);
       });
     }
   }
@@ -6543,6 +6699,14 @@
           const fId = btn.getAttribute('data-formation-id');
           const fTitle = decodeURIComponent(btn.getAttribute('data-formation-title') || '');
           openFormationRegistrationsModal(fId, fTitle);
+        });
+      });
+
+      document.querySelectorAll('.btn-formation-visio').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const fId = btn.getAttribute('data-formation-id');
+          const fTitle = decodeURIComponent(btn.getAttribute('data-formation-title') || '');
+          openFormationVisioModal(fId, fTitle);
         });
       });
 
