@@ -324,6 +324,10 @@ return headers;
       },
       getCategories: () => apiRequestWithRefresh('/formations/categories'),
       getById: (id) => apiRequestWithRefresh(`/formations/${id}`),
+      register: (id, data) => apiRequestWithRefresh(`/formations/${id}/register`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
     },
 
     // Forum

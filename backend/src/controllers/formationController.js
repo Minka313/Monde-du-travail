@@ -254,6 +254,68 @@ class FormationController {
       next(error);
     }
   }
+
+  // Inscription publique à une formation
+  static async registerCandidate(req, res, next) {
+    try {
+      const { name, email, phone, motivation } = req.body;
+      const formationId = req.params.id;
+      const userId = req.user ? req.user.id : null;
+
+      const result = await formationService.registerCandidate({
+        formationId,
+        name,
+        email,
+        phone,
+        motivation,
+        userId,
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'Ton inscription a été validée avec succès ! Un email de confirmation vient de t\'être envoyé.',
+        data: result.registration,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Liste des inscrits d'une formation (Espace Admin)
+  static async getRegistrations(req, res, next) {
+    try {
+      const result = await formationService.getRegistrations(req.params.id, req.query);
+      res.json({
+        success: true,
+        data: result.registrations,
+        total: result.total,
+        page: result.page,
+        pageSize: result.pageSize,
+        formation: {
+          id: result.formation.id,
+          title: result.formation.title,
+          category: result.formation.category,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Mise à jour du statut d'une inscription (Espace Admin)
+  static async updateRegistrationStatus(req, res, next) {
+    try {
+      const { status } = req.body;
+      const result = await formationService.updateRegistrationStatus(req.params.registrationId, status);
+      res.json({
+        success: true,
+        message: 'Statut de l\'inscription mis à jour',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = FormationController;

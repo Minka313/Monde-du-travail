@@ -445,6 +445,104 @@ class EmailService {
 
     return this.sendMail({ to, subject, html });
   }
+
+  // 3. Confirmation d'inscription à une formation envoyée au participant
+  static async notifyFormationRegistrationConfirmation({ to, candidateName, formationTitle, formationLocation, formationDuration, startDate }) {
+    const subject = `Confirmation de ta réservation : ${formationTitle} 🎓`;
+    const dateFormatted = startDate ? new Date(startDate).toLocaleDateString('fr-FR', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    }) : 'Prochaine session annoncée très prochainement';
+    const locationStr = formationLocation || 'Dakar / En ligne (lien envoyé avant la session)';
+    const durationStr = formationDuration || 'Programme intensif';
+
+    const html = `
+      <div style="margin:0;padding:20px;background:#f1f5f9;font-family:'Segoe UI',Roboto,Helvetica,sans-serif;">
+        <div style="max-width:600px;margin:auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 15px rgba(0,0,0,0.05);">
+          <div style="background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%);padding:30px 20px;text-align:center;">
+            <h1 style="color:#ffffff;margin:0;font-size:1.4rem;letter-spacing:0.5px;">LE MONDE DU TRAVAIL</h1>
+            <p style="color:#e0f2fe;margin:6px 0 0;font-size:0.9rem;">Formations &bull; Ateliers Pratiques &bull; Soft Skills</p>
+          </div>
+
+          <div style="padding:28px 24px;">
+            <div style="display:inline-block;padding:4px 12px;background:#dcfce7;color:#166534;border-radius:9999px;font-size:0.75rem;font-weight:700;text-transform:uppercase;margin-bottom:15px;">
+              ✅ Inscription Validée
+            </div>
+
+            <h2 style="color:#0f172a;margin:0 0 12px;font-size:1.25rem;">Félicitations ${candidateName || ''} !</h2>
+            <p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0 0 16px;">
+              Ta place pour la session <strong>« ${formationTitle} »</strong> est bien réservée. Notre équipe pédagogique prépare déjà les supports d'immersion pour cette masterclass.
+            </p>
+
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:18px;margin-bottom:20px;">
+              <h3 style="margin:0 0 10px;color:#0f172a;font-size:1rem;">📌 Récapitulatif de la session :</h3>
+              <p style="margin:4px 0;color:#334155;font-size:0.9rem;"><strong>Formation :</strong> ${formationTitle}</p>
+              <p style="margin:4px 0;color:#334155;font-size:0.9rem;"><strong>Lieu :</strong> 📍 ${locationStr}</p>
+              <p style="margin:4px 0;color:#334155;font-size:0.9rem;"><strong>Durée :</strong> ⏱️ ${durationStr}</p>
+              <p style="margin:4px 0;color:#334155;font-size:0.9rem;"><strong>Date :</strong> 🗓️ ${dateFormatted}</p>
+            </div>
+
+            <div style="background:#eff6ff;border-left:4px solid #0284c7;padding:14px;border-radius:6px;margin-bottom:20px;">
+              <h4 style="margin:0 0 6px;color:#1e40af;font-size:0.92rem;">💡 Conseils pour maximiser ton atelier :</h4>
+              <ul style="margin:0;padding-left:18px;color:#334155;font-size:0.88rem;line-height:1.5;">
+                <li>Prépare un carnet de notes et tes questions précises.</li>
+                <li>Connecte-toi 10 minutes avant si la session se déroule en visioconférence.</li>
+                <li>N'hésite pas à échanger avec tes pairs sur notre forum communautaire.</li>
+              </ul>
+            </div>
+
+            <div style="text-align:center;margin:28px 0 10px;">
+              <a href="https://monde-du-travail.vercel.app/formations.html" style="background:#0284c7;color:#ffffff;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-block;box-shadow:0 3px 8px rgba(2,132,199,0.3);">
+                Accéder au programme &rarr;
+              </a>
+            </div>
+          </div>
+
+          <div style="background:#f8fafc;padding:15px;text-align:center;border-top:1px solid #e2e8f0;font-size:0.75rem;color:#94a3b8;">
+            Le Monde du Travail &bull; Demain se prépare aujourd'hui !<br>
+            Une question ? Contacte-nous à contact@mondedutravail.com
+          </div>
+        </div>
+      </div>
+    `;
+
+    return this.sendMail({ to, subject, html });
+  }
+
+  // 4. Notification envoyée aux administrateurs lors d'une nouvelle inscription
+  static async notifyAdminNewFormationRegistration({ candidateName, candidateEmail, candidatePhone, formationTitle, motivation, createdAt }) {
+    const adminEmail = process.env.ULTRA_ADMIN_EMAIL || process.env.DEFAULT_ADMIN_EMAIL || 'admin@mondedutravail.com';
+    const subject = `[Nouvelle Inscription Formation] ${candidateName} s'est inscrit à ${formationTitle}`;
+    const dateStr = createdAt ? new Date(createdAt).toLocaleString('fr-FR') : new Date().toLocaleString('fr-FR');
+    const baseUrl = (process.env.FRONTEND_URL || 'https://monde-du-travail.vercel.app').replace(/\/$/, '');
+
+    const html = `
+      <div style="margin:0;padding:20px;background:#f1f5f9;font-family:'Segoe UI',Roboto,Helvetica,sans-serif;">
+        <div style="max-width:600px;margin:auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">
+          <div style="background:#0f172a;padding:20px;text-align:center;">
+            <h2 style="color:#ffffff;margin:0;font-size:1.2rem;">LE MONDE DU TRAVAIL — SUIVI FORMATIONS</h2>
+          </div>
+          <div style="padding:24px;">
+            <h3 style="color:#0f172a;margin-top:0;">Nouvelle inscription enregistrée</h3>
+            <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:16px 0;">
+              <p style="margin:4px 0;"><strong>Formation :</strong> 🎓 ${formationTitle}</p>
+              <p style="margin:4px 0;"><strong>Apprenant :</strong> 👤 ${candidateName}</p>
+              <p style="margin:4px 0;"><strong>Email :</strong> ✉️ ${candidateEmail}</p>
+              <p style="margin:4px 0;"><strong>Téléphone / WhatsApp :</strong> 📱 ${candidatePhone || 'Non renseigné'}</p>
+              <p style="margin:4px 0;"><strong>Date d'inscription :</strong> 🗓️ ${dateStr}</p>
+              ${motivation ? `<p style="margin:8px 0 0;font-style:italic;color:#475569;">« ${motivation} »</p>` : ''}
+            </div>
+            <div style="text-align:center;margin-top:20px;">
+              <a href="${baseUrl}/admin-frontend/index.html#formations" style="background:#0284c7;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">
+                Gérer les formations dans l'admin &rarr;
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    return this.sendMail({ to: adminEmail, subject, html });
+  }
 }
 
 module.exports = EmailService;

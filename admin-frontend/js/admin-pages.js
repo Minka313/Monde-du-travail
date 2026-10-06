@@ -1669,6 +1669,9 @@
     if (moduleKey === 'jobs') {
       html += `<a href="../frontend/job.html?job=${encodeURIComponent(item.id)}" target="_blank" class="btn btn-sm btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;gap:0.25rem;margin-right:0.25rem;" title="Voir la fiche publique"><span>👁️</span> <span>Voir</span></a>`;
     }
+    if (moduleKey === 'formations') {
+      html += `<button type="button" class="btn btn-sm btn-info btn-formation-registrations" data-formation-id="${item.id}" data-formation-title="${encodeURIComponent(item.title || '')}" style="margin-right:0.25rem;display:inline-flex;align-items:center;gap:0.25rem;" title="Consulter la liste des inscrits et candidats"><span>👥</span> <span>Inscrits</span></button>`;
+    }
     if (can(`${permPrefix}.publish`)) {
       if (item.status === 'DRAFT' || item.status === 'ARCHIVED') html += btn('publish', 'Publier', 'btn-success');
       if (item.status === 'PUBLISHED') html += btn('unpublish', 'Dépublier', 'btn-warning');
@@ -2576,6 +2579,212 @@
 
   async function loadMetiers() {
     return loadContentModule('jobs', { title: 'Métiers', permPrefix: 'metier' });
+  }
+
+  // Modale de gestion des candidatures / inscriptions à une formation
+  async function openFormationRegistrationsModal(formationId, formationTitle) {
+    const existing = document.getElementById('formation-registrations-modal-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'formation-registrations-modal-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(15,23,42,0.7);display:flex;align-items:center;justify-content:center;z-index:1050;padding:1rem;backdrop-filter:blur(4px);';
+    overlay.innerHTML = `
+      <div class="card" style="max-width:980px;width:100%;padding:1.75rem;max-height:92vh;overflow-y:auto;background:var(--bg-card, #fff);box-shadow:0 20px 50px rgba(0,0,0,0.3);border-radius:12px;">
+        <div class="card-header" style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;border-bottom:1px solid #e2e8f0;padding-bottom:0.85rem;">
+          <div>
+            <div style="display:inline-flex;align-items:center;gap:0.4rem;font-size:0.8rem;font-weight:700;color:#0284c7;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.25rem;">
+              <span>🎓</span> Inscriptions & Candidatures
+            </div>
+            <h2 style="margin:0;font-size:1.3rem;color:#0f172a;">${escapeHtml(formationTitle || 'Formation')}</h2>
+            <p style="margin:0.25rem 0 0 0;font-size:0.85rem;color:#64748b;">Suivi des apprenants préinscrits, gestion des statuts en direct et export CSV.</p>
+          </div>
+          <button type="button" id="reg-modal-close-btn" style="border:none;background:transparent;font-size:1.6rem;cursor:pointer;line-height:1;color:#64748b;">&times;</button>
+        </div>
+
+        <div id="reg-modal-loading" style="text-align:center;padding:2.5rem;color:#64748b;">
+          <div class="spinner" style="margin:0 auto 1rem auto;"></div>
+          <p>Chargement des inscriptions...</p>
+        </div>
+
+        <div id="reg-modal-body" style="display:none;"></div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const close = () => overlay.remove();
+    overlay.querySelector('#reg-modal-close-btn')?.addEventListener('click', close);
+    overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+
+    const loadingEl = overlay.querySelector('#reg-modal-loading');
+    const bodyEl = overlay.querySelector('#reg-modal-body');
+
+    try {
+      const res = await window.AdminApi.formations.getRegistrations(formationId);
+      const items = res?.data || [];
+
+      loadingEl.style.display = 'none';
+      bodyEl.style.display = 'block';
+
+      const totalCount = items.length;
+      const confirmedCount = items.filter(i => i.status === 'CONFIRMED').length;
+      const pendingCount = items.filter(i => i.status === 'PENDING').length;
+      const cancelledCount = items.filter(i => i.status === 'CANCELLED').length;
+
+      let html = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(130px, 1fr));gap:0.75rem;margin-bottom:1.25rem;">
+          <div style="background:#f8fafc;padding:0.75rem;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">
+            <div style="font-size:1.3rem;font-weight:700;color:#0f172a;">${totalCount}</div>
+            <div style="font-size:0.75rem;color:#64748b;font-weight:600;">Total Inscrits</div>
+          </div>
+          <div style="background:#ecfdf5;padding:0.75rem;border-radius:8px;border:1px solid #a7f3d0;text-align:center;">
+            <div style="font-size:1.3rem;font-weight:700;color:#059669;">${confirmedCount}</div>
+            <div style="font-size:0.75rem;color:#065f46;font-weight:600;">Confirmés</div>
+          </div>
+          <div style="background:#fffbeb;padding:0.75rem;border-radius:8px;border:1px solid #fde68a;text-align:center;">
+            <div style="font-size:1.3rem;font-weight:700;color:#d97706;">${pendingCount}</div>
+            <div style="font-size:0.75rem;color:#92400e;font-weight:600;">En attente</div>
+          </div>
+          <div style="background:#fef2f2;padding:0.75rem;border-radius:8px;border:1px solid #fecaca;text-align:center;">
+            <div style="font-size:1.3rem;font-weight:700;color:#dc2626;">${cancelledCount}</div>
+            <div style="font-size:0.75rem;color:#991b1b;font-weight:600;">Annulés</div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+          <input type="text" id="reg-search-filter" placeholder="🔍 Filtrer par nom, email ou tél..." style="padding:0.45rem 0.75rem;border:1px solid #cbd5e1;border-radius:6px;font-size:0.85rem;min-width:240px;">
+          <button type="button" class="btn btn-sm btn-outline" id="btn-export-reg-csv" ${totalCount === 0 ? 'disabled' : ''}>
+            📥 Exporter la liste (CSV)
+          </button>
+        </div>
+      `;
+
+      if (totalCount === 0) {
+        html += `
+          <div style="text-align:center;padding:3rem 1rem;background:#f8fafc;border-radius:8px;border:1px dashed #cbd5e1;">
+            <div style="font-size:2.5rem;margin-bottom:0.5rem;">📭</div>
+            <h4 style="margin:0 0 0.3rem 0;color:#334155;">Aucun inscrit pour le moment</h4>
+            <p style="margin:0;font-size:0.85rem;color:#64748b;">Les candidats préinscrits depuis le site public apparaîtront automatiquement ici.</p>
+          </div>
+        `;
+        bodyEl.innerHTML = html;
+        return;
+      }
+
+      html += `
+        <div class="table-responsive" style="max-height:480px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px;">
+          <table class="table" style="width:100%;font-size:0.85rem;margin:0;">
+            <thead style="position:sticky;top:0;background:#f8fafc;z-index:2;border-bottom:1px solid #cbd5e1;">
+              <tr>
+                <th style="padding:0.6rem 0.75rem;">Candidat</th>
+                <th style="padding:0.6rem 0.75rem;">Contact</th>
+                <th style="padding:0.6rem 0.75rem;">Profil</th>
+                <th style="padding:0.6rem 0.75rem;">Date</th>
+                <th style="padding:0.6rem 0.75rem;">Statut</th>
+                <th style="padding:0.6rem 0.75rem;">Attentes / Motivation</th>
+              </tr>
+            </thead>
+            <tbody id="reg-table-body">
+              ${items.map(r => {
+                const fullName = `${escapeHtml(r.firstName || '')} ${escapeHtml(r.lastName || '')}`.trim() || 'Anonyme';
+                const createdStr = r.createdAt ? new Date(r.createdAt).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
+                return `
+                  <tr data-reg-id="${r.id}" data-reg-search="${escapeHtml(fullName + ' ' + (r.email || '') + ' ' + (r.phone || '')).toLowerCase()}">
+                    <td style="padding:0.6rem 0.75rem;font-weight:600;color:#0f172a;">${fullName}</td>
+                    <td style="padding:0.6rem 0.75rem;">
+                      <div><a href="mailto:${escapeHtml(r.email)}" style="color:#0284c7;text-decoration:none;">${escapeHtml(r.email)}</a></div>
+                      ${r.phone ? `<div style="color:#475569;font-size:0.8rem;margin-top:0.2rem;"><a href="https://wa.me/${escapeHtml(r.phone.replace(/[^0-9]/g, ''))}" target="_blank" style="color:#16a34a;text-decoration:none;">📱 ${escapeHtml(r.phone)}</a></div>` : ''}
+                    </td>
+                    <td style="padding:0.6rem 0.75rem;">
+                      <span class="badge badge-info" style="font-size:0.75rem;">${escapeHtml(r.profileStatus || 'Non précisé')}</span>
+                      ${r.level ? `<div style="font-size:0.75rem;color:#64748b;margin-top:0.2rem;">Niveau : ${escapeHtml(r.level)}</div>` : ''}
+                    </td>
+                    <td style="padding:0.6rem 0.75rem;color:#64748b;font-size:0.8rem;white-space:nowrap;">${createdStr}</td>
+                    <td style="padding:0.6rem 0.75rem;">
+                      <select class="reg-status-select" data-reg-id="${r.id}" style="padding:0.3rem 0.5rem;border-radius:6px;border:1px solid #cbd5e1;font-size:0.8rem;font-weight:600;background:#fff;cursor:pointer;">
+                        <option value="PENDING" ${r.status === 'PENDING' ? 'selected' : ''}>⏳ En attente</option>
+                        <option value="CONFIRMED" ${r.status === 'CONFIRMED' ? 'selected' : ''}>✅ Confirmé</option>
+                        <option value="CANCELLED" ${r.status === 'CANCELLED' ? 'selected' : ''}>❌ Annulé</option>
+                      </select>
+                    </td>
+                    <td style="padding:0.6rem 0.75rem;max-width:240px;color:#334155;font-size:0.8rem;">
+                      ${r.notes ? `<div style="overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;" title="${escapeHtml(r.notes)}">${escapeHtml(r.notes)}</div>` : '<span style="color:#94a3b8;font-style:italic;">Aucune note</span>'}
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      bodyEl.innerHTML = html;
+
+      // Event listener pour filtre temps réel dans la modale
+      const searchInput = bodyEl.querySelector('#reg-search-filter');
+      const tableRows = bodyEl.querySelectorAll('#reg-table-body tr');
+      searchInput?.addEventListener('input', () => {
+        const q = searchInput.value.toLowerCase().trim();
+        tableRows.forEach(row => {
+          const text = row.getAttribute('data-reg-search') || '';
+          row.style.display = !q || text.includes(q) ? '' : 'none';
+        });
+      });
+
+      // Event listener pour changement de statut
+      bodyEl.querySelectorAll('.reg-status-select').forEach(select => {
+        select.addEventListener('change', async () => {
+          const regId = select.getAttribute('data-reg-id');
+          const newStatus = select.value;
+          select.disabled = true;
+          try {
+            await window.AdminApi.formations.updateRegistrationStatus(regId, newStatus);
+            showToast('Statut de candidature mis à jour', 'success');
+            const it = items.find(x => x.id === regId);
+            if (it) it.status = newStatus;
+          } catch (err) {
+            showToast('Erreur : ' + err.message, 'error');
+            const it = items.find(x => x.id === regId);
+            if (it) select.value = it.status;
+          } finally {
+            select.disabled = false;
+          }
+        });
+      });
+
+      // Event listener pour Export CSV
+      bodyEl.querySelector('#btn-export-reg-csv')?.addEventListener('click', () => {
+        const headers = ['Prénom', 'Nom', 'Email', 'Téléphone', 'Profil', 'Niveau', 'Statut', 'Date Inscription', 'Attentes'];
+        const rows = items.map(r => [
+          r.firstName || '',
+          r.lastName || '',
+          r.email || '',
+          r.phone || '',
+          r.profileStatus || '',
+          r.level || '',
+          r.status || '',
+          r.createdAt ? new Date(r.createdAt).toISOString() : '',
+          (r.notes || '').replace(/[\r\n]+/g, ' ')
+        ]);
+        const safeTitle = (formationTitle || 'formation').toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        exportTableToCsv(`inscrits_${safeTitle}_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+        showToast('Export CSV des inscrits téléchargé !', 'success');
+      });
+
+    } catch (err) {
+      loadingEl.style.display = 'none';
+      bodyEl.style.display = 'block';
+      bodyEl.innerHTML = `
+        <div style="padding:2rem;text-align:center;color:#ef4444;">
+          <p>⚠️ Erreur lors du chargement des inscrits : ${escapeHtml(err.message)}</p>
+          <button type="button" class="btn btn-sm btn-outline" id="btn-reg-retry">Réessayer</button>
+        </div>
+      `;
+      bodyEl.querySelector('#btn-reg-retry')?.addEventListener('click', () => {
+        openFormationRegistrationsModal(formationId, formationTitle);
+      });
+    }
   }
 
   function blogActionButtons(item) {
@@ -6327,6 +6536,14 @@
           exportTableToCsv(`formations_${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
           showToast('Export CSV des formations téléchargé', 'success');
         }
+      });
+
+      document.querySelectorAll('.btn-formation-registrations').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const fId = btn.getAttribute('data-formation-id');
+          const fTitle = decodeURIComponent(btn.getAttribute('data-formation-title') || '');
+          openFormationRegistrationsModal(fId, fTitle);
+        });
       });
 
       document.querySelectorAll('[data-content-action]').forEach(btn => {

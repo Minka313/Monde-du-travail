@@ -171,12 +171,100 @@
             </div>
         </section>
 
+        <!-- Simulateur Express d'Orientation Soft Skills -->
+        <section class="section section-simulator scene" id="scene-diagnostic" style="background: var(--bg-alt, #f8fafc); padding: var(--space-8, 3rem) 0; border-top: 1px solid var(--border-color, #e2e8f0); border-bottom: 1px solid var(--border-color, #e2e8f0);">
+            <div class="container page-content">
+                <div class="simulator-card reveal-up">
+                    <div class="simulator-header text-center" style="max-width: 720px; margin: 0 auto 2rem auto;">
+                        <span class="section-label" style="display:inline-block;margin-bottom:0.4rem;">🧭 Diagnostic Express</span>
+                        <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Quelle compétence clé te manque-t-il ?</h2>
+                        <p style="color: var(--text-muted, #64748b); font-size: 0.95rem;">En 2 clics, identifie le module d'immersion adapté pour propulser ton insertion ou accélérer ta carrière.</p>
+                    </div>
+
+                    <div class="simulator-interactive-area" id="softSkillsSimulator">
+                        <!-- Étape 1 : Profil -->
+                        <div class="simulator-step active" id="simStep1">
+                            <h4 class="sim-question-title">1. Quel est ton profil actuel ?</h4>
+                            <div class="sim-options-grid">
+                                <button type="button" class="sim-option-btn" data-profile="etudiant">
+                                    <span class="sim-opt-icon">🎓</span>
+                                    <span class="sim-opt-text"><strong>Étudiant / En fin de cycle</strong><br><small style="color:#64748b;">Je prépare ma transition vers l'entreprise</small></span>
+                                </button>
+                                <button type="button" class="sim-option-btn" data-profile="chercheur">
+                                    <span class="sim-opt-icon">💼</span>
+                                    <span class="sim-opt-text"><strong>Primo-demandeur d'emploi</strong><br><small style="color:#64748b;">Je souhaite booster mon CV et réussir mes entretiens</small></span>
+                                </button>
+                                <button type="button" class="sim-option-btn" data-profile="pro">
+                                    <span class="sim-opt-icon">🚀</span>
+                                    <span class="sim-opt-text"><strong>Jeune professionnel en poste</strong><br><small style="color:#64748b;">Je veux monter en responsabilités et manager</small></span>
+                                </button>
+                                <button type="button" class="sim-option-btn" data-profile="porteur">
+                                    <span class="sim-opt-icon">💡</span>
+                                    <span class="sim-opt-text"><strong>Porteur de projet / Entrepreneur</strong><br><small style="color:#64748b;">Je veux concrétiser et monétiser une idée en Afrique</small></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Étape 2 : Défi -->
+                        <div class="simulator-step" id="simStep2" style="display:none;">
+                            <div class="sim-back-nav">
+                                <button type="button" class="btn-sim-back" id="btnSimBack">&larr; Modifier mon profil</button>
+                            </div>
+                            <h4 class="sim-question-title">2. Quel est ton défi prioritaire aujourd'hui ?</h4>
+                            <div class="sim-options-grid">
+                                <button type="button" class="sim-option-btn" data-target-training="Prise de parole en public">
+                                    <span class="sim-opt-icon">🗣️</span>
+                                    <span class="sim-opt-text"><strong>Prise de parole & Éloquence</strong><br><small style="color:#64748b;">Vaincre le trac, structurer un pitch et captiver mon auditoire</small></span>
+                                </button>
+                                <button type="button" class="sim-option-btn" data-target-training="Leadership & Management">
+                                    <span class="sim-opt-icon">🤝</span>
+                                    <span class="sim-opt-text"><strong>Leadership & Travail d'équipe</strong><br><small style="color:#64748b;">Fédérer une équipe, déléguer et résoudre les conflits</small></span>
+                                </button>
+                                <button type="button" class="sim-option-btn" data-target-training="Entrepreneuriat">
+                                    <span class="sim-opt-icon">⚡</span>
+                                    <span class="sim-opt-text"><strong>Entrepreneuriat & Innovation</strong><br><small style="color:#64748b;">Valider mon modèle économique et décrocher mes premiers clients</small></span>
+                                </button>
+                                <button type="button" class="sim-option-btn" data-target-training="Énergies renouvelables">
+                                    <span class="sim-opt-icon">🌱</span>
+                                    <span class="sim-opt-text"><strong>Transition Écologique & Climat</strong><br><small style="color:#64748b;">Découvrir les métiers d'avenir du solaire et de l'énergie en Afrique</small></span>
+                                </button>
+                                <button type="button" class="sim-option-btn" data-target-training="Développement personnel">
+                                    <span class="sim-opt-icon">🧠</span>
+                                    <span class="sim-opt-text"><strong>Mindset & Clarté Professionnelle</strong><br><small style="color:#64748b;">Vaincre la procrastination et aligner mes valeurs professionnelles</small></span>
+                                </button>
+                                <button type="button" class="sim-option-btn" data-target-training="Communication efficace">
+                                    <span class="sim-opt-icon">💬</span>
+                                    <span class="sim-opt-text"><strong>Communication & Négociation</strong><br><small style="color:#64748b;">Mieux écouter, négocier avec tact et enrichir mon réseau</small></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Étape 3 : Résultat Recommandé -->
+                        <div class="simulator-result" id="simResult" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="section scene" id="scene-catalogue" style="padding-top: var(--space-8);">
             <div class="container page-content">
                 <div class="section-header reveal-up">
                     <span class="section-label">Catalogue des formations</span>
                     <h2>Développe tes compétences clés</h2>
                     <p>Des formations pratiques et certifiantes animées par des professionnels chevronnés.</p>
+                </div>
+
+                <!-- Barre de Recherche Instantanée & Compteur Dynamique -->
+                <div class="formation-search-box-wrap reveal-up">
+                    <div class="formation-search-input-group">
+                        <span class="formation-search-icon" aria-hidden="true">🔍</span>
+                        <input type="text" id="formationSearchInput" class="formation-search-input" placeholder="Rechercher par mot-clé (ex: parole, leadership, solaire, pitch, gestion...)" aria-label="Rechercher une formation">
+                        <button type="button" id="formationSearchClear" class="formation-search-clear" aria-label="Effacer la recherche" style="display:none;">&times;</button>
+                    </div>
+                    <div class="formation-search-meta">
+                        <span id="formationResultsCount" class="formation-results-badge">6 formations disponibles</span>
+                        <span style="font-size:0.8rem;color:#64748b;">💡 Ateliers pratiques à Dakar & webinaires interactifs</span>
+                    </div>
                 </div>
 
                 <div id="formationCategoryPills" class="domain-pills-bar">
@@ -343,9 +431,13 @@
         const container = document.getElementById('formationsGrid');
         const categoryPillsContainer = document.getElementById('formationCategoryPills');
         const formatFiltersContainer = document.getElementById('formationFormatFilters');
+        const searchInput = document.getElementById('formationSearchInput');
+        const searchClearBtn = document.getElementById('formationSearchClear');
+        const resultsCountEl = document.getElementById('formationResultsCount');
 
         let currentCategory = '';
         let currentFormat = '';
+        let searchQuery = '';
         let allFormations = [];
         const formationsMap = {};
 
@@ -356,6 +448,43 @@
           'Développement personnel': 'images/about_mission.webp',
           'Entrepreneuriat': 'images/innovation.webp',
           'Communication efficace': 'images/communication.webp',
+        };
+
+        const formationRelatedJobs = {
+          'Prise de parole en public': [
+            { title: 'Chargé de Communication', link: 'job-detail.html?slug=charge-de-communication' },
+            { title: 'Directeur Commercial', link: 'job-detail.html?slug=directeur-commercial' },
+            { title: 'Porte-Parole & Relations Publiques', link: 'job.html?domain=Communication' },
+            { title: 'Avocat / Juriste d\'Affaires', link: 'job.html?domain=Droit' }
+          ],
+          'Leadership & Management': [
+            { title: 'Chef de Projet Digital', link: 'job-detail.html?slug=chef-de-projet-digital' },
+            { title: 'Responsable d\'Équipe Opérationnelle', link: 'job.html?domain=Management' },
+            { title: 'Directeur des Ressources Humaines', link: 'job.html?domain=RH' },
+            { title: 'Scrum Master & Coach Agile', link: 'job.html?domain=Digital' }
+          ],
+          'Entrepreneuriat': [
+            { title: 'Fondateur de Startup / Dirigeant', link: 'job.html?domain=Entrepreneuriat' },
+            { title: 'Product Manager', link: 'job-detail.html?slug=product-manager' },
+            { title: 'Consultant en Stratégie & Croissance', link: 'job.html?domain=Conseil' },
+            { title: 'Responsable Incubation & Accélération', link: 'job.html?domain=Innovation' }
+          ],
+          'Énergies renouvelables': [
+            { title: 'Ingénieur Solaire & Photovoltaïque', link: 'job-detail.html?slug=ingenieur-solaire' },
+            { title: 'Technicien de Maintenance EnR', link: 'job.html?domain=Energie' },
+            { title: 'Auditeur Efficacité Énergétique', link: 'job.html?domain=Environnement' },
+            { title: 'Chef de Projet Électrification Rurale', link: 'job.html?domain=Energie' }
+          ],
+          'Développement personnel': [
+            { title: 'Coach en Évolution Professionnelle', link: 'job.html?domain=Coaching' },
+            { title: 'Consultant Formateur Soft Skills', link: 'job.html?domain=Formation' },
+            { title: 'Tous Métiers (Booster de Confiance)', link: 'job.html' }
+          ],
+          'Communication efficace': [
+            { title: 'Négociateur Commercial Grands Comptes', link: 'job.html?domain=Commerce' },
+            { title: 'Chargé de Relations Médias', link: 'job.html?domain=Communication' },
+            { title: 'Médiateur Professionnel & RH', link: 'job.html?domain=RH' }
+          ]
         };
 
         function optimizeFormationImg(url, width = 600, quality = 65) {
@@ -393,6 +522,16 @@
 
           const img = optimizeFormationImg(safeUrl(f.image || formationImages[f.title] || 'images/formations_hero.webp'), 600, 65);
           const embedUrl = getYoutubeEmbedUrl(f.videoUrl);
+          const relatedJobs = formationRelatedJobs[f.title] || [];
+
+          // Liens de partage WhatsApp & Calendrier
+          const shareText = `Salam ! Découvre la formation « ${f.title} » au club Le Monde du Travail : atelier pratique pour booster ses compétences ! 🚀 https://monde-du-travail.vercel.app/formations.html?search=${encodeURIComponent(f.title)}`;
+          const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+
+          const calTitle = encodeURIComponent(`Formation Le Monde du Travail : ${f.title}`);
+          const calDetails = encodeURIComponent(`${f.description || ''}\n\nLieu : ${f.location || 'Dakar / En ligne'}\nOrganisé par Le Monde du Travail`);
+          const calLocation = encodeURIComponent(f.location || 'Dakar, Sénégal');
+          const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calTitle}&details=${calDetails}&location=${calLocation}`;
 
           // Normalize syllabus if string or object
           let syllabusList = [];
@@ -436,6 +575,16 @@
                     ${f.location ? `<span class="dossier-meta-tag">📍 ${escapeHtml(f.location)}</span>` : ''}
                     ${dateStr ? `<span class="dossier-meta-tag">${escapeHtml(dateStr)}</span>` : ''}
                   </div>
+                  <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;margin-top:0.85rem;">
+                    <a href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-share" aria-label="Partager sur WhatsApp">
+                      <span>📲</span>
+                      <span>Partager sur WhatsApp</span>
+                    </a>
+                    <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" class="btn-calendar-add" aria-label="Ajouter à mon agenda">
+                      <span>📅</span>
+                      <span>Ajouter à mon agenda</span>
+                    </a>
+                  </div>
                 </div>
               </div>
 
@@ -449,7 +598,7 @@
 
               <!-- Body -->
               <div class="dossier-body" data-lenis-prevent="true" data-lenis-prevent-wheel="true" data-lenis-prevent-touch="true" tabindex="-1">
-                <!-- Tab 1: Objectifs -->
+                <!-- Tab 1: Objectifs & Débouchés -->
                 <div class="dossier-tab-content active" id="tab-f-overview">
                   <div class="dossier-section">
                     <h3 class="dossier-section-title">Présentation de la formation</h3>
@@ -460,6 +609,22 @@
                     <div class="dossier-section">
                       <h3 class="dossier-section-title">Objectifs pédagogiques & Acquis de la formation</h3>
                       <div class="dossier-text-block" style="border-left:4px solid #10b981;">${escapeHtml(f.objectives)}</div>
+                    </div>
+                  ` : ''}
+
+                  ${relatedJobs.length > 0 ? `
+                    <div class="dossier-section">
+                      <h3 class="dossier-section-title">💼 Débouchés & Métiers associés sur la plateforme</h3>
+                      <p style="color:#64748b;font-size:0.9rem;margin-bottom:0.75rem;">Ce module renforce directement les compétences recherchées pour ces postes :</p>
+                      <div class="formation-jobs-grid">
+                        ${relatedJobs.map(j => `
+                          <a href="${escapeHtml(j.link)}" class="formation-job-chip" title="Découvrir la fiche métier">
+                            <span>🎯</span>
+                            <span>${escapeHtml(j.title)}</span>
+                            <span style="margin-left:auto;opacity:0.6;">&rarr;</span>
+                          </a>
+                        `).join('')}
+                      </div>
                     </div>
                   ` : ''}
 
@@ -680,19 +845,19 @@
             <div class="preregister-modal" role="dialog" aria-modal="true">
               <div class="preregister-header">
                 <button type="button" class="dossier-close-btn" id="preregister-close-x" aria-label="Fermer">&times;</button>
-                <h3>⚡ Pré-inscription à la session</h3>
+                <h3>⚡ Inscription à la session</h3>
                 <p>${escapeHtml(f.title)}</p>
               </div>
               <form id="preregisterForm" class="preregister-body">
                 ${currentUser ? `
                   <div class="preregister-notice">
                     <span>✨</span>
-                    <div><strong>Membre Connecté :</strong> Tes coordonnées ont été pré-remplies. Valide pour confirmer ta réservation instantanément.</div>
+                    <div><strong>Membre Connecté :</strong> Tes coordonnées ont été pré-remplies. Valide pour confirmer ta place instantanément.</div>
                   </div>
                 ` : `
                   <div class="preregister-notice" style="background:#eff6ff;border-color:#bfdbfe;color:#1e40af;">
                     <span>ℹ️</span>
-                    <div>Remplis ce formulaire express pour réserver ta place. Les membres connectés s'inscrivent en 1 clic.</div>
+                    <div>Remplis ce formulaire express pour réserver ta place. Un email récapitulatif te sera envoyé.</div>
                   </div>
                 `}
                 <div class="preregister-field">
@@ -708,12 +873,12 @@
                   <input type="tel" id="regPhone" value="${escapeHtml(defaultPhone)}" placeholder="+221 77 000 00 00">
                 </div>
                 <div class="preregister-field">
-                  <label for="regMotivation">Ton objectif principal pour cette session</label>
-                  <input type="text" id="regMotivation" placeholder="Ex: Préparer mes entretiens, monter en compétences...">
+                  <label for="regMotivation">Ton objectif principal pour cet atelier</label>
+                  <input type="text" id="regMotivation" placeholder="Ex: Développer mon assurance à l'oral, manager mon équipe...">
                 </div>
                 <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:1.5rem;">
                   <button type="button" class="btn btn-outline btn-sm" id="btnCancelPreRegister">Annuler</button>
-                  <button type="submit" class="btn btn-primary btn-sm" style="background:#0284c7;border-color:#0284c7;color:#fff;">✅ Valider ma pré-inscription</button>
+                  <button type="submit" class="btn btn-primary btn-sm" id="btnSubmitPreRegister" style="background:#0284c7;border-color:#0284c7;color:#fff;">✅ Valider mon inscription</button>
                 </div>
               </form>
             </div>
@@ -734,12 +899,29 @@
           });
 
           const form = overlay.querySelector('#preregisterForm');
-          form.addEventListener('submit', (e) => {
+          form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = document.getElementById('btnSubmitPreRegister');
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.innerHTML = '⏳ Inscription en cours...';
+            }
+
             const name = document.getElementById('regName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
+            const motivation = document.getElementById('regMotivation').value.trim();
 
+            // 1. Enregistrement API Backend
+            try {
+              if (window.Api?.formations?.register && f.id && !f.id.startsWith('fb-')) {
+                await window.Api.formations.register(f.id, { name, email, phone, motivation });
+              }
+            } catch (apiErr) {
+              console.warn('API inscription indisponible, sauvegarde locale active :', apiErr);
+            }
+
+            // 2. Sauvegarde persistante dans le navigateur
             try {
               const stored = JSON.parse(localStorage.getItem('member_registered_formations') || '[]');
               const already = stored.some(item => item.id === f.id);
@@ -750,7 +932,7 @@
                   category: f.category || 'Formation',
                   registeredAt: new Date().toISOString(),
                   status: 'CONFIRMED',
-                  name, email, phone
+                  name, email, phone, motivation
                 });
                 localStorage.setItem('member_registered_formations', JSON.stringify(stored));
               }
@@ -758,10 +940,11 @@
 
             closeRegModal();
 
+            const successMsg = `🎉 Félicitations ${name} ! Ta place pour « ${f.title} » est confirmée. Un email de récapitulatif vient d'être généré.`;
             if (window.toast) {
-              window.toast.success(`🎉 Félicitations ! Ta pré-inscription à "${f.title}" est validée.`);
+              window.toast.success(successMsg);
             } else {
-              alert(`🎉 Félicitations ! Ta pré-inscription à "${f.title}" est validée.`);
+              alert(successMsg);
             }
           });
         }
@@ -774,6 +957,97 @@
               btn.classList.add('active');
               currentFormat = btn.getAttribute('data-format') || '';
               renderCards();
+            });
+          });
+        }
+
+        function initSearchInput() {
+          if (!searchInput) return;
+
+          searchInput.addEventListener('input', () => {
+            searchQuery = searchInput.value.trim().toLowerCase();
+            if (searchClearBtn) {
+              searchClearBtn.style.display = searchQuery ? 'block' : 'none';
+            }
+            renderCards();
+          });
+
+          if (searchClearBtn) {
+            searchClearBtn.addEventListener('click', () => {
+              searchInput.value = '';
+              searchQuery = '';
+              searchClearBtn.style.display = 'none';
+              renderCards();
+              searchInput.focus();
+            });
+          }
+        }
+
+        function initSimulator() {
+          const simStep1 = document.getElementById('simStep1');
+          const simStep2 = document.getElementById('simStep2');
+          const simResult = document.getElementById('simResult');
+          const btnSimBack = document.getElementById('btnSimBack');
+
+          if (!simStep1 || !simStep2 || !simResult) return;
+
+          let chosenProfile = '';
+
+          simStep1.querySelectorAll('.sim-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              chosenProfile = btn.getAttribute('data-profile');
+              simStep1.style.display = 'none';
+              simStep2.style.display = 'block';
+            });
+          });
+
+          if (btnSimBack) {
+            btnSimBack.addEventListener('click', () => {
+              simStep2.style.display = 'none';
+              simStep1.style.display = 'block';
+            });
+          }
+
+          simStep2.querySelectorAll('.sim-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const targetTitle = btn.getAttribute('data-target-training');
+              const matched = allFormations.find(f => f.title === targetTitle) || allFormations[0];
+
+              if (!matched) return;
+
+              simStep2.style.display = 'none';
+              simResult.style.display = 'block';
+
+              simResult.innerHTML = `
+                <div class="sim-result-card reveal-scale">
+                  <span class="sim-result-badge">🎯 Recommandation personnalisée pour ton profil</span>
+                  <h3 style="font-size:1.35rem;color:#0f172a;margin:0.5rem 0;">${escapeHtml(matched.icon || '🎓')} ${escapeHtml(matched.title)}</h3>
+                  <p style="color:#475569;font-size:0.95rem;max-width:680px;margin:0 auto 1.25rem auto;line-height:1.6;">${escapeHtml(matched.description)}</p>
+                  <div style="display:flex;gap:0.75rem;justify-content:center;align-items:center;flex-wrap:wrap;">
+                    <button type="button" class="btn btn-primary btn-sm" id="btnSimOpenMatched" style="background:#0284c7;border-color:#0284c7;color:#fff;padding:0.6rem 1.4rem;font-weight:600;">
+                      Consulter ce programme &rarr;
+                    </button>
+                    <button type="button" class="btn btn-outline btn-sm" id="btnSimReset">
+                      Refaire le diagnostic
+                    </button>
+                  </div>
+                </div>
+              `;
+
+              const openBtn = simResult.querySelector('#btnSimOpenMatched');
+              if (openBtn) {
+                openBtn.addEventListener('click', () => {
+                  openFormationDetailModal(matched);
+                });
+              }
+
+              const resetBtn = simResult.querySelector('#btnSimReset');
+              if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                  simResult.style.display = 'none';
+                  simStep1.style.display = 'block';
+                });
+              }
             });
           });
         }
@@ -833,21 +1107,44 @@
             });
           }
 
+          if (searchQuery) {
+            filtered = filtered.filter(f => {
+              const title = (f.title || '').toLowerCase();
+              const desc = (f.description || '').toLowerCase();
+              const cat = (f.category || '').toLowerCase();
+              const obj = (f.objectives || '').toLowerCase();
+              return title.includes(searchQuery) || desc.includes(searchQuery) || cat.includes(searchQuery) || obj.includes(searchQuery);
+            });
+          }
+
+          if (resultsCountEl) {
+            resultsCountEl.textContent = `${filtered.length} formation${filtered.length > 1 ? 's' : ''} disponible${filtered.length > 1 ? 's' : ''}`;
+          }
+
           if (filtered.length === 0) {
             container.innerHTML = `
               <div style="grid-column:1/-1;text-align:center;padding:3rem 1rem;background:#f8fafc;border-radius:12px;border:1px dashed #cbd5e1;">
-                <p style="font-size:1.1rem;color:#475569;margin-bottom:0.5rem;">Aucune formation trouvée pour cette catégorie.</p>
-                <button type="button" class="btn btn-outline btn-sm" id="btn-reset-formation-filter">Afficher toutes les formations</button>
+                <p style="font-size:1.1rem;color:#475569;margin-bottom:0.5rem;">Aucune formation trouvée pour ces critères.</p>
+                <button type="button" class="btn btn-outline btn-sm" id="btn-reset-formation-filter">Réinitialiser les filtres & recherche</button>
               </div>
             `;
             const resetBtn = document.getElementById('btn-reset-formation-filter');
             if (resetBtn) {
               resetBtn.addEventListener('click', () => {
                 currentCategory = '';
+                currentFormat = '';
+                searchQuery = '';
+                if (searchInput) searchInput.value = '';
+                if (searchClearBtn) searchClearBtn.style.display = 'none';
                 if (categoryPillsContainer) {
                   categoryPillsContainer.querySelectorAll('.domain-pill').forEach(b => b.classList.remove('active'));
                   const first = categoryPillsContainer.querySelector('.domain-pill');
                   if (first) first.classList.add('active');
+                }
+                if (formatFiltersContainer) {
+                  formatFiltersContainer.querySelectorAll('.format-pill').forEach(b => b.classList.remove('active'));
+                  const firstFmt = formatFiltersContainer.querySelector('.format-pill');
+                  if (firstFmt) firstFmt.classList.add('active');
                 }
                 renderCards();
               });
@@ -904,9 +1201,133 @@
           });
         }
 
+        const enrichedFallbackFormations = [
+          {
+            id: 'fb-1',
+            title: 'Prise de parole en public',
+            category: 'Soft Skills & Communication',
+            duration: '4 semaines (30h)',
+            location: 'Dakar & En ligne',
+            icon: '🗣️',
+            description: 'Maîtrise l\'art de la présentation et de l\'éloquence pour convaincre et captiver ton audience en toute sérénité.',
+            objectives: 'Maîtriser la gestion du stress, structurer un pitch percutant, captiver son auditoire par la voix et remporter l\'adhésion.',
+            prerequisites: 'Aucun prérequis technique. Volonté d\'expérimenter et de progresser en groupe bienveillant.',
+            targetAudience: 'Étudiants, jeunes diplômés, managers et entrepreneurs souhaitant développer leur impact oratoire.',
+            certification: 'Certificat d\'Aptitude à l\'Éloquence et à la Prise de Parole (Club Le Monde du Travail).',
+            videoUrl: 'https://www.youtube.com/watch?v=i0a61wFaQD8',
+            syllabus: [
+              { module: 'Module 1 : Vaincre le trac et maîtriser son non-verbal', duration: '1 semaine', lessons: ['Respiration ventrale et ancrage', 'Regard et gestion de l\'espace scénique', 'Poser sa voix et moduler le rythme'] },
+              { module: 'Module 2 : L\'art du Storytelling et de la Narration', duration: '1 semaine', lessons: ['L\'arc narratif inspiré des talks TED', 'Accroches mémorables', 'Créer des slides épurés'] },
+              { module: 'Module 3 : Pitch d\'impact et persuasion', duration: '1 semaine', lessons: ['Méthode CAB', 'Répondre aux objections avec aisance', 'Elevator Pitch en 90 secondes'] },
+              { module: 'Module 4 : Grand Oral face à un jury d\'experts', duration: '1 semaine', lessons: ['Simulation filmée et débriefing personnalisé', 'Plan de perfectionnement continu'] }
+            ]
+          },
+          {
+            id: 'fb-2',
+            title: 'Leadership & Management',
+            category: 'Management & Direction',
+            duration: '6 semaines (45h)',
+            location: 'Hybride (Dakar / Zoom)',
+            icon: '🤝',
+            description: 'Développe ta capacité à inspirer, à fédérer et à piloter des équipes vers des objectifs communs avec bienveillance.',
+            objectives: 'Développer un leadership inclusif, animer des réunions productives, déléguer avec confiance et piloter la performance collective.',
+            prerequisites: 'Avoir une première expérience de projet en équipe ou un rôle de coordination.',
+            targetAudience: 'Chefs de projet, managers de proximité, directeurs de pôles, entrepreneurs.',
+            certification: 'Certification Professionnelle en Management Collaboratif & Leadership Éthique.',
+            videoUrl: 'https://www.youtube.com/watch?v=ReRcHdeUG9Y',
+            syllabus: [
+              { module: 'Module 1 : De l\'expert au leader inspirant', duration: '1 semaine', lessons: ['Styles de leadership', 'Intelligence émotionnelle appliquée', 'Bâtir une vision d\'équipe motivante'] },
+              { module: 'Module 2 : Délégation et responsabilisation', duration: '2 semaines', lessons: ['Objectifs SMART et OKRs', 'L\'art du feedback constructif (Méthode DESC)', 'Valoriser l\'autonomie'] },
+              { module: 'Module 3 : Gestion de conflits et climat serein', duration: '2 semaines', lessons: ['Désamorcer les tensions', 'Prévention du burn-out', 'Rituels agiles stimulants'] },
+              { module: 'Module 4 : Conduite du changement et prise de décision', duration: '1 semaine', lessons: ['Prise de décision sous incertitude', 'Embarquer les résistances au changement'] }
+            ]
+          },
+          {
+            id: 'fb-3',
+            title: 'Entrepreneuriat',
+            category: 'Entrepreneuriat & Innovation',
+            duration: '8 semaines (60h)',
+            location: 'Incubateur Le Monde du Travail & Visio',
+            icon: '💡',
+            description: 'Apprends à transformer tes idées en projets viables, à valider ton modèle économique et à lancer ton activité en Afrique.',
+            objectives: 'Transformer une idée brute en modèle économique rentable, valider son marché par le Lean Startup et lever des fonds d\'amorçage.',
+            prerequisites: 'Porteur d\'idée de projet ou volonté forte d\'entreprendre en Afrique de l\'Ouest.',
+            targetAudience: 'Porteurs de projets innovants, diplômés souhaitant créer leur entreprise.',
+            certification: 'Attestation Supérieure d\'Incubation & Création d\'Entreprise.',
+            videoUrl: 'https://www.youtube.com/watch?v=b4Z6p2qWp5c',
+            syllabus: [
+              { module: 'Module 1 : Idéation & Empathie client locale', duration: '2 semaines', lessons: ['Design Thinking appliqué', 'Interviews clients au Sénégal', 'Value Proposition Canvas'] },
+              { module: 'Module 2 : Business Model & MVP Lean', duration: '2 semaines', lessons: ['Business Model Canvas', 'Prototyper sans coder (No-Code)', 'Acquérir ses 50 premiers utilisateurs'] },
+              { module: 'Module 3 : Cadre Juridique, Fiscal & Modèle Financier', duration: '2 semaines', lessons: ['Statuts juridiques (SAS, SARL, GIE au Sénégal)', 'BFR et prévisionnel financier'] },
+              { module: 'Module 4 : Pitch aux investisseurs & Demo Day', duration: '2 semaines', lessons: ['Deck investisseur percutant', 'Canaux d\'acquisition', 'Soutenance face aux business angels'] }
+            ]
+          },
+          {
+            id: 'fb-4',
+            title: 'Énergies renouvelables',
+            category: 'Transition Écologique & Climat',
+            duration: '5 semaines (40h)',
+            location: 'Atelier Pratique & Terrain Dakar',
+            icon: '🌱',
+            description: 'Sensibilise-toi aux enjeux énergétiques majeurs et aux métiers d\'avenir du photovoltaïque sur le continent africain.',
+            objectives: 'Comprendre les principes du photovoltaïque, dimensionner une installation solaire autonome et maîtriser les normes de sécurité.',
+            prerequisites: 'Notions de base en sciences physiques ou électricité.',
+            targetAudience: 'Techniciens en reconversion, ingénieurs juniors, chefs de projets énergétiques.',
+            certification: 'Habilitation Pratique Technicien Photovoltaïque Autonome.',
+            videoUrl: 'https://www.youtube.com/watch?v=1kUE0BZtTRc',
+            syllabus: [
+              { module: 'Module 1 : Gisement solaire et composants clés', duration: '1 semaine', lessons: ['Rayonnement et inclinaisons', 'Panneaux monocristallins et polycristallins', 'Batteries et régulateurs'] },
+              { module: 'Module 2 : Dimensionnement pratique d\'installation', duration: '2 semaines', lessons: ['Bilan de puissance', 'Calcul des capacités de stockage', 'Outils de simulation PVSyst'] },
+              { module: 'Module 3 : Câblage, sécurité et maintenance terrain', duration: '2 semaines', lessons: ['Mise à la terre et protection surtensions', 'Diagnostic de pannes sur banc d\'essai réel'] }
+            ]
+          },
+          {
+            id: 'fb-5',
+            title: 'Développement personnel',
+            category: 'Soft Skills & Épanouissement',
+            duration: '3 semaines (20h)',
+            location: 'En ligne & Ateliers Coaching',
+            icon: '🧠',
+            description: 'Travaille sur ton mindset, ta confiance en toi, ta discipline et ta capacité à surmonter les obstacles de carrière.',
+            objectives: 'Cultiver un esprit de croissance (Growth Mindset), vaincre la procrastination et clarifier sa trajectoire professionnelle.',
+            prerequisites: 'Aucun prérequis. Engagement personnel actif.',
+            targetAudience: 'Toute personne en quête de clarté professionnelle ou de confiance en soi.',
+            certification: 'Certificat de Compétences Personnelles & Mindset Professionnel.',
+            videoUrl: 'https://www.youtube.com/watch?v=mgmVOuLgFB0',
+            syllabus: [
+              { module: 'Module 1 : Alignement personnel et clarté de vision', duration: '1 semaine', lessons: ['Méthode Ikigai : passions, talents et opportunités', 'Déconstruire ses croyances limitantes'] },
+              { module: 'Module 2 : Discipline et micro-habitudes', duration: '1 semaine', lessons: ['Science des micro-habitudes (Atomic Habits)', 'Gestion de l\'énergie et Deep Work'] },
+              { module: 'Module 3 : Résilience et passage à l\'action', duration: '1 semaine', lessons: ['Faire de l\'échec un tremplin', 'Plan d\'action personnel à 90 jours'] }
+            ]
+          },
+          {
+            id: 'fb-6',
+            title: 'Communication efficace',
+            category: 'Soft Skills & Communication',
+            duration: '3 semaines (25h)',
+            location: 'Dakar & En ligne',
+            icon: '💬',
+            description: 'Améliore tes interactions professionnelles, pratique l\'écoute active et apprends à négocier des solutions gagnant-gagnant.',
+            objectives: 'Adopter une écoute active bienveillante, formuler des critiques constructives et négocier des accords gagnant-gagnant.',
+            prerequisites: 'Ouvert à tous les profils professionnels.',
+            targetAudience: 'Collaborateurs en entreprise, consultants, chargés de clientèle.',
+            certification: 'Attestation d\'Excellence Relationnelle & Communication Interpersonnelle.',
+            videoUrl: 'https://www.youtube.com/watch?v=F6Q_o_v3oZ0',
+            syllabus: [
+              { module: 'Module 1 : Les bases de la communication interpersonnelle', duration: '1 semaine', lessons: ['Filtres de perception et écoute active', 'L\'art de poser les questions puissantes'] },
+              { module: 'Module 2 : Communication Non Violente (CNV) en entreprise', duration: '1 semaine', lessons: ['Observer sans juger', 'Exprimer ses besoins avec diplomatie', 'Formuler une demande claire'] },
+              { module: 'Module 3 : Négociation raisonnée et médiation', duration: '1 semaine', lessons: ['Négociation de Harvard (BATNA / MESORE)', 'Gérer les situations tendues avec calme'] }
+            ]
+          }
+        ];
+
         try {
           const response = await window.Api.formations.getAll();
           let formations = response.data || [];
+
+          if (formations.length === 0) {
+            formations = enrichedFallbackFormations;
+          }
 
           const seen = new Set();
           allFormations = formations.filter(f => {
@@ -918,14 +1339,11 @@
 
           if (!container) return;
 
-          if (allFormations.length === 0) {
-            container.innerHTML = '<p class="text-muted text-center">Aucune formation disponible pour le moment.</p>';
-            return;
-          }
-
           allFormations.forEach(f => { formationsMap[f.id] = f; });
 
           await loadCategories();
+          initSearchInput();
+          initSimulator();
           renderCards();
 
           // Check if URL search query is present
@@ -956,16 +1374,11 @@
         } catch (error) {
           console.warn('API non disponible, affichage des formations de secours :', error);
           if (container) {
-            allFormations = [
-              { id: 'fb-1', title: 'Leadership & Management', description: 'Développe ta capacité à inspirer, à fédérer et à piloter des équipes vers des objectifs communs.', icon: '🤝', category: 'Management' },
-              { id: 'fb-2', title: 'Communication efficace', description: 'Améliore tes interactions professionnelles et apprends à transmettre tes messages clairement.', icon: '💬', category: 'Soft Skills' },
-              { id: 'fb-3', title: 'Prise de parole en public', description: 'Maîtrise l\'art de la présentation et de l\'éloquence pour convaincre et captiver ton audience.', icon: '🗣️', category: 'Soft Skills' },
-              { id: 'fb-4', title: 'Entrepreneuriat', description: 'Apprends à transformer tes idées en projets viables et à créer ta propre opportunité.', icon: '💡', category: 'Entrepreneuriat' },
-              { id: 'fb-5', title: 'Développement personnel', description: 'Travaille sur ton mindset, ta confiance en toi et ta capacité à te dépasser.', icon: '🧠', category: 'Soft Skills' },
-              { id: 'fb-6', title: 'Énergies renouvelables & Métiers verts', description: 'Sensibilise-toi aux enjeux énergétiques et aux métiers d\'avenir sur le continent africain.', icon: '🌱', category: 'Environnement' }
-            ];
+            allFormations = enrichedFallbackFormations;
             allFormations.forEach(f => { formationsMap[f.id] = f; });
             await loadCategories();
+            initSearchInput();
+            initSimulator();
             renderCards();
           }
         }

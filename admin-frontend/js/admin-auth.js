@@ -374,6 +374,17 @@
       publish: (id) => apiRequestWithRefresh(`/formations/${id}/publish`, { method: 'POST' }),
       unpublish: (id) => apiRequestWithRefresh(`/formations/${id}/unpublish`, { method: 'POST' }),
       archive: (id) => apiRequestWithRefresh(`/formations/${id}/archive`, { method: 'POST' }),
+      getRegistrations: (id, params = {}) => {
+        const q = new URLSearchParams();
+        if (params.status) q.set('status', params.status);
+        if (params.search) q.set('search', params.search);
+        const qs = q.toString();
+        return apiRequestWithRefresh(`/formations/${id}/registrations${qs ? `?${qs}` : ''}`);
+      },
+      updateRegistrationStatus: (regId, status) => apiRequestWithRefresh(`/formations/registrations/${regId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      }),
     },
     jobs: {
       get: (id) => apiRequestWithRefresh(`/jobs/${id}`),
