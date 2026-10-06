@@ -1640,7 +1640,7 @@
   const BLOG_CATEGORIES = ['CLUB', 'FORMATION', 'ATELIER', 'RENCONTRE', 'CONFERENCE', 'VISITE', 'PROJET', 'TEMOIGNAGE', 'ANNONCE'];
   const blogFilters = { status: '', category: '', search: '', mine: false };
   const blogCache = {};
-  const forumFilters = { search: '', status: '', category: '' };
+  const forumFilters = { search: '', status: '', category: '', activeTab: 'topics', reportStatus: 'PENDING' };
   const forumCache = {};
   const STATUS_LABELS = {
     DRAFT: 'Brouillon',
@@ -3323,6 +3323,105 @@
   }
 
   async function loadForum() {
+    let reportsCount = 0;
+    try {
+      const repRes = await window.AdminApi.forum.getReports({ status: 'PENDING', limit: 1 });
+      reportsCount = repRes.pagination?.total || 0;
+    } catch (_) {}
+
+    const isReportsTab = forumFilters.activeTab === 'reports';
+
+    if (isReportsTab) {
+      let reports = [];
+      let repTotal = 0;
+      try {
+        const res = await window.AdminApi.forum.getReports({
+          status: forumFilters.reportStatus || undefined,
+          limit: 50,
+        });
+        reports = res.data || [];
+        repTotal = res.pagination?.total ?? reports.length;
+      } catch (e) {
+        showToast('Erreur chargement signalements: ' + e.message, 'error');
+      }
+
+      const repStatusOptions = [
+        { value: 'PENDING', label: '⏳ En attente de traitement' },
+        { value: 'REVIEWED', label: '✓ Traités / Approuvés' },
+        { value: 'DISMISSED', label: '✕ Rejetés / Ignorés' },
+        { value: 'all', label: 'Tous les signalements' },
+      ].map(opt => `<option value="${opt.value}" ${forumFilters.reportStatus === opt.value ? 'selected' : ''}>${opt.label}</option>`).join('');
+
+      return `
+        <div class="card">
+          <div class="card-header" style="flex-wrap: wrap; gap: 0.75rem;">
+            <div>
+              <h2>Modération du Forum</h2>
+              <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+                <button class="btn btn-sm btn-outline forum-tab-btn" data-tab="topics">💬 Discussions</button>
+                <button class="btn btn-sm btn-primary forum-tab-btn" data-tab="reports">🚩 Signalements (${repTotal})</button>
+              </div>
+            </div>
+            <span class="badge ${reportsCount > 0 ? 'badge-danger' : 'badge-primary'}">${reportsCount} en attente</span>
+          </div>
+
+          <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
+            <label>Filtrer statut&nbsp;
+              <select id="forum-report-status-filter">${repStatusOptions}</select>
+            </label>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Motif</th>
+                  <th>Cible</th>
+                  <th>Extrait du message</th>
+                  <th>Signalé par</th>
+                  <th>Date</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${reports.length === 0 ? '<tr><td colspan="7"><div class="empty-state">Aucun signalement trouvé</div></td></tr>' : reports.map(r => {
+                  const targetType = r.topic ? 'Sujet' : (r.reply ? 'Réponse' : 'Inconnu');
+                  const targetContent = r.topic ? (r.topic.title + ' — ' + r.topic.content) : (r.reply ? r.reply.content : 'Message supprimé');
+                  const targetSnippet = targetContent.length > 80 ? targetContent.slice(0, 80) + '…' : targetContent;
+                  const reporterName = r.reporter ? `${escapeHtml(r.reporter.firstName)} ${escapeHtml(r.reporter.lastName)}` : 'Membre';
+
+                  return `
+                    <tr>
+                      <td><span class="badge badge-warning" style="font-size:0.75rem;">${escapeHtml(r.reason)}</span></td>
+                      <td><strong>${targetType}</strong></td>
+                      <td style="max-width: 250px; font-size: 0.85rem;" title="${escapeHtml(targetContent)}">
+                        ${escapeHtml(targetSnippet)}
+                        ${r.details ? `<br><small style="color:#64748b;"><em>Note : ${escapeHtml(r.details)}</em></small>` : ''}
+                      </td>
+                      <td>${reporterName}</td>
+                      <td>${new Date(r.createdAt).toLocaleDateString('fr-FR')}</td>
+                      <td>
+                        ${r.status === 'PENDING' ? '<span class="badge badge-warning">En attente</span>' : ''}
+                        ${r.status === 'REVIEWED' ? '<span class="badge badge-success">Traité</span>' : ''}
+                        ${r.status === 'DISMISSED' ? '<span class="badge badge-muted">Rejeté</span>' : ''}
+                      </td>
+                      <td>
+                        ${r.status === 'PENDING' ? `
+                          <button class="btn btn-sm btn-success btn-report-resolve" data-id="${r.id}" data-status="REVIEWED" style="margin-right: 0.25rem;">Traiter</button>
+                          <button class="btn btn-sm btn-ghost btn-report-resolve" data-id="${r.id}" data-status="DISMISSED">Rejeter</button>
+                        ` : '<span style="color:#64748b; font-size:0.8rem;">Clôturé</span>'}
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
     const response = await window.AdminApi.forum.getAll({
       search: forumFilters.search || undefined,
       status: forumFilters.status || undefined,
@@ -3341,8 +3440,14 @@
 
     return `
       <div class="card">
-        <div class="card-header">
-          <h2>Modération du Forum</h2>
+        <div class="card-header" style="flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <h2>Modération du Forum</h2>
+            <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+              <button class="btn btn-sm btn-primary forum-tab-btn" data-tab="topics">💬 Discussions (${response.pagination?.total ?? items.length})</button>
+              <button class="btn btn-sm btn-outline forum-tab-btn" data-tab="reports">🚩 Signalements ${reportsCount > 0 ? `(${reportsCount})` : ''}</button>
+            </div>
+          </div>
           <span class="badge badge-primary">${response.pagination?.total ?? items.length} sujets</span>
         </div>
         <div style="display:flex;gap:1rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap;">
@@ -3361,6 +3466,7 @@
                 <th>Titre</th>
                 <th>Catégorie</th>
                 <th>Auteur</th>
+                <th>Utile</th>
                 <th>Réponses</th>
                 <th>Vues</th>
                 <th>État</th>
@@ -3369,13 +3475,14 @@
               </tr>
             </thead>
             <tbody>
-              ${items.length === 0 ? '<tr><td colspan="8"><div class="empty-state">Aucun sujet trouvé</div></td></tr>' : items.map(item => `
+              ${items.length === 0 ? '<tr><td colspan="9"><div class="empty-state">Aucun sujet trouvé</div></td></tr>' : items.map(item => `
                 <tr>
                   <td>
                     <strong>${escapeHtml(item.title)}</strong>
                   </td>
                   <td><span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.75rem;">${escapeHtml(item.category)}</span></td>
                   <td>${escapeHtml(item.author ? `${item.author.firstName} ${item.author.lastName}` : 'Anonyme')}</td>
+                  <td><span class="badge" style="background:rgba(2,132,199,0.1);color:#0284c7;font-size:0.75rem;">▲ ${item.likeCount || 0}</span></td>
                   <td><span class="badge badge-info" style="font-size:0.75rem;">💬 ${item.replyCount || 0}</span></td>
                   <td>${item.views || 0}</td>
                   <td>
@@ -6972,6 +7079,35 @@
               showToast(error.message, 'error');
             }
             return;
+          }
+        });
+      });
+
+      document.querySelectorAll('.forum-tab-btn').forEach(tabBtn => {
+        tabBtn.addEventListener('click', () => {
+          forumFilters.activeTab = tabBtn.getAttribute('data-tab');
+          loadPage('forum');
+        });
+      });
+
+      const reportStatusFilter = document.getElementById('forum-report-status-filter');
+      if (reportStatusFilter) {
+        reportStatusFilter.addEventListener('change', () => {
+          forumFilters.reportStatus = reportStatusFilter.value;
+          loadPage('forum');
+        });
+      }
+
+      document.querySelectorAll('.btn-report-resolve').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const reportId = btn.getAttribute('data-id');
+          const status = btn.getAttribute('data-status');
+          try {
+            await window.AdminApi.forum.resolveReport(reportId, status);
+            showToast(status === 'REVIEWED' ? 'Signalement marqué comme traité' : 'Signalement rejeté', 'success');
+            loadPage('forum');
+          } catch (err) {
+            showToast(err.message || 'Erreur lors du traitement', 'error');
           }
         });
       });

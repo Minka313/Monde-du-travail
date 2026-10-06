@@ -451,6 +451,20 @@
       lock: (id) => apiRequestWithRefresh(`/forum/${id}/lock`, { method: 'PUT' }),
       resolve: (id) => apiRequestWithRefresh(`/forum/${id}/resolve`, { method: 'PUT' }),
       remove: (id) => apiRequestWithRefresh(`/forum/${id}`, { method: 'DELETE' }),
+      getReports: (params = {}) => {
+        const query = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && value !== '') {
+            query.set(key, value);
+          }
+        });
+        const qs = query.toString();
+        return apiRequestWithRefresh(`/forum/admin/reports${qs ? `?${qs}` : ''}`);
+      },
+      resolveReport: (id, status) => apiRequestWithRefresh(`/forum/admin/reports/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ status }),
+      }),
     },
     organization: {
       getBureau: (params = {}) => {

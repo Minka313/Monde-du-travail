@@ -21,6 +21,7 @@
     <title>Forum - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css">
+    <link rel="stylesheet" href="css/forum-advanced.css">
     <script src="js/theme-engine.js"></script>
 </head>
 <body>
@@ -145,14 +146,26 @@
 
                     <aside class="forum-sidebar" aria-label="Filtres du forum">
                         <div class="forum-filter">
-                            <h3>Filtrer</h3>
+                            <h3>Filtrer par état</h3>
                             <div class="forum-filter-actions">
                                 <button class="forum-filter-btn" data-filter="all" aria-current="true">Tous les sujets</button>
-                                <button class="forum-filter-btn" data-filter="pinned">Épinglés</button>
-                                <button class="forum-filter-btn" data-filter="resolved">Résolus</button>
-                                <button class="forum-filter-btn" data-filter="locked">Verrouillés</button>
+                                <button class="forum-filter-btn" data-filter="unanswered">⚡ En attente d'aide</button>
+                                <button class="forum-filter-btn" data-filter="resolved">✓ Résolus (avec solution)</button>
+                                <button class="forum-filter-btn" data-filter="pinned">📌 Épinglés</button>
+                                <button class="forum-filter-btn" data-filter="locked">🔒 Verrouillés</button>
                             </div>
                         </div>
+
+                        <div class="forum-filter">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3>Tags tendances</h3>
+                                <button id="btnResetTag" style="display: none; background: transparent; border: none; color: var(--forum-accent); font-size: 0.78rem; cursor: pointer; text-decoration: underline;">Réinitialiser</button>
+                            </div>
+                            <div id="popularTagsContainer" class="forum-tags-cloud">
+                                <span class="text-muted" style="font-size: 0.85rem;">Chargement des tags...</span>
+                            </div>
+                        </div>
+
                         <div class="forum-filter">
                             <h3>Statistiques</h3>
                             <p class="text-muted" id="forumStats">Chargement...</p>
@@ -279,6 +292,7 @@
 
         let currentPage = 1;
         let currentCategory = null;
+        let currentTag = null;
         let currentStatus = 'all';
         let searchDebounce = null;
 
@@ -298,16 +312,39 @@
           return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
         }
 
+        function escapeHtml(text) {
+          const div = document.createElement('div');
+          div.textContent = text;
+          return div.innerHTML;
+        }
+
+        function renderAuthorBadge(author) {
+          if (!author) return '';
+          if (author.adminRoles && author.adminRoles.length > 0) {
+            return '<span class="role-badge role-badge--admin">🛡️ Équipe</span>';
+          }
+          if (author.role === 'ADMIN' || author.role === 'ULTRA_ADMIN') {
+            return '<span class="role-badge role-badge--admin">🛡️ Admin</span>';
+          }
+          if (author.role === 'MENTOR') {
+            return '<span class="role-badge role-badge--mentor">🌟 Mentor</span>';
+          }
+          if (author.role === 'PRO') {
+            return '<span class="role-badge role-badge--pro">💼 Pro</span>';
+          }
+          return '';
+        }
+
         function renderBadges(topic) {
           const badges = [];
           if (topic.isPinned) {
-            badges.push('<span class="forum-badge forum-badge--pinned">Épinglé</span>');
+            badges.push('<span class="forum-badge forum-badge--pinned">📌 Épinglé</span>');
           }
-          if (topic.isResolved) {
-            badges.push('<span class="forum-badge forum-badge--resolved">Résolu</span>');
+          if (topic.bestReplyId || topic.isResolved) {
+            badges.push('<span class="forum-badge forum-badge--resolved">✓ Solution trouvée</span>');
           }
           if (topic.isLocked) {
-            badges.push('<span class="forum-badge forum-badge--locked">Verrouillé</span>');
+            badges.push('<span class="forum-badge forum-badge--locked">🔒 Verrouillé</span>');
           }
           if (topic.category) {
             badges.push(`<span class="forum-badge forum-badge--category">${escapeHtml(topic.category)}</span>`);
@@ -318,12 +355,6 @@
             });
           }
           return badges.join('');
-        }
-
-        function escapeHtml(text) {
-          const div = document.createElement('div');
-          div.textContent = text;
-          return div.innerHTML;
         }
 
         function renderPagination(pagination) {
@@ -361,19 +392,31 @@
         }
 
         function renderTopicCard(topic) {
-          const authorName = topic.author ? `${escapeHtml(topic.author.firstName)} ${escapeHtml(topic.author.lastName)}` : 'Utilisateur';
+          const authorName = topic.author ? `${escapeHtml(topic.author.firstName)} ${escapeHtml(topic.author.lastName)}` : 'Membre';
+          const authorBadge = renderAuthorBadge(topic.author);
+          const hasSolution = topic.bestReplyId || topic.isResolved;
+          const editedHtml = topic.isEdited ? '<span class="edited-notice">(modifié)</span>' : '';
+
           return `
             <a class="forum-topic-card" href="forum-topic.html?id=${topic.id}" aria-label="Sujet : ${escapeHtml(topic.title)}">
               <div class="forum-topic-main">
-                <div class="forum-topic-title">${escapeHtml(topic.title)}</div>
+                <div class="forum-topic-title">
+                  ${hasSolution ? '<span style="color:var(--forum-emerald); margin-right:4px;" title="Solution certifiée">✓</span>' : ''}
+                  ${escapeHtml(topic.title)}
+                </div>
                 <div class="forum-topic-meta">
                   <span class="author">${authorName}</span>
+                  ${authorBadge}
                   <span>·</span>
                   <span>${formatDate(topic.createdAt)}</span>
+                  ${editedHtml}
                 </div>
                 <div class="forum-badges">${renderBadges(topic)}</div>
               </div>
               <div class="forum-topic-stats">
+                <div class="forum-stat" title="Utile / Upvotes" style="color: var(--forum-accent); font-weight: 600;">
+                  <span>▲</span> ${topic.likeCount || 0}
+                </div>
                 <div class="forum-stat" title="Réponses">
                   <span>💬</span> ${topic.replyCount || 0}
                 </div>
@@ -430,16 +473,67 @@
           }
         }
 
+        async function loadPopularTags() {
+          const container = document.getElementById('popularTagsContainer');
+          const resetBtn = document.getElementById('btnResetTag');
+          if (!container) return;
+
+          try {
+            const res = await window.Api.forum.getPopularTags();
+            const tags = res.data || [];
+            if (!tags.length) {
+              container.innerHTML = '<span class="text-muted" style="font-size:0.85rem;">Aucun tag pour le moment.</span>';
+              return;
+            }
+
+            container.innerHTML = tags.map(t => `
+              <button class="forum-tag-pill ${currentTag === t.name ? 'active' : ''}" data-tag="${escapeHtml(t.name)}" type="button">
+                <span>#${escapeHtml(t.name)}</span>
+                <span class="tag-count">${t.count}</span>
+              </button>
+            `).join('');
+
+            container.querySelectorAll('.forum-tag-pill').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const tag = btn.getAttribute('data-tag');
+                if (currentTag === tag) {
+                  currentTag = null;
+                  if (resetBtn) resetBtn.style.display = 'none';
+                } else {
+                  currentTag = tag;
+                  if (resetBtn) resetBtn.style.display = 'inline-block';
+                }
+                currentPage = 1;
+                loadPopularTags();
+                loadTopics();
+              });
+            });
+
+            if (resetBtn) {
+              resetBtn.onclick = () => {
+                currentTag = null;
+                resetBtn.style.display = 'none';
+                loadPopularTags();
+                currentPage = 1;
+                loadTopics();
+              };
+            }
+          } catch (e) {
+            container.innerHTML = '<span class="text-muted" style="font-size:0.85rem;">Tags indisponibles.</span>';
+          }
+        }
+
         async function loadTopics() {
           try {
             const search = forumSearch.value.trim();
             const sort = forumSort.value;
 
-            topicsContainer.innerHTML = '<p class="text-muted">Chargement...</p>';
+            topicsContainer.innerHTML = '<p class="text-muted">Chargement des discussions...</p>';
             paginationContainer.innerHTML = '';
 
             const response = await window.Api.forum.getAll({
               category: currentCategory,
+              tag: currentTag || undefined,
               search: search || undefined,
               status: currentStatus !== 'all' ? currentStatus : undefined,
               page: currentPage,
@@ -450,7 +544,7 @@
             const topics = response.data || [];
 
             if (!topics.length) {
-              topicsContainer.innerHTML = '<div class="forum-empty"><p>Aucune discussion trouvée.</p></div>';
+              topicsContainer.innerHTML = '<div class="forum-empty"><p>Aucune discussion trouvée pour ces critères.</p></div>';
               return;
             }
 
@@ -503,6 +597,7 @@
         });
 
         loadCategories();
+        loadPopularTags();
         loadTopics();
         loadStats();
       });
