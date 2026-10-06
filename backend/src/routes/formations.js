@@ -35,14 +35,36 @@ const bulkDeleteSchema = z.object({
   }),
 });
 
+const registrationSchema = z.object({
+  body: z.object({
+    name: z.string().min(2, 'Nom complet requis (au moins 2 caractères)'),
+    email: z.string().email('Adresse email valide requise'),
+    phone: z.string().optional().nullable(),
+    motivation: z.string().optional().nullable(),
+  }),
+});
+
+const updateRegistrationStatusSchema = z.object({
+  body: z.object({
+    status: z.enum(['PENDING', 'CONFIRMED', 'ATTENDED', 'CANCELLED']),
+  }),
+});
+
 const adminGate = [authenticate, AdminApprovalMiddleware.middleware, requireModulePermission('formation')];
 
 // Routes publiques : uniquement le contenu publié
 router.get('/', formationController.getPublishedFormations);
 router.get('/categories', formationController.getCategories);
 
+// Inscription publique à une session de formation
+router.post('/:id/register', optionalAuth, validate(registrationSchema), formationController.registerCandidate);
+
 // Liste admin (filtres statut / mes créations / recherche) — avant /:id
 router.get('/admin/list', ...adminGate, authorize('formation.read'), formationController.getFormationsForAdmin);
+
+// Inscrits d'une formation (espace admin)
+router.get('/:id/registrations', ...adminGate, authorize('formation.read'), formationController.getRegistrations);
+router.patch('/registrations/:registrationId', ...adminGate, authorize('formation.update'), validate(updateRegistrationStatusSchema), formationController.updateRegistrationStatus);
 
 router.get('/:id', optionalAuth, formationController.getFormationById);
 

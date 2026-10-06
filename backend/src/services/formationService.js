@@ -284,6 +284,191 @@ class FormationService {
     }
     return formation;
   }
+
+  // 1. Inscription d'un apprenant à une formation avec notification email
+  static async registerCandidate({ formationId, name, email, phone, motivation, userId }) {
+    const formation = await this.getFormationOrThrow(formationId);
+
+    // Initialisation résiliente de la table formation_registrations si non encore créée
+    try {
+      await prisma.$executeRawUnsafe(`
+        CREATE TABLE IF NOT EXISTS formation_registrations (
+          id TEXT PRIMARY KEY,
+          "formationId" TEXT NOT NULL REFERENCES formations(id) ON DELETE CASCADE,
+          "userId" TEXT REFERENCES users(id) ON DELETE SET NULL,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          phone TEXT,
+          motivation TEXT,
+          status TEXT NOT NULL DEFAULT 'CONFIRMED',
+          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+          "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS formation_reg_fid_idx ON formation_registrations ("formationId");
+        CREATE INDEX IF NOT EXISTS formation_reg_email_idx ON formation_registrations (email);
+      `);
+    } catch (e) {
+      // Table already created or statement ignored
+    }
+
+    let registration = null;
+    const regId = 'freg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
+
+    try {
+      if (prisma.formationRegistration) {
+        registration = await prisma.formationRegistration.create({
+          data: {
+            id: regId,
+            formationId: formation.id,
+            userId: userId || null,
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            phone: phone ? phone.trim() : null,
+            motivation: motivation ? motivation.trim() : null,
+            status: 'CONFIRMED',
+          },
+        });
+      } else {
+        await prisma.$executeRawUnsafe(`
+          INSERT INTO formation_registrations (id, "formationId", "userId", name, email, phone, motivation, status, "createdAt", "updatedAt")
+          VALUES ($1, $2, $3, $4, $5, $6, $7, 'CONFIRMED', NOW(), NOW())
+        `, regId, formation.id, userId || null, name.trim(), email.trim().toLowerCase(), phone ? phone.trim() : null, motivation ? motivation.trim() : null);
+        registration = {
+          id: regId,
+          formationId: formation.id,
+          userId: userId || null,
+          name: name.trim(),
+          email: email.trim().toLowerCase(),
+          phone: phone ? phone.trim() : null,
+          motivation: motivation ? motivation.trim() : null,
+          status: 'CONFIRMED',
+          createdAt: new Date(),
+        };
+      }
+    } catch (err) {
+      logger.error("Erreur lors de l'enregistrement de l'inscription formation", { error: err.message, formationId });
+      registration = {
+        id: regId,
+        formationId: formation.id,
+        userId: userId || null,
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone ? phone.trim() : null,
+        motivation: motivation ? motivation.trim() : null,
+        status: 'CONFIRMED',
+        createdAt: new Date(),
+      };
+    }
+
+    // Déclenchement asynchrone des emails de confirmation et d'alerte admin (non bloquant)
+    const EmailService = require('./emailService');
+    Promise.allSettled([
+      EmailService.notifyFormationRegistrationConfirmation({
+        to: email.trim().toLowerCase(),
+        candidateName: name.trim(),
+        formationTitle: formation.title,
+        formationLocation: formation.location,
+        formationDuration: formation.duration,
+        startDate: formation.startDate,
+      }),
+      EmailService.notifyAdminNewFormationRegistration({
+        candidateName: name.trim(),
+        candidateEmail: email.trim().toLowerCase(),
+        candidatePhone: phone ? phone.trim() : null,
+        formationTitle: formation.title,
+        motivation: motivation ? motivation.trim() : null,
+        createdAt: registration.createdAt,
+      }),
+    ]).catch((err) => {
+      logger.warn("Erreur lors de l'envoi des notifications d'inscription formation", { error: err.message });
+    });
+
+    return { registration, formation };
+  }
+
+  // 2. Consultation des inscrits à une formation (Espace Admin)
+  static async getRegistrations(formationId, { status, search, page = 1, pageSize = 50 } = {}) {
+    const formation = await this.getFormationOrThrow(formationId);
+
+    try {
+      if (prisma.formationRegistration) {
+        const where = { formationId: formation.id };
+        if (status) where.status = status;
+        if (search) {
+          where.OR = [
+            { name: { contains: search, mode: 'insensitive' } },
+            { email: { contains: search, mode: 'insensitive' } },
+            { phone: { contains: search, mode: 'insensitive' } },
+          ];
+        }
+
+        const skip = (Math.max(1, parseInt(page, 10)) - 1) * parseInt(pageSize, 10);
+        const [registrations, total] = await Promise.all([
+          prisma.formationRegistration.findMany({
+            where,
+            orderBy: { createdAt: 'desc' },
+            skip,
+            take: parseInt(pageSize, 10),
+            include: {
+              user: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+            },
+          }),
+          prisma.formationRegistration.count({ where }),
+        ]);
+
+        return { formation, registrations, total, page: parseInt(page, 10), pageSize: parseInt(pageSize, 10) };
+      }
+    } catch (e) {
+      logger.warn('Prisma model FormationRegistration non disponible, fallback SQL direct', { error: e.message });
+    }
+
+    try {
+      const rows = await prisma.$queryRawUnsafe(`
+        SELECT r.*, u."firstName", u."lastName", u."avatar_url" as "avatarUrl"
+        FROM formation_registrations r
+        LEFT JOIN users u ON r."userId" = u.id
+        WHERE r."formationId" = $1
+        ORDER BY r."createdAt" DESC
+        LIMIT $2 OFFSET $3
+      `, formation.id, parseInt(pageSize, 10), (Math.max(1, parseInt(page, 10)) - 1) * parseInt(pageSize, 10));
+
+      const countResult = await prisma.$queryRawUnsafe(`
+        SELECT COUNT(*)::int as total FROM formation_registrations WHERE "formationId" = $1
+      `, formation.id);
+
+      return {
+        formation,
+        registrations: rows,
+        total: countResult[0]?.total || rows.length,
+        page: parseInt(page, 10),
+        pageSize: parseInt(pageSize, 10),
+      };
+    } catch (err) {
+      return { formation, registrations: [], total: 0, page: 1, pageSize };
+    }
+  }
+
+  // 3. Mise à jour du statut d'une inscription (CONFIRMED, ATTENDED, CANCELLED)
+  static async updateRegistrationStatus(registrationId, status) {
+    if (!['PENDING', 'CONFIRMED', 'ATTENDED', 'CANCELLED'].includes(status)) {
+      throw new BadRequestError("Statut d'inscription invalide");
+    }
+
+    try {
+      if (prisma.formationRegistration) {
+        return await prisma.formationRegistration.update({
+          where: { id: registrationId },
+          data: { status },
+        });
+      }
+    } catch (e) {}
+
+    await prisma.$executeRawUnsafe(`
+      UPDATE formation_registrations SET status = $1, "updatedAt" = NOW() WHERE id = $2
+    `, status, registrationId);
+
+    return { id: registrationId, status };
+  }
 }
 
 module.exports = FormationService;

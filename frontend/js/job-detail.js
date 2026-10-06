@@ -555,6 +555,37 @@
       }
     }
 
+    // Formations du club recommandées pour ce métier
+    const clubBox = document.getElementById('clubRecommendedFormationsBox');
+    const clubList = document.getElementById('clubRecommendedFormationsList');
+    if (clubBox && clubList) {
+      const category = (job.category || job.domain || '').toLowerCase();
+      const title = (job.title || '').toLowerCase();
+
+      let recs = [];
+      if (category.includes('énergie') || title.includes('solaire') || category.includes('environn') || category.includes('agri')) {
+        recs.push({ title: 'Énergies renouvelables', icon: '🌱', desc: 'Transition durable & solaire' });
+        recs.push({ title: 'Entrepreneuriat', icon: '💡', desc: 'Lancer un projet à impact' });
+      } else if (category.includes('numérique') || category.includes('informatique') || category.includes('digital') || category.includes('tech')) {
+        recs.push({ title: 'Leadership & Management', icon: '🤝', desc: 'Gestion d\'équipe agile' });
+        recs.push({ title: 'Entrepreneuriat', icon: '💡', desc: 'Innovation & MVP Lean' });
+      } else if (category.includes('comm') || category.includes('marketing') || category.includes('droit') || category.includes('vente')) {
+        recs.push({ title: 'Prise de parole en public', icon: '🗣️', desc: 'Éloquence & Pitch persuasif' });
+        recs.push({ title: 'Communication efficace', icon: '💬', desc: 'Négociation & Écoute active' });
+      } else {
+        recs.push({ title: 'Prise de parole en public', icon: '🗣️', desc: 'Réussir ses entretiens & s\'affirmer' });
+        recs.push({ title: 'Développement personnel', icon: '🧠', desc: 'Mindset & Confiance professionnelle' });
+      }
+
+      clubList.innerHTML = recs.map(r => `
+        <a href="formations.html?search=${encodeURIComponent(r.title)}" class="btn btn-outline btn-sm" style="background:#ffffff;border-color:#0284c7;color:#0369a1;display:inline-flex;align-items:center;gap:0.4rem;font-weight:600;padding:0.5rem 0.85rem;border-radius:8px;text-decoration:none;box-shadow:0 2px 4px rgba(0,0,0,0.03);">
+          <span>${r.icon}</span>
+          <span>${escapeHtml(r.title)}</span>
+          <span style="color:#0284c7;margin-left:0.25rem;">&rarr;</span>
+        </a>
+      `).join('');
+    }
+
     // Sénégal 2050
     const s2050Box = document.getElementById('senegal2050Box');
     const s2050Desc = document.getElementById('senegal2050Desc');

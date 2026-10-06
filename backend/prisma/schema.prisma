@@ -91,9 +91,32 @@ model Formation {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
+  registrations  FormationRegistration[]
+
   @@index([status])
   @@index([category])
   @@map("formations")
+}
+
+model FormationRegistration {
+  id          String   @id @default(cuid())
+  formationId String
+  userId      String?
+  name        String
+  email       String
+  phone       String?
+  motivation  String?
+  status      String   @default("CONFIRMED")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  formation   Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  user        User?     @relation("UserFormationRegistrations", fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([formationId])
+  @@index([userId])
+  @@index([email])
+  @@map("formation_registrations")
 }
 
 model Post {
@@ -250,6 +273,7 @@ model User {
   notificationReads   NotificationRead[]  @relation("UserNotificationReads")
   pushSubscriptions  PushSubscription[]  @relation("UserPushSubscriptions")
   analyticsEvents    AnalyticsEvent[]    @relation("UserAnalyticsEvents")
+  formationRegistrations FormationRegistration[] @relation("UserFormationRegistrations")
 
   @@map("users")
 }
