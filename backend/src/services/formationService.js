@@ -469,6 +469,125 @@ class FormationService {
 
     return { id: registrationId, status };
   }
+
+  // 4. Démarrer ou initialiser une session de visioconférence
+  static async startVisioSession(formationId, { user, scheduledAt } = {}) {
+    const formation = await this.getFormationOrThrow(formationId);
+
+    // Auto-migration résiliente des colonnes visio si non existantes
+    try {
+      await prisma.$executeRawUnsafe(`
+        ALTER TABLE formations ADD COLUMN IF NOT EXISTS "visioEnabled" BOOLEAN DEFAULT FALSE;
+        ALTER TABLE formations ADD COLUMN IF NOT EXISTS "visioRoomId" TEXT;
+        ALTER TABLE formations ADD COLUMN IF NOT EXISTS "visioStatus" TEXT DEFAULT 'INACTIVE';
+        ALTER TABLE formations ADD COLUMN IF NOT EXISTS "visioScheduledAt" TIMESTAMP(3);
+        ALTER TABLE formations ADD COLUMN IF NOT EXISTS "visioRecordingUrl" TEXT;
+      `);
+    } catch (e) {
+      // Ignoré si déjà présent ou non supporté
+    }
+
+    // Nom de salle unique et normalisé pour Jitsi Meet
+    const cleanSlug = (formation.title || 'atelier')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+      .slice(0, 30);
+    
+    const roomId = formation.visioRoomId || `lmdt-${cleanSlug}-${formation.id.slice(-6)}`;
+
+    try {
+      await prisma.formation.update({
+        where: { id: formation.id },
+        data: {
+          visioEnabled: true,
+          visioRoomId: roomId,
+          visioStatus: 'LIVE',
+          visioScheduledAt: scheduledAt ? new Date(scheduledAt) : (formation.visioScheduledAt || new Date()),
+        },
+      });
+    } catch (e) {
+      try {
+        await prisma.$executeRawUnsafe(`
+          UPDATE formations 
+          SET "visioEnabled" = TRUE, "visioRoomId" = $1, "visioStatus" = 'LIVE', "updatedAt" = NOW()
+          WHERE id = $2
+        `, roomId, formation.id);
+      } catch (err) {}
+    }
+
+    const isModerator = user && ['SUPER_ADMIN', 'ADMIN', 'COACH'].includes(user.role);
+
+    return {
+      formationId: formation.id,
+      formationTitle: formation.title,
+      roomId,
+      visioStatus: 'LIVE',
+      isModerator: !!isModerator,
+      domain: 'meet.jit.si',
+      userName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : 'Apprenant Invité',
+      userEmail: user?.email || '',
+      userAvatar: user?.avatarUrl || null,
+      scheduledAt: formation.visioScheduledAt || new Date(),
+    };
+  }
+
+  // 5. Clôturer une session de visioconférence
+  static async stopVisioSession(formationId) {
+    const formation = await this.getFormationOrThrow(formationId);
+
+    try {
+      await prisma.formation.update({
+        where: { id: formation.id },
+        data: {
+          visioStatus: 'ENDED',
+        },
+      });
+    } catch (e) {
+      try {
+        await prisma.$executeRawUnsafe(`
+          UPDATE formations SET "visioStatus" = 'ENDED', "updatedAt" = NOW() WHERE id = $1
+        `, formation.id);
+      } catch (err) {}
+    }
+
+    return { formationId: formation.id, visioStatus: 'ENDED' };
+  }
+
+  // 6. Consulter le statut de la session visio
+  static async getVisioSession(formationId, { user } = {}) {
+    const formation = await this.getFormationOrThrow(formationId);
+
+    const cleanSlug = (formation.title || 'atelier')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '')
+      .slice(0, 30);
+    
+    const roomId = formation.visioRoomId || `lmdt-${cleanSlug}-${formation.id.slice(-6)}`;
+    const isModerator = user && ['SUPER_ADMIN', 'ADMIN', 'COACH'].includes(user.role);
+
+    return {
+      formationId: formation.id,
+      formationTitle: formation.title,
+      category: formation.category,
+      duration: formation.duration,
+      location: formation.location,
+      roomId,
+      visioEnabled: !!formation.visioEnabled,
+      visioStatus: formation.visioStatus || 'INACTIVE',
+      visioScheduledAt: formation.visioScheduledAt || null,
+      isModerator: !!isModerator,
+      domain: 'meet.jit.si',
+      userName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : 'Apprenant Invité',
+      userEmail: user?.email || '',
+      userAvatar: user?.avatarUrl || null,
+    };
+  }
 }
 
 module.exports = FormationService;

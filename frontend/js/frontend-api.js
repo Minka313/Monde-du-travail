@@ -328,6 +328,7 @@ return headers;
         method: 'POST',
         body: JSON.stringify(data),
       }),
+      getVisioSession: (id) => apiRequestWithRefresh(`/formations/${id}/visio`),
     },
 
     // Forum

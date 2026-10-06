@@ -14930,6 +14930,34 @@ body,
 }
 
 /* Boutons de Partage & Calendrier dans la modale */
+.btn-visio-join {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.05rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-visio-join:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4);
+}
+
+.btn-visio-card-quick:hover {
+  background: rgba(2, 132, 199, 0.2) !important;
+  border-color: #0284c7 !important;
+  transform: scale(1.05);
+}
+
 .btn-whatsapp-share {
   background: #25D366;
   color: #ffffff !important;

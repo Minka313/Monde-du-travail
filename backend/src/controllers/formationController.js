@@ -316,6 +316,53 @@ class FormationController {
       next(error);
     }
   }
+
+  // Démarrer la session de visioconférence (Formateur / Admin)
+  static async startVisioSession(req, res, next) {
+    try {
+      const { scheduledAt } = req.body || {};
+      const result = await formationService.startVisioSession(req.params.id, {
+        user: req.user,
+        scheduledAt,
+      });
+      res.json({
+        success: true,
+        message: 'Session de visioconférence initialisée avec succès !',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Clôturer la session de visioconférence
+  static async stopVisioSession(req, res, next) {
+    try {
+      const result = await formationService.stopVisioSession(req.params.id);
+      res.json({
+        success: true,
+        message: 'Session de visioconférence clôturée.',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Obtenir les informations de la salle de visioconférence
+  static async getVisioSession(req, res, next) {
+    try {
+      const result = await formationService.getVisioSession(req.params.id, {
+        user: req.user,
+      });
+      res.json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = FormationController;

@@ -66,6 +66,11 @@ router.get('/admin/list', ...adminGate, authorize('formation.read'), formationCo
 router.get('/:id/registrations', ...adminGate, authorize('formation.read'), formationController.getRegistrations);
 router.patch('/registrations/:registrationId', ...adminGate, authorize('formation.update'), validate(updateRegistrationStatusSchema), formationController.updateRegistrationStatus);
 
+// Salle Virtuelle (Visioconférence Jitsi Meet)
+router.get('/:id/visio', optionalAuth, formationController.getVisioSession);
+router.post('/:id/visio/start', ...adminGate, authorize('formation.update'), formationController.startVisioSession);
+router.post('/:id/visio/stop', ...adminGate, authorize('formation.update'), formationController.stopVisioSession);
+
 router.get('/:id', optionalAuth, formationController.getFormationById);
 
 // Gestion (authentifiée, cloisonnée au module formation)

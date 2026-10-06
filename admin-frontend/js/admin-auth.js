@@ -385,6 +385,14 @@
         method: 'PATCH',
         body: JSON.stringify({ status }),
       }),
+      getVisio: (id) => apiRequestWithRefresh(`/formations/${id}/visio`),
+      startVisio: (id, data = {}) => apiRequestWithRefresh(`/formations/${id}/visio/start`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+      stopVisio: (id) => apiRequestWithRefresh(`/formations/${id}/visio/stop`, {
+        method: 'POST',
+      }),
     },
     jobs: {
       get: (id) => apiRequestWithRefresh(`/jobs/${id}`),

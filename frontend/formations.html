@@ -576,6 +576,10 @@
                     ${dateStr ? `<span class="dossier-meta-tag">${escapeHtml(dateStr)}</span>` : ''}
                   </div>
                   <div style="display:flex;gap:0.6rem;align-items:center;flex-wrap:wrap;margin-top:0.85rem;">
+                    <a href="visio.html?formation=${encodeURIComponent(f.id)}" class="btn-visio-join" aria-label="Rejoindre la salle virtuelle en direct" title="Entrer dans la salle de classe virtuelle">
+                      <span>🎥</span>
+                      <span>Salle Virtuelle (Visio)</span>
+                    </a>
                     <a href="${whatsappUrl}" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-share" aria-label="Partager sur WhatsApp">
                       <span>📲</span>
                       <span>Partager sur WhatsApp</span>
@@ -732,6 +736,9 @@
               <div class="dossier-footer">
                 <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
                   <button type="button" class="btn btn-sm" id="btnOpenPreRegister" style="background:#0284c7;color:#fff;font-weight:600;border:none;cursor:pointer;">⚡ S'inscrire à la session</button>
+                  <a href="visio.html?formation=${encodeURIComponent(f.id)}" class="btn btn-sm btn-outline" style="border-color:#0284c7;color:#0284c7;font-weight:600;display:inline-flex;align-items:center;gap:0.35rem;text-decoration:none;" title="Accéder à la classe virtuelle">
+                    <span>🎥</span> <span>Accéder à la Visio</span>
+                  </a>
                   <a href="forum.html" class="btn btn-outline btn-sm">💬 Poser une question</a>
                 </div>
                 <button type="button" class="btn btn-primary btn-sm" id="formation-close-footer">Fermer</button>
@@ -1181,11 +1188,14 @@
                     <p style="color:#64748b;font-size:0.88rem;margin-top:0.4rem;line-height:1.55;">${escapeHtml(formation.description)}</p>
                   </div>
                 </div>
-                <div style="padding:0 1.25rem 1.25rem 1.25rem;">
-                  <button type="button" class="btn btn-outline btn-sm btn-formation-detail" data-id="${formation.id}" style="width:100%;text-align:center;padding:0.65rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
-                    <span>Consulter le programme complet</span>
+                <div style="padding:0 1.25rem 1.25rem 1.25rem;display:flex;gap:0.5rem;align-items:center;">
+                  <button type="button" class="btn btn-outline btn-sm btn-formation-detail" data-id="${formation.id}" style="flex:1;text-align:center;padding:0.65rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
+                    <span>Consulter le programme</span>
                     <span>&rarr;</span>
                   </button>
+                  <a href="visio.html?formation=${encodeURIComponent(formation.id)}" class="btn btn-sm btn-visio-card-quick" title="Rejoindre la salle virtuelle" style="padding:0.65rem 0.85rem;background:rgba(2,132,199,0.1);color:#0284c7;border:1px solid rgba(2,132,199,0.3);border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-weight:700;">
+                    <span>🎥</span>
+                  </a>
                 </div>
               </article>
             `;
@@ -1194,6 +1204,7 @@
           // Wire click on whole card or button
           container.querySelectorAll('.formation-card').forEach(card => {
             card.addEventListener('click', (e) => {
+              if (e.target.closest('.btn-visio-card-quick')) return;
               const id = card.getAttribute('data-id');
               const f = formationsMap[id];
               if (f) openFormationDetailModal(f);
