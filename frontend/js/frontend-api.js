@@ -396,15 +396,19 @@ return headers;
         if (params.page) query.set('page', params.page);
         if (params.limit) query.set('limit', params.limit);
         if (params.category) query.set('category', params.category);
+        if (params.tag) query.set('tag', params.tag);
         if (params.search) query.set('search', params.search);
+        if (params.sort) query.set('sort', params.sort);
         if (params.featured !== undefined) query.set('featured', String(params.featured));
         const qs = query.toString();
         return apiRequestWithRefresh(`/blog${qs ? `?${qs}` : ''}`);
       },
       getById: (id) => apiRequestWithRefresh(`/blog/${id}`),
       getBySlug: (slug) => apiRequestWithRefresh(`/blog/slug/${encodeURIComponent(slug)}`),
+      getPopular: (limit = 4) => apiRequestWithRefresh(`/blog/popular?limit=${encodeURIComponent(limit)}`),
       getRelated: (id, limit) => apiRequestWithRefresh(`/blog/related/${id}?limit=${encodeURIComponent(limit || 4)}`),
       getCategories: () => apiRequestWithRefresh('/blog/categories'),
+      toggleLike: (id) => apiRequestWithRefresh(`/blog/${id}/like`, { method: 'POST' }),
       create: (data) => apiRequestWithRefresh('/blog', {
         method: 'POST',
         body: JSON.stringify(data),

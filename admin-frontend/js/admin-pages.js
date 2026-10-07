@@ -2966,6 +2966,8 @@
       `<button class="btn btn-sm ${cls} btn-blog-action" data-action="${action}" data-id="${item.id}" style="margin-right:0.25rem;">${label}</button>`;
 
     let html = '';
+    const viewUrl = item.slug ? `/blog-post.html?slug=${encodeURIComponent(item.slug)}` : `/blog-post.html?id=${item.id}`;
+    html += `<a href="${viewUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline" style="margin-right:0.25rem;text-decoration:none;" title="Voir sur le site">🔗 Voir</a>`;
     if (can('blog.update')) html += btn('edit', 'Modifier');
     if (can('blog.update') && (item.status === 'DRAFT' || item.status === 'ARCHIVED')) {
       html += btn('submit', 'Soumettre', 'btn-primary');
@@ -2996,7 +2998,7 @@
     overlay.id = 'blog-modal-overlay';
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:1rem;';
     overlay.innerHTML = `
-      <div class="card" style="max-width:680px;width:100%;padding:1.5rem;max-height:90vh;overflow-y:auto;background:var(--bg-card, #fff);box-shadow:0 10px 30px rgba(0,0,0,0.2);border-radius:8px;">
+      <div class="card" style="max-width:720px;width:100%;padding:1.5rem;max-height:90vh;overflow-y:auto;background:var(--bg-card, #fff);box-shadow:0 10px 30px rgba(0,0,0,0.2);border-radius:8px;">
         <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;border-bottom:1px solid #e2e8f0;padding-bottom:0.75rem;">
           <h2 style="margin:0;font-size:1.25rem;">${post ? 'Modifier l\'article' : 'Rédiger un nouvel article'}</h2>
           <button type="button" id="blog-modal-close-btn" style="border:none;background:transparent;font-size:1.5rem;cursor:pointer;line-height:1;">&times;</button>
@@ -3021,6 +3023,16 @@
               </select>
             </label>
           </div>
+
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:0.75rem;">
+            <label>Tags / Mots-clés (séparés par des virgules)
+              <input type="text" name="tags" value="${escapeHtml(Array.isArray(post?.tags) ? post.tags.join(', ') : (post?.tags || ''))}" placeholder="ex: Droit du travail, Emploi, Réforme, Sénégal">
+            </label>
+            <label>Temps de lecture (minutes)
+              <input type="number" min="1" max="120" name="readingTime" value="${post?.readingTime || ''}" placeholder="Auto (calculé)">
+            </label>
+          </div>
+
           <div>
             <label style="display:flex;justify-content:space-between;align-items:center;">
               <span>Image de couverture</span>
@@ -3043,10 +3055,19 @@
           <label>Contenu complet de l'article *
             <textarea name="content" required minlength="10" rows="8" placeholder="Rédigez l'article ici...">${escapeHtml(post?.content || '')}</textarea>
           </label>
-          <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
-            <input type="checkbox" name="featured" ${post?.featured ? 'checked' : ''}>
-            <span>Mettre cet article en avant (à la une sur la page d'accueil)</span>
-          </label>
+          <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+              <input type="checkbox" name="featured" ${post?.featured ? 'checked' : ''}>
+              <span>Mettre cet article en avant (à la une sur la page d'accueil)</span>
+            </label>
+            ${post ? `
+              <div style="font-size:0.8rem;color:#64748b;margin-left:auto;display:flex;gap:0.75rem;">
+                <span>👁️ <strong>${post.views || 0}</strong> vues</span>
+                <span>❤️ <strong>${post.likeCount || 0}</strong> likes</span>
+                <span>⏱️ <strong>${post.readingTime || 3}</strong> min</span>
+              </div>
+            ` : ''}
+          </div>
           <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:0.5rem;padding-top:0.75rem;border-top:1px solid #e2e8f0;">
             <button type="button" class="btn" id="blog-modal-cancel">Annuler</button>
             <button type="submit" class="btn btn-primary">${post ? 'Enregistrer les modifications' : 'Créer l\'article (brouillon)'}</button>
@@ -3144,6 +3165,14 @@
     overlay.querySelector('#blog-modal-form').addEventListener('submit', async e => {
       e.preventDefault();
       const formData = new FormData(e.target);
+      const tagsRaw = formData.get('tags') || '';
+      const tags = tagsRaw
+        ? tagsRaw.split(',').map(t => t.trim().replace(/^#/, '')).filter(Boolean)
+        : [];
+      const readingTimeStr = formData.get('readingTime');
+      const readingTimeVal = parseInt(readingTimeStr, 10);
+      const readingTime = Number.isInteger(readingTimeVal) && readingTimeVal > 0 ? readingTimeVal : undefined;
+
       const data = {
         title: formData.get('title'),
         category: formData.get('category'),
@@ -3151,6 +3180,8 @@
         excerpt: formData.get('excerpt') || null,
         content: formData.get('content'),
         featured: formData.get('featured') === 'on',
+        tags,
+        ...(readingTime !== undefined ? { readingTime } : {}),
       };
 
       try {
@@ -3212,8 +3243,9 @@
             <thead>
               <tr>
                 <th>Titre</th>
-                <th>Catégorie</th>
+                <th>Catégorie & Tags</th>
                 <th>Statut</th>
+                <th>Engagement</th>
                 <th>Mis en avant</th>
                 <th>Auteur</th>
                 <th>Mise à jour</th>
@@ -3221,14 +3253,29 @@
               </tr>
             </thead>
             <tbody>
-              ${items.length === 0 ? '<tr><td colspan="7"><div class="empty-state">Aucun article trouvé</div></td></tr>' : items.map(item => `
+              ${items.length === 0 ? '<tr><td colspan="8"><div class="empty-state">Aucun article trouvé</div></td></tr>' : items.map(item => `
                 <tr>
                   <td>
                     <strong>${escapeHtml(item.title)}</strong>
-                    ${item.excerpt ? `<div style="font-size:0.8rem;color:#64748b;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(item.excerpt)}</div>` : ''}
+                    ${item.excerpt ? `<div style="font-size:0.8rem;color:#64748b;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(item.excerpt)}</div>` : ''}
                   </td>
-                  <td><span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.75rem;">${escapeHtml(item.category)}</span></td>
+                  <td>
+                    <span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.75rem;">${escapeHtml(item.category)}</span>
+                    ${item.tags && item.tags.length ? `
+                      <div style="display:flex;gap:0.25rem;flex-wrap:wrap;margin-top:0.25rem;">
+                        ${item.tags.slice(0, 3).map(t => `<span class="badge" style="background:#f1f5f9;color:#475569;font-size:0.65rem;padding:0.1rem 0.3rem;">#${escapeHtml(t)}</span>`).join('')}
+                        ${item.tags.length > 3 ? `<span style="font-size:0.65rem;color:#94a3b8;">+${item.tags.length - 3}</span>` : ''}
+                      </div>
+                    ` : ''}
+                  </td>
                   <td>${contentStatusBadge(item.status)}</td>
+                  <td>
+                    <div style="display:flex;flex-direction:column;gap:0.2rem;font-size:0.75rem;color:#475569;">
+                      <span>👁️ <strong>${item.views || 0}</strong> vues</span>
+                      <span>❤️ <strong>${item.likeCount || 0}</strong> likes</span>
+                      <span>⏱️ <strong>${item.readingTime || 3}</strong> min</span>
+                    </div>
+                  </td>
                   <td>${item.featured ? '<span class="badge badge-warning" style="font-size:0.75rem;">⭐ Oui</span>' : 'Non'}</td>
                   <td>${escapeHtml(item.author ? `${item.author.firstName} ${item.author.lastName}` : '—')}</td>
                   <td>${new Date(item.updatedAt || item.createdAt).toLocaleDateString('fr-FR')}</td>

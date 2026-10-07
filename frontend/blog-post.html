@@ -15,6 +15,7 @@
     <title>Article - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css">
+    <link rel="stylesheet" href="css/blog-advanced.css">
     <script src="js/theme-engine.js"></script>
 </head>
 <body>
@@ -307,35 +308,113 @@
             const categoryLabel = categoryLabels[post.category] || post.category;
             const categoryIcon = categoryIcons[post.category] || '📄';
             const wordCount = (post.content || '').trim().split(/\s+/).length;
-            const readingMinutes = Math.max(1, Math.ceil(wordCount / 200));
+            const readingMinutes = post.readingTime || Math.max(1, Math.ceil(wordCount / 200));
 
-            document.title = `${post.title} - Le Monde du Travail`;
+            document.title = `${post.title} — Le Monde du Travail`;
+
+            // Extraction et injection des ancres pour le Sommaire (Table of Contents)
+            let formattedBody = formatBodyText(post.content);
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = formattedBody;
+            const headings = tempDiv.querySelectorAll('h2, h3');
+            let tocHtml = '';
+
+            if (headings.length >= 2) {
+              const tocItems = [];
+              headings.forEach((h, idx) => {
+                const id = `section-${idx + 1}`;
+                h.id = id;
+                const isH3 = h.tagName.toLowerCase() === 'h3';
+                tocItems.push(`<li class="${isH3 ? 'toc-h3' : 'toc-h2'}"><a href="#${id}">📌 ${escapeHtml(h.textContent)}</a></li>`);
+              });
+              formattedBody = tempDiv.innerHTML;
+              tocHtml = `
+                <div class="blog-toc-card">
+                  <div class="blog-toc-title">📖 Sommaire de l'article</div>
+                  <ul class="blog-toc-list">${tocItems.join('')}</ul>
+                </div>
+              `;
+            }
+
+            // Profil de l'auteur
+            const author = post.author || {};
+            const authorName = author.firstName ? `${author.firstName} ${author.lastName}` : 'Équipe Le Monde du Travail';
+            const authorInitial = author.firstName ? author.firstName.charAt(0) : 'L';
+            const authorRole = author.role ? author.role.replace('_', ' ') : 'RÉDACTION';
 
             container.innerHTML = `
               <article class="blog-post">
                 <header class="blog-post-header">
-                  <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
-                  <h1>${escapeHtml(post.title)}</h1>
-                  <div class="blog-meta">
-                    <span>✍️ ${escapeHtml(post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu')}</span>
-                    <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
-                    <span class="blog-reading-time">⏱️ ${readingMinutes} min de lecture</span>
+                  <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.75rem;">
+                    <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
+                    <span class="blog-reading-pill">⏱️ ${readingMinutes} min de lecture</span>
+                    <span class="blog-views-pill">👁️ ${post.views || 1} consultations</span>
+                    ${post.likeCount ? `<span class="blog-likes-pill">❤️ ${post.likeCount}</span>` : ''}
                   </div>
+                  <h1 style="line-height:1.25;margin-bottom:1rem;">${escapeHtml(post.title)}</h1>
+                  <div class="blog-meta" style="font-size:0.9rem;gap:1rem;flex-wrap:wrap;">
+                    <span>✍️ <strong>${escapeHtml(authorName)}</strong></span>
+                    <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
+                  </div>
+                  ${post.tags && post.tags.length > 0 ? `
+                    <div class="blog-tags-container">
+                      ${post.tags.map(t => `<a href="blog.html?search=${encodeURIComponent(t)}" class="blog-tag-pill">#${escapeHtml(t)}</a>`).join('')}
+                    </div>
+                  ` : ''}
                 </header>
-                <div class="blog-post-image">
-                  <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="eager" decoding="async" width="1000" height="500">
+
+                <div class="blog-post-image" style="border-radius:12px;overflow:hidden;margin:1.5rem 0;">
+                  <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="eager" decoding="async" width="1000" height="500" style="width:100%;object-fit:cover;max-height:480px;">
                 </div>
-                <div class="blog-post-content">
-                  ${post.excerpt ? `<p class="blog-post-excerpt">${escapeHtml(post.excerpt)}</p>` : ''}
-                  <div class="blog-post-body">${formatBodyText(post.content)}</div>
+
+                ${tocHtml}
+
+                <div class="blog-post-content" style="font-size:1.05rem;line-height:1.75;">
+                  ${post.excerpt ? `<p class="blog-post-excerpt" style="font-size:1.15rem;font-weight:500;color:var(--color-text-muted);border-left:3px solid #0284c7;padding-left:1rem;margin-bottom:1.5rem;">${escapeHtml(post.excerpt)}</p>` : ''}
+                  <div class="blog-post-body">${formattedBody}</div>
                 </div>
+
                 ${renderGallery(post.gallery)}
+
+                <!-- Bouton J'aime interactif -->
+                <div class="blog-like-button-wrap">
+                  <button type="button" class="btn-blog-like ${post.hasLiked ? 'liked' : ''}" id="btnBlogLike" title="Aimer cet article">
+                    <span class="like-heart">${post.hasLiked ? '❤️' : '🤍'}</span>
+                    <span id="blogLikeText">${post.hasLiked ? 'Vous aimez' : 'J\'aime cet article'}</span>
+                    (<strong id="blogLikeCount">${post.likeCount || 0}</strong>)
+                  </button>
+                </div>
+
+                <!-- Encart Profil Auteur -->
+                <div class="blog-author-card">
+                  ${author.avatarUrl ? `
+                    <img src="${escapeHtml(author.avatarUrl)}" alt="${escapeHtml(authorName)}" class="blog-author-avatar">
+                  ` : `
+                    <div class="blog-author-avatar-placeholder">${authorInitial}</div>
+                  `}
+                  <div class="blog-author-info">
+                    <h4 class="blog-author-name">
+                      ${escapeHtml(authorName)}
+                      <span class="blog-author-role-badge">${escapeHtml(authorRole)}</span>
+                    </h4>
+                    <p class="blog-author-bio">Contributeur officiel au club Le Monde du Travail, engagé pour l'insertion et l'épanouissement professionnel de la jeunesse.</p>
+                  </div>
+                </div>
+
+                <!-- Encart Connexion Forum -->
+                <div class="blog-forum-callout">
+                  <div class="blog-forum-callout-text">
+                    <h4>💬 Une question ou un avis sur ce sujet ?</h4>
+                    <p>Poursuis la conversation avec les autres membres et mentors sur le forum de la communauté.</p>
+                  </div>
+                  <a href="forum.html" class="btn btn-primary">Rejoindre la discussion &rarr;</a>
+                </div>
 
                 <!-- Social Share Bar -->
                 <div class="blog-share-section">
-                  <span class="blog-share-title">📤 Partager cet article</span>
+                  <span class="blog-share-title">📤 Partager cette publication</span>
                   <div class="blog-share-buttons">
-                    <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(post.title + ' - ' + window.location.href)}" target="_blank" rel="noopener noreferrer" class="share-btn share-btn-wa">
+                    <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(post.title + ' — ' + window.location.href)}" target="_blank" rel="noopener noreferrer" class="share-btn share-btn-wa">
                       <span>💬</span> WhatsApp
                     </a>
                     <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}" target="_blank" rel="noopener noreferrer" class="share-btn share-btn-in">
@@ -352,6 +431,41 @@
                 <div id="shareToast" class="share-toast">Lien copié dans le presse-papier !</div>
               </article>
             `;
+
+            // Like interaction
+            const btnLike = document.getElementById('btnBlogLike');
+            const likeCountEl = document.getElementById('blogLikeCount');
+            const likeTextEl = document.getElementById('blogLikeText');
+
+            if (btnLike && likeCountEl) {
+              btnLike.addEventListener('click', async () => {
+                if (!window.Api.isLoggedIn || !window.Api.isLoggedIn()) {
+                  alert('Connectez-vous pour aimer cet article et soutenir les rédacteurs !');
+                  return;
+                }
+                btnLike.disabled = true;
+                try {
+                  const res = await window.Api.blog.toggleLike(post.id);
+                  if (res.success && res.data) {
+                    const liked = res.data.liked;
+                    likeCountEl.textContent = res.data.likeCount;
+                    if (liked) {
+                      btnLike.classList.add('liked');
+                      btnLike.querySelector('.like-heart').textContent = '❤️';
+                      if (likeTextEl) likeTextEl.textContent = 'Vous aimez';
+                    } else {
+                      btnLike.classList.remove('liked');
+                      btnLike.querySelector('.like-heart').textContent = '🤍';
+                      if (likeTextEl) likeTextEl.textContent = 'J\'aime cet article';
+                    }
+                  }
+                } catch (err) {
+                  console.error('Erreur like:', err);
+                } finally {
+                  btnLike.disabled = false;
+                }
+              });
+            }
 
             // Scroll reading progress indicator
             const progressBar = document.getElementById('readingProgressBar');
@@ -387,12 +501,13 @@
 
             if (related.length > 0) {
               relatedContainer.innerHTML = `
-                <h3 class="text-center mt-2">Articles associés</h3>
+                <h3 class="text-center mt-3 mb-1">Articles similaires & Recommandés</h3>
                 <div class="cards-grid mt-1">
                   ${related.map(relatedPost => {
                     const rawRelatedImg = safeUrl(relatedPost.coverImage || getDefaultImage(relatedPost.category), getDefaultImage(relatedPost.category));
                     const relatedImg = optimizeBlogImg(rawRelatedImg, 450, 65);
                     const relatedCategoryLabel = categoryLabels[relatedPost.category] || relatedPost.category;
+                    const relatedLink = `blog-post.html?slug=${encodeURIComponent(relatedPost.slug || relatedPost.id)}`;
                     return `
                       <article class="card">
                         <div class="card-image-wrap">
@@ -400,10 +515,13 @@
                           <div class="card-image-overlay"></div>
                         </div>
                         <div class="card-body">
-                          <span class="blog-category">${escapeHtml(relatedCategoryLabel)}</span>
+                          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;">
+                            <span class="blog-category">${escapeHtml(relatedCategoryLabel)}</span>
+                            <span class="blog-reading-pill" style="font-size:0.75rem;padding:0.12rem 0.45rem;">⏱️ ${relatedPost.readingTime || 3} min</span>
+                          </div>
                           <h3>${escapeHtml(relatedPost.title)}</h3>
                           <p>${escapeHtml(relatedPost.excerpt)}</p>
-                          <a href="blog-post.html?id=${relatedPost.id}" class="card-link">Lire la suite</a>
+                          <a href="${relatedLink}" class="card-link" style="margin-top:auto;">Lire l'article &rarr;</a>
                         </div>
                       </article>
                     `;
