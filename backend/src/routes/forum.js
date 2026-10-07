@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const forumController = require('../controllers/forumController');
+const forumService = require('../services/forumService');
 const { authenticate, authorize, authorizeMember, authorizeAdmin, optionalAuth } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
@@ -38,6 +39,24 @@ const reportSchema = z.object({
     topicId: z.string().optional(),
     replyId: z.string().optional(),
   }),
+});
+
+// Auto-synchronisation du schéma PostgreSQL (Supabase)
+router.use(async (req, res, next) => {
+  try {
+    await forumService.ensureSchema();
+  } catch (_) {}
+  next();
+});
+
+// Endpoint de synchronisation explicite
+router.get('/sync-schema', async (req, res) => {
+  try {
+    const result = await forumService.ensureSchema(true);
+    res.json({ success: true, message: 'Schéma synchronisé avec succès dans Supabase', result });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 // Routes publiques (avec détection de l'utilisateur si token présent)

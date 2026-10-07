@@ -2,11 +2,138 @@ const prisma = require('../config/database');
 const { NotFoundError, BadRequestError, ForbiddenError } = require('../utils/errors');
 const logger = require('../utils/logger');
 
+let schemaEnsured = false;
+let schemaPromise = null;
+
 class ForumService {
+  /**
+   * Synchronise automatiquement les colonnes et tables manquantes dans Supabase
+   */
+  static async ensureSchema(force = false) {
+    if (schemaEnsured && !force) return { status: 'already_ensured' };
+    if (schemaPromise && !force) return schemaPromise;
+
+    schemaPromise = (async () => {
+      const logs = [];
+      try {
+        // 1. Colonnes sur topics
+        await prisma.$executeRawUnsafe(`
+          ALTER TABLE topics
+            ADD COLUMN IF NOT EXISTS "likeCount" INTEGER NOT NULL DEFAULT 0,
+            ADD COLUMN IF NOT EXISTS "bestReplyId" TEXT,
+            ADD COLUMN IF NOT EXISTS "isEdited" BOOLEAN NOT NULL DEFAULT false,
+            ADD COLUMN IF NOT EXISTS "editedAt" TIMESTAMPTZ;
+        `);
+        logs.push('topics columns verified');
+
+        // 2. Colonnes sur replies
+        await prisma.$executeRawUnsafe(`
+          ALTER TABLE replies
+            ADD COLUMN IF NOT EXISTS "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            ADD COLUMN IF NOT EXISTS "isSolution" BOOLEAN NOT NULL DEFAULT false,
+            ADD COLUMN IF NOT EXISTS "isEdited" BOOLEAN NOT NULL DEFAULT false,
+            ADD COLUMN IF NOT EXISTS "editedAt" TIMESTAMPTZ,
+            ADD COLUMN IF NOT EXISTS "likeCount" INTEGER NOT NULL DEFAULT 0;
+        `);
+        logs.push('replies columns verified');
+
+        // 3. Index replies
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS replies_is_solution_idx ON replies ("isSolution");
+        `);
+        logs.push('replies index verified');
+
+        // 4. Table topic_likes
+        await prisma.$executeRawUnsafe(`
+          CREATE TABLE IF NOT EXISTS topic_likes (
+            id TEXT PRIMARY KEY,
+            "topicId" TEXT NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
+            "userId" TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT topic_likes_topic_user_unique UNIQUE ("topicId", "userId")
+          );
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS topic_likes_topic_idx ON topic_likes ("topicId");
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS topic_likes_user_idx ON topic_likes ("userId");
+        `);
+        logs.push('topic_likes table verified');
+
+        // 5. Table reply_likes
+        await prisma.$executeRawUnsafe(`
+          CREATE TABLE IF NOT EXISTS reply_likes (
+            id TEXT PRIMARY KEY,
+            "replyId" TEXT NOT NULL REFERENCES replies(id) ON DELETE CASCADE,
+            "userId" TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT reply_likes_reply_user_unique UNIQUE ("replyId", "userId")
+          );
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS reply_likes_reply_idx ON reply_likes ("replyId");
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS reply_likes_user_idx ON reply_likes ("userId");
+        `);
+        logs.push('reply_likes table verified');
+
+        // 6. Enum ForumReportStatus
+        try {
+          await prisma.$executeRawUnsafe(`CREATE TYPE "ForumReportStatus" AS ENUM ('PENDING', 'REVIEWED', 'DISMISSED');`);
+          logs.push('enum ForumReportStatus created');
+        } catch (e) {
+          logs.push('enum ForumReportStatus exists');
+        }
+
+        // 7. Table forum_reports
+        await prisma.$executeRawUnsafe(`
+          CREATE TABLE IF NOT EXISTS forum_reports (
+            id TEXT PRIMARY KEY,
+            reason TEXT NOT NULL,
+            details TEXT,
+            status "ForumReportStatus" NOT NULL DEFAULT 'PENDING',
+            "reporterId" TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            "topicId" TEXT REFERENCES topics(id) ON DELETE CASCADE,
+            "replyId" TEXT REFERENCES replies(id) ON DELETE CASCADE,
+            "createdAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+          );
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS forum_reports_status_idx ON forum_reports (status);
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS forum_reports_topic_idx ON forum_reports ("topicId");
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS forum_reports_reply_idx ON forum_reports ("replyId");
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS forum_reports_reporter_idx ON forum_reports ("reporterId");
+        `);
+        logs.push('forum_reports table verified');
+
+        schemaEnsured = true;
+        logger.info('Auto-migration: Schéma Forum synchronisé avec succès dans Supabase');
+        return { status: 'success', logs };
+      } catch (err) {
+        logger.warn('Auto-migration forum échouée ou partielle:', err.message);
+        return { status: 'error', error: err.message, logs };
+      } finally {
+        schemaPromise = null;
+      }
+    })();
+
+    return schemaPromise;
+  }
+
   /**
    * Récupère la liste des sujets avec filtres et pagination
    */
   static async getAllTopics({ category, search, status, tag, page = 1, limit = 20, sort = 'latest', userId } = {}) {
+    await ForumService.ensureSchema();
     const where = {};
 
     if (category) {
@@ -120,6 +247,7 @@ class ForumService {
    * Récupère un sujet par son ID avec incrément des vues et liste des réponses
    */
   static async getTopicById(id, userId = null) {
+    await ForumService.ensureSchema();
     try {
       const topic = await prisma.topic.update({
         where: { id },
@@ -198,6 +326,7 @@ class ForumService {
    * Crée un nouveau sujet
    */
   static async createTopic(data, userId) {
+    await ForumService.ensureSchema();
     const topic = await prisma.topic.create({
       data: {
         title: data.title,
@@ -606,6 +735,7 @@ class ForumService {
    * Recommande des sujets similaires basés sur la catégorie et les tags partagés
    */
   static async getSimilarTopics(topicId, limit = 4) {
+    await ForumService.ensureSchema();
     const currentTopic = await prisma.topic.findUnique({
       where: { id: topicId },
       select: { id: true, category: true, tags: true },
@@ -649,6 +779,7 @@ class ForumService {
    * Récupère la liste des tags populaires
    */
   static async getPopularTags(limit = 15) {
+    await ForumService.ensureSchema();
     const topics = await prisma.topic.findMany({
       select: { tags: true },
     });
