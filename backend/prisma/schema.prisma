@@ -137,16 +137,35 @@ model Post {
   category    PostCategory
   status      PostStatus   @default(DRAFT)
   featured    Boolean      @default(false)
+  views       Int          @default(0)
+  readingTime Int          @default(3)
+  likeCount   Int          @default(0)
+  tags        String[]     @default([])
   publishedAt DateTime?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
   authorId    String
   author      User         @relation(fields: [authorId], references: [id])
+  likes       PostLike[]
 
   @@index([status])
   @@index([publishedAt])
   @@index([category])
   @@map("posts")
+}
+
+model PostLike {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserPostLikes", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+  @@map("post_likes")
 }
 
 model Topic {
@@ -347,6 +366,7 @@ model User {
   topicLikes         TopicLike[]         @relation("UserTopicLikes")
   replyLikes         ReplyLike[]         @relation("UserReplyLikes")
   forumReports       ForumReport[]       @relation("UserForumReports")
+  postLikes          PostLike[]          @relation("UserPostLikes")
 
   @@map("users")
 }

@@ -1,7 +1,8 @@
 const express = require('express');
 const { z } = require('zod');
 const BlogController = require('../controllers/blogController');
-const { authenticate, authorize } = require('../middleware/auth');
+const BlogService = require('../services/blogService');
+const { authenticate, authorize, authorizeMember, optionalAuth } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
 const validate = require('../middleware/validate');
@@ -16,6 +17,8 @@ const postFields = {
     coverImage: z.string().url('URL invalide').optional().nullable(),
     gallery: z.array(z.string().url('URL invalide')).max(10, 'Maximum 10 images dans la galerie').optional(),
     category: z.enum(['CLUB', 'FORMATION', 'ATELIER', 'RENCONTRE', 'CONFERENCE', 'VISITE', 'PROJET', 'TEMOIGNAGE', 'ANNONCE']),
+    tags: z.array(z.string()).optional(),
+    readingTime: z.number().int().min(1).optional(),
     featured: z.boolean().optional()
   })
 };
@@ -27,17 +30,39 @@ const updatePostSchema = z.object({
 
 const adminGate = [authenticate, AdminApprovalMiddleware.middleware, requireModulePermission('blog')];
 
+// Auto-synchronisation du schéma PostgreSQL (Supabase)
+router.use(async (req, res, next) => {
+  try {
+    await BlogService.ensureSchema();
+  } catch (_) {}
+  next();
+});
+
+// Endpoint de synchronisation explicite
+router.get('/sync-schema', async (req, res) => {
+  try {
+    const result = await BlogService.ensureSchema(true);
+    res.json({ success: true, message: 'Schéma du blog synchronisé avec succès dans Supabase', result });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 // Routes publiques
-router.get('/', BlogController.getPosts);
+router.get('/', optionalAuth, BlogController.getPosts);
 router.get('/categories', BlogController.getCategories);
+router.get('/popular', BlogController.getPopularPosts);
 router.get('/related/:id', BlogController.getRelatedPosts);
-router.get('/slug/:slug', BlogController.getPostBySlug);
+router.get('/slug/:slug', optionalAuth, BlogController.getPostBySlug);
+
+// Like sur article (membres connectés)
+router.post('/:id/like', authenticate, authorizeMember, BlogController.togglePostLike);
 
 // Liste admin (définie avant /:id pour éviter collision d'URL)
 router.get('/admin/list', ...adminGate, authorize('blog.read'), BlogController.getPostsForAdmin);
 
 // Consultation publique d'un article
-router.get('/:id', BlogController.getPost);
+router.get('/:id', optionalAuth, BlogController.getPost);
 
 // Gestion authentifiée (cloisonnée au module blog)
 router.post('/', ...adminGate, authorize('blog.create'), validate(createPostSchema), BlogController.createPost);

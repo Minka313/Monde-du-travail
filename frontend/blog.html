@@ -22,6 +22,7 @@
     <title>Blog - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css">
+    <link rel="stylesheet" href="css/blog-advanced.css">
     <script src="js/theme-engine.js"></script>
 </head>
 <body>
@@ -104,9 +105,19 @@
         <section class="section scene" id="articles" data-scene="blog-articles">
             <div class="container page-content">
                 <div class="blog-controls reveal-up">
-                    <div class="blog-search">
-                        <span class="blog-search-icon">🔍</span>
-                        <input type="text" id="blogSearch" placeholder="Rechercher un article, un sujet...">
+                    <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;width:100%;margin-bottom:0.75rem;">
+                        <div class="blog-search" style="flex:1;min-width:260px;">
+                            <span class="blog-search-icon">🔍</span>
+                            <input type="text" id="blogSearch" placeholder="Rechercher un article, un sujet, un mot-clé...">
+                        </div>
+                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                            <label for="blogSortSelect" style="font-size:0.85rem;color:var(--color-muted);white-space:nowrap;">Trier par :</label>
+                            <select id="blogSortSelect" class="blog-sort-select">
+                                <option value="latest">📅 Plus récents</option>
+                                <option value="popular">🔥 Plus populaires</option>
+                                <option value="views">👁️ Plus consultés</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="blog-filters stagger-group" id="blogCategoryFilters">
                         <button class="filter-chip stagger-item active" data-category="">✨ Tout afficher</button>
@@ -300,7 +311,17 @@
 
         let currentCategory = '';
         let currentSearch = '';
+        let currentSort = 'latest';
         let currentPage = 1;
+
+        const sortSelect = document.getElementById('blogSortSelect');
+        if (sortSelect) {
+          sortSelect.addEventListener('change', () => {
+            currentSort = sortSelect.value;
+            currentPage = 1;
+            loadPosts();
+          });
+        }
 
         function getDefaultImage(category) {
           return defaultImages[category] || defaultImages['CLUB'];
@@ -322,6 +343,7 @@
           const img = optimizeBlogImg(rawImg, 800, 70);
           const categoryLabel = categoryLabels[post.category] || post.category;
           const categoryIcon = categoryIcons[post.category] || '📄';
+          const postLink = `blog-post.html?slug=${encodeURIComponent(post.slug || post.id)}`;
 
           featuredContainer.innerHTML = `
             <article class="blog-featured-card">
@@ -330,14 +352,24 @@
                 <div class="blog-featured-overlay"></div>
               </div>
               <div class="blog-featured-content">
-                <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
+                <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.5rem;">
+                  <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
+                  <span class="blog-reading-pill">⏱️ ${post.readingTime || 3} min</span>
+                  <span class="blog-views-pill">👁️ ${post.views || 0} vues</span>
+                  ${post.likeCount ? `<span class="blog-likes-pill">❤️ ${post.likeCount}</span>` : ''}
+                </div>
                 <h2>${escapeHtml(post.title)}</h2>
                 <p>${escapeHtml(post.excerpt)}</p>
+                ${post.tags && post.tags.length > 0 ? `
+                  <div class="blog-tags-container" style="margin: 0.5rem 0 1rem;">
+                    ${post.tags.map(t => `<span class="blog-tag-pill">#${escapeHtml(t)}</span>`).join('')}
+                  </div>
+                ` : ''}
                 <div class="blog-meta">
                   <span>✍️ ${escapeHtml(post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu')}</span>
                   <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
                 </div>
-                <a href="blog-post.html?id=${post.id}" class="btn btn-primary btn-lg">Lire l'article</a>
+                <a href="${postLink}" class="btn btn-primary btn-lg">Lire l'article &rarr;</a>
               </div>
             </article>
           `;
@@ -391,6 +423,7 @@
               limit: 9,
               category: currentCategory || undefined,
               search: currentSearch || undefined,
+              sort: currentSort || 'latest',
               featured: false
             };
 
@@ -426,6 +459,7 @@
               const img = optimizeBlogImg(rawImg, 450, 65);
               const categoryLabel = categoryLabels[post.category] || post.category;
               const categoryIcon = categoryIcons[post.category] || '📄';
+              const postLink = `blog-post.html?slug=${encodeURIComponent(post.slug || post.id)}`;
 
               return `
                 <article class="card stagger-item" data-blog-post-id="${post.id}" style="--stagger-idx: ${idx};">
@@ -434,14 +468,22 @@
                     <div class="card-image-overlay"></div>
                   </div>
                   <div class="card-body">
-                    <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
-                    <h3>${escapeHtml(post.title)}</h3>
-                    <p>${escapeHtml(post.excerpt || `${post.content.substring(0, 150)}...`)}</p>
-                    <div class="blog-meta">
-                      <span>✍️ ${escapeHtml(post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur inconnu')}</span>
-                      <span>📅 ${formatDate(post.publishedAt || post.createdAt)}</span>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.4rem;">
+                      <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
+                      <span class="blog-reading-pill" style="font-size:0.75rem;padding:0.15rem 0.5rem;">⏱️ ${post.readingTime || 3} min</span>
                     </div>
-                    <a href="blog-post.html?id=${post.id}" class="card-link">Lire la suite</a>
+                    <h3>${escapeHtml(post.title)}</h3>
+                    <p>${escapeHtml(post.excerpt || `${(post.content || '').substring(0, 150)}...`)}</p>
+                    ${post.tags && post.tags.length > 0 ? `
+                      <div class="blog-tags-container" style="margin: 0.35rem 0 0.65rem;">
+                        ${post.tags.slice(0, 3).map(t => `<span class="blog-tag-pill" style="font-size:0.72rem;padding:0.12rem 0.45rem;">#${escapeHtml(t)}</span>`).join('')}
+                      </div>
+                    ` : ''}
+                    <div class="blog-meta" style="margin-top:auto;padding-top:0.6rem;border-top:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:space-between;font-size:0.78rem;">
+                      <span>✍️ ${escapeHtml(post.author ? `${post.author.firstName} ${post.author.lastName}` : 'Auteur')}</span>
+                      <span>👁️ ${post.views || 0} vues</span>
+                    </div>
+                    <a href="${postLink}" class="card-link" style="margin-top:0.6rem;">Lire la suite &rarr;</a>
                   </div>
                 </article>
               `;

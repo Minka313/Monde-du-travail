@@ -7,13 +7,16 @@ class BlogController {
   static async getPosts(req, res, next) {
     try {
       res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
-      const { page, limit, category, search, featured, status } = req.query;
+      const { page, limit, category, search, tag, featured, sort, status } = req.query;
       const result = await BlogService.getPublishedPosts({
         page,
         limit,
         category,
         search,
-        featured
+        tag,
+        featured,
+        sort,
+        userId: req.user?.id,
       });
 
       res.json({
@@ -21,6 +24,17 @@ class BlogController {
         data: result.posts,
         pagination: result.pagination
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getPopularPosts(req, res, next) {
+    try {
+      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+      const limit = Math.min(12, Math.max(1, parseInt(req.query.limit, 10) || 4));
+      const posts = await BlogService.getPopularPosts(limit);
+      res.json({ success: true, data: posts });
     } catch (error) {
       next(error);
     }
@@ -52,7 +66,7 @@ class BlogController {
   static async getPost(req, res, next) {
     try {
       const { id } = req.params;
-      const post = await BlogService.getPostById(id);
+      const post = await BlogService.getPostById(id, req.user?.id);
       res.json({ success: true, data: post });
     } catch (error) {
       next(error);
@@ -63,8 +77,32 @@ class BlogController {
     try {
       res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
       const { slug } = req.params;
-      const post = await BlogService.getPostBySlug(slug);
+      const post = await BlogService.getPostBySlug(slug, req.user?.id);
       res.json({ success: true, data: post });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async togglePostLike(req, res, next) {
+    try {
+      const { id } = req.params;
+      const userId = req.user.id;
+      const result = await BlogService.togglePostLike(id, userId);
+
+      await AuditService.log({
+        userId,
+        action: result.liked ? 'blog.like' : 'blog.unlike',
+        module: 'blog',
+        resource: 'Post',
+        resourceId: id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'SUCCESS',
+        metadata: { liked: result.liked, likeCount: result.likeCount },
+      });
+
+      res.json({ success: true, data: result });
     } catch (error) {
       next(error);
     }
