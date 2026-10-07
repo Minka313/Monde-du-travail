@@ -45,11 +45,11 @@ const assignPositionSchema = z.object({
   }),
 });
 
-// --- CONSULTATION (Accessible à tout le staff administrateur) ---
-router.get('/bureau', OrganizationController.getBureau);
-router.get('/positions', OrganizationController.getAllPositions);
-router.get('/positions/:id', OrganizationController.getPosition);
-router.get('/assignments', OrganizationController.getAllAssignments);
+// --- CONSULTATION (Accessible à l'Ultra Admin et aux rôles autorisés) ---
+router.get('/bureau', authorize(['organization.read', '*']), OrganizationController.getBureau);
+router.get('/positions', authorize(['organization.read', '*']), OrganizationController.getAllPositions);
+router.get('/positions/:id', authorize(['organization.read', '*']), OrganizationController.getPosition);
+router.get('/assignments', authorize(['organization.read', '*']), OrganizationController.getAllAssignments);
 
 // --- MUTATIONS STRUCTURELLES (Réservées EXCLUSIVEMENT à l'Ultra Admin) ---
 router.post('/positions', authorizeUltraAdmin, validate(createPositionSchema), OrganizationController.createPosition);

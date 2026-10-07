@@ -22,8 +22,8 @@ class RbacService {
       select: { role: true },
     });
 
-    if (user?.role === 'ULTRA_ADMIN' || user?.role === 'ADMIN') {
-      return { permissions: ['*'], adminRoles: [user.role] };
+    if (user?.role === 'ULTRA_ADMIN') {
+      return { permissions: ['*'], adminRoles: ['ULTRA_ADMIN'] };
     }
 
     const userRoles = await prisma.userAdminRole.findMany({
@@ -47,6 +47,32 @@ class RbacService {
       adminRoles.push(userRole.role.name);
       for (const rp of userRole.role.permissions) {
         permissions.add(rp.permission.code);
+      }
+    }
+
+    // Si le compte a le rôle de base ADMIN mais aucune attribution canonique active,
+    // vérifier s'il existe une attribution existante (tolérance de synchronisation)
+    if (adminRoles.length === 0 && user?.role === 'ADMIN') {
+      const fallbackAssignment = await prisma.userAdminRole.findFirst({
+        where: { userId },
+        include: {
+          role: {
+            include: {
+              permissions: {
+                include: {
+                  permission: { select: { code: true } },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (fallbackAssignment && fallbackAssignment.role) {
+        adminRoles.push(fallbackAssignment.role.name);
+        for (const rp of fallbackAssignment.role.permissions) {
+          permissions.add(rp.permission.code);
+        }
       }
     }
 
