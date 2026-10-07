@@ -185,26 +185,35 @@
       const input = overlay.querySelector('#cmd-search');
       const results = overlay.querySelector('#cmd-results');
 
-      const actions = [
-        { label: 'Tableau de bord', icon: '📊', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('dashboard') },
-        { label: 'Vitrine & Éditorial (À la Une / Jalons)', icon: '🎨', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('vitrine') },
-        { label: 'Métiers & Fiches', icon: '💼', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('metiers') },
-        { label: 'Créer une nouvelle fiche Métier', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('metiers'); setTimeout(() => openContentModal('jobs'), 300); } },
-        { label: 'Formations & Programmes', icon: '📚', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('formations') },
-        { label: 'Créer une nouvelle Formation', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('formations'); setTimeout(() => openContentModal('formations'), 300); } },
-        { label: 'Blog & Articles', icon: '📝', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('blog') },
-        { label: 'Rédiger un article de blog', icon: '✍️', shortcut: 'Action', action: () => { window.AdminRouter.navigate('blog'); setTimeout(() => openBlogPostModal(), 300); } },
-        { label: 'Approbations & Validations', icon: '✅', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('approvals') },
-        { label: 'Audience & Présence des membres', icon: '📈', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('analytics') },
-        { label: 'Gestion des Utilisateurs', icon: '👥', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('users') },
-        { label: 'Organisation & Bureau', icon: '🏛️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('organization') },
-        { label: 'Notifications Push', icon: '🔔', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('notifications') },
-        { label: 'Journal d\'activité (Logs)', icon: '📋', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('logs') },
-        { label: 'Paramètres système & 2FA', icon: '⚙️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('settings') },
+      const authorized = window.AdminApp?.authorizedModules || [];
+      const can = perm => window.AdminApp?.hasPermission(window.AdminApp.currentUser, perm);
+
+      const allActions = [
+        { module: 'dashboard', label: 'Tableau de bord', icon: '📊', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('dashboard') },
+        { module: 'vitrine', label: 'Vitrine & Éditorial (À la Une / Jalons)', icon: '🎨', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('vitrine') },
+        { module: 'metiers', label: 'Métiers & Fiches', icon: '💼', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('metiers') },
+        { module: 'metiers', perm: 'metier.create', label: 'Créer une nouvelle fiche Métier', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('metiers'); setTimeout(() => openContentModal('jobs'), 300); } },
+        { module: 'formations', label: 'Formations & Programmes', icon: '📚', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('formations') },
+        { module: 'formations', perm: 'formation.create', label: 'Créer une nouvelle Formation', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('formations'); setTimeout(() => openContentModal('formations'), 300); } },
+        { module: 'blog', label: 'Blog & Articles', icon: '📝', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('blog') },
+        { module: 'blog', perm: 'blog.create', label: 'Rédiger un article de blog', icon: '✍️', shortcut: 'Action', action: () => { window.AdminRouter.navigate('blog'); setTimeout(() => openBlogPostModal(), 300); } },
+        { module: 'approvals', label: 'Approbations & Validations', icon: '✅', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('approvals') },
+        { module: 'analytics', label: 'Audience & Présence des membres', icon: '📈', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('analytics') },
+        { module: 'users', label: 'Gestion des Utilisateurs', icon: '👥', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('users') },
+        { module: 'organization', label: 'Organisation & Bureau', icon: '🏛️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('organization') },
+        { module: 'notifications', label: 'Notifications Push', icon: '🔔', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('notifications') },
+        { module: 'logs', label: 'Journal d\'activité (Logs)', icon: '📋', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('logs') },
+        { module: 'settings', label: 'Paramètres système & 2FA', icon: '⚙️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('settings') },
         { label: 'Basculer Mode Sombre / Clair', icon: '🌓', shortcut: 'Thème', action: () => (document.getElementById('admin-theme-toggle') || document.getElementById('admin-sidebar-theme-toggle'))?.click() },
         { label: 'Voir le site public', icon: '🌐', shortcut: 'Lien', action: () => window.open('../frontend/index.html', '_blank') },
         { label: 'Déconnexion', icon: '🚪', shortcut: 'Compte', action: () => window.AdminApp?.logout() },
       ];
+
+      const actions = allActions.filter(a => {
+        if (a.module && !authorized.includes(a.module)) return false;
+        if (a.perm && !can(a.perm)) return false;
+        return true;
+      });
 
       const renderResults = (query = '') => {
         const q = query.toLowerCase().trim();
@@ -266,10 +275,15 @@
   let badgesFetched = false;
 
   async function fetchSidebarBadges() {
+    const authorized = window.AdminApp?.authorizedModules || [];
+    const canApprovals = authorized.includes('approvals');
+    const canUsers = authorized.includes('users');
+    if (!canApprovals && !canUsers) return;
+
     try {
       const [approvalsRes, membershipsRes] = await Promise.allSettled([
-        window.AdminApi.approvals ? window.AdminApi.approvals.getPending() : Promise.resolve({ data: [] }),
-        window.AdminApi.admin ? window.AdminApi.admin.getPendingMemberships() : Promise.resolve({ data: [] }),
+        (canApprovals && window.AdminApi.approvals) ? window.AdminApi.approvals.getPending() : Promise.resolve({ data: [] }),
+        (canUsers && window.AdminApi.admin) ? window.AdminApi.admin.getPendingMemberships() : Promise.resolve({ data: [] }),
       ]);
       const pendingApps = (approvalsRes.status === 'fulfilled' && Array.isArray(approvalsRes.value?.data)) ? approvalsRes.value.data.length : 0;
       const pendingMems = (membershipsRes.status === 'fulfilled' && Array.isArray(membershipsRes.value?.data)) ? membershipsRes.value.data.length : 0;
@@ -479,6 +493,26 @@
 
     // Afficher la barre de chargement discrète sans écran blanc
     showTopLoader();
+
+    // Vérification de sécurité côté interface : refuser le chargement si le module n'est pas autorisé
+    const authorized = window.AdminApp?.authorizedModules || [];
+    const isUltra = window.AdminApp?.currentUser?.role === 'ULTRA_ADMIN';
+    if (!isUltra && !authorized.includes(module)) {
+      hideTopLoader();
+      content.innerHTML = `
+        <div class="card" style="padding:3.5rem 1.5rem;text-align:center;max-width:540px;margin:3rem auto;box-shadow:0 10px 30px rgba(0,0,0,0.06);border-radius:12px;">
+          <div style="font-size:3.5rem;margin-bottom:1rem;">🔒</div>
+          <h2 style="margin-bottom:0.6rem;font-size:1.4rem;">Accès Non Autorisé</h2>
+          <p style="color:var(--color-muted);line-height:1.6;margin-bottom:1.75rem;font-size:0.95rem;">
+            Votre compte administrateur n'a pas les droits nécessaires pour accéder à l'espace <strong>« ${escapeHtml(ADMIN_MODULES[module]?.label || module)} »</strong>.
+          </p>
+          <button type="button" class="btn btn-primary" onclick="window.AdminRouter.navigate('${authorized[0] || 'dashboard'}')">
+            ← Revenir à mon espace de travail
+          </button>
+        </div>
+      `;
+      return;
+    }
 
     // Si changement de module froid, afficher un skeleton moderne
     if (!isSoftRefresh && activeModule !== module) {

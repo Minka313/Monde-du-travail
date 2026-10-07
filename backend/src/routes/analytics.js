@@ -1,6 +1,7 @@
 const express = require('express');
 const AnalyticsController = require('../controllers/analyticsController');
 const { optionalAuth, authenticate, authorizeAdmin } = require('../middleware/auth');
+const { authorize } = require('../middleware/rbac');
 
 const router = express.Router();
 
@@ -14,11 +15,11 @@ router.post('/events', optionalAuth, AnalyticsController.trackEvents);
 // Profilage progressif sans friction (Lycéen, Étudiant, Pro, Reconversion)
 router.post('/profile', optionalAuth, AnalyticsController.setProfile);
 
-// Endpoints sécurisés réservés aux administrateurs
-router.get('/visitors', authenticate, authorizeAdmin, AnalyticsController.getVisitorOverview);
-router.get('/overview', authenticate, authorizeAdmin, AnalyticsController.getVisitorOverview);
-router.get('/presence', authenticate, authorizeAdmin, AnalyticsController.getMostActiveMembers);
-router.get('/impact-stats', authenticate, authorizeAdmin, AnalyticsController.getImpactStats);
+// Endpoints sécurisés réservés aux administrateurs autorisés (Ultra Admin / analytics.read)
+router.get('/visitors', authenticate, authorizeAdmin, authorize(['analytics.read', '*']), AnalyticsController.getVisitorOverview);
+router.get('/overview', authenticate, authorizeAdmin, authorize(['analytics.read', '*']), AnalyticsController.getVisitorOverview);
+router.get('/presence', authenticate, authorizeAdmin, authorize(['analytics.read', '*']), AnalyticsController.getMostActiveMembers);
+router.get('/impact-stats', authenticate, authorizeAdmin, authorize(['analytics.read', '*']), AnalyticsController.getImpactStats);
 
 module.exports = router;
 
