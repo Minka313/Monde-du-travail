@@ -261,7 +261,7 @@ consultable avec filtres dans l'onglet « Journal d'activité ».
 
 ```bash
 npm start          # Démarrer en production
-npm run dev        # Démarrer en développement (nodemon)
+npm run dev        # Démarrer en développement (node --watch)
 npm test           # Lancer les tests
 npm run prisma:generate   # Générer le client Prisma
 npm run prisma:migrate    # Créer une migration
