@@ -2334,7 +2334,7 @@
             throw new Error(res.message || 'Échec du téléversement');
           }
         } catch (err) {
-          r2Status.innerHTML = `<span style="color:#ef4444;">❌ Erreur: ${err.message}</span>`;
+          r2Status.innerHTML = `<span style="color:#ef4444;">❌ Erreur: ${escapeHtml(err.message)}</span>`;
           showToast(`Erreur upload R2 : ${err.message}`, 'error');
         }
       });
@@ -3135,7 +3135,7 @@
             throw new Error(res.message || 'Échec du téléversement');
           }
         } catch (err) {
-          blogR2Status.innerHTML = `<span style="color:#ef4444;">❌ Erreur: ${err.message}</span>`;
+          blogR2Status.innerHTML = `<span style="color:#ef4444;">❌ Erreur: ${escapeHtml(err.message)}</span>`;
           showToast(`Erreur upload R2: ${err.message}`, 'error');
         }
       });

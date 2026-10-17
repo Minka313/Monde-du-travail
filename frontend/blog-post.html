@@ -192,6 +192,7 @@
     <script defer src="js/layout.js"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/main.js"></script>
+    <script defer src="js/vendor/purify.min.js"></script>
     <script>
       document.addEventListener('layout:loaded', async () => {
         const container = document.getElementById('blogPostContainer');
@@ -270,7 +271,14 @@
         function formatBodyText(content) {
           if (!content) return '';
           if (/<[a-z][\s\S]*>/i.test(content)) {
-            return content;
+            // Contenu HTML : nettoyé (scripts, gestionnaires on*, URLs javascript:)
+            // AVANT toute insertion dans le DOM, y compris le div temporaire du sommaire.
+            if (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') {
+              // target conservé : les liens d'articles s'ouvrent toujours dans un nouvel onglet
+              return window.DOMPurify.sanitize(content, { ADD_ATTR: ['target'] });
+            }
+            // Sans le nettoyeur, on affiche le texte brut plutôt que du HTML non vérifié
+            return `<p>${escapeHtml(content).replace(/\n/g, '<br>')}</p>`;
           }
           return content
             .split(/\n\s*\n/)

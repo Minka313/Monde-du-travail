@@ -53,7 +53,7 @@
     } catch (error) {
       console.error('[Visio] Erreur lors de l\'initialisation de la salle virtuelle :', error);
       if (elements.loadingDesc) {
-        elements.loadingDesc.innerHTML = `<span style="color:#ef4444;">⚠️ Impossible de charger la session : ${error.message}</span>`;
+        elements.loadingDesc.innerHTML = `<span style="color:#ef4444;">⚠️ Impossible de charger la session : ${escapeHtml(error.message)}</span>`;
       }
     }
   });
