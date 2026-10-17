@@ -1,4 +1,6 @@
 require('dotenv').config();
+// Suivi des erreurs initialisé au plus tôt (inactif sans SENTRY_DSN)
+require('./utils/monitoring').initMonitoring();
 
 const express = require('express');
 const cors = require('cors');

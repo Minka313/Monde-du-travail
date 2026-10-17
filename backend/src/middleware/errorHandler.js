@@ -1,7 +1,7 @@
 const logger = require('../utils/logger');
-const { BadRequestError, NotFoundError } = require('../utils/errors');
+const { captureServerError } = require('../utils/monitoring');
 
-const errorHandler = (err, req, res, next) => {
+const errorHandler = async (err, req, res, next) => {
   if (!err) {
     return next();
   }
@@ -26,6 +26,16 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === 'ZodError') {
     statusCode = 400;
     message = err.errors?.map((e) => e.message).join(', ') || 'Validation invalide';
+  }
+
+  // Seules les erreurs inattendues (5xx) remontent au suivi
+  if (statusCode >= 500) {
+    await captureServerError(err, req);
+    // En production, le message brut d'une erreur imprévue (Prisma, SDK...) peut
+    // révéler des détails internes : seul un message prévu par le code est renvoyé.
+    if (process.env.NODE_ENV === 'production' && !err.isOperational) {
+      message = 'Erreur serveur interne';
+    }
   }
 
   res.status(statusCode).json({

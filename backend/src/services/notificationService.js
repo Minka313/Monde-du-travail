@@ -80,7 +80,7 @@ class NotificationService {
    */
   async createNotification({ userId = null, type = 'SYSTEM', title, message, url = null, imageUrl = null, dedupeKey = null }) {
     if (!title || !message) {
-      throw new Error('Le titre et le message de la notification sont requis');
+      throw new BadRequestError('Le titre et le message de la notification sont requis');
     }
 
     // Une clé d'événement rend les publications rejouables sans créer de doublon.
