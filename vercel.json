@@ -77,6 +77,11 @@
       "dest": "/frontend/fragments/$1"
     },
     {
+      "src": "/data/(.*)",
+      "headers": { "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400" },
+      "dest": "/frontend/data/$1"
+    },
+    {
       "src": "/images/(.*)",
       "headers": { "Cache-Control": "public, max-age=86400, stale-while-revalidate=604800" },
       "dest": "/frontend/images/$1"

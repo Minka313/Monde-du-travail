@@ -2278,34 +2278,14 @@
 
           if (Array.isArray(apiJobs) && apiJobs.length > 0) {
             apiJobs.forEach(apiJob => {
-              const existingIdx = combined.findIndex(j => (apiJob.id && (j.id === apiJob.id || j.backendId === apiJob.id)) || (j.slug && apiJob.slug && j.slug === apiJob.slug) || (j.title && apiJob.title && j.title.toLowerCase() === apiJob.title.toLowerCase()));
+              // L'identifiant prime : deux fiches du catalogue peuvent partager le même titre
+              let existingIdx = combined.findIndex(j => apiJob.id && (j.id === apiJob.id || j.backendId === apiJob.id));
+              if (existingIdx < 0) {
+                existingIdx = combined.findIndex(j => (j.slug && apiJob.slug && j.slug === apiJob.slug) || (j.title && apiJob.title && j.title.toLowerCase() === apiJob.title.toLowerCase()));
+              }
               if (existingIdx >= 0) {
-                if (apiJob.saviezVous) {
-                  combined[existingIdx].saviezVous = apiJob.saviezVous;
-                }
-                if (apiJob.salary) {
-                  combined[existingIdx].salary = apiJob.salary;
-                }
-                if (apiJob.description) {
-                  combined[existingIdx].shortDescription = apiJob.description;
-                }
-                if (apiJob.content) {
-                  combined[existingIdx].longDescription = apiJob.content;
-                }
-                if (apiJob.location) {
-                  combined[existingIdx].location = apiJob.location;
-                }
-                if (apiJob.skills && Array.isArray(apiJob.skills) && apiJob.skills.length > 0) {
-                  const existingSkills = combined[existingIdx].skills;
-                  if (existingSkills && typeof existingSkills === 'object' && !Array.isArray(existingSkills)) {
-                    combined[existingIdx].skills = Object.assign({}, existingSkills, {
-                      technical: apiJob.skills
-                    });
-                  } else {
-                    combined[existingIdx].skills = apiJob.skills;
-                  }
-                }
-                if (apiJob.id) combined[existingIdx].backendId = apiJob.id;
+                // Règles de fusion partagées avec la fiche métier (js/job-merge.js)
+                window.JobMerge.applyApiJob(combined[existingIdx], apiJob);
               } else {
                 combined.push({
                   id: apiJob.id || 'job-' + Math.random().toString(36).substr(2, 9),

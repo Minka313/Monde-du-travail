@@ -91,3 +91,7 @@ jobs:
 
       - name: Lancer ESLint
         run: npm run lint
+
+      # Les fiches métiers pré-calculées doivent suivre le catalogue d'orientation
+      - name: Vérifier les données des fiches métiers
+        run: node scripts/build-job-data.js --check

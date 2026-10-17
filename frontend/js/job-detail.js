@@ -68,6 +68,69 @@
     }, 3200);
   }
 
+  // Catalogue complet, chargé seulement en secours (fiche absente de data/jobs/).
+  // Liste lue aussi par scripts/build-job-data.js : la garder dans l'ordre d'exécution.
+  const CATALOG_SCRIPTS = [
+    'js/orientation-digital-data.js',
+    'js/orientation-finance-data.js',
+    'js/orientation-agri-data.js',
+    'js/orientation-energy-data.js',
+    'js/orientation-btp-data.js',
+    'js/orientation-llsh-data.js',
+    'js/orientation-industry-data.js',
+    'js/orientation-geosciences-data.js',
+    'js/orientation-health-data.js',
+    'js/orientation-biochimie-data.js',
+    'js/orientation-education-data.js',
+    'js/orientation-environment-data.js',
+    'js/orientation-hospitality-data.js',
+    'js/orientation-communication-data.js',
+    'js/job-merge.js',
+    'js/orientation-data.js',
+  ];
+  const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+  // Métiers connexes pré-calculés avec la fiche (null = calcul via le catalogue complet)
+  let prebuiltRelated = null;
+
+  // Fiche pré-calculée au build (~10 Ko) puis modifications de l'admin pour ce seul métier
+  async function loadPrebuiltJob(slug) {
+    if (!SLUG_PATTERN.test(slug)) return null;
+    let payload;
+    try {
+      const res = await fetch(`data/jobs/${slug}.json`);
+      if (!res.ok) return null;
+      payload = await res.json();
+    } catch (_) {
+      return null;
+    }
+    if (!payload || !payload.job) return null;
+
+    try {
+      if (window.Api && window.Api.jobs && typeof window.Api.jobs.getById === 'function' && window.JobMerge) {
+        const res = await window.Api.jobs.getById(encodeURIComponent(payload.job.backendId || payload.job.id));
+        if (res && res.data) window.JobMerge.applyApiJob(payload.job, res.data);
+      }
+    } catch (_) {
+      // Métier absent de la base ou API indisponible : la fiche du catalogue reste affichée
+    }
+    return payload;
+  }
+
+  // Secours : exécute les scripts du catalogue dans l'ordre (async = false)
+  function loadCatalogScripts() {
+    return new Promise((resolve, reject) => {
+      CATALOG_SCRIPTS.forEach((src, index) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = false;
+        if (index === CATALOG_SCRIPTS.length - 1) script.onload = resolve;
+        script.onerror = () => reject(new Error(`Échec de chargement : ${src}`));
+        document.head.appendChild(script);
+      });
+    });
+  }
+
   // Initialisation au chargement du DOM
   document.addEventListener('DOMContentLoaded', async () => {
     const skeleton = document.getElementById('jobDetailSkeleton');
@@ -84,26 +147,18 @@
       return;
     }
 
-    // Attendre que OrientationData soit prêt
-    if (!window.OrientationData || typeof window.OrientationData.getJobBySlug !== 'function') {
-      let attempts = 0;
-      while ((!window.OrientationData || typeof window.OrientationData.getJobBySlug !== 'function') && attempts < 20) {
-        await new Promise(r => setTimeout(r, 100));
-        attempts++;
-      }
-    }
-
-    if (!window.OrientationData || typeof window.OrientationData.getJobBySlug !== 'function') {
-      if (skeleton) skeleton.style.display = 'none';
-      if (notFoundView) notFoundView.style.display = 'block';
-      return;
-    }
-
     let job = null;
-    try {
-      job = await window.OrientationData.getJobBySlug(slug);
-    } catch (err) {
-      console.error('Erreur chargement métier:', err);
+    const prebuilt = await loadPrebuiltJob(slug);
+    if (prebuilt) {
+      job = prebuilt.job;
+      prebuiltRelated = Array.isArray(prebuilt.related) ? prebuilt.related : null;
+    } else {
+      try {
+        if (!window.OrientationData) await loadCatalogScripts();
+        job = await window.OrientationData.getJobBySlug(slug);
+      } catch (err) {
+        console.error('Erreur chargement métier:', err);
+      }
     }
 
     if (!job) {
@@ -699,7 +754,9 @@
 
     let relatedList = [];
     try {
-      if (typeof window.OrientationData.getRelatedJobs === 'function') {
+      if (prebuiltRelated) {
+        relatedList = prebuiltRelated;
+      } else if (window.OrientationData && typeof window.OrientationData.getRelatedJobs === 'function') {
         relatedList = await window.OrientationData.getRelatedJobs(job);
       }
     } catch (e) {

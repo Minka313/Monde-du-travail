@@ -96,6 +96,16 @@ npm run lint             # depuis la racine : ESLint sur l'API, le site et l'adm
 - La [CI GitHub Actions](.github/workflows/ci.yml) lance les tests et le lint à chaque push sur `main` et sur chaque pull request, avec une base PostgreSQL jetable.
 - ESLint est en phase d'introduction : les règles signalent sans bloquer.
 
+### Catalogue d'orientation et fiches métiers
+
+Les fiches métiers (`job-detail.html`) chargent un fichier pré-calculé `frontend/data/jobs/<slug>.json` (~2 Ko compressé) au lieu du catalogue complet. **Après toute modification d'un fichier `frontend/js/orientation-*.js`**, régénérer ces fichiers et les commiter :
+
+```bash
+npm run build:job-data
+```
+
+La CI échoue si les fichiers ne sont plus à jour. Les modifications faites dans l'admin (table `jobs`) restent appliquées à l'affichage.
+
 ## Déploiement
 
 Chaque push sur `main` déclenche un déploiement automatique sur Vercel. Les variables d'environnement de production se configurent dans Vercel (*Settings → Environment Variables*) ; la liste complète est dans [`directives/deploy_vercel.md`](directives/deploy_vercel.md).
