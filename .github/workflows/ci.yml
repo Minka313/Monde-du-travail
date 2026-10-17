@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Tests API (Jest + PostgreSQL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    # Base jetable propre à chaque exécution : les tests ne touchent jamais Supabase
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mdt_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mdt_test
+      DIRECT_URL: postgresql://postgres:postgres@localhost:5432/mdt_test
+      # Secrets factices, valables uniquement pour cette base de test
+      JWT_SECRET: ci_jwt_secret_for_tests_only
+      JWT_REFRESH_SECRET: ci_refresh_secret_for_tests_only
+      FRONTEND_URL: http://localhost:3000
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Générer le client Prisma
+        run: npx prisma generate
+
+      - name: Créer le schéma de la base de test
+        run: npx prisma db push --skip-generate
+
+      - name: Lancer les tests
+        run: npx jest --runInBand
+
+  lint:
+    name: Lint (ESLint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Lancer ESLint
+        run: npm run lint
