@@ -97,6 +97,18 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// Sitemap généré depuis le contenu publié (mis en cache 1 h par le CDN)
+const SitemapService = require('./services/sitemapService');
+app.get('/sitemap.xml', async (req, res, next) => {
+  try {
+    const xml = await SitemapService.build(`${req.protocol}://${req.get('host')}`);
+    res.set('Cache-Control', 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400');
+    res.type('application/xml').send(xml);
+  } catch (error) {
+    next(error);
+  }
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

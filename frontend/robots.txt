@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Espaces privés, API et pages de compte : rien à indexer
+Disallow: /admin
+Disallow: /admin-frontend/
+Disallow: /api/
+Disallow: /login
+Disallow: /connexion
+Disallow: /adhesion
+Disallow: /profile.html
+Disallow: /reset-password
+Disallow: /visio.html
+Disallow: /maintenance.html
+
+Sitemap: https://monde-du-travail.vercel.app/sitemap.xml

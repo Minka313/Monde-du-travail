@@ -29,6 +29,10 @@
       "dest": "/api/index.js"
     },
     {
+      "src": "/sitemap.xml",
+      "dest": "/api/index.js"
+    },
+    {
       "src": "^/admin/login(\\.html)?$",
       "status": 307,
       "headers": { "Location": "/admin-frontend/login.html" }
@@ -122,6 +126,14 @@
     {
       "src": "/(.*)",
       "dest": "/frontend/$1"
+    },
+    {
+      "handle": "error"
+    },
+    {
+      "src": "^/(?!api/).*$",
+      "status": 404,
+      "dest": "/frontend/404.html"
     }
   ]
 }

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page introuvable - Le Monde du Travail</title>
+    <meta name="robots" content="noindex">
+    <!-- Page servie à n'importe quelle URL : tous les chemins sont absolus -->
+    <link rel="icon" type="image/webp" href="/logo.webp">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="/js/theme-engine.js"></script>
+
+    <style>
+        :root {
+            --nf-primary: #0f2b46;
+            --nf-accent: #e8b923;
+            --nf-bg: #f8fafc;
+            --nf-surface: #ffffff;
+            --nf-border: #e2e8f0;
+            --nf-text: #0f172a;
+            --nf-muted: #64748b;
+        }
+
+        [data-theme="dark"] {
+            --nf-primary: #93c5fd;
+            --nf-accent: #fbbf24;
+            --nf-bg: #0b1220;
+            --nf-surface: #111c2e;
+            --nf-border: #24344d;
+            --nf-text: #f1f5f9;
+            --nf-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--nf-bg);
+            color: var(--nf-text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .nf-topbar {
+            display: flex;
+            align-items: center;
+            padding: 1.25rem clamp(1rem, 4vw, 2.5rem);
+        }
+
+        .nf-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--nf-text);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .nf-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem 4rem;
+        }
+
+        .nf-card {
+            width: 100%;
+            max-width: 560px;
+            text-align: center;
+            background: var(--nf-surface);
+            border: 1px solid var(--nf-border);
+            border-radius: 20px;
+            padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 5vw, 2.75rem);
+            box-shadow: 0 20px 45px -25px rgba(15, 43, 70, 0.35);
+        }
+
+        .nf-code {
+            margin: 0;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(4rem, 14vw, 6rem);
+            line-height: 1;
+            color: var(--nf-primary);
+        }
+
+        .nf-code span { color: var(--nf-accent); }
+
+        h1 {
+            margin: 1rem 0 0.75rem;
+            font-size: 1.4rem;
+        }
+
+        .nf-text {
+            margin: 0 auto 2rem;
+            max-width: 40ch;
+            color: var(--nf-muted);
+            line-height: 1.6;
+        }
+
+        .nf-home {
+            display: inline-block;
+            padding: 0.8rem 1.6rem;
+            border-radius: 999px;
+            background: var(--nf-accent);
+            color: #0f172a;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.15s ease;
+        }
+
+        .nf-home:hover,
+        .nf-home:focus-visible { transform: translateY(-2px); }
+
+        .nf-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.25rem;
+            margin: 2rem 0 0;
+            padding: 1.5rem 0 0;
+            border-top: 1px solid var(--nf-border);
+            list-style: none;
+        }
+
+        .nf-links a {
+            color: var(--nf-primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nf-links a:hover,
+        .nf-links a:focus-visible { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <header class="nf-topbar">
+        <a href="/" class="nf-brand" aria-label="Accueil Le Monde du Travail">
+            <img src="/logo.webp" alt="" width="36" height="36" onerror="this.onerror=null; this.src='/logo.png';">
+            <span>Le Monde du Travail</span>
+        </a>
+    </header>
+
+    <main class="nf-main" id="main-content">
+        <div class="nf-card">
+            <p class="nf-code" aria-hidden="true">4<span>0</span>4</p>
+            <h1>Cette page est introuvable</h1>
+            <p class="nf-text">
+                Le lien est peut-être erroné ou la page a été déplacée.
+                Pas d'inquiétude, votre parcours continue ici.
+            </p>
+            <a href="/" class="nf-home">Retour à l'accueil</a>
+
+            <ul class="nf-links" aria-label="Rubriques principales">
+                <li><a href="/metiers">Métiers</a></li>
+                <li><a href="/formations">Formations</a></li>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/forum">Forum</a></li>
+                <li><a href="/about">À propos</a></li>
+            </ul>
+        </div>
+    </main>
+</body>
+</html>
