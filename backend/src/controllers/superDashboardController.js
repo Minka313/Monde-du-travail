@@ -1,6 +1,7 @@
 const RbacService = require('../services/rbacService');
 const AnalyticsService = require('../services/analyticsService');
 const prisma = require('../config/database');
+const { NotFoundError, ForbiddenError } = require('../utils/errors');
 
 // Cache mémoire court pour les métriques d'ensemble du dashboard (TTL 25s)
 let statsCache = null;
