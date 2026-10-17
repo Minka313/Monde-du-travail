@@ -26,8 +26,11 @@ Sur le dashboard de votre projet Vercel (**Project Settings > Environment Variab
 | `EMAIL_FROM` | `Le Monde du Travail <onboarding@resend.dev>` (ou votre domaine vérifié) | Production, Preview, Development |
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Clés Web Push générées par `node execution/generate_vapid_keys.js` (la clé privée ne doit jamais être commitée) | Production, Preview, Development |
 | `VAPID_SUBJECT` | `mailto:` de contact pour les notifications push | Production, Preview, Development |
-| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | Identifiants Cloudflare R2 (upload d'images ; sans eux l'upload est refusé en production) | Production, Preview |
-| `R2_BUCKET_NAME`, `R2_PUBLIC_DOMAIN` | Bucket R2 et domaine public servant les fichiers | Production, Preview |
+| `STORAGE_S3_ENDPOINT`, `STORAGE_S3_REGION` | Supabase > Storage > S3 Connection (upload d'images ; sans stockage configuré l'upload est refusé en production) | Production, Preview |
+| `STORAGE_ACCESS_KEY_ID`, `STORAGE_SECRET_ACCESS_KEY` | Clés d'accès S3 créées dans Supabase (secrètes) | Production, Preview |
+| `STORAGE_BUCKET`, `STORAGE_PUBLIC_URL` | Bucket public (ex. `media`) et `https://[PROJECT-REF].supabase.co/storage/v1/object/public/media` | Production, Preview |
+| `R2_*` | Alternative Cloudflare R2, utilisée seulement si `STORAGE_S3_ENDPOINT` est vide (voir `backend/.env.example`) | Production, Preview |
+| `SENTRY_DSN` | Suivi des erreurs serveur (Sentry > Settings > Projects > Client Keys). Optionnel : inactif si absent | Production |
 
 ---
 
