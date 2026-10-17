@@ -8,7 +8,8 @@
     "build": "prisma generate --schema=backend/prisma/schema.prisma",
     "vercel-build": "prisma generate --schema=backend/prisma/schema.prisma",
     "start": "cd backend && npm start",
-    "dev": "cd backend && npm run dev"
+    "dev": "cd backend && npm run dev",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.600.0",
@@ -28,6 +29,9 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
     "prisma": "^5.22.0"
   }
 }
