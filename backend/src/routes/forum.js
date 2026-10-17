@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const forumController = require('../controllers/forumController');
 const forumService = require('../services/forumService');
-const { authenticate, authorize, authorizeMember, authorizeAdmin, optionalAuth } = require('../middleware/auth');
+const { authenticate, authorize, authorizeMember, authorizeAdmin, authorizeUltraAdmin, optionalAuth } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
 const validate = require('../middleware/validate');
@@ -50,12 +50,13 @@ router.use(async (req, res, next) => {
 });
 
 // Endpoint de synchronisation explicite
-router.get('/sync-schema', async (req, res) => {
+// Modifie la structure de la base : réservé à l'Ultra Admin authentifié
+router.post('/sync-schema', authenticate, authorizeUltraAdmin, async (req, res, next) => {
   try {
     const result = await forumService.ensureSchema(true);
     res.json({ success: true, message: 'Schéma synchronisé avec succès dans Supabase', result });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    next(err);
   }
 });
 

@@ -2,7 +2,7 @@ const express = require('express');
 const { z } = require('zod');
 const BlogController = require('../controllers/blogController');
 const BlogService = require('../services/blogService');
-const { authenticate, authorize, authorizeMember, optionalAuth } = require('../middleware/auth');
+const { authenticate, authorize, authorizeMember, authorizeUltraAdmin, optionalAuth } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
 const validate = require('../middleware/validate');
@@ -39,12 +39,13 @@ router.use(async (req, res, next) => {
 });
 
 // Endpoint de synchronisation explicite
-router.get('/sync-schema', async (req, res) => {
+// Modifie la structure de la base : réservé à l'Ultra Admin authentifié
+router.post('/sync-schema', authenticate, authorizeUltraAdmin, async (req, res, next) => {
   try {
     const result = await BlogService.ensureSchema(true);
     res.json({ success: true, message: 'Schéma du blog synchronisé avec succès dans Supabase', result });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    next(err);
   }
 });
 
