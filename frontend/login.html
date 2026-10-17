@@ -782,6 +782,23 @@
             });
           }
 
+          // Inscriptions fermées par l'administration : on l'annonce au lieu du formulaire
+          if (window.Api && window.Api.settings) {
+            window.Api.settings.getPublic().then(function(res) {
+              if (!res || !res.data || res.data['platform.allowRegistrations'] !== false) return;
+              const form = document.getElementById('registerForm');
+              if (form) form.style.display = 'none';
+              if (btnRegister) {
+                const notice = document.createElement('p');
+                notice.className = 'registrations-closed-notice';
+                notice.setAttribute('role', 'status');
+                notice.style.cssText = 'margin:1rem 0;padding:0.9rem 1rem;border-radius:0.75rem;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.4);font-weight:600;text-align:center;';
+                notice.textContent = 'Les inscriptions sont momentanément fermées. Reviens bientôt !';
+                btnRegister.replaceWith(notice);
+              }
+            }).catch(function() {});
+          }
+
           // Détection d'ancre #adhesion ou #register au chargement
           if (window.location.hash === '#adhesion' || window.location.hash === '#register' || window.location.search.includes('action=register')) {
             setAuthTab('register');

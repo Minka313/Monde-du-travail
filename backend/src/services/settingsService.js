@@ -3,14 +3,11 @@ const { NotFoundError, BadRequestError } = require('../utils/errors');
 const logger = require('../utils/logger');
 
 const DEFAULT_SETTINGS = [
-  { key: 'site.name', value: 'Le Monde du Travail', category: 'general', label: 'Nom du site' },
-  { key: 'site.description', value: 'Club de découverte et d\'accompagnement vers le monde professionnel', category: 'general', label: 'Description du site' },
-  { key: 'site.contactEmail', value: 'contact@mondedutravail.com', category: 'general', label: 'Email de contact' },
-  { key: 'memberships.allowRegistrations', value: 'true', category: 'membres', label: 'Autoriser les inscriptions' },
+  { key: 'site.contactEmail', value: 'contact@mondedutravail.com', category: 'general', label: 'Email de contact (affiché sur la page de maintenance)' },
   { key: 'platform.maintenanceMode', value: 'false', category: 'plateforme', label: 'Mode maintenance (Bloque l\'accès public)', isSensitive: true },
   { key: 'platform.maintenanceMessage', value: 'Notre équipe effectue actuellement une mise à niveau technique programmée pour optimiser la plateforme. Nous serons de retour très rapidement !', category: 'plateforme', label: 'Message public de maintenance', isSensitive: false },
   { key: 'platform.maintenanceEstimatedReturn', value: 'Bientôt de retour', category: 'plateforme', label: 'Heure de retour estimée (ex: Aujourd\'hui à 15h00 GMT)', isSensitive: false },
-  { key: 'platform.allowRegistrations', value: 'true', category: 'plateforme', label: 'Inscriptions ouvertes (paramètre plateforme)', isSensitive: true },
+  { key: 'platform.allowRegistrations', value: 'true', category: 'membres', label: 'Inscriptions ouvertes (demandes d\'adhésion depuis le site)', isSensitive: true },
   {
     key: 'home.featured_monthly',
     value: JSON.stringify({
@@ -72,6 +69,9 @@ let cachedPublicSettings = null;
 let cachedPublicSettingsTime = 0;
 const PUBLIC_SETTINGS_CACHE_TTL_MS = 60 * 1000; // 60s cache mémoire
 
+// Anciens paramètres sans effet sur le site : conservés en base mais masqués de l'admin
+const DEPRECATED_KEYS = ['site.name', 'site.description', 'memberships.allowRegistrations'];
+
 class SettingsService {
   static invalidatePublicCache() {
     cachedPublicSettings = null;
@@ -102,9 +102,24 @@ class SettingsService {
 
   static async getAll() {
     await this.ensureDefaults();
-    return prisma.setting.findMany({
+    const settings = await prisma.setting.findMany({
+      where: { key: { notIn: DEPRECATED_KEYS } },
       orderBy: [{ category: 'asc' }, { key: 'asc' }],
     });
+    // Libellé et rubrique à jour depuis le code (les lignes existantes gardent leur valeur)
+    return settings.map((setting) => {
+      const defaults = DEFAULT_SETTINGS.find((d) => d.key === setting.key);
+      return defaults ? { ...setting, label: defaults.label, category: defaults.category } : setting;
+    });
+  }
+
+  // Les inscriptions sont ouvertes sauf si l'admin les a explicitement fermées
+  static async registrationsOpen() {
+    const setting = await prisma.setting.findUnique({
+      where: { key: 'platform.allowRegistrations' },
+      select: { value: true },
+    });
+    return setting?.value !== 'false';
   }
 
   /**
@@ -138,6 +153,8 @@ class SettingsService {
       select: { value: true },
     });
     result['platform.maintenanceMode'] = maintSetting?.value === 'true';
+    result['platform.allowRegistrations'] = await this.registrationsOpen();
+    for (const key of DEPRECATED_KEYS) delete result[key];
     if (!result['platform.maintenanceMessage']) {
       result['platform.maintenanceMessage'] = 'Notre équipe effectue actuellement une mise à niveau technique programmée pour optimiser la plateforme. Nous serons de retour très rapidement !';
     }

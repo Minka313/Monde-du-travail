@@ -198,6 +198,7 @@
         { module: 'formations', label: 'Formations & Programmes', icon: '📚', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('formations') },
         { module: 'formations', perm: 'formation.create', label: 'Créer une nouvelle Formation', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('formations'); setTimeout(() => openContentModal('formations'), 300); } },
         { module: 'opportunites', label: 'Concours & opportunités', icon: '🎯', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('opportunites') },
+        { module: 'opportunites', perm: 'opportunite.create', label: 'Publier une annonce (bourse, concours, examen)', icon: '➕', shortcut: 'Action', action: async () => { await window.AdminRouter.navigate('opportunites'); window.AdminOpportunities.openCreate(); } },
         { module: 'blog', label: 'Blog & Articles', icon: '📝', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('blog') },
         { module: 'blog', perm: 'blog.create', label: 'Rédiger un article de blog', icon: '✍️', shortcut: 'Action', action: () => { window.AdminRouter.navigate('blog'); setTimeout(() => openBlogPostModal(), 300); } },
         { module: 'approvals', label: 'Approbations & Validations', icon: '✅', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('approvals') },
@@ -695,6 +696,9 @@
             </button>
             <button class="dash-quick-btn btn-accent" id="dash-btn-new-job">
               <span>💼</span> <span>+ Nouveau Métier</span>
+            </button>
+            <button class="dash-quick-btn btn-accent" id="dash-btn-new-opportunity">
+              <span>🎯</span> <span>+ Nouvelle annonce</span>
             </button>
             <button class="dash-quick-btn btn-accent" id="dash-btn-new-post">
               <span>📝</span> <span>+ Rédiger Article</span>
@@ -3024,7 +3028,7 @@
     if (can('blog.delete')) {
       html += btn('delete', 'Supprimer', 'btn-danger');
     }
-    return html;
+    return `<div class="row-actions">${html}</div>`;
   }
 
   function openBlogPostModal(post = null) {
@@ -3286,17 +3290,16 @@
                 <th>Catégorie & Tags</th>
                 <th>Statut</th>
                 <th>Engagement</th>
-                <th>Mis en avant</th>
-                <th>Auteur</th>
-                <th>Mise à jour</th>
+                <th>Auteur & date</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              ${items.length === 0 ? '<tr><td colspan="8"><div class="empty-state">Aucun article trouvé</div></td></tr>' : items.map(item => `
+              ${items.length === 0 ? '<tr><td colspan="6"><div class="empty-state">Aucun article trouvé</div></td></tr>' : items.map(item => `
                 <tr>
                   <td>
                     <strong>${escapeHtml(item.title)}</strong>
+                    ${item.featured ? '<span class="badge badge-warning" style="font-size:0.7rem;margin-left:0.3rem;" title="Article mis en avant">⭐ À la une</span>' : ''}
                     ${item.excerpt ? `<div style="font-size:0.8rem;color:#64748b;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(item.excerpt)}</div>` : ''}
                   </td>
                   <td>
@@ -3316,9 +3319,10 @@
                       <span>⏱️ <strong>${item.readingTime || 3}</strong> min</span>
                     </div>
                   </td>
-                  <td>${item.featured ? '<span class="badge badge-warning" style="font-size:0.75rem;">⭐ Oui</span>' : 'Non'}</td>
-                  <td>${escapeHtml(item.author ? `${item.author.firstName} ${item.author.lastName}` : '—')}</td>
-                  <td>${new Date(item.updatedAt || item.createdAt).toLocaleDateString('fr-FR')}</td>
+                  <td>
+                    <div>${escapeHtml(item.author ? `${item.author.firstName} ${item.author.lastName}` : '—')}</div>
+                    <div style="font-size:0.78rem;color:#64748b;">${new Date(item.updatedAt || item.createdAt).toLocaleDateString('fr-FR')}</div>
+                  </td>
                   <td>${blogActionButtons(item)}</td>
                 </tr>
               `).join('')}
@@ -3344,7 +3348,7 @@
     if (can('forum.delete')) {
       html += btn('delete', 'Supprimer', 'btn-danger');
     }
-    return html;
+    return `<div class="row-actions">${html}</div>`;
   }
 
   async function openForumTopicModal(topicId) {
@@ -3550,35 +3554,35 @@
           <table>
             <thead>
               <tr>
-                <th>Titre</th>
-                <th>Catégorie</th>
-                <th>Auteur</th>
-                <th>Utile</th>
-                <th>Réponses</th>
-                <th>Vues</th>
+                <th>Sujet</th>
+                <th>Auteur & date</th>
+                <th>Activité</th>
                 <th>État</th>
-                <th>Date</th>
                 <th>Actions de modération</th>
               </tr>
             </thead>
             <tbody>
-              ${items.length === 0 ? '<tr><td colspan="9"><div class="empty-state">Aucun sujet trouvé</div></td></tr>' : items.map(item => `
+              ${items.length === 0 ? '<tr><td colspan="5"><div class="empty-state">Aucun sujet trouvé</div></td></tr>' : items.map(item => `
                 <tr>
-                  <td>
+                  <td style="min-width:220px;">
                     <strong>${escapeHtml(item.title)}</strong>
+                    <div style="margin-top:0.3rem;"><span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.72rem;">${escapeHtml(item.category)}</span></div>
                   </td>
-                  <td><span class="badge" style="background:#e0e7ff;color:#3730a3;font-size:0.75rem;">${escapeHtml(item.category)}</span></td>
-                  <td>${escapeHtml(item.author ? `${item.author.firstName} ${item.author.lastName}` : 'Anonyme')}</td>
-                  <td><span class="badge" style="background:rgba(2,132,199,0.1);color:#0284c7;font-size:0.75rem;">▲ ${item.likeCount || 0}</span></td>
-                  <td><span class="badge badge-info" style="font-size:0.75rem;">💬 ${item.replyCount || 0}</span></td>
-                  <td>${item.views || 0}</td>
+                  <td>
+                    <div>${escapeHtml(item.author ? `${item.author.firstName} ${item.author.lastName}` : 'Anonyme')}</div>
+                    <div style="font-size:0.78rem;color:#64748b;">${new Date(item.createdAt).toLocaleDateString('fr-FR')}</div>
+                  </td>
+                  <td style="white-space:nowrap;font-size:0.82rem;color:#475569;">
+                    <div title="Votes « utile »">▲ ${item.likeCount || 0} utile</div>
+                    <div title="Réponses">💬 ${item.replyCount || 0} réponse${(item.replyCount || 0) > 1 ? 's' : ''}</div>
+                    <div title="Vues">👁️ ${item.views || 0} vue${(item.views || 0) > 1 ? 's' : ''}</div>
+                  </td>
                   <td>
                     ${item.isPinned ? '<span class="badge badge-warning" style="font-size:0.75rem;">📌 Épinglé</span> ' : ''}
                     ${item.isLocked ? '<span class="badge badge-danger" style="font-size:0.75rem;">🔒 Verrouillé</span> ' : ''}
                     ${item.isResolved ? '<span class="badge badge-success" style="font-size:0.75rem;">✅ Résolu</span> ' : ''}
                     ${!item.isPinned && !item.isLocked && !item.isResolved ? '<span class="badge badge-muted" style="font-size:0.75rem;">Normal</span>' : ''}
                   </td>
-                  <td>${new Date(item.createdAt).toLocaleDateString('fr-FR')}</td>
                   <td>${forumActionButtons(item)}</td>
                 </tr>
               `).join('')}
@@ -3669,7 +3673,7 @@
                       ${can('admins.assign') ? (
                         (u.adminRoles || []).includes('MENTOR_EXPERT')
                           ? `<button class="btn btn-outline-danger btn-sm" data-user-action="revoke-mentor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" title="Révoquer le statut de Mentor">Révoquer Mentor</button>`
-                          : `<button class="btn btn-sm" data-user-action="nominate-mentor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" style="background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;border:1px solid #f59e0b;font-weight:600;" title="Nommer au rang de Mentor & Expert">🎓 Nommer Mentor</button>`
+                          : `<button class="btn btn-sm btn-mentor" data-user-action="nominate-mentor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" title="Nommer au rang de Mentor & Expert">🎓 Nommer Mentor</button>`
                       ) : ''}
                       ${can('users.delete') && u.id !== user.id ? `<button class="btn btn-danger btn-sm" data-user-action="delete" data-user-id="${u.id}">Supprimer</button>` : ''}
                     </div>
@@ -4754,7 +4758,7 @@
               <span>🗂️</span> Espaces de travail spécialisés
             </h2>
             <p style="margin:0.25rem 0 0;font-size:0.85rem;color:#64748b;">
-              Accès direct de supervision Ultra Admin aux 4 espaces de travail délégués (Formations, Métiers, Blog, Forum).
+              Accès direct de supervision Ultra Admin aux 5 espaces de travail délégués (Formations, Métiers, Concours & opportunités, Blog, Forum).
             </p>
           </div>
         </div>
@@ -4782,6 +4786,18 @@
               <p style="font-size:0.84rem;color:#64748b;margin:0 0 1rem;line-height:1.45;">Fiches métiers, salaires indicatifs, compétences et débouchés.</p>
             </div>
             <button type="button" class="btn btn-primary btn-sm btn-full" data-dash-navigate="metiers" style="text-align:center;font-weight:600;cursor:pointer;">Ouvrir cet espace &rarr;</button>
+          </div>
+
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1.1rem;display:flex;flex-direction:column;justify-content:space-between;">
+            <div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+                <span style="font-size:1.6rem;">🎯</span>
+                <span class="badge badge-primary" style="font-size:0.75rem;">ADMIN_OPPORTUNITE</span>
+              </div>
+              <h3 style="margin:0 0 0.35rem;font-size:1.05rem;color:#0f172a;">Espace Concours & opportunités</h3>
+              <p style="font-size:0.84rem;color:#64748b;margin:0 0 1rem;line-height:1.45;">Bourses, concours, examens et admissions vérifiés à la source.</p>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm btn-full" data-dash-navigate="opportunites" style="text-align:center;font-weight:600;cursor:pointer;">Ouvrir cet espace &rarr;</button>
           </div>
 
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:1.1rem;display:flex;flex-direction:column;justify-content:space-between;">
@@ -6159,8 +6175,8 @@
       const isBool = s.value === 'true' || s.value === 'false';
       const isLongText = s.key === 'platform.maintenanceMessage' || s.value.length > 70;
       return `
-                <label style="display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0.4rem 0;">
-                  <span>
+                <label style="display:flex;flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0.5rem 1rem;padding:0.6rem 0;border-bottom:1px solid #f1f5f9;text-align:left;">
+                  <span style="flex:1 1 260px;min-width:0;">
                     ${escapeHtml(s.label || s.key)}
                     ${s.isSensitive ? ' <span class="badge badge-warning">sensible 🔒</span>' : ''}
                     <br><small class="text-muted">${escapeHtml(s.key)}</small>
@@ -6170,13 +6186,13 @@
                       <a href="../frontend/maintenance.html?preview=1" target="_blank" class="btn btn-sm btn-ghost" style="text-decoration:none;font-size:0.8rem;padding:0.25rem 0.6rem;">
                         👁️ Aperçu page
                       </a>
-                      <input type="checkbox" data-setting-key="${s.key}" data-setting-bool="true" ${s.value === 'true' ? 'checked' : ''}>
+                      <input type="checkbox" data-setting-key="${s.key}" data-setting-original="${escapeHtml(s.value)}" data-setting-bool="true" ${s.value === 'true' ? 'checked' : ''}>
                     </div>
                   ` : isBool
-                    ? `<input type="checkbox" data-setting-key="${s.key}" data-setting-bool="true" ${s.value === 'true' ? 'checked' : ''}>`
+                    ? `<input type="checkbox" data-setting-key="${s.key}" data-setting-original="${escapeHtml(s.value)}" data-setting-bool="true" ${s.value === 'true' ? 'checked' : ''}>`
                     : isLongText
-                      ? `<textarea data-setting-key="${s.key}" rows="2" style="width:100%;max-width:380px;box-sizing:border-box;padding:0.4rem 0.6rem;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:0.85rem;">${escapeHtml(s.value)}</textarea>`
-                      : `<input type="text" data-setting-key="${s.key}" value="${escapeHtml(s.value)}" style="max-width:340px;">`}
+                      ? `<textarea data-setting-key="${s.key}" data-setting-original="${escapeHtml(s.value)}" rows="2" style="flex:1 1 280px;width:100%;max-width:380px;box-sizing:border-box;padding:0.4rem 0.6rem;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit;font-size:0.85rem;">${escapeHtml(s.value)}</textarea>`
+                      : `<input type="text" data-setting-key="${s.key}" data-setting-original="${escapeHtml(s.value)}" value="${escapeHtml(s.value)}" style="flex:1 1 280px;max-width:380px;">`}
                 </label>
               `;
     }).join('')}
@@ -6605,6 +6621,11 @@
 
       document.getElementById('dash-btn-new-job')?.addEventListener('click', () => {
         openContentModal('jobs');
+      });
+
+      document.getElementById('dash-btn-new-opportunity')?.addEventListener('click', async () => {
+        await window.AdminRouter.navigate('opportunites');
+        window.AdminOpportunities.openCreate();
       });
 
       document.getElementById('dash-btn-new-post')?.addEventListener('click', () => {
@@ -7490,6 +7511,8 @@
           const value = input.getAttribute('data-setting-bool')
             ? String(input.checked)
             : input.value;
+          // Seuls les réglages modifiés sont envoyés (évite de redemander le mot de passe pour rien)
+          if (value === input.getAttribute('data-setting-original')) continue;
           try {
             await window.AdminApi.settings.update(key, value);
             saved += 1;
@@ -7498,11 +7521,14 @@
             break;
           }
         }
-        if (saved > 0 && !failed) {
+        if (failed) {
+          showToast(failed, 'error');
+          if (saved > 0) loadPage('settings');
+        } else if (saved > 0) {
           showToast(`${saved} paramètre(s) enregistré(s)`, 'success');
           loadPage('settings');
-        } else if (failed) {
-          showToast(failed, 'error');
+        } else {
+          showToast('Aucune modification à enregistrer', 'info');
         }
       });
 

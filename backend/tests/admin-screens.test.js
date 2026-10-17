@@ -133,17 +133,21 @@ describe('Admin screens - users, settings, audit, approvals', () => {
         .set('Authorization', `Bearer ${ultraToken}`);
       expect(res.status).toBe(200);
       const keys = res.body.data.map(s => s.key);
-      expect(keys).toContain('site.name');
+      expect(keys).toContain('site.contactEmail');
       expect(keys).toContain('platform.maintenanceMode');
+      expect(keys).toContain('platform.allowRegistrations');
+      // Anciens réglages sans effet : masqués
+      expect(keys).not.toContain('site.name');
+      expect(keys).not.toContain('memberships.allowRegistrations');
     });
 
     it('met à jour un paramètre simple sans confirmation', async () => {
       const res = await request(app)
-        .put('/api/settings/site.name')
+        .put('/api/settings/site.contactEmail')
         .set('Authorization', `Bearer ${ultraToken}`)
-        .send({ value: 'Le Monde du Travail — Club' });
+        .send({ value: 'club@example.org' });
       expect(res.status).toBe(200);
-      expect(res.body.data.value).toBe('Le Monde du Travail — Club');
+      expect(res.body.data.value).toBe('club@example.org');
     });
 
     it('exige la confirmation pour un paramètre sensible', async () => {
@@ -224,6 +228,36 @@ describe('Admin screens - users, settings, audit, approvals', () => {
         .get('/api/approvals/pending')
         .set('Authorization', `Bearer ${memberToken}`);
       expect(res.status).toBe(403);
+    });
+  });
+  describe('Interrupteur des inscriptions', () => {
+    const setRegistrations = (value) => request(app)
+      .put('/api/settings/platform.allowRegistrations')
+      .set('Authorization', `Bearer ${ultraToken}`)
+      .set('x-confirm-password', PASSWORD)
+      .send({ value });
+    const register = (email) => request(app).post('/api/auth/register').send({
+      email, password: 'Motdepasse123', firstName: 'Test', lastName: 'Inscription',
+    });
+
+    afterAll(async () => {
+      await setRegistrations('true');
+      await prisma.user.deleteMany({ where: { email: { endsWith: '@registrations.test.com' } } });
+    });
+
+    it('refuse les inscriptions quand elles sont fermées, et le signale publiquement', async () => {
+      expect((await setRegistrations('false')).status).toBe(200);
+      const res = await register('closed@registrations.test.com');
+      expect(res.status).toBe(403);
+      expect(res.body.message).toMatch(/fermées/);
+      const pub = await request(app).get('/api/settings/public');
+      expect(pub.body.data['platform.allowRegistrations']).toBe(false);
+    });
+
+    it('accepte de nouveau les inscriptions une fois rouvertes', async () => {
+      expect((await setRegistrations('true')).status).toBe(200);
+      const res = await register('open@registrations.test.com');
+      expect(res.status).toBe(201);
     });
   });
 });

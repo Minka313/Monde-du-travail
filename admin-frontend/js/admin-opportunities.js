@@ -301,5 +301,5 @@
     });
   }
 
-  window.AdminOpportunities = { render, bind };
+  window.AdminOpportunities = { render, bind, openCreate: () => openForm(null) };
 })();

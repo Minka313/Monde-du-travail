@@ -6,6 +6,7 @@ const logger = require('../utils/logger');
 const AuditService = require('./auditService');
 const RbacService = require('./rbacService');
 const EmailService = require('./emailService');
+const SettingsService = require('./settingsService');
 const totp = require('../utils/totp');
 const { signAccessToken, signRefreshToken, matchesPassword } = require('../utils/tokens');
 
@@ -14,6 +15,10 @@ class AuthService {
   // d'adhésion est créée pour validation par un administrateur.
   static async register(userData) {
     const { email, password, firstName, lastName, motivation } = userData;
+
+    if (!(await SettingsService.registrationsOpen())) {
+      throw new ForbiddenError('Les inscriptions sont momentanément fermées. Reviens bientôt !');
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: { email },

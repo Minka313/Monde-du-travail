@@ -2252,3 +2252,245 @@ body[data-theme="dark"] .draft-banner-restore {
   background: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
+
+/* ==========================================================================
+   MODE SOMBRE — COULEURS ÉCRITES EN DUR DANS LES ÉCRANS
+   Les modules génèrent des styles en ligne pensés pour le thème clair
+   (texte ardoise foncé, fonds blancs, bordures gris clair). Ces règles les
+   convertissent en équivalents sombres lisibles, sans toucher au thème clair.
+   ========================================================================== */
+body[data-theme="dark"] [style^="color:#0f172a"],
+body[data-theme="dark"] [style^="color: #0f172a"],
+body[data-theme="dark"] [style*=";color:#0f172a"],
+body[data-theme="dark"] [style*="; color:#0f172a"],
+body[data-theme="dark"] [style*=";color: #0f172a"],
+body[data-theme="dark"] [style*="; color: #0f172a"],
+body[data-theme="dark"] [style^="color:#1e293b"],
+body[data-theme="dark"] [style^="color: #1e293b"],
+body[data-theme="dark"] [style*=";color:#1e293b"],
+body[data-theme="dark"] [style*="; color:#1e293b"],
+body[data-theme="dark"] [style*=";color: #1e293b"],
+body[data-theme="dark"] [style*="; color: #1e293b"],
+body[data-theme="dark"] [style^="color:#334155"],
+body[data-theme="dark"] [style^="color: #334155"],
+body[data-theme="dark"] [style*=";color:#334155"],
+body[data-theme="dark"] [style*="; color:#334155"],
+body[data-theme="dark"] [style*=";color: #334155"],
+body[data-theme="dark"] [style*="; color: #334155"] {
+  color: #f1f5f9 !important;
+}
+
+body[data-theme="dark"] [style^="color:#475569"],
+body[data-theme="dark"] [style^="color: #475569"],
+body[data-theme="dark"] [style*=";color:#475569"],
+body[data-theme="dark"] [style*="; color:#475569"],
+body[data-theme="dark"] [style*=";color: #475569"],
+body[data-theme="dark"] [style*="; color: #475569"],
+body[data-theme="dark"] [style^="color:#64748b"],
+body[data-theme="dark"] [style^="color: #64748b"],
+body[data-theme="dark"] [style*=";color:#64748b"],
+body[data-theme="dark"] [style*="; color:#64748b"],
+body[data-theme="dark"] [style*=";color: #64748b"],
+body[data-theme="dark"] [style*="; color: #64748b"] {
+  color: #94a3b8 !important;
+}
+
+body[data-theme="dark"] [style^="color:#3730a3"],
+body[data-theme="dark"] [style^="color: #3730a3"],
+body[data-theme="dark"] [style*=";color:#3730a3"],
+body[data-theme="dark"] [style*="; color:#3730a3"],
+body[data-theme="dark"] [style*=";color: #3730a3"],
+body[data-theme="dark"] [style*="; color: #3730a3"] { color: #a5b4fc !important; }
+body[data-theme="dark"] [style^="color:#92400e"],
+body[data-theme="dark"] [style^="color: #92400e"],
+body[data-theme="dark"] [style*=";color:#92400e"],
+body[data-theme="dark"] [style*="; color:#92400e"],
+body[data-theme="dark"] [style*=";color: #92400e"],
+body[data-theme="dark"] [style*="; color: #92400e"],
+body[data-theme="dark"] [style^="color:#78350f"],
+body[data-theme="dark"] [style^="color: #78350f"],
+body[data-theme="dark"] [style*=";color:#78350f"],
+body[data-theme="dark"] [style*="; color:#78350f"],
+body[data-theme="dark"] [style*=";color: #78350f"],
+body[data-theme="dark"] [style*="; color: #78350f"],
+body[data-theme="dark"] [style^="color:#b45309"],
+body[data-theme="dark"] [style^="color: #b45309"],
+body[data-theme="dark"] [style*=";color:#b45309"],
+body[data-theme="dark"] [style*="; color:#b45309"],
+body[data-theme="dark"] [style*=";color: #b45309"],
+body[data-theme="dark"] [style*="; color: #b45309"] { color: #fcd34d !important; }
+body[data-theme="dark"] [style^="color:#166534"],
+body[data-theme="dark"] [style^="color: #166534"],
+body[data-theme="dark"] [style*=";color:#166534"],
+body[data-theme="dark"] [style*="; color:#166534"],
+body[data-theme="dark"] [style*=";color: #166534"],
+body[data-theme="dark"] [style*="; color: #166534"] { color: #86efac !important; }
+body[data-theme="dark"] [style^="color:#991b1b"],
+body[data-theme="dark"] [style^="color: #991b1b"],
+body[data-theme="dark"] [style*=";color:#991b1b"],
+body[data-theme="dark"] [style*="; color:#991b1b"],
+body[data-theme="dark"] [style*=";color: #991b1b"],
+body[data-theme="dark"] [style*="; color: #991b1b"],
+body[data-theme="dark"] [style^="color:#7f1d1d"],
+body[data-theme="dark"] [style^="color: #7f1d1d"],
+body[data-theme="dark"] [style*=";color:#7f1d1d"],
+body[data-theme="dark"] [style*="; color:#7f1d1d"],
+body[data-theme="dark"] [style*=";color: #7f1d1d"],
+body[data-theme="dark"] [style*="; color: #7f1d1d"],
+body[data-theme="dark"] [style^="color:#b91c1c"],
+body[data-theme="dark"] [style^="color: #b91c1c"],
+body[data-theme="dark"] [style*=";color:#b91c1c"],
+body[data-theme="dark"] [style*="; color:#b91c1c"],
+body[data-theme="dark"] [style*=";color: #b91c1c"],
+body[data-theme="dark"] [style*="; color: #b91c1c"] { color: #fca5a5 !important; }
+
+body[data-theme="dark"] [style*="background:#f8fafc"],
+body[data-theme="dark"] [style*="background: #f8fafc"],
+body[data-theme="dark"] [style*="background-color:#f8fafc"],
+body[data-theme="dark"] [style*="background-color: #f8fafc"],
+body[data-theme="dark"] [style*="background:#fafafa"],
+body[data-theme="dark"] [style*="background: #fafafa"],
+body[data-theme="dark"] [style*="background-color:#fafafa"],
+body[data-theme="dark"] [style*="background-color: #fafafa"],
+body[data-theme="dark"] [style*="background:#f1f5f9"],
+body[data-theme="dark"] [style*="background: #f1f5f9"],
+body[data-theme="dark"] [style*="background-color:#f1f5f9"],
+body[data-theme="dark"] [style*="background-color: #f1f5f9"] {
+  background: #1e293b !important;
+}
+
+body[data-theme="dark"] [style*="background:#ffffff"],
+body[data-theme="dark"] [style*="background: #ffffff"],
+body[data-theme="dark"] [style*="background-color:#ffffff"],
+body[data-theme="dark"] [style*="background-color: #ffffff"],
+body[data-theme="dark"] [style*="background:#fff;"],
+body[data-theme="dark"] [style*="background: #fff;"],
+body[data-theme="dark"] [style*="background-color:#fff;"],
+body[data-theme="dark"] [style*="background-color: #fff;"],
+body[data-theme="dark"] [style$="background:#fff"],
+body[data-theme="dark"] [style$="background: #fff"],
+body[data-theme="dark"] [style$="background-color:#fff"],
+body[data-theme="dark"] [style$="background-color: #fff"],
+body[data-theme="dark"] [style*="background:#fff "],
+body[data-theme="dark"] [style*="background: #fff "],
+body[data-theme="dark"] [style*="background-color:#fff "],
+body[data-theme="dark"] [style*="background-color: #fff "] {
+  background: #111827 !important;
+}
+
+body[data-theme="dark"] [style*="background:#e2e8f0"],
+body[data-theme="dark"] [style*="background: #e2e8f0"],
+body[data-theme="dark"] [style*="background-color:#e2e8f0"],
+body[data-theme="dark"] [style*="background-color: #e2e8f0"] { background: #334155 !important; }
+body[data-theme="dark"] [style*="background:#fffbeb"],
+body[data-theme="dark"] [style*="background: #fffbeb"],
+body[data-theme="dark"] [style*="background-color:#fffbeb"],
+body[data-theme="dark"] [style*="background-color: #fffbeb"] { background: rgba(245, 158, 11, 0.12) !important; }
+body[data-theme="dark"] [style*="background:#fef2f2"],
+body[data-theme="dark"] [style*="background: #fef2f2"],
+body[data-theme="dark"] [style*="background-color:#fef2f2"],
+body[data-theme="dark"] [style*="background-color: #fef2f2"] { background: rgba(239, 68, 68, 0.12) !important; }
+body[data-theme="dark"] [style*="background:#ecfdf5"],
+body[data-theme="dark"] [style*="background: #ecfdf5"],
+body[data-theme="dark"] [style*="background-color:#ecfdf5"],
+body[data-theme="dark"] [style*="background-color: #ecfdf5"],
+body[data-theme="dark"] [style*="background:#f0fdf4"],
+body[data-theme="dark"] [style*="background: #f0fdf4"],
+body[data-theme="dark"] [style*="background-color:#f0fdf4"],
+body[data-theme="dark"] [style*="background-color: #f0fdf4"] { background: rgba(16, 185, 129, 0.12) !important; }
+body[data-theme="dark"] [style*="background:#e0e7ff"],
+body[data-theme="dark"] [style*="background: #e0e7ff"],
+body[data-theme="dark"] [style*="background-color:#e0e7ff"],
+body[data-theme="dark"] [style*="background-color: #e0e7ff"] { background: rgba(99, 102, 241, 0.18) !important; }
+
+body[data-theme="dark"] [style*="solid #cbd5e1"],
+body[data-theme="dark"] [style*="dashed #cbd5e1"],
+body[data-theme="dark"] [style*="solid #e2e8f0"],
+body[data-theme="dark"] [style*="dashed #e2e8f0"],
+body[data-theme="dark"] [style*="solid #f1f5f9"],
+body[data-theme="dark"] [style*="dashed #f1f5f9"],
+body[data-theme="dark"] [style*="solid #e0e0e0"],
+body[data-theme="dark"] [style*="dashed #e0e0e0"] {
+  border-color: #334155 !important;
+}
+
+body[data-theme="dark"] [style*="solid #fde68a"],
+body[data-theme="dark"] [style*="dashed #fde68a"],
+body[data-theme="dark"] [style*="solid #fcd34d"],
+body[data-theme="dark"] [style*="dashed #fcd34d"] { border-color: rgba(245, 158, 11, 0.4) !important; }
+body[data-theme="dark"] [style*="solid #fecaca"],
+body[data-theme="dark"] [style*="dashed #fecaca"] { border-color: rgba(239, 68, 68, 0.4) !important; }
+
+body[data-theme="dark"] label,
+body[data-theme="dark"] legend {
+  color: #cbd5e1;
+}
+
+body[data-theme="dark"] fieldset {
+  border-color: #334155 !important;
+}
+
+/* Bouton « Nommer Mentor » (Utilisateurs) */
+.btn-mentor {
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  color: #92400e;
+  border: 1px solid #f59e0b;
+  font-weight: 600;
+}
+body[data-theme="dark"] .btn-mentor {
+  background: rgba(245, 158, 11, 0.16);
+  color: #fcd34d;
+  border-color: rgba(245, 158, 11, 0.5);
+}
+
+/* Mode sombre : composants dont le fond clair est défini dans cette feuille */
+body[data-theme="dark"] .badge-muted {
+  background: #1e293b;
+  color: #cbd5e1;
+}
+body[data-theme="dark"] .btn-ghost:hover,
+body[data-theme="dark"] .org-subnav .btn-ghost:hover,
+body[data-theme="dark"] tr:hover td {
+  background: #1e293b;
+}
+body[data-theme="dark"] .dash-quick-btn,
+body[data-theme="dark"] .approval-tab-btn,
+body[data-theme="dark"] .dash-activity-item,
+body[data-theme="dark"] .mentor-metrics-row,
+body[data-theme="dark"] .dossier-motivation-quote,
+body[data-theme="dark"] .dossier-metric-card {
+  background: #1e293b;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+body[data-theme="dark"] .dash-quick-btn:hover,
+body[data-theme="dark"] .approval-tab-btn:hover,
+body[data-theme="dark"] .dash-activity-item:hover {
+  background: #273449;
+  color: #f8fafc;
+  border-color: #475569;
+}
+body[data-theme="dark"] .approval-tab-btn.active {
+  background: var(--color-primary, #0284c7);
+  color: #ffffff;
+  border-color: var(--color-primary, #0284c7);
+}
+
+/* Boutons d'action des lignes de tableau : retour à la ligne propre */
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  min-width: 170px;
+  max-width: 280px;
+}
+.row-actions .btn {
+  margin-right: 0 !important;
+}
+
+/* Cases à cocher : jamais étirées sur toute la largeur d'une ligne */
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  flex: 0 0 auto;
+}
