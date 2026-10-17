@@ -1,5 +1,17 @@
 const request = require('supertest');
 const { app } = require('../src/app');
+const { TEST_PASSWORD, createTestUser, cleanupTestUsers } = require('./helpers/fixtures');
+
+const EMAILS = {
+  admin: 'admin-blog@admin.test.com',
+  ultra: 'ultra@admin.test.com',
+  member: 'member@admin.test.com',
+};
+
+async function login(email) {
+  const res = await request(app).post('/api/auth/login').send({ email, password: TEST_PASSWORD });
+  return res.body.data.accessToken;
+}
 
 describe('Admin Integration', () => {
   let adminToken;
@@ -7,30 +19,19 @@ describe('Admin Integration', () => {
   let memberToken;
 
   beforeAll(async () => {
-    const adminLogin = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'admin@mondedutravail.com',
-        password: '***SUPPRIME***',
-      });
-    adminToken = adminLogin.body.data.accessToken;
-
+    // Admin de module (blog) : accès au tableau de bord et au blog, pas aux adhésions
+    await createTestUser({ email: EMAILS.admin, role: 'ADMIN', adminRole: 'ADMIN_BLOG' });
     // La gestion des adhésions requiert membership.approve (ULTRA_ADMIN)
-    const ultraLogin = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'khadimoulbarham@gmail.com',
-        password: '***SUPPRIME***',
-      });
-    ultraToken = ultraLogin.body.data.accessToken;
+    await createTestUser({ email: EMAILS.ultra, role: 'ULTRA_ADMIN' });
+    await createTestUser({ email: EMAILS.member, role: 'MEMBER' });
 
-    const memberLogin = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'amadou@demo.com',
-        password: '***SUPPRIME***',
-      });
-    memberToken = memberLogin.body.data.accessToken;
+    adminToken = await login(EMAILS.admin);
+    ultraToken = await login(EMAILS.ultra);
+    memberToken = await login(EMAILS.member);
+  });
+
+  afterAll(async () => {
+    await cleanupTestUsers(Object.values(EMAILS));
   });
 
   describe('GET /api/admin/stats', () => {

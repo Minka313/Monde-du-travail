@@ -90,7 +90,9 @@ describe('Flux d\'adhésion et permissions forum (P0)', () => {
       const res = await request(app)
         .post('/api/auth/login')
         .send({ email: approvedEmail, password: PASSWORD });
-      expect(res.status).toBe(401);
+      // 403 (et non 401) : identifiants valides mais compte pas encore activé ;
+      // login.html s'appuie sur ce code pour afficher le message « en attente ».
+      expect(res.status).toBe(403);
     });
 
     it('la demande apparaît dans la liste des adhésions en attente', async () => {
@@ -143,7 +145,7 @@ describe('Flux d\'adhésion et permissions forum (P0)', () => {
       const login = await request(app)
         .post('/api/auth/login')
         .send({ email: rejectedEmail, password: PASSWORD });
-      expect(login.status).toBe(401);
+      expect(login.status).toBe(403);
     });
   });
 

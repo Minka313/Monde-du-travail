@@ -126,18 +126,28 @@ describe('Organization & Bureau Club Integration Tests', () => {
   });
 
   describe('1. Consultation du Bureau et des Postes', () => {
-    it('GET /api/organization/bureau - doit retourner 200 pour le staff admin', async () => {
+    it('GET /api/organization/bureau - doit refuser un admin de module sans organization.read (cloisonnement strict)', async () => {
       const res = await request(app)
         .get('/api/organization/bureau')
         .set('Authorization', `Bearer ${blogToken}`);
 
+      expect(res.status).toBe(403);
+    });
+
+    it('GET /api/organization/bureau - doit retourner 200 pour l\'Ultra Admin', async () => {
+      const res = await request(app)
+        .get('/api/organization/bureau')
+        .set('Authorization', `Bearer ${ultraToken}`);
+
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(Array.isArray(res.body.data)).toBe(true);
-      expect(res.body.data.length).toBeGreaterThanOrEqual(12);
-      expect(res.body.data[0]).toHaveProperty('title');
-      expect(res.body.data[0]).toHaveProperty('category');
-      expect(res.body.data[0]).toHaveProperty('currentHolders');
+      // Le nombre de postes dépend du seed : on vérifie la structure de chaque poste
+      res.body.data.forEach((position) => {
+        expect(position).toHaveProperty('title');
+        expect(position).toHaveProperty('category');
+        expect(position).toHaveProperty('currentHolders');
+      });
     });
 
     it('GET /api/organization/bureau - doit refuser l\'accès (403) à un simple membre', async () => {

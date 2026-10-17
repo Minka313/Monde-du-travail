@@ -1,18 +1,29 @@
 const request = require('supertest');
 const { app } = require('../src/app');
+const { TEST_PASSWORD, createTestUser, cleanupTestUsers, prisma } = require('./helpers/fixtures');
+
+const ADMIN_EMAIL = 'admin-forum@forum.test.com';
+const MEMBER_EMAIL = 'member@forum.test.com';
 
 describe('Forum Integration', () => {
   let adminToken;
   let memberToken;
   let topicId;
+  let memberUser;
+
+  afterAll(async () => {
+    await cleanupTestUsers([ADMIN_EMAIL, MEMBER_EMAIL]);
+  });
 
   beforeAll(async () => {
+    await createTestUser({ email: ADMIN_EMAIL, role: 'ADMIN', adminRole: 'ADMIN_FORUM' });
+    memberUser = await createTestUser({ email: MEMBER_EMAIL, role: 'MEMBER' });
     // Login as admin
     const adminLogin = await request(app)
       .post('/api/auth/login')
       .send({
-        email: 'admin@mondedutravail.com',
-        password: '***SUPPRIME***',
+        email: ADMIN_EMAIL,
+        password: TEST_PASSWORD,
       });
     adminToken = adminLogin.body.data.accessToken;
 
@@ -20,8 +31,8 @@ describe('Forum Integration', () => {
     const memberLogin = await request(app)
       .post('/api/auth/login')
       .send({
-        email: 'amadou@demo.com',
-        password: '***SUPPRIME***',
+        email: MEMBER_EMAIL,
+        password: TEST_PASSWORD,
       });
     memberToken = memberLogin.body.data.accessToken;
   });
@@ -73,8 +84,10 @@ describe('Forum Integration', () => {
 
   describe('GET /api/forum/:id', () => {
     it('should return topic by id', async () => {
-      const topicsResponse = await request(app).get('/api/forum');
-      const topic = topicsResponse.body.data[0];
+      // Sujet créé par le test : ne dépend pas du contenu déjà présent en base
+      const topic = await prisma.topic.create({
+        data: { title: 'Sujet de lecture par id', content: 'Contenu de test', category: 'Orientation & Métiers', authorId: memberUser.id },
+      });
 
       const response = await request(app).get(`/api/forum/${topic.id}`);
       expect(response.status).toBe(200);

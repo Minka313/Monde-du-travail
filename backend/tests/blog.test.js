@@ -1,16 +1,24 @@
 const request = require('supertest');
 const { app } = require('../src/app');
+const { TEST_PASSWORD, createTestUser, cleanupTestUsers } = require('./helpers/fixtures');
+
+const ADMIN_EMAIL = 'admin-blog@blog.test.com';
 
 describe('Blog Integration', () => {
   let adminToken;
   let postId;
 
+  afterAll(async () => {
+    await cleanupTestUsers([ADMIN_EMAIL]);
+  });
+
   beforeAll(async () => {
+    await createTestUser({ email: ADMIN_EMAIL, role: 'ADMIN', adminRole: 'ADMIN_BLOG' });
     const adminLogin = await request(app)
       .post('/api/auth/login')
       .send({
-        email: 'admin@mondedutravail.com',
-        password: '***SUPPRIME***',
+        email: ADMIN_EMAIL,
+        password: TEST_PASSWORD,
       });
     adminToken = adminLogin.body.data.accessToken;
   });

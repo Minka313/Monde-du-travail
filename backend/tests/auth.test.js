@@ -2,9 +2,19 @@ const request = require('supertest');
 const { PrismaClient } = require('@prisma/client');
 const { app } = require('../src/app');
 const prisma = new PrismaClient();
+const { TEST_PASSWORD, createTestUser, cleanupTestUsers } = require('./helpers/fixtures');
+
+const ADMIN_EMAIL = 'admin@auth.test.com';
+const MEMBER_EMAIL = 'member@auth.test.com';
 
 describe('Auth Integration', () => {
+  beforeAll(async () => {
+    await createTestUser({ email: ADMIN_EMAIL, role: 'ADMIN', adminRole: 'ADMIN_BLOG' });
+    await createTestUser({ email: MEMBER_EMAIL, role: 'MEMBER' });
+  });
+
   afterAll(async () => {
+    await cleanupTestUsers([ADMIN_EMAIL, MEMBER_EMAIL]);
     // Les inscriptions de test pollueraient la base sinon
     await prisma.membershipRequest.deleteMany({
       where: { user: { email: { endsWith: '@example.com' } } },
@@ -94,13 +104,13 @@ describe('Auth Integration', () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'admin@mondedutravail.com',
-          password: '***SUPPRIME***',
+          email: ADMIN_EMAIL,
+          password: TEST_PASSWORD,
         });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
-      expect(response.body.data.user.email).toBe('admin@mondedutravail.com');
+      expect(response.body.data.user.email).toBe(ADMIN_EMAIL);
       expect(response.body.data.accessToken).toBeDefined();
       expect(response.body.data.refreshToken).toBeDefined();
     });
@@ -109,13 +119,13 @@ describe('Auth Integration', () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'amadou@demo.com',
-          password: '***SUPPRIME***',
+          email: MEMBER_EMAIL,
+          password: TEST_PASSWORD,
         });
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
-      expect(response.body.data.user.email).toBe('amadou@demo.com');
+      expect(response.body.data.user.email).toBe(MEMBER_EMAIL);
     });
 
     it('should reject invalid email', async () => {
@@ -134,7 +144,7 @@ describe('Auth Integration', () => {
       const response = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'admin@mondedutravail.com',
+          email: ADMIN_EMAIL,
           password: 'wrongpassword',
         });
 
@@ -157,8 +167,8 @@ describe('Auth Integration', () => {
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'admin@mondedutravail.com',
-          password: '***SUPPRIME***',
+          email: ADMIN_EMAIL,
+          password: TEST_PASSWORD,
         });
 
       const token = loginResponse.body.data.accessToken;
@@ -169,7 +179,7 @@ describe('Auth Integration', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
-      expect(response.body.data.email).toBe('admin@mondedutravail.com');
+      expect(response.body.data.email).toBe(ADMIN_EMAIL);
       expect(response.body.data.role).toBe('ADMIN');
     });
 
@@ -192,8 +202,8 @@ describe('Auth Integration', () => {
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'admin@mondedutravail.com',
-          password: '***SUPPRIME***',
+          email: ADMIN_EMAIL,
+          password: TEST_PASSWORD,
         });
 
       const refreshToken = loginResponse.body.data.refreshToken;
@@ -222,8 +232,8 @@ describe('Auth Integration', () => {
       const loginResponse = await request(app)
         .post('/api/auth/login')
         .send({
-          email: 'admin@mondedutravail.com',
-          password: '***SUPPRIME***',
+          email: ADMIN_EMAIL,
+          password: TEST_PASSWORD,
         });
 
       const token = loginResponse.body.data.accessToken;

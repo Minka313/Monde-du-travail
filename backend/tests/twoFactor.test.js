@@ -89,7 +89,8 @@ describe('Two-Factor Authentication (2FA / TOTP)', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       expect(res.body.data.secret).toBeDefined();
-      expect(res.body.data.qrCodeUrl).toContain('https://api.qrserver.com');
+      // QR code généré côté serveur : le secret TOTP n'est jamais envoyé à un service tiers
+      expect(res.body.data.qrCodeUrl).toMatch(/^data:image\/png;base64,/);
       generatedSecret = res.body.data.secret;
     });
 
