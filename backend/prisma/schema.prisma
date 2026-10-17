@@ -91,14 +91,14 @@ model Formation {
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
-  registrations  FormationRegistration[]
+  registrations FormationRegistration[]
 
   // Salle Virtuelle (Visioconférence Jitsi Meet)
-  visioEnabled       Boolean       @default(false)
-  visioRoomId        String?
-  visioStatus        String        @default("INACTIVE")
-  visioScheduledAt   DateTime?
-  visioRecordingUrl  String?
+  visioEnabled      Boolean?  @default(false)
+  visioRoomId       String?
+  visioStatus       String?   @default("INACTIVE")
+  visioScheduledAt  DateTime?
+  visioRecordingUrl String?
 
   @@index([status])
   @@index([category])
@@ -115,10 +115,10 @@ model FormationRegistration {
   motivation  String?
   status      String   @default("CONFIRMED")
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now()) @updatedAt
 
-  formation   Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
-  user        User?     @relation("UserFormationRegistrations", fields: [userId], references: [id], onDelete: SetNull)
+  formation Formation @relation(fields: [formationId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user      User?     @relation("UserFormationRegistrations", fields: [userId], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
   @@index([formationId])
   @@index([userId])
@@ -151,6 +151,8 @@ model Post {
   @@index([status])
   @@index([publishedAt])
   @@index([category])
+  @@index([likeCount], map: "posts_like_count_idx")
+  @@index([views])
   @@map("posts")
 }
 
@@ -158,13 +160,13 @@ model PostLike {
   id        String   @id @default(cuid())
   postId    String
   userId    String
-  createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  user      User     @relation("UserPostLikes", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user      User     @relation("UserPostLikes", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([postId, userId])
-  @@index([postId])
-  @@index([userId])
+  @@unique([postId, userId], map: "post_likes_post_user_unique")
+  @@index([postId], map: "post_likes_post_idx")
+  @@index([userId], map: "post_likes_user_idx")
   @@map("post_likes")
 }
 
@@ -181,7 +183,7 @@ model Topic {
   isPinned       Boolean       @default(false)
   isResolved     Boolean       @default(false)
   isEdited       Boolean       @default(false)
-  editedAt       DateTime?
+  editedAt       DateTime?     @db.Timestamptz(6)
   lastActivityAt DateTime      @default(now())
   tags           String[]      @default([])
   createdAt      DateTime      @default(now())
@@ -202,10 +204,10 @@ model Reply {
   id         String        @id @default(cuid())
   content    String
   createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
+  updatedAt  DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
   isSolution Boolean       @default(false)
   isEdited   Boolean       @default(false)
-  editedAt   DateTime?
+  editedAt   DateTime?     @db.Timestamptz(6)
   likeCount  Int           @default(0)
   topicId    String
   authorId   String
@@ -215,7 +217,7 @@ model Reply {
   reports    ForumReport[]
 
   @@index([topicId])
-  @@index([isSolution])
+  @@index([isSolution], map: "replies_is_solution_idx")
   @@map("replies")
 }
 
@@ -223,13 +225,13 @@ model TopicLike {
   id        String   @id @default(cuid())
   topicId   String
   userId    String
-  createdAt DateTime @default(now())
-  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  user      User     @relation("UserTopicLikes", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user      User     @relation("UserTopicLikes", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([topicId, userId])
-  @@index([topicId])
-  @@index([userId])
+  @@unique([topicId, userId], map: "topic_likes_topic_user_unique")
+  @@index([topicId], map: "topic_likes_topic_idx")
+  @@index([userId], map: "topic_likes_user_idx")
   @@map("topic_likes")
 }
 
@@ -237,13 +239,13 @@ model ReplyLike {
   id        String   @id @default(cuid())
   replyId   String
   userId    String
-  createdAt DateTime @default(now())
-  reply     Reply    @relation(fields: [replyId], references: [id], onDelete: Cascade)
-  user      User     @relation("UserReplyLikes", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  reply     Reply    @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user      User     @relation("UserReplyLikes", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([replyId, userId])
-  @@index([replyId])
-  @@index([userId])
+  @@unique([replyId, userId], map: "reply_likes_reply_user_unique")
+  @@index([replyId], map: "reply_likes_reply_idx")
+  @@index([userId], map: "reply_likes_user_idx")
   @@map("reply_likes")
 }
 
@@ -255,16 +257,16 @@ model ForumReport {
   reporterId String
   topicId    String?
   replyId    String?
-  createdAt  DateTime          @default(now())
-  updatedAt  DateTime          @updatedAt
-  reporter   User              @relation("UserForumReports", fields: [reporterId], references: [id], onDelete: Cascade)
-  topic      Topic?            @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  reply      Reply?            @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  createdAt  DateTime          @default(now()) @db.Timestamptz(6)
+  updatedAt  DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  reporter   User              @relation("UserForumReports", fields: [reporterId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  topic      Topic?            @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  reply      Reply?            @relation(fields: [replyId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([status])
-  @@index([topicId])
-  @@index([replyId])
-  @@index([reporterId])
+  @@index([topicId], map: "forum_reports_topic_idx")
+  @@index([replyId], map: "forum_reports_reply_idx")
+  @@index([reporterId], map: "forum_reports_reporter_idx")
   @@map("forum_reports")
 }
 
@@ -328,45 +330,45 @@ model UserAdminRole {
 }
 
 model User {
-  id                 String              @id @default(cuid())
-  email              String              @unique
-  password           String
-  firstName          String
-  lastName           String
-  role               Role                @default(MEMBER)
-  isActive           Boolean             @default(false)
-  isVerified         Boolean             @default(false)
-  twoFactorEnabled   Boolean             @default(false)
-  twoFactorSecret    String?
-  avatarUrl          String?             @map("avatar_url")
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  lastLoginAt        DateTime?
-  approvalSteps      ApprovalStep[]
-  createdApprovals   ApprovalWorkflow[]  @relation("ApprovalCreatedBy")
-  reviewedApprovals  ApprovalWorkflow[]  @relation("ApprovalReviewedBy")
-  auditLogs          AuditLog[]
-  events             Event[]             @relation("EventCreator")
-  memberships        MembershipRequest[]
-  posts              Post[]
-  replies            Reply[]
-  topics             Topic[]
-  assignedRoles      UserAdminRole[]     @relation("AdminRoleAssignment")
-  reviewedAdminRoles UserAdminRole[]     @relation("AdminRoleReviewer")
-  adminRoles         UserAdminRole[]     @relation("UserAdminRoles")
-  createdFormations  Formation[]         @relation("FormationCreator")
-  createdJobs        Job[]               @relation("JobCreator")
-  clubAssignments    ClubAssignment[]    @relation("UserClubAssignments")
-  assignedClubRoles  ClubAssignment[]    @relation("ClubAssignmentCreator")
-  notifications      Notification[]      @relation("UserNotifications")
-  notificationReads   NotificationRead[]  @relation("UserNotificationReads")
-  pushSubscriptions  PushSubscription[]  @relation("UserPushSubscriptions")
-  analyticsEvents    AnalyticsEvent[]    @relation("UserAnalyticsEvents")
+  id                     String                  @id @default(cuid())
+  email                  String                  @unique
+  password               String
+  firstName              String
+  lastName               String
+  role                   Role                    @default(MEMBER)
+  isActive               Boolean                 @default(false)
+  isVerified             Boolean                 @default(false)
+  twoFactorEnabled       Boolean                 @default(false)
+  twoFactorSecret        String?
+  avatarUrl              String?                 @map("avatar_url")
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  lastLoginAt            DateTime?
+  approvalSteps          ApprovalStep[]
+  createdApprovals       ApprovalWorkflow[]      @relation("ApprovalCreatedBy")
+  reviewedApprovals      ApprovalWorkflow[]      @relation("ApprovalReviewedBy")
+  auditLogs              AuditLog[]
+  events                 Event[]                 @relation("EventCreator")
+  memberships            MembershipRequest[]
+  posts                  Post[]
+  replies                Reply[]
+  topics                 Topic[]
+  assignedRoles          UserAdminRole[]         @relation("AdminRoleAssignment")
+  reviewedAdminRoles     UserAdminRole[]         @relation("AdminRoleReviewer")
+  adminRoles             UserAdminRole[]         @relation("UserAdminRoles")
+  createdFormations      Formation[]             @relation("FormationCreator")
+  createdJobs            Job[]                   @relation("JobCreator")
+  clubAssignments        ClubAssignment[]        @relation("UserClubAssignments")
+  assignedClubRoles      ClubAssignment[]        @relation("ClubAssignmentCreator")
+  notifications          Notification[]          @relation("UserNotifications")
+  notificationReads      NotificationRead[]      @relation("UserNotificationReads")
+  pushSubscriptions      PushSubscription[]      @relation("UserPushSubscriptions")
+  analyticsEvents        AnalyticsEvent[]        @relation("UserAnalyticsEvents")
   formationRegistrations FormationRegistration[] @relation("UserFormationRegistrations")
-  topicLikes         TopicLike[]         @relation("UserTopicLikes")
-  replyLikes         ReplyLike[]         @relation("UserReplyLikes")
-  forumReports       ForumReport[]       @relation("UserForumReports")
-  postLikes          PostLike[]          @relation("UserPostLikes")
+  topicLikes             TopicLike[]             @relation("UserTopicLikes")
+  replyLikes             ReplyLike[]             @relation("UserReplyLikes")
+  forumReports           ForumReport[]           @relation("UserForumReports")
+  postLikes              PostLike[]              @relation("UserPostLikes")
 
   @@map("users")
 }
@@ -591,18 +593,18 @@ enum ForumReportStatus {
 }
 
 model Notification {
-  id        String           @id @default(cuid())
+  id        String             @id @default(cuid())
   userId    String?
-  type      NotificationType @default(SYSTEM)
+  type      NotificationType   @default(SYSTEM)
   title     String
   message   String
   url       String?
   imageUrl  String?
-  dedupeKey String?          @unique
-  isRead    Boolean          @default(false)
+  dedupeKey String?            @unique
+  isRead    Boolean            @default(false)
   readAt    DateTime?
-  createdAt DateTime         @default(now())
-  user      User?            @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime           @default(now())
+  user      User?              @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
   reads     NotificationRead[]
 
   @@index([userId])
@@ -641,24 +643,45 @@ model PushSubscription {
 }
 
 model AnalyticsEvent {
-  id          String   @id @default(uuid())
-  sessionId   String   @map("session_id")
-  userId      String?  @map("user_id")
-  userProfile String?  @map("user_profile")
-  eventType   String   @map("event_type")
-  entityType  String?  @map("entity_type")
-  entityId    String?  @map("entity_id")
-  metadata    Json?    @default("{}") @map("metadata")
-  createdAt   DateTime @default(now()) @map("created_at")
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sessionId   String    @map("session_id") @db.VarChar(128)
+  userId      String?   @map("user_id")
+  userProfile String?   @map("user_profile") @db.VarChar(50)
+  eventType   String    @map("event_type") @db.VarChar(100)
+  entityType  String?   @map("entity_type") @db.VarChar(50)
+  entityId    String?   @map("entity_id") @db.VarChar(255)
+  metadata    Json?     @default("{}") @map("metadata")
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
 
-  user User? @relation("UserAnalyticsEvents", fields: [userId], references: [id], onDelete: SetNull)
+  user User? @relation("UserAnalyticsEvents", fields: [userId], references: [id], onDelete: SetNull, onUpdate: NoAction)
 
-  @@index([sessionId])
-  @@index([userId])
-  @@index([eventType])
-  @@index([entityType, entityId])
-  @@index([createdAt])
-  @@index([userProfile])
+  @@index([sessionId], map: "idx_analytics_events_session_id")
+  @@index([userId], map: "idx_analytics_events_user_id")
+  @@index([eventType], map: "idx_analytics_events_event_type")
+  @@index([entityType, entityId], map: "idx_analytics_events_entity")
+  @@index([createdAt], map: "idx_analytics_events_created_at")
+  @@index([userProfile], map: "idx_analytics_events_user_profile")
   @@map("analytics_events")
 }
 
+// Agrégats quotidiens d'analytics : table alimentée par analytics_retention_cron.sql
+// (déclarée ici pour que les migrations Prisma ne la suppriment jamais).
+model AnalyticsDailyStat {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  statDate       DateTime  @map("stat_date") @db.Date
+  eventType      String    @map("event_type") @db.VarChar(100)
+  entityType     String?   @default("") @map("entity_type") @db.VarChar(50)
+  entityId       String?   @default("") @map("entity_id") @db.VarChar(255)
+  userProfile    String?   @default("") @map("user_profile") @db.VarChar(50)
+  totalEvents    Int       @default(0) @map("total_events")
+  uniqueSessions Int       @default(0) @map("unique_sessions")
+  uniqueUsers    Int       @default(0) @map("unique_users")
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime? @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  @@unique([statDate, eventType, entityType, entityId, userProfile], map: "uq_analytics_daily_stats")
+  @@index([statDate(sort: Desc)], map: "idx_analytics_daily_stats_date")
+  @@index([entityType, entityId], map: "idx_analytics_daily_stats_entity")
+  @@index([eventType], map: "idx_analytics_daily_stats_type")
+  @@map("analytics_daily_stats")
+}

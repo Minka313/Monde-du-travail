@@ -62,8 +62,12 @@ jobs:
       - name: Générer le client Prisma
         run: npx prisma generate
 
-      - name: Créer le schéma de la base de test
-        run: npx prisma db push --skip-generate
+      # Les migrations versionnées construisent la base : la CI vérifie qu'elles s'appliquent
+      - name: Appliquer les migrations sur la base de test
+        run: npx prisma migrate deploy
+
+      - name: Vérifier que les migrations correspondent au schéma
+        run: npx prisma migrate diff --from-url "$DATABASE_URL" --to-schema-datamodel prisma/schema.prisma --exit-code
 
       - name: Lancer les tests
         run: npx jest --runInBand

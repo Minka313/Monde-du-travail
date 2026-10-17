@@ -58,9 +58,20 @@ Variables indispensables dans `backend/.env` : `DATABASE_URL`, `DIRECT_URL`, `JW
 
 ```bash
 cd backend
-npx prisma db push      # crée les tables à partir du schéma
-npm run prisma:seed     # contenu initial, rôles et compte Ultra Admin
+npx prisma migrate deploy   # crée les tables à partir des migrations versionnées
+npm run prisma:seed         # contenu initial, rôles et compte Ultra Admin
 ```
+
+#### Modifier la structure de la base
+
+La structure est versionnée dans [`backend/prisma/migrations/`](backend/prisma/migrations/) ; `0_init` décrit la base de production telle qu'elle existait à l'introduction des migrations.
+
+1. Modifier [`schema.prisma`](backend/prisma/schema.prisma), puis générer la migration **sur une base locale** :
+   `npx prisma migrate dev --create-only --name description_courte`
+2. Relire le SQL généré : il ne doit contenir **aucune suppression imprévue** (`DROP TABLE`, `DROP COLUMN`).
+3. Après validation, appliquer en production : `npx prisma migrate deploy` avec `DIRECT_URL` pointant vers Supabase.
+
+Ne jamais utiliser `prisma db push` ni `prisma migrate reset` contre la production.
 
 Le seed exige `ULTRA_ADMIN_EMAIL` et `ULTRA_ADMIN_PASSWORD` dans `backend/.env`.
 
