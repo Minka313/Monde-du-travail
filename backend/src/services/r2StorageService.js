@@ -11,6 +11,7 @@ try {
 const path = require('path');
 const crypto = require('crypto');
 const logger = require('../utils/logger');
+const { InternalServerError } = require('../utils/errors');
 
 /**
  * Service d'hébergement objet compatible S3 ciblant Cloudflare R2
@@ -93,6 +94,15 @@ class R2StorageService {
     }
 
     const key = this.generateKey(originalName, folder);
+
+    // En production, une URL simulée pointerait vers un fichier inexistant (image cassée
+    // enregistrée en base) : on refuse explicitement plutôt que de feindre un succès.
+    if ((!this.isConfigured || !this.client) && process.env.NODE_ENV === 'production') {
+      logger.error('[R2StorageService] Téléversement refusé : variables R2_* absentes en production');
+      throw new InternalServerError(
+        'Le stockage des fichiers (Cloudflare R2) n\'est pas configuré sur le serveur. Collez une URL d\'image en attendant.'
+      );
+    }
 
     // Fallback de simulation si les clés Cloudflare R2 ne sont pas encore configurées en environnement local
     if (!this.isConfigured || !this.client) {
