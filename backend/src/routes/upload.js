@@ -33,7 +33,7 @@ const upload = multer({
 
 /**
  * Route POST /api/upload
- * Téléversement d'un fichier média ou document vers Cloudflare R2 avec bouclier CDN
+ * Téléversement d'un fichier média ou document vers le stockage objet (Supabase Storage ou R2)
  */
 router.post(
   '/',
@@ -69,7 +69,7 @@ router.post(
 
       return res.status(200).json({
         success: true,
-        message: 'Fichier téléversé avec succès sur Cloudflare R2',
+        message: 'Fichier téléversé avec succès',
         data: {
           url: result.url,
           key: result.key,

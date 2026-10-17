@@ -1,9 +1,8 @@
-let S3Client, PutObjectCommand, DeleteObjectCommand;
+let S3Client, PutObjectCommand;
 try {
   const s3Module = require('@aws-sdk/client-s3');
   S3Client = s3Module.S3Client;
   PutObjectCommand = s3Module.PutObjectCommand;
-  DeleteObjectCommand = s3Module.DeleteObjectCommand;
 } catch (e) {
   // Graceful fallback pour environnement de dev offline ou avant npm install
 }
@@ -11,43 +10,75 @@ try {
 const path = require('path');
 const crypto = require('crypto');
 const logger = require('../utils/logger');
-const { InternalServerError } = require('../utils/errors');
+const { BadRequestError, InternalServerError } = require('../utils/errors');
+
+const trimSlash = (value) => String(value || '').replace(/\/+$/, '');
 
 /**
- * Service d'hébergement objet compatible S3 ciblant Cloudflare R2
- * avec configuration du CDN Edge ("Le Bouclier") et forçage du cache immuable.
+ * Lit la configuration du stockage objet compatible S3.
+ * - Générique (STORAGE_*) : Supabase Storage, MinIO, etc. — prioritaire.
+ * - Cloudflare R2 (R2_*) : conservé pour compatibilité.
+ * Retourne null si aucune configuration complète n'est présente.
+ */
+function readStorageConfig(env = process.env) {
+  if (env.STORAGE_S3_ENDPOINT) {
+    return {
+      provider: 'S3',
+      endpoint: env.STORAGE_S3_ENDPOINT,
+      region: env.STORAGE_S3_REGION || 'us-east-1',
+      // Supabase et la plupart des services S3 auto-hébergés exigent l'adressage par chemin
+      forcePathStyle: true,
+      accessKeyId: env.STORAGE_ACCESS_KEY_ID,
+      secretAccessKey: env.STORAGE_SECRET_ACCESS_KEY,
+      bucket: env.STORAGE_BUCKET,
+      publicUrl: trimSlash(env.STORAGE_PUBLIC_URL),
+      required: ['STORAGE_ACCESS_KEY_ID', 'STORAGE_SECRET_ACCESS_KEY', 'STORAGE_BUCKET', 'STORAGE_PUBLIC_URL'],
+    };
+  }
+  if (env.R2_ACCOUNT_ID) {
+    return {
+      provider: 'R2',
+      endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      region: 'auto',
+      forcePathStyle: false,
+      accessKeyId: env.R2_ACCESS_KEY_ID,
+      secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+      bucket: env.R2_BUCKET_NAME || 'monde-du-travail-assets',
+      publicUrl: trimSlash(env.R2_PUBLIC_DOMAIN || 'https://media.lemondedutravail.com'),
+      required: ['R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY'],
+    };
+  }
+  return null;
+}
+
+/**
+ * Service d'hébergement objet compatible S3 (Supabase Storage ou Cloudflare R2)
+ * avec forçage du cache immuable sur les fichiers téléversés.
  */
 class R2StorageService {
-  constructor() {
-    this.accountId = process.env.R2_ACCOUNT_ID;
-    this.accessKeyId = process.env.R2_ACCESS_KEY_ID;
-    this.secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
-    this.bucketName = process.env.R2_BUCKET_NAME || 'monde-du-travail-assets';
+  constructor(env = process.env) {
+    this.config = readStorageConfig(env);
+    const missing = this.config ? this.config.required.filter((name) => !env[name]) : [];
 
-    // Domaine CDN personnalisé proxyfié par Cloudflare (Orange Cloud)
-    // Ne jamais exposer l'URL brute du bucket en production.
-    const configuredDomain = process.env.R2_PUBLIC_DOMAIN || 'https://media.lemondedutravail.com';
-    this.publicDomain = configuredDomain.replace(/\/$/, '');
-
-    this.isConfigured = Boolean(
-      S3Client && 
-      this.accountId && 
-      this.accessKeyId && 
-      this.secretAccessKey
-    );
+    this.isConfigured = Boolean(S3Client && this.config && missing.length === 0);
+    // URL de base utilisée aussi par la simulation en développement
+    this.publicDomain = this.config?.publicUrl || 'https://media.lemondedutravail.com';
 
     if (this.isConfigured) {
       this.client = new S3Client({
-        region: 'auto',
-        endpoint: `https://${this.accountId}.r2.cloudflarestorage.com`,
+        region: this.config.region,
+        endpoint: this.config.endpoint,
+        forcePathStyle: this.config.forcePathStyle,
         credentials: {
-          accessKeyId: this.accessKeyId,
-          secretAccessKey: this.secretAccessKey,
+          accessKeyId: this.config.accessKeyId,
+          secretAccessKey: this.config.secretAccessKey,
         },
       });
-      logger.info('[R2StorageService] Connecté avec succès à Cloudflare R2.');
+      logger.info(`[StorageService] Stockage ${this.config.provider} configuré (bucket ${this.config.bucket}).`);
+    } else if (this.config) {
+      logger.warn(`[StorageService] Configuration ${this.config.provider} incomplète : ${missing.join(', ') || 'SDK S3 indisponible'}.`);
     } else {
-      logger.warn('[R2StorageService] Configuration Cloudflare R2 incomplète ou module SDK S3 non disponible.');
+      logger.warn('[StorageService] Aucun stockage de fichiers configuré (STORAGE_* ou R2_*).');
     }
   }
 
@@ -59,11 +90,13 @@ class R2StorageService {
    * @returns {String} Clé d'objet S3
    */
   generateKey(originalName, folder = 'metiers') {
-    const ext = path.extname(originalName || '').toLowerCase() || '.webp';
-    const baseName = path.basename(originalName || 'file', ext)
+    const rawExt = path.extname(originalName || '');
+    const ext = rawExt.toLowerCase() || '.webp';
+    // basename avec l'extension d'origine : « Photo.PNG » donne « photo », pas « photo-png »
+    const baseName = path.basename(originalName || 'file', rawExt)
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[̀-ͯ]/g, '')
       .replace(/[^a-z0-9]/g, '-')
       .replace(/-+/g, '-')
       .replace(/^-|-$/g, '')
@@ -79,8 +112,8 @@ class R2StorageService {
   }
 
   /**
-   * Envoie un fichier brut vers Cloudflare R2 avec injection stricte des headers de cache.
-   * 
+   * Envoie un fichier brut vers le stockage avec injection stricte des headers de cache.
+   *
    * @param {Object} params
    * @param {Buffer} params.buffer Contenu brut du fichier (Multer memoryStorage)
    * @param {String} params.originalName Nom d'origine
@@ -90,7 +123,7 @@ class R2StorageService {
    */
   async uploadFile({ buffer, originalName, mimeType, folder = 'metiers' }) {
     if (!buffer || buffer.length === 0) {
-      throw new Error('Le buffer de fichier fourni est vide.');
+      throw new BadRequestError('Le fichier envoyé est vide.');
     }
 
     const key = this.generateKey(originalName, folder);
@@ -98,16 +131,16 @@ class R2StorageService {
     // En production, une URL simulée pointerait vers un fichier inexistant (image cassée
     // enregistrée en base) : on refuse explicitement plutôt que de feindre un succès.
     if ((!this.isConfigured || !this.client) && process.env.NODE_ENV === 'production') {
-      logger.error('[R2StorageService] Téléversement refusé : variables R2_* absentes en production');
+      logger.error('[StorageService] Téléversement refusé : stockage non configuré en production');
       throw new InternalServerError(
-        'Le stockage des fichiers (Cloudflare R2) n\'est pas configuré sur le serveur. Collez une URL d\'image en attendant.'
+        'Le stockage des fichiers n\'est pas configuré sur le serveur. Collez une URL d\'image en attendant.'
       );
     }
 
-    // Fallback de simulation si les clés Cloudflare R2 ne sont pas encore configurées en environnement local
+    // Fallback de simulation si le stockage n'est pas configuré en environnement local
     if (!this.isConfigured || !this.client) {
       const simulatedUrl = `${this.publicDomain}/${key}`;
-      logger.warn(`[R2StorageService] Mode simulation (R2 non configuré) : URL générée ${simulatedUrl}`);
+      logger.warn(`[StorageService] Mode simulation (stockage non configuré) : URL générée ${simulatedUrl}`);
       return {
         success: true,
         url: simulatedUrl,
@@ -118,13 +151,13 @@ class R2StorageService {
       };
     }
 
-    // LE BOUCLIER : Forçage des métadonnées et en-têtes HTTP de cache immuable
+    // Forçage des métadonnées et en-têtes HTTP de cache immuable
     const command = new PutObjectCommand({
-      Bucket: this.bucketName,
+      Bucket: this.config.bucket,
       Key: key,
       Body: buffer,
       ContentType: mimeType || 'application/octet-stream',
-      // 1 an de cache immuable (Browser + Cloudflare CDN Edge)
+      // 1 an de cache immuable : la clé contient un horodatage et un hash uniques
       CacheControl: 'public, max-age=31536000, immutable',
       Metadata: {
         'served-by': 'monde-du-travail-cdn',
@@ -135,43 +168,23 @@ class R2StorageService {
     try {
       await this.client.send(command);
 
-      // L'URL publique servie est exclusivement celle du domaine CDN personnalisé proxyfié
-      const cdnUrl = `${this.publicDomain}/${key}`;
-
-      logger.info(`[R2StorageService] Fichier téléversé avec succès sur R2 (CDN: ${cdnUrl})`);
+      const publicUrl = `${this.publicDomain}/${key}`;
+      logger.info(`[StorageService] Fichier téléversé (${this.config.provider}) : ${publicUrl}`);
 
       return {
         success: true,
-        url: cdnUrl,
+        url: publicUrl,
         key: key,
         size: buffer.length,
         mimeType: mimeType,
       };
     } catch (error) {
-      logger.error(`[R2StorageService] Échec du téléversement vers Cloudflare R2 pour ${key}:`, error);
-      throw new Error(`Échec de téléversement R2 : ${error.message}`);
+      logger.error(`[StorageService] Échec du téléversement ${this.config.provider} pour ${key}: ${error.message}`);
+      throw new InternalServerError('Échec du téléversement du fichier. Réessayez ou collez une URL d\'image.');
     }
-  }
-
-  /**
-   * Vérifie si une URL donnée pointe vers le CDN R2
-   * @param {String} url
-   * @returns {Boolean}
-   */
-  isCdnUrl(url) {
-    if (!url || typeof url !== 'string') return false;
-    return url.startsWith(this.publicDomain) || url.includes('.r2.dev') || url.includes('.r2.cloudflarestorage.com');
-  }
-
-  /**
-   * Vérifie si une URL provient de l'ancien Supabase Storage
-   * @param {String} url
-   * @returns {Boolean}
-   */
-  isSupabaseUrl(url) {
-    if (!url || typeof url !== 'string') return false;
-    return url.includes('supabase.co/storage/v1/object');
   }
 }
 
 module.exports = new R2StorageService();
+module.exports.R2StorageService = R2StorageService;
+module.exports.readStorageConfig = readStorageConfig;
