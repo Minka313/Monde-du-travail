@@ -9,7 +9,7 @@
     VERSION: '1.0.0',
     // Suivi des erreurs du navigateur : URL du « Loader Script » Sentry
     // (Sentry > Settings > Projects > Loader Script). Vide = désactivé.
-    SENTRY_LOADER_URL: '',
+    SENTRY_LOADER_URL: 'https://js-de.sentry-cdn.com/421cdd37dcc6f0f8baa58466e46b8d61.min.js',
   };
 
   // Les URL peuvent contenir des jetons (ex. réinitialisation de mot de passe) : on retire la query string
@@ -18,7 +18,7 @@
   }
 
   var loaderUrl = window.AppConfig.SENTRY_LOADER_URL;
-  if (loaderUrl && /^https:\/\/js\.sentry-cdn\.com\//.test(loaderUrl) && window.location.protocol === 'https:') {
+  if (loaderUrl && /^https:\/\/js(-[a-z]{2})?\.sentry-cdn\.com\//.test(loaderUrl) && window.location.protocol === 'https:') {
     window.sentryOnLoad = function () {
       window.Sentry.init({
         sendDefaultPii: false,
