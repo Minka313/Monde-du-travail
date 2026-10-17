@@ -7,6 +7,7 @@ const AuditService = require('./auditService');
 const RbacService = require('./rbacService');
 const EmailService = require('./emailService');
 const totp = require('../utils/totp');
+const { signAccessToken, signRefreshToken, matchesPassword } = require('../utils/tokens');
 
 class AuthService {
   // Inscription d'un nouveau membre : le compte reste inactif et une demande
@@ -126,17 +127,8 @@ class AuthService {
       };
     }
 
-    const accessToken = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE || '7d' }
-    );
-
-    const refreshToken = jwt.sign(
-      { id: user.id },
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d' }
-    );
+    const accessToken = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
 
     // Mettre à jour lastLoginAt
     await prisma.user.update({
@@ -208,17 +200,8 @@ class AuthService {
       throw new UnauthorizedError('Code 2FA incorrect ou expiré');
     }
 
-    const accessToken = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE || '7d' }
-    );
-
-    const refreshToken = jwt.sign(
-      { id: user.id },
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d' }
-    );
+    const accessToken = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
 
     await prisma.user.update({
       where: { id: user.id },
@@ -288,11 +271,12 @@ class AuthService {
         throw new UnauthorizedError('Utilisateur non trouvé ou inactif');
       }
 
-      const newAccessToken = jwt.sign(
-        { id: user.id, email: user.email, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_EXPIRE || '7d' }
-      );
+      // Mot de passe changé depuis l'émission du jeton : session révoquée
+      if (!matchesPassword(payload, user.password)) {
+        throw new UnauthorizedError('Session révoquée');
+      }
+
+      const newAccessToken = signAccessToken(user);
 
       return { accessToken: newAccessToken };
     } catch (error) {

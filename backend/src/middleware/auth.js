@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
 const { UnauthorizedError, ForbiddenError } = require('../utils/errors');
+const { verifyAccessToken, matchesPassword } = require('../utils/tokens');
 const { authorize } = require('./rbac');
 const prisma = require('../config/database');
 const RbacService = require('../services/rbacService');
@@ -21,7 +21,7 @@ const authenticate = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const payload = verifyAccessToken(token);
 
     const user = await prisma.user.findUnique({
       where: { id: payload.id },
@@ -34,6 +34,7 @@ const authenticate = async (req, res, next) => {
         isActive: true,
         isVerified: true,
         avatarUrl: true,
+        password: true,
       },
     });
 
@@ -41,11 +42,19 @@ const authenticate = async (req, res, next) => {
       throw new UnauthorizedError('Utilisateur introuvable');
     }
 
-    if (!user.isActive) {
+    // Le hash ne sert qu'à vérifier l'empreinte : il ne doit jamais circuler dans req.user
+    const { password: passwordHash, ...safeUser } = user;
+
+    // Mot de passe changé depuis l'émission du jeton : session révoquée
+    if (!matchesPassword(payload, passwordHash)) {
+      throw new UnauthorizedError('Session expirée, veuillez vous reconnecter');
+    }
+
+    if (!safeUser.isActive) {
       throw new ForbiddenError('Compte désactivé');
     }
 
-    req.user = user;
+    req.user = safeUser;
     const { permissions, adminRoles } = await RbacService.getUserAdminContext(user.id);
     req.user.permissions = permissions;
     req.user.adminRoles = adminRoles;
@@ -141,7 +150,7 @@ const optionalAuth = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
-      req.user = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = verifyAccessToken(token);
     }
   } catch (error) {
     // Silently ignore invalid tokens for optional auth

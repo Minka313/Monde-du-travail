@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken');
+const { verifyAccessToken } = require('../utils/tokens');
 const prisma = require('../config/database');
 const RbacService = require('../services/rbacService');
 
@@ -79,7 +79,7 @@ const maintenanceMode = async (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
-      const payload = jwt.verify(token, process.env.JWT_SECRET);
+      const payload = verifyAccessToken(token);
       const user = await prisma.user.findUnique({
         where: { id: payload.id },
         select: { id: true, isActive: true },
