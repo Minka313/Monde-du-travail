@@ -9,6 +9,7 @@
     notifications: { label: 'Notifications Push', icon: '🔔' },
     formations: { label: 'Formations', icon: '📚' },
     metiers: { label: 'Métiers', icon: '💼' },
+    opportunites: { label: 'Concours & opportunités', icon: '🎯' },
     blog: { label: 'Blog', icon: '📝' },
     forum: { label: 'Forum', icon: '💬' },
     users: { label: 'Utilisateurs', icon: '👥' },
@@ -26,6 +27,7 @@
     ULTRA_ADMIN: '👑 Ultra Admin',
     ADMIN_FORMATION: 'Admin Formations',
     ADMIN_METIER: 'Admin Métiers',
+    ADMIN_OPPORTUNITE: 'Admin Opportunités',
     ADMIN_BLOG: 'Admin Blog',
     ADMIN_FORUM: 'Admin Forum',
   };
@@ -195,6 +197,7 @@
         { module: 'metiers', perm: 'metier.create', label: 'Créer une nouvelle fiche Métier', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('metiers'); setTimeout(() => openContentModal('jobs'), 300); } },
         { module: 'formations', label: 'Formations & Programmes', icon: '📚', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('formations') },
         { module: 'formations', perm: 'formation.create', label: 'Créer une nouvelle Formation', icon: '➕', shortcut: 'Action', action: () => { window.AdminRouter.navigate('formations'); setTimeout(() => openContentModal('formations'), 300); } },
+        { module: 'opportunites', label: 'Concours & opportunités', icon: '🎯', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('opportunites') },
         { module: 'blog', label: 'Blog & Articles', icon: '📝', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('blog') },
         { module: 'blog', perm: 'blog.create', label: 'Rédiger un article de blog', icon: '✍️', shortcut: 'Action', action: () => { window.AdminRouter.navigate('blog'); setTimeout(() => openBlogPostModal(), 300); } },
         { module: 'approvals', label: 'Approbations & Validations', icon: '✅', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('approvals') },
@@ -545,6 +548,9 @@
           break;
         case 'metiers':
           html = await loadMetiers();
+          break;
+        case 'opportunites':
+          html = await window.AdminOpportunities.render();
           break;
         case 'blog':
           html = await loadBlog();
@@ -4735,6 +4741,7 @@
     const roleSpaceMap = {
       ADMIN_FORMATION: { hash: '#formations', label: 'Formations', icon: '🎓' },
       ADMIN_METIER: { hash: '#metiers', label: 'Métiers', icon: '💼' },
+      ADMIN_OPPORTUNITE: { hash: '#opportunites', label: 'Concours & opportunités', icon: '🎯' },
       ADMIN_BLOG: { hash: '#blog', label: 'Blog', icon: '✍️' },
       ADMIN_FORUM: { hash: '#forum', label: 'Forum', icon: '💬' },
     };
@@ -4910,6 +4917,7 @@
             <select name="roleName" required style="width:100%;margin-top:0.25rem;">
               <option value="ADMIN_FORMATION">Admin Formations — Gestion du module Formations</option>
               <option value="ADMIN_METIER">Admin Métiers — Gestion du module Métiers</option>
+              <option value="ADMIN_OPPORTUNITE">Admin Opportunités — Bourses, concours, examens et admissions</option>
               <option value="ADMIN_BLOG">Admin Blog — Gestion et rédaction du Blog</option>
               <option value="ADMIN_FORUM">Admin Forum — Modération du Forum</option>
             </select>
@@ -6546,6 +6554,10 @@
   }
 
   function bindPageEvents(module) {
+    if (module === 'opportunites') {
+      window.AdminOpportunities.bind();
+      return;
+    }
     if (module === 'dashboard') {
       // Navigation interactive depuis les cartes KPI et alertes
       document.querySelectorAll('[data-dash-navigate]').forEach(el => {

@@ -1,0 +1,124 @@
+const OpportunityService = require('../services/opportunityService');
+const AuditService = require('../services/auditService');
+const RbacService = require('../services/rbacService');
+
+function audit(req, action, opportunity, result) {
+  return AuditService.log({
+    userId: req.user.id,
+    action: `opportunite.${action}`,
+    module: 'opportunite',
+    resource: 'Opportunity',
+    resourceId: opportunity.id,
+    ipAddress: req.ip,
+    userAgent: req.get('user-agent'),
+    result,
+    metadata: { title: opportunity.title },
+  });
+}
+
+class OpportunityController {
+  // Liste publique : annonces publiées, filtrables
+  static async getPublished(req, res, next) {
+    try {
+      res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
+      const data = await OpportunityService.getPublished(req.query);
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getForAdmin(req, res, next) {
+    try {
+      const data = await OpportunityService.getForAdmin(req.query);
+      res.json({ success: true, data, pagination: { total: data.length } });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getById(req, res, next) {
+    try {
+      const opportunity = await OpportunityService.getById(req.params.id);
+
+      // Une annonce non publiée n'est visible que des administrateurs du module
+      if (opportunity.status !== 'PUBLISHED') {
+        let canRead = false;
+        if (req.user) {
+          const { permissions } = await RbacService.getUserAdminContext(req.user.id);
+          canRead = req.user.role === 'ULTRA_ADMIN' || permissions.includes('*') || permissions.includes('opportunite.read');
+        }
+        if (!canRead) {
+          return res.status(404).json({ success: false, message: 'Annonce non trouvée' });
+        }
+      }
+
+      res.json({ success: true, data: opportunity });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async create(req, res, next) {
+    try {
+      const opportunity = await OpportunityService.create(req.body, req.user.id);
+      await audit(req, 'create', opportunity);
+      res.status(201).json({ success: true, message: 'Annonce créée (brouillon)', data: opportunity });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async update(req, res, next) {
+    try {
+      const opportunity = await OpportunityService.update(req.params.id, req.body);
+      await audit(req, 'update', opportunity);
+      res.json({ success: true, message: 'Annonce mise à jour', data: opportunity });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async publish(req, res, next) {
+    try {
+      const opportunity = await OpportunityService.publish(req.params.id);
+      await audit(req, 'publish', opportunity, 'PUBLISHED');
+      res.json({ success: true, message: 'Annonce publiée', data: opportunity });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async unpublish(req, res, next) {
+    try {
+      const opportunity = await OpportunityService.unpublish(req.params.id);
+      await audit(req, 'unpublish', opportunity, 'DRAFT');
+      res.json({ success: true, message: 'Annonce dépubliée', data: opportunity });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async archive(req, res, next) {
+    try {
+      const opportunity = await OpportunityService.archive(req.params.id);
+      await audit(req, 'archive', opportunity, 'ARCHIVED');
+      res.json({ success: true, message: 'Annonce archivée', data: opportunity });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async remove(req, res, next) {
+    try {
+      const opportunity = await OpportunityService.getById(req.params.id);
+      await OpportunityService.remove(req.params.id);
+      await audit(req, 'delete', opportunity);
+      res.json({ success: true, message: 'Annonce supprimée' });
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
+module.exports = OpportunityController;

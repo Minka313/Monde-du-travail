@@ -105,6 +105,41 @@ model Formation {
   @@map("formations")
 }
 
+// Rubrique « Concours & opportunités » : bourses, concours, examens, admissions.
+// Une annonce ne peut être publiée qu'avec un lien officiel et une date de
+// vérification (pas d'opportunité non sourcée présentée comme confirmée).
+model Opportunity {
+  id             String        @id @default(cuid())
+  title          String
+  organization   String
+  category       String
+  summary        String
+  details        String?
+  eligibility    String?
+  levels         String[]      @default([])
+  destination    String?
+  country        String?
+  openingDate    DateTime?
+  deadline       DateTime?
+  keyDates       Json?
+  documents      String[]      @default([])
+  benefits       String?
+  officialUrl    String?
+  lastVerifiedAt DateTime?
+  // Forçage manuel de la phase (ex. RESULTS) ; null = calculée depuis les dates
+  phaseOverride  String?
+  image          String?
+  status         ContentStatus @default(DRAFT)
+  createdById    String?
+  createdBy      User?         @relation("OpportunityCreator", fields: [createdById], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([status, deadline])
+  @@index([category])
+  @@map("opportunities")
+}
+
 model FormationRegistration {
   id          String   @id @default(cuid())
   formationId String
@@ -358,6 +393,7 @@ model User {
   adminRoles             UserAdminRole[]         @relation("UserAdminRoles")
   createdFormations      Formation[]             @relation("FormationCreator")
   createdJobs            Job[]                   @relation("JobCreator")
+  createdOpportunities   Opportunity[]           @relation("OpportunityCreator")
   clubAssignments        ClubAssignment[]        @relation("UserClubAssignments")
   assignedClubRoles      ClubAssignment[]        @relation("ClubAssignmentCreator")
   notifications          Notification[]          @relation("UserNotifications")

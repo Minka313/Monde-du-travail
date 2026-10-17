@@ -4,6 +4,7 @@ const prisma = require('../config/database');
 const STATIC_PAGES = [
   { path: '/', changefreq: 'weekly', priority: '1.0' },
   { path: '/metiers', changefreq: 'weekly', priority: '0.9' },
+  { path: '/opportunites', changefreq: 'daily', priority: '0.8' },
   { path: '/formations', changefreq: 'weekly', priority: '0.8' },
   { path: '/blog', changefreq: 'daily', priority: '0.8' },
   { path: '/forum', changefreq: 'daily', priority: '0.7' },

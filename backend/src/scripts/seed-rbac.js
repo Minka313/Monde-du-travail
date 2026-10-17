@@ -17,6 +17,13 @@ const PERMISSIONS = [
   { code: 'metier.delete', module: 'metier', action: 'delete', description: 'Supprimer des métiers' },
   { code: 'metier.publish', module: 'metier', action: 'publish', description: 'Publier / dépublier des métiers' },
   { code: 'metier.archive', module: 'metier', action: 'archive', description: 'Archiver des métiers' },
+  // Concours & opportunités
+  { code: 'opportunite.read', module: 'opportunite', action: 'read', description: 'Consulter les concours et opportunités' },
+  { code: 'opportunite.create', module: 'opportunite', action: 'create', description: 'Créer des annonces (bourses, concours, examens, admissions)' },
+  { code: 'opportunite.update', module: 'opportunite', action: 'update', description: 'Modifier et vérifier des annonces' },
+  { code: 'opportunite.delete', module: 'opportunite', action: 'delete', description: 'Supprimer des annonces' },
+  { code: 'opportunite.publish', module: 'opportunite', action: 'publish', description: 'Publier / dépublier des annonces' },
+  { code: 'opportunite.archive', module: 'opportunite', action: 'archive', description: 'Archiver des annonces' },
   // Blog
   { code: 'blog.read', module: 'blog', action: 'read', description: 'Consulter les articles' },
   { code: 'blog.create', module: 'blog', action: 'create', description: 'Créer des articles' },
@@ -87,6 +94,13 @@ const SYSTEM_ROLES = [
     isSystem: true,
     requiresApproval: true,
     permissions: ['metier.read', 'metier.create', 'metier.update', 'metier.delete', 'metier.publish', 'metier.archive'],
+  },
+  {
+    name: 'ADMIN_OPPORTUNITE',
+    description: 'Gestion complète de la rubrique Concours & opportunités',
+    isSystem: true,
+    requiresApproval: true,
+    permissions: ['opportunite.read', 'opportunite.create', 'opportunite.update', 'opportunite.delete', 'opportunite.publish', 'opportunite.archive'],
   },
   {
     name: 'ADMIN_BLOG',

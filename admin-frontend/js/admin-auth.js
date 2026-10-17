@@ -361,6 +361,16 @@
         body: JSON.stringify({ comment }),
       }),
     },
+    opportunities: {
+      get: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}`),
+      getAdmin: (params = {}) => contentListQuery('/opportunities/admin/list', params),
+      create: (data) => apiRequestWithRefresh('/opportunities', { method: 'POST', body: JSON.stringify(data) }),
+      update: (id, data) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) }),
+      remove: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+      publish: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/publish`, { method: 'POST' }),
+      unpublish: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/unpublish`, { method: 'POST' }),
+      archive: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/archive`, { method: 'POST' }),
+    },
     formations: {
       get: (id) => apiRequestWithRefresh(`/formations/${id}`),
       getAll: () => apiRequestWithRefresh('/formations'),

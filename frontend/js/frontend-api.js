@@ -309,6 +309,19 @@ return headers;
       getById: (id) => apiRequestWithRefresh(`/jobs/${id}`),
     },
 
+    // Concours & opportunités
+    opportunities: {
+      getAll: (params = {}) => {
+        const query = new URLSearchParams();
+        ['category', 'level', 'destination', 'phase', 'search'].forEach((key) => {
+          if (params[key]) query.set(key, params[key]);
+        });
+        const qs = query.toString();
+        return apiRequestWithRefresh(`/opportunities${qs ? `?${qs}` : ''}`);
+      },
+      getById: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}`),
+    },
+
     // Formations
     formations: {
       getAll: (params = {}) => {

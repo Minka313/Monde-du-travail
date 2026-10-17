@@ -9,6 +9,7 @@
     organization: 'organization.read',
     formations: 'formation.read',
     metiers: 'metier.read',
+    opportunites: 'opportunite.read',
     blog: 'blog.read',
     forum: 'forum.read',
     users: 'users.read',
