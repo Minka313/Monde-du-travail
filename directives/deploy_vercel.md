@@ -14,16 +14,20 @@ Sur le dashboard de votre projet Vercel (**Project Settings > Environment Variab
 
 | Variable | Valeur / Description | Environnements |
 | :--- | :--- | :--- |
-| `DATABASE_URL` | `postgresql://postgres.[PROJECT-REF]:***SUPPRIME***@aws-0-eu-west-2.pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true&connection_limit=5&pool_timeout=20` | Production, Preview, Development |
-| `DIRECT_URL` | `postgresql://postgres:***SUPPRIME***@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require` | Production, Preview, Development |
+| `DATABASE_URL` | `postgresql://postgres.[PROJECT-REF]:[MOT_DE_PASSE]@aws-0-[REGION].pooler.supabase.com:6543/postgres?sslmode=require&pgbouncer=true&connection_limit=5&pool_timeout=20` (à copier depuis Supabase > Connect, ne jamais commiter) | Production, Preview, Development |
+| `DIRECT_URL` | `postgresql://postgres:[MOT_DE_PASSE]@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require` (ne jamais commiter) | Production, Preview, Development |
 | `JWT_SECRET` | Clé secrète JWT complexe | Production, Preview, Development |
 | `JWT_REFRESH_SECRET` | Clé secrète Refresh JWT complexe | Production, Preview, Development |
 | `SUPABASE_URL` | `https://[PROJECT-REF].supabase.co` | Production, Preview, Development |
-| `SUPABASE_ANON_KEY` | `[SUPABASE_PUBLISHABLE_KEY]` | Production, Preview, Development |
+| `SUPABASE_ANON_KEY` | Clé publishable du projet (Supabase > Settings > API Keys) | Production, Preview, Development |
 | `NODE_ENV` | `production` | Production |
 | `ULTRA_ADMIN_EMAIL` | `khadimoulbarham@gmail.com` (Email recevant les alertes d'adhésion) | Production, Preview, Development |
 | `RESEND_API_KEY` | Clé API Resend (`re_...` créée sur [resend.com](https://resend.com)) | Production, Preview, Development |
 | `EMAIL_FROM` | `Le Monde du Travail <onboarding@resend.dev>` (ou votre domaine vérifié) | Production, Preview, Development |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Clés Web Push générées par `node execution/generate_vapid_keys.js` (la clé privée ne doit jamais être commitée) | Production, Preview, Development |
+| `VAPID_SUBJECT` | `mailto:` de contact pour les notifications push | Production, Preview, Development |
+| `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` | Identifiants Cloudflare R2 (upload d'images ; sans eux l'upload est refusé en production) | Production, Preview |
+| `R2_BUCKET_NAME`, `R2_PUBLIC_DOMAIN` | Bucket R2 et domaine public servant les fichiers | Production, Preview |
 
 ---
 

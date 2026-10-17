@@ -69,7 +69,11 @@ async function verifyMaintenanceSystem() {
 
     // 5. Contrôle direct des paramètres en base Supabase
     console.log('\n5. Contrôle des paramètres de maintenance dans Supabase...');
-    const dbUrl = "postgresql://postgres:***SUPPRIME***@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require";
+    require('dotenv').config({ path: path.resolve(__dirname, '..', 'backend/.env') });
+    const dbUrl = process.env.DIRECT_URL;
+    if (!dbUrl) {
+      throw new Error('DIRECT_URL introuvable : définissez-la dans l\'environnement ou dans backend/.env');
+    }
     const psqlOutput = execSync(`psql "${dbUrl}" -t -c "SELECT key FROM settings WHERE key LIKE 'platform.maintenance%' ORDER BY key;"`, { encoding: 'utf8' });
     const foundKeys = psqlOutput.trim().split('\n').map(k => k.trim());
     

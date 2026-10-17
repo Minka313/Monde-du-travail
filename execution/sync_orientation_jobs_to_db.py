@@ -18,8 +18,6 @@ class JobDatabaseSynchronizer:
     entre le catalogue d'orientation et la table PostgreSQL 'jobs' de Supabase.
     """
 
-    DEFAULT_DB_URL = "postgresql://postgres:***SUPPRIME***@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require"
-
     def __init__(self, catalog_path: str = ".tmp/orientation_jobs_catalog.json", db_url: Optional[str] = None) -> None:
         """
         Initialise le synchronisateur avec les chemins et paramètres de connexion.
@@ -37,7 +35,13 @@ class JobDatabaseSynchronizer:
 
         Returns:
             str: URL PostgreSQL avec sslmode=require.
+
+        Raises:
+            RuntimeError: si DIRECT_URL n'est défini ni dans l'environnement ni dans backend/.env.
         """
+        env_url = os.environ.get("DIRECT_URL")
+        if env_url:
+            return env_url
         env_path = os.path.join("backend", ".env")
         if os.path.exists(env_path):
             with open(env_path, "r", encoding="utf-8") as f:
@@ -46,7 +50,9 @@ class JobDatabaseSynchronizer:
                     if line.startswith("DIRECT_URL="):
                         val = line.split("=", 1)[1].strip().strip('"').strip("'")
                         return val
-        return self.DEFAULT_DB_URL
+        raise RuntimeError(
+            "DIRECT_URL introuvable : définissez-la dans l'environnement ou dans backend/.env"
+        )
 
     @staticmethod
     def map_category(family_id: Optional[str], title: str, domain: Optional[str]) -> str:
