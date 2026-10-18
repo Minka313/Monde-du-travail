@@ -2494,3 +2494,11 @@ input[type="radio"] {
   width: auto;
   flex: 0 0 auto;
 }
+
+/* Filet de sécurité : un mot très long (email, lien) revient à la ligne au lieu de sortir de sa carte */
+.content {
+  overflow-wrap: break-word;
+}
+.content td {
+  overflow-wrap: break-word;
+}

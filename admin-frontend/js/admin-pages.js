@@ -3648,8 +3648,8 @@
             <tbody>
               ${items.length === 0 ? '<tr><td colspan="6"><div class="empty-state">Aucun utilisateur</div></td></tr>' : items.map(u => `
                 <tr>
-                  <td>${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</td>
-                  <td>${escapeHtml(u.email)}</td>
+                  <td style="min-width:140px;">${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</td>
+                  <td style="overflow-wrap:anywhere;min-width:160px;max-width:260px;">${escapeHtml(u.email)}</td>
                   <td>
                     <span class="badge badge-primary">${u.role}</span>
                     ${(u.adminRoles || []).map(r => r === 'MENTOR_EXPERT'
@@ -3663,7 +3663,7 @@
                   </td>
                   <td>${u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString('fr-FR') : '—'}</td>
                   <td>
-                    <div style="display:flex;gap:0.35rem;flex-wrap:wrap;align-items:center;">
+                    <div class="row-actions" style="min-width:230px;">
                       <button class="btn btn-primary btn-sm" data-user-action="dossier" data-user-id="${u.id}" title="Consulter le dossier complet">📁 Dossier</button>
                       ${can('users.suspend') ? (u.isActive
                         ? `<button class="btn btn-warning btn-sm" data-user-action="deactivate" data-user-id="${u.id}">Désactiver</button>`
@@ -5313,8 +5313,8 @@
               ${team.map(m => `
                 <li style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;padding:0.4rem 0.55rem;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;">
                   <span style="min-width:0;">
-                    <strong style="font-size:0.86rem;color:#0f172a;">${escapeHtml(m.fullName)}</strong>
-                    <span style="display:block;font-size:0.74rem;color:#64748b;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(m.email)}</span>
+                    <strong style="font-size:0.86rem;color:#0f172a;overflow-wrap:anywhere;">${escapeHtml(m.fullName)}</strong>
+                    <span style="display:block;font-size:0.74rem;color:#64748b;overflow-wrap:anywhere;">${escapeHtml(m.email)}</span>
                   </span>
                   ${isUltraAdmin ? `<button class="btn btn-ghost btn-sm" data-org-free="${m.assignmentId}" data-pos-title="${escapeHtml(pos.title)}" data-member-name="${escapeHtml(m.fullName)}" title="Retirer de l'équipe" style="padding:0.2rem 0.45rem;font-size:0.78rem;color:var(--color-danger, #dc2626);">Retirer</button>` : ''}
                 </li>
@@ -5370,16 +5370,16 @@
         <!-- Titulaire ou État Vacant -->
         <div style="border-top:1px solid #f1f5f9;padding-top:1rem;margin-top:auto;">
           ${isOccupied && holder ? `
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.85rem;">
-              <div style="display:flex;align-items:center;gap:0.75rem;">
-                <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg, ${meta.color} 0%, #0f172a 100%);color:#ffffff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95rem;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem 0.75rem;margin-bottom:0.85rem;">
+              <div style="display:flex;align-items:center;gap:0.75rem;min-width:0;flex:1 1 180px;">
+                <div style="flex-shrink:0;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg, ${meta.color} 0%, #0f172a 100%);color:#ffffff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95rem;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
                   ${initials}
                 </div>
-                <div>
-                  <div style="font-weight:700;color:#0f172a;font-size:0.95rem;">
+                <div style="min-width:0;">
+                  <div style="font-weight:700;color:#0f172a;font-size:0.95rem;overflow-wrap:anywhere;">
                     ${escapeHtml(holder.fullName)}
                   </div>
-                  <div style="font-size:0.78rem;color:#64748b;">
+                  <div style="font-size:0.78rem;color:#64748b;overflow-wrap:anywhere;">
                     ${escapeHtml(holder.email)}
                   </div>
                 </div>
