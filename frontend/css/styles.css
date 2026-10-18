@@ -15036,3 +15036,446 @@ body,
     white-space: nowrap;
   }
 }
+
+/* ==========================================================================
+   MODE SOMBRE — couleurs codées en dur pour le thème clair
+   Fonds blancs fixes rendus sombres, textes « blancs » (var(--color-white),
+   qui devient la couleur de fond en sombre) rendus vraiment blancs, textes
+   bleu marine / ardoise éclaircis. Sans effet sur le thème clair.
+   ========================================================================== */
+
+[data-theme="dark"] .site-header.scrolled,
+[data-theme="dark"] .user-dropdown-menu,
+[data-theme="dark"] .site-header.scrolled + .main-nav,
+[data-theme="dark"] .site-header.scrolled ~ .main-nav,
+[data-theme="dark"] .editorial-duo-card,
+[data-theme="dark"] .section .btn-outline,
+[data-theme="dark"] .section-alt .btn-outline,
+[data-theme="dark"] .container .btn-outline,
+[data-theme="dark"] .page-content .btn-outline,
+[data-theme="dark"] .form-textarea,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .data-table,
+[data-theme="dark"] .skill-item,
+[data-theme="dark"] .topic,
+[data-theme="dark"] .section-box,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .scene-divider,
+[data-theme="dark"] .pathway-step,
+[data-theme="dark"] .skeleton-card,
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .auth-tabs-mobile,
+[data-theme="dark"] .auth-tab-btn.active,
+[data-theme="dark"] .btn-register,
+[data-theme="dark"] .forum-toolbar,
+[data-theme="dark"] .forum-search input,
+[data-theme="dark"] .forum-category-card,
+[data-theme="dark"] .forum-topic-card,
+[data-theme="dark"] .forum-pagination button,
+[data-theme="dark"] .forum-filter,
+[data-theme="dark"] .forum-topic-detail,
+[data-theme="dark"] .forum-reply,
+[data-theme="dark"] .forum-reply-form,
+[data-theme="dark"] .forum-form,
+[data-theme="dark"] .forum-form-group input,
+[data-theme="dark"] .forum-form-group textarea,
+[data-theme="dark"] .forum-form-group select,
+[data-theme="dark"] .blog-search input,
+[data-theme="dark"] .filter-chip,
+[data-theme="dark"] .blog-featured-card,
+[data-theme="dark"] .blog-empty-state,
+[data-theme="dark"] .blog-post,
+[data-theme="dark"] .share-btn,
+[data-theme="dark"] .toast,
+[data-theme="dark"] .confirm-modal,
+[data-theme="dark"] .dossier-modal,
+[data-theme="dark"] .dossier-tabs,
+[data-theme="dark"] .dossier-body,
+[data-theme="dark"] .dossier-text-block,
+[data-theme="dark"] .syllabus-card,
+[data-theme="dark"] .syllabus-header,
+[data-theme="dark"] .syllabus-meta,
+[data-theme="dark"] .syllabus-body,
+[data-theme="dark"] .notif-push-settings-btn,
+[data-theme="dark"] .lmt-push-prompt,
+[data-theme="dark"] .breadcrumb-container,
+[data-theme="dark"] .interest-explorer-card,
+[data-theme="dark"] .affinity-pill,
+[data-theme="dark"] .search-results-bar,
+[data-theme="dark"] .job-mini-skill-chip,
+[data-theme="dark"] .btn-open-dossier,
+[data-theme="dark"] .env-tag-chip,
+[data-theme="dark"] .tools-box,
+[data-theme="dark"] .tool-badge,
+[data-theme="dark"] .pathway-step-card,
+[data-theme="dark"] .school-card,
+[data-theme="dark"] .insight-card,
+[data-theme="dark"] .btn-goto-rel,
+[data-theme="dark"] .resource-item-card,
+[data-theme="dark"] .btn-dossier-forum,
+[data-theme="dark"] .home-topic-card,
+[data-theme="dark"] .testimonial-card,
+[data-theme="dark"] .profile-avatar-big,
+[data-theme="dark"] .avatar-modal-card,
+[data-theme="dark"] .avatar-modal-header,
+[data-theme="dark"] .avatar-modal-close,
+[data-theme="dark"] .avatar-live-preview-box,
+[data-theme="dark"] .avatar-tabs,
+[data-theme="dark"] .avatar-tab-btn.active,
+[data-theme="dark"] .avatar-preset-btn,
+[data-theme="dark"] .avatar-upload-zone,
+[data-theme="dark"] .avatar-preview-img-wrapper,
+[data-theme="dark"] .avatar-modal-footer,
+[data-theme="dark"] .profile-box,
+[data-theme="dark"] .profile-item-card,
+[data-theme="dark"] .profile-empty-hint,
+[data-theme="dark"] .preregister-modal,
+[data-theme="dark"] .preregister-field input,
+[data-theme="dark"] .preregister-field select,
+[data-theme="dark"] .format-pill,
+[data-theme="dark"] #job-dossier-overlay .dossier-hero,
+[data-theme="dark"] .markdown-toolbar,
+[data-theme="dark"] .md-btn,
+[data-theme="dark"] .timeline-step,
+[data-theme="dark"] .mentor-card,
+[data-theme="dark"] .orientation-survey-widget,
+[data-theme="dark"] .survey-tag-chip,
+[data-theme="dark"] .saviez-vous-card,
+[data-theme="dark"] .dossier-cross-recommendations,
+[data-theme="dark"] .cross-rec-card,
+[data-theme="dark"] .objective-dna-card,
+[data-theme="dark"] .objective-card-tag,
+[data-theme="dark"] .local-jobs-filter-bar,
+[data-theme="dark"] .orientation-pagination-wrap,
+[data-theme="dark"] .btn-show-all-jobs,
+[data-theme="dark"] .job-card-skeleton,
+[data-theme="dark"] .interest-accordion-toggle,
+[data-theme="dark"] .active-filter-pill,
+[data-theme="dark"] .btn-clear-filters-animated,
+[data-theme="dark"] .btn-open-drawer-filters,
+[data-theme="dark"] .mobile-jobs-count-pill,
+[data-theme="dark"] .filters-offcanvas-drawer,
+[data-theme="dark"] .drawer-footer,
+[data-theme="dark"] .boussole-mode-btn,
+[data-theme="dark"] .boussole-mode-btn.active .boussole-mode-badge,
+[data-theme="dark"] .quiz-card,
+[data-theme="dark"] .quiz-option-card,
+[data-theme="dark"] .riasec-gauges-section,
+[data-theme="dark"] .riasec-gauge-card,
+[data-theme="dark"] .senegal-pathway-card,
+[data-theme="dark"] .pathway-tag-pill,
+[data-theme="dark"] .pathway-tag-pill.uni-pill,
+[data-theme="dark"] .formation-search-input,
+[data-theme="dark"] .simulator-card,
+[data-theme="dark"] .sim-option-btn,
+[data-theme="dark"] .formation-job-chip {
+  background-color: var(--surface-raised);
+  background-image: none;
+  border-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .btn-cta,
+[data-theme="dark"] .hero,
+[data-theme="dark"] .hero-label,
+[data-theme="dark"] .hero h1,
+[data-theme="dark"] .full-width-image--overlay .full-width-image-content,
+[data-theme="dark"] .btn-outline,
+[data-theme="dark"] .btn-success,
+[data-theme="dark"] .btn-danger,
+[data-theme="dark"] .motivation-box,
+[data-theme="dark"] .info-box,
+[data-theme="dark"] .info-box h2,
+[data-theme="dark"] .forum-hero,
+[data-theme="dark"] .forum-hero h1,
+[data-theme="dark"] .forum-pagination button[aria-current="true"] {
+  color: #ffffff;
+}
+
+[data-theme="dark"] a,
+[data-theme="dark"] .user-dropdown-badge,
+[data-theme="dark"] .mobile-nav-menu a[aria-current="page"],
+[data-theme="dark"] .btn-link-register,
+[data-theme="dark"] .editorial-pill,
+[data-theme="dark"] .section-label,
+[data-theme="dark"] .card-link,
+[data-theme="dark"] .badge-primary,
+[data-theme="dark"] .alert-info,
+[data-theme="dark"] .category-header,
+[data-theme="dark"] .pull-quote,
+[data-theme="dark"] .stat-card p,
+[data-theme="dark"] .auth-tab-btn.active,
+[data-theme="dark"] .btn-register,
+[data-theme="dark"] .forum-login-prompt a,
+[data-theme="dark"] .home-topic-replies,
+[data-theme="dark"] .profile-avatar-big,
+[data-theme="dark"] .avatar-tab-btn.active,
+[data-theme="dark"] .timeline-year,
+[data-theme="dark"] .mentor-role,
+[data-theme="dark"] .objective-card-num {
+  color: var(--accent-text);
+}
+
+[data-theme="dark"] .centered-editorial .editorial-lead,
+[data-theme="dark"] .editorial-duo-card .duo-text,
+[data-theme="dark"] .section .btn-outline,
+[data-theme="dark"] .section-alt .btn-outline,
+[data-theme="dark"] .container .btn-outline,
+[data-theme="dark"] .page-content .btn-outline,
+[data-theme="dark"] .blog-featured-content h2,
+[data-theme="dark"] .blog-empty-state h3,
+[data-theme="dark"] .syllabus-title,
+[data-theme="dark"] .notif-header-title h3,
+[data-theme="dark"] .notif-item-title,
+[data-theme="dark"] .notif-push-settings-btn,
+[data-theme="dark"] .lmt-push-text strong,
+[data-theme="dark"] .breadcrumb-item.active,
+[data-theme="dark"] .btn-open-dossier,
+[data-theme="dark"] .dossier-editorial-lead,
+[data-theme="dark"] .timeline-content strong,
+[data-theme="dark"] .skill-cat-header h4,
+[data-theme="dark"] .tool-badge,
+[data-theme="dark"] .pathway-step-info h4,
+[data-theme="dark"] .insight-card h4,
+[data-theme="dark"] .rel-info h4,
+[data-theme="dark"] .resource-title,
+[data-theme="dark"] .btn-dossier-forum,
+[data-theme="dark"] .avatar-modal-header h3,
+[data-theme="dark"] .avatar-preview-name,
+[data-theme="dark"] .avatar-upload-title,
+[data-theme="dark"] #job-dossier-overlay .dossier-hero,
+[data-theme="dark"] #job-dossier-overlay .dossier-title,
+[data-theme="dark"] .survey-question-title,
+[data-theme="dark"] .saviez-vous-title,
+[data-theme="dark"] .saviez-vous-fait,
+[data-theme="dark"] .saviez-vous-takeaway .takeaway-label,
+[data-theme="dark"] .cross-rec-title,
+[data-theme="dark"] .cross-rec-card-title,
+[data-theme="dark"] .objective-dna-title,
+[data-theme="dark"] .local-filter-input,
+[data-theme="dark"] .btn-show-all-jobs,
+[data-theme="dark"] .interest-accordion-toggle,
+[data-theme="dark"] .active-filter-pill,
+[data-theme="dark"] .btn-open-drawer-filters,
+[data-theme="dark"] .drawer-title,
+[data-theme="dark"] .quiz-question-title,
+[data-theme="dark"] .quiz-option-text,
+[data-theme="dark"] .wheel-status-notice,
+[data-theme="dark"] .riasec-section-title,
+[data-theme="dark"] .gauge-name,
+[data-theme="dark"] .gauge-pct,
+[data-theme="dark"] .pathway-tag-pill.uni-pill,
+[data-theme="dark"] .pathway-salary,
+[data-theme="dark"] .quiz-job-title,
+[data-theme="dark"] .quiz-job-salary,
+[data-theme="dark"] .formation-search-input,
+[data-theme="dark"] .sim-question-title,
+[data-theme="dark"] .sim-option-btn,
+[data-theme="dark"] .formation-job-chip {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .dossier-text-block,
+[data-theme="dark"] .syllabus-lessons-list li,
+[data-theme="dark"] .notif-item-desc,
+[data-theme="dark"] .notif-empty p,
+[data-theme="dark"] .lmt-push-text p,
+[data-theme="dark"] .affinity-pill,
+[data-theme="dark"] .job-mini-skill-chip,
+[data-theme="dark"] .env-tag-chip,
+[data-theme="dark"] .timeline-content p,
+[data-theme="dark"] .skills-list,
+[data-theme="dark"] .insight-list,
+[data-theme="dark"] .survey-tags-title,
+[data-theme="dark"] .survey-tag-chip,
+[data-theme="dark"] .saviez-vous-pourquoi,
+[data-theme="dark"] .saviez-vous-takeaway .takeaway-text,
+[data-theme="dark"] .objective-card-tag,
+[data-theme="dark"] .pagination-counter-text,
+[data-theme="dark"] .boussole-mode-btn,
+[data-theme="dark"] .wheel-intro-text {
+  color: var(--text-secondary);
+}
+
+/* Texte sur fond coloré : couleur d'origine conservée */
+[data-theme="dark"] .user-avatar-badge { color: #ffffff; }
+[data-theme="dark"] .btn-primary { color: var(--color-primary-dark); }
+[data-theme="dark"] .badge-default { color: var(--color-gray-700); }
+[data-theme="dark"] .data-table th { color: var(--color-gray-600); }
+[data-theme="dark"] .impact-section { color: #ffffff; }
+[data-theme="dark"] .pathway-step-num { color: #ffffff; }
+[data-theme="dark"] .btn-mobile-cta { color: #ffffff !important; }
+[data-theme="dark"] .forum-badge { color: var(--color-gray-700); }
+[data-theme="dark"] .forum-badge--pinned { color: #c2410c; }
+[data-theme="dark"] .forum-badge--resolved { color: #047857; }
+[data-theme="dark"] .forum-badge--locked { color: #b91c1c; }
+[data-theme="dark"] .forum-badge--category { color: #1d4ed8; }
+[data-theme="dark"] .forum-filter-btn[aria-current="true"] { color: var(--color-primary); }
+[data-theme="dark"] .forum-login-prompt { color: #1e3a8a; }
+[data-theme="dark"] .filter-chip.active { color: #ffffff; }
+[data-theme="dark"] .blog-category { color: #ea580c; }
+[data-theme="dark"] .blog-post-body blockquote { color: #92400e; }
+[data-theme="dark"] .share-toast { color: #ffffff; }
+[data-theme="dark"] .dossier-hero { color: #ffffff; }
+[data-theme="dark"] .dossier-close-btn { color: #ffffff; }
+[data-theme="dark"] .dossier-domain-pill { color: #e0e7ff; }
+[data-theme="dark"] .dossier-aliases-wrap { color: #f1f5f9; }
+[data-theme="dark"] .dossier-meta-tag { color: #f8fafc; }
+[data-theme="dark"] .dossier-meta-tag.meta-level { color: #eff6ff; }
+[data-theme="dark"] .dossier-meta-tag.meta-salary { color: #ecfdf5; }
+[data-theme="dark"] .dossier-meta-tag.meta-geo { color: #f8fafc; }
+[data-theme="dark"] .dossier-tab.active { color: #0284c7; }
+[data-theme="dark"] .subprofession-chip { color: #1e40af; }
+[data-theme="dark"] .notification-badge { color: #ffffff; }
+[data-theme="dark"] .lmt-toast { color: #ffffff; }
+[data-theme="dark"] .family-card-badge { color: #ffffff; }
+[data-theme="dark"] .family-drilldown-banner { color: #ffffff; }
+[data-theme="dark"] .subdomain-pill.active { color: #ffffff; }
+[data-theme="dark"] .family-drilldown-banner .domain-pill.active { color: #ffffff; }
+[data-theme="dark"] .job-badge-emerging { color: #92400e; }
+[data-theme="dark"] .job-badge-esd { color: #065f46; }
+[data-theme="dark"] .job-badge-itf { color: #6d28d9; }
+[data-theme="dark"] .affinity-pill.active { color: #ffffff; }
+[data-theme="dark"] .job-card-pill-tag { color: #f8fafc; }
+[data-theme="dark"] .job-card-salary-badge { color: #065f46; }
+[data-theme="dark"] .pathway-step-badge { color: #ffffff; }
+[data-theme="dark"] .geo-senegal { color: #065f46; }
+[data-theme="dark"] .geo-afrique { color: #92400e; }
+[data-theme="dark"] .geo-monde { color: #5b21b6; }
+[data-theme="dark"] .resource-badge-type { color: #0f172a; }
+[data-theme="dark"] .btn-dossier-formation { color: #ffffff !important; }
+[data-theme="dark"] .btn-dossier-close-footer { color: #ffffff !important; }
+[data-theme="dark"] .home-featured-card { color: #ffffff; }
+[data-theme="dark"] .featured-tag { color: #0f172a; }
+[data-theme="dark"] .testimonial-avatar { color: #ffffff; }
+[data-theme="dark"] .newsletter-card { color: #ffffff; }
+[data-theme="dark"] .newsletter-btn { color: #0f172a; }
+[data-theme="dark"] .profile-hero { color: #ffffff; }
+[data-theme="dark"] .avatar-edit-badge { color: #ffffff; }
+[data-theme="dark"] .avatar-live-preview-circle { color: #ffffff; }
+[data-theme="dark"] .avatar-preview-badge { color: #0284c7; }
+[data-theme="dark"] .avatar-preset-check { color: #ffffff; }
+[data-theme="dark"] .btn-upload-browse { color: #ffffff; }
+[data-theme="dark"] .btn-avatar-cancel { color: #334155; }
+[data-theme="dark"] .btn-avatar-save { color: #ffffff; }
+[data-theme="dark"] .preregister-header { color: #ffffff; }
+[data-theme="dark"] .preregister-notice { color: #166534; }
+[data-theme="dark"] .format-pill.active { color: #ffffff; }
+[data-theme="dark"] .btn-dossier-fav.is-fav { color: #0f172a; }
+[data-theme="dark"] #job-dossier-overlay .dossier-meta-tag { color: #334155 !important; }
+[data-theme="dark"] .mentor-avatar { color: #ffffff; }
+[data-theme="dark"] .dossier-quick-stat-badge { color: #f1f5f9; }
+[data-theme="dark"] .btn-floating-formation { color: #ffffff !important; }
+[data-theme="dark"] .btn-survey-vote.selected { color: #ffffff; }
+[data-theme="dark"] .survey-tag-chip.active { color: #0369a1; }
+[data-theme="dark"] .saviez-vous-takeaway { color: #334155; }
+[data-theme="dark"] .cross-rec-badge { color: #6d28d9; }
+[data-theme="dark"] .progressive-profile-banner { color: #ffffff; }
+[data-theme="dark"] .scrolly-journey-section { color: #ffffff; }
+[data-theme="dark"] .scrolly-card-action { color: #0f2b46; }
+[data-theme="dark"] .sticky-domain-select { color: #f8fafc; }
+[data-theme="dark"] .local-filter-count { color: #0284c7; }
+[data-theme="dark"] .scroll-chevron-btn { color: #ffffff; }
+[data-theme="dark"] .btn-load-more-jobs { color: #ffffff; }
+[data-theme="dark"] .floating-scroll-top-btn { color: #ffffff; }
+[data-theme="dark"] .boussole-mode-btn.active { color: #ffffff; }
+[data-theme="dark"] .boussole-mode-badge { color: #ffffff; }
+[data-theme="dark"] .quiz-option-check { color: #ffffff; }
+[data-theme="dark"] .wheel-spin-btn { color: #ffffff; }
+[data-theme="dark"] .quiz-profile-banner { color: #ffffff; }
+[data-theme="dark"] .badge-holland { color: #ffffff; }
+[data-theme="dark"] .badge-priority-pillar { color: #92400e; }
+[data-theme="dark"] .btn-job-tool.is-active { color: #0f172a; }
+[data-theme="dark"] .mission-number { color: #ffffff; }
+[data-theme="dark"] .job-detail-toast { color: #ffffff; }
+[data-theme="dark"] .sim-result-badge { color: #ffffff; }
+[data-theme="dark"] .btn-visio-join { color: #ffffff !important; }
+[data-theme="dark"] .btn-whatsapp-share { color: #ffffff !important; }
+[data-theme="dark"] .btn-calendar-add { color: #ffffff !important; }
+[data-theme="dark"] .footer-bottom-bar p { color: #091b2e; }
+
+/* Styles en ligne générés par les pages (cartes de formations, simulateur…) */
+[data-theme="dark"] [style^="color:#0f172a"],
+[data-theme="dark"] [style^="color: #0f172a"],
+[data-theme="dark"] [style*=";color:#0f172a"],
+[data-theme="dark"] [style*="; color:#0f172a"],
+[data-theme="dark"] [style*=";color: #0f172a"],
+[data-theme="dark"] [style*="; color: #0f172a"],
+[data-theme="dark"] [style^="color:#1e293b"],
+[data-theme="dark"] [style^="color: #1e293b"],
+[data-theme="dark"] [style*=";color:#1e293b"],
+[data-theme="dark"] [style*="; color:#1e293b"],
+[data-theme="dark"] [style*=";color: #1e293b"],
+[data-theme="dark"] [style*="; color: #1e293b"],
+[data-theme="dark"] [style^="color:#0f2b46"],
+[data-theme="dark"] [style^="color: #0f2b46"],
+[data-theme="dark"] [style*=";color:#0f2b46"],
+[data-theme="dark"] [style*="; color:#0f2b46"],
+[data-theme="dark"] [style*=";color: #0f2b46"],
+[data-theme="dark"] [style*="; color: #0f2b46"] {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] [style^="color:#334155"],
+[data-theme="dark"] [style^="color: #334155"],
+[data-theme="dark"] [style*=";color:#334155"],
+[data-theme="dark"] [style*="; color:#334155"],
+[data-theme="dark"] [style*=";color: #334155"],
+[data-theme="dark"] [style*="; color: #334155"],
+[data-theme="dark"] [style^="color:#475569"],
+[data-theme="dark"] [style^="color: #475569"],
+[data-theme="dark"] [style*=";color:#475569"],
+[data-theme="dark"] [style*="; color:#475569"],
+[data-theme="dark"] [style*=";color: #475569"],
+[data-theme="dark"] [style*="; color: #475569"] {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] [style*="background:#ffffff"],
+[data-theme="dark"] [style*="background: #ffffff"],
+[data-theme="dark"] [style*="background-color:#ffffff"],
+[data-theme="dark"] [style*="background-color: #ffffff"],
+[data-theme="dark"] [style*="background:#fff;"],
+[data-theme="dark"] [style*="background: #fff;"],
+[data-theme="dark"] [style*="background-color:#fff;"],
+[data-theme="dark"] [style*="background-color: #fff;"],
+[data-theme="dark"] [style*="background:#f8fafc"],
+[data-theme="dark"] [style*="background: #f8fafc"],
+[data-theme="dark"] [style*="background-color:#f8fafc"],
+[data-theme="dark"] [style*="background-color: #f8fafc"],
+[data-theme="dark"] [style*="background:#f1f5f9"],
+[data-theme="dark"] [style*="background: #f1f5f9"],
+[data-theme="dark"] [style*="background-color:#f1f5f9"],
+[data-theme="dark"] [style*="background-color: #f1f5f9"] {
+  background: var(--surface-raised) !important;
+}
+
+/* Lisibilité : corrections ciblées (thèmes clair et sombre) */
+.forum-hero .section-label {
+  color: #ffc078;
+  background: rgba(245, 166, 35, 0.12);
+  border-color: rgba(245, 166, 35, 0.35);
+}
+.family-sample-label {
+  color: #64748b;
+}
+.btn-explore-family {
+  color: #1e293b;
+}
+.blog-meta {
+  color: #475569;
+}
+[data-theme="dark"] .btn-explore-family,
+[data-theme="dark"] .family-card:hover .btn-explore-family {
+  color: var(--text-primary);
+}
+[data-theme="dark"] .family-sample-label,
+[data-theme="dark"] .blog-meta {
+  color: var(--text-secondary);
+}
+[data-theme="dark"] .editorial-duo-card .duo-subtitle,
+[data-theme="dark"] .editorial-duo-card.duo-constat .duo-subtitle {
+  color: #fbbf24;
+}
+[data-theme="dark"] .editorial-duo-card.duo-reponse .duo-subtitle {
+  color: #93c5fd;
+}
