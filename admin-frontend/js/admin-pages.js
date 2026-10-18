@@ -5149,7 +5149,7 @@
     cachedOrgUsers = users;
 
     const totalPositions = positions.length;
-    const occupiedCount = positions.filter(p => p.activeMembersCount > 0).length;
+    const occupiedCount = bureau.filter(p => p.isOccupied).length;
     const vacantCount = totalPositions - occupiedCount;
     const activeAssignments = assignments.filter(a => a.isActive);
 
@@ -5299,6 +5299,36 @@
     `;
   }
 
+  // Équipe d'un poste de Responsable (pôle) : membres ajoutés sous le titulaire
+  function renderPositionTeam(pos, isUltraAdmin) {
+    const team = pos.team || [];
+    return `
+      <div class="org-team" style="border-top:1px solid #f1f5f9;margin-top:1rem;padding-top:0.85rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+          <span style="font-size:0.8rem;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:0.04em;">👥 Équipe (${team.length})</span>
+        </div>
+        ${team.length === 0
+          ? '<p style="margin:0 0 0.6rem;font-size:0.8rem;color:#64748b;">Aucun membre dans l\'équipe pour le moment.</p>'
+          : `<ul style="list-style:none;margin:0 0 0.6rem;padding:0;display:flex;flex-direction:column;gap:0.35rem;">
+              ${team.map(m => `
+                <li style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;padding:0.4rem 0.55rem;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;">
+                  <span style="min-width:0;">
+                    <strong style="font-size:0.86rem;color:#0f172a;">${escapeHtml(m.fullName)}</strong>
+                    <span style="display:block;font-size:0.74rem;color:#64748b;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(m.email)}</span>
+                  </span>
+                  ${isUltraAdmin ? `<button class="btn btn-ghost btn-sm" data-org-free="${m.assignmentId}" data-pos-title="${escapeHtml(pos.title)}" data-member-name="${escapeHtml(m.fullName)}" title="Retirer de l'équipe" style="padding:0.2rem 0.45rem;font-size:0.78rem;color:var(--color-danger, #dc2626);">Retirer</button>` : ''}
+                </li>
+              `).join('')}
+            </ul>`}
+        ${isUltraAdmin ? `
+          <button class="btn btn-sm btn-outline btn-full" data-org-add-team="${pos.id}" style="font-weight:600;font-size:0.82rem;">
+            ➕ Ajouter un membre à l'équipe
+          </button>
+        ` : ''}
+      </div>
+    `;
+  }
+
   function renderPositionCard(pos, isUltraAdmin, isExec = false) {
     const meta = ORG_CATEGORIES[pos.category] || ORG_CATEGORIES.AUTRE;
     const isOccupied = pos.isOccupied;
@@ -5386,6 +5416,7 @@
             `}
           `}
         </div>
+        ${pos.acceptsTeam ? renderPositionTeam(pos, isUltraAdmin) : ''}
 
       </div>
     `;
@@ -5513,6 +5544,7 @@
                     </td>
                     <td>
                       <strong style="color:#0f172a;">${escapeHtml(a.position?.title || '—')}</strong>
+                      ${a.memberRole === 'EQUIPE' ? '<div><span class="badge badge-muted" style="font-size:0.7rem;margin-top:0.2rem;">👥 Membre de l\'équipe</span></div>' : ''}
                     </td>
                     <td>
                       <span class="badge" style="background:${meta.bg};color:${meta.color};border:1px solid ${meta.border};font-size:0.75rem;">
@@ -5652,9 +5684,11 @@
     });
   }
 
-  function openAssignPositionModal(preselectedPositionId = null, preselectedUserId = null) {
+  function openAssignPositionModal(preselectedPositionId = null, preselectedUserId = null, memberRole = 'TITULAIRE') {
     const existing = document.getElementById('org-assign-modal');
     if (existing) existing.remove();
+    const isTeam = memberRole === 'EQUIPE';
+    const teamPosition = isTeam ? cachedOrgPositions.find(p => p.id === preselectedPositionId) : null;
 
     const currentYear = new Date().getFullYear();
     const defaultMandate = `${currentYear}-${currentYear + 1}`;
@@ -5667,19 +5701,22 @@
         <div class="card-header" style="margin-bottom:1.25rem;border-bottom:1px solid #f1f5f9;padding-bottom:0.75rem;">
           <div>
             <h3 style="margin:0;font-size:1.2rem;color:#0f172a;font-weight:700;">
-              Nomination &amp; Attribution de Poste
+              ${isTeam ? 'Ajouter un membre à l\'équipe' : 'Nomination &amp; Attribution de Poste'}
             </h3>
             <span style="font-size:0.84rem;color:#64748b;">
-              Désignez le membre responsable de cette mission pour le mandat officiel.
+              ${isTeam
+                ? `Ce membre rejoint l'équipe du poste « ${escapeHtml(teamPosition?.title || '')} », aux côtés du responsable.`
+                : 'Désignez le membre responsable de cette mission pour le mandat officiel.'}
             </span>
           </div>
           <button type="button" class="btn btn-ghost btn-sm" id="org-assign-modal-close" style="font-size:1.2rem;">&times;</button>
         </div>
 
         <form id="org-assign-form" style="display:flex;flex-direction:column;gap:1rem;">
-          <label style="display:flex;flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
+          ${isTeam ? `<input type="hidden" name="positionId" value="${escapeHtml(preselectedPositionId)}">` : ''}
+          <label style="display:${isTeam ? 'none' : 'flex'};flex-direction:column;font-weight:600;font-size:0.9rem;color:#0f172a;">
             Poste à pourvoir *
-            <select name="positionId" required style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
+            <select name="${isTeam ? 'positionIdDisplay' : 'positionId'}" ${isTeam ? '' : 'required'} style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
               <option value="">-- Sélectionnez un poste --</option>
               ${cachedOrgPositions.map(p => `
                 <option value="${p.id}" ${p.id === preselectedPositionId ? 'selected' : ''}>
@@ -5706,10 +5743,10 @@
             <input type="text" name="mandateYear" placeholder="Ex. 2026-2027" value="${defaultMandate}" style="width:100%;margin-top:0.35rem;padding:0.6rem 0.75rem;border:1.5px solid #cbd5e1;border-radius:8px;font-size:0.95rem;">
           </label>
 
-          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.85rem;display:flex;align-items:flex-start;gap:0.6rem;">
-            <input type="checkbox" name="replaceCurrent" id="replaceCurrent" checked style="margin-top:0.25rem;">
+          <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:0.85rem;display:${isTeam ? 'none' : 'flex'};align-items:flex-start;gap:0.6rem;">
+            <input type="checkbox" name="replaceCurrent" id="replaceCurrent" ${isTeam ? '' : 'checked'} style="margin-top:0.25rem;">
             <label for="replaceCurrent" style="font-size:0.85rem;color:#334155;cursor:pointer;line-height:1.4;">
-              <strong>Remplacer automatiquement le titulaire actuel</strong> si ce poste est déjà occupé (son mandat sera archivé).
+              <strong>Remplacer automatiquement le titulaire actuel</strong> si ce poste est déjà occupé (son mandat sera archivé ; l'équipe éventuelle reste en place).
             </label>
           </div>
 
@@ -5721,7 +5758,7 @@
           <div style="display:flex;justify-content:flex-end;gap:0.6rem;margin-top:0.75rem;border-top:1px solid #f1f5f9;padding-top:1rem;">
             <button type="button" class="btn" id="org-assign-modal-cancel">Annuler</button>
             <button type="submit" class="btn btn-primary" id="org-assign-modal-submit" style="font-weight:600;">
-              Confirmer la nomination
+              ${isTeam ? 'Ajouter à l\'équipe' : 'Confirmer la nomination'}
             </button>
           </div>
         </form>
@@ -5743,21 +5780,22 @@
         positionId: formData.get('positionId'),
         userId: formData.get('userId'),
         mandateYear: formData.get('mandateYear')?.trim() || defaultMandate,
-        replaceCurrent: formData.get('replaceCurrent') === 'on',
+        replaceCurrent: !isTeam && formData.get('replaceCurrent') === 'on',
         notes: formData.get('notes')?.trim() || null,
+        memberRole,
       };
 
       try {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Nomination en cours...';
         await window.AdminApi.organization.assignPosition(payload);
-        showToast('Membre nommé au poste avec succès !', 'success');
+        showToast(isTeam ? 'Membre ajouté à l\'équipe !' : 'Membre nommé au poste avec succès !', 'success');
         overlay.remove();
         loadPage('organization');
       } catch (error) {
         showToast(error.message || 'Erreur lors de l\'attribution du poste', 'error');
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Confirmer la nomination';
+        submitBtn.textContent = isTeam ? 'Ajouter à l\'équipe' : 'Confirmer la nomination';
       }
     });
   }
@@ -5867,6 +5905,12 @@
       });
     });
 
+    document.querySelectorAll('[data-org-add-team]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        openAssignPositionModal(btn.getAttribute('data-org-add-team'), null, 'EQUIPE');
+      });
+    });
+
     document.querySelectorAll('[data-org-change-post]').forEach(btn => {
       btn.addEventListener('click', () => {
         const positionId = btn.getAttribute('data-org-change-post');
@@ -5912,13 +5956,17 @@
       btn.addEventListener('click', async () => {
         const assignmentId = btn.getAttribute('data-org-free');
         const title = btn.getAttribute('data-pos-title') || 'ce poste';
-        if (!confirm(`Voulez-vous libérer le titulaire actuel de "${title}" ?\nLe poste redeviendra vacant.`)) {
+        const memberName = btn.getAttribute('data-member-name');
+        const question = memberName
+          ? `Retirer ${memberName} de l'équipe de "${title}" ?`
+          : `Voulez-vous libérer le titulaire actuel de "${title}" ?\nLe poste redeviendra vacant.`;
+        if (!confirm(question)) {
           return;
         }
 
         try {
           await window.AdminApi.organization.removeAssignment(assignmentId);
-          showToast(`Le poste "${title}" est désormais vacant`, 'info');
+          showToast(memberName ? `${memberName} a été retiré(e) de l'équipe` : `Le poste "${title}" est désormais vacant`, 'info');
           loadPage('organization');
         } catch (error) {
           showToast(error.message || 'Erreur lors du retrait de l\'affectation', 'error');

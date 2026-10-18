@@ -41,6 +41,7 @@ const assignPositionSchema = z.object({
     userId: z.string().min(1, 'ID utilisateur requis'),
     mandateYear: z.string().max(50).optional().nullable(),
     replaceCurrent: z.boolean().optional(),
+    memberRole: z.enum(['TITULAIRE', 'EQUIPE']).optional(),
     notes: z.string().max(500).optional().nullable(),
   }),
 });

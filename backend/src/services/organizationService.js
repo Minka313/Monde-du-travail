@@ -5,6 +5,12 @@
 
 const prisma = require('../config/database');
 const { NotFoundError, BadRequestError, ConflictError } = require('../utils/errors');
+
+// Seuls les postes de « Responsable … » (un pôle) peuvent avoir une équipe
+const MEMBER_ROLES = ['TITULAIRE', 'EQUIPE'];
+function acceptsTeam(title) {
+  return /^responsable\b/i.test((title || '').trim());
+}
 const AuditService = require('./auditService');
 
 /**
@@ -57,16 +63,7 @@ class OrganizationService {
       },
     });
 
-    return positions.map((pos) => ({
-      id: pos.id,
-      title: pos.title,
-      description: pos.description,
-      category: pos.category,
-      order: pos.order,
-      isSystem: pos.isSystem,
-      isOccupied: pos.assignments.length > 0,
-      activeHoldersCount: pos.assignments.length,
-      currentHolders: pos.assignments.map((a) => ({
+    const toMember = (a) => ({
         assignmentId: a.id,
         userId: a.user.id,
         fullName: `${a.user.firstName} ${a.user.lastName}`.trim(),
@@ -78,10 +75,27 @@ class OrganizationService {
         startDate: a.startDate,
         notes: a.notes,
         assignedBy: a.assignedBy ? `${a.assignedBy.firstName} ${a.assignedBy.lastName}`.trim() : null,
-      })),
-      createdAt: pos.createdAt,
-      updatedAt: pos.updatedAt,
-    }));
+      });
+
+    return positions.map((pos) => {
+      const holders = pos.assignments.filter((a) => a.memberRole !== 'EQUIPE');
+      const team = pos.assignments.filter((a) => a.memberRole === 'EQUIPE');
+      return {
+        id: pos.id,
+        title: pos.title,
+        description: pos.description,
+        category: pos.category,
+        order: pos.order,
+        isSystem: pos.isSystem,
+        isOccupied: holders.length > 0,
+        activeHoldersCount: holders.length,
+        currentHolders: holders.map(toMember),
+        acceptsTeam: acceptsTeam(pos.title),
+        team: team.map(toMember),
+        createdAt: pos.createdAt,
+        updatedAt: pos.updatedAt,
+      };
+    });
   }
 
   /**
@@ -341,9 +355,13 @@ class OrganizationService {
    */
   static async assignPosition(data, adminUserId) {
     const { positionId, userId, mandateYear, replaceCurrent = false, notes } = data;
+    const memberRole = data.memberRole || 'TITULAIRE';
 
     if (!positionId || !userId) {
       throw new BadRequestError('positionId et userId sont obligatoires.');
+    }
+    if (!MEMBER_ROLES.includes(memberRole)) {
+      throw new BadRequestError('Rôle de membre invalide.');
     }
 
     const [position, user] = await Promise.all([
@@ -357,6 +375,9 @@ class OrganizationService {
     if (!user) {
       throw new NotFoundError('Utilisateur introuvable.');
     }
+    if (memberRole === 'EQUIPE' && !acceptsTeam(position.title)) {
+      throw new BadRequestError('Seuls les postes de « Responsable » peuvent avoir une équipe.');
+    }
 
     // Vérifier si l'utilisateur est déjà actif sur ce poste
     const existingActiveAssignment = await prisma.clubAssignment.findFirst({
@@ -366,6 +387,12 @@ class OrganizationService {
         isActive: true,
       },
     });
+
+    if (existingActiveAssignment && existingActiveAssignment.memberRole !== memberRole) {
+      throw new ConflictError(memberRole === 'EQUIPE'
+        ? 'Ce membre est déjà titulaire de ce poste.'
+        : "Ce membre fait déjà partie de l'équipe de ce poste : retirez-le de l'équipe avant de le nommer titulaire.");
+    }
 
     if (existingActiveAssignment) {
       // Met à jour les informations du mandat
@@ -384,12 +411,13 @@ class OrganizationService {
       return updated;
     }
 
-    // Si replaceCurrent est actif, archiver les mandats actifs actuels de ce poste
-    if (replaceCurrent) {
+    // Si replaceCurrent est actif, archiver le(s) titulaire(s) actuel(s) : l'équipe reste en place
+    if (replaceCurrent && memberRole === 'TITULAIRE') {
       await prisma.clubAssignment.updateMany({
         where: {
           positionId,
           isActive: true,
+          memberRole: 'TITULAIRE',
         },
         data: {
           isActive: false,
@@ -406,6 +434,7 @@ class OrganizationService {
         startDate: new Date(),
         isActive: true,
         notes: notes?.trim() || null,
+        memberRole,
         assignedById: adminUserId,
       },
       include: {
@@ -425,6 +454,7 @@ class OrganizationService {
         positionTitle: position.title,
         userName: `${user.firstName} ${user.lastName}`.trim(),
         mandateYear: assignment.mandateYear,
+        memberRole,
       },
       result: 'SUCCESS',
     });
@@ -453,6 +483,9 @@ class OrganizationService {
     if (data.positionId !== undefined) {
       const newPos = await prisma.clubPosition.findUnique({ where: { id: data.positionId } });
       if (!newPos) throw new NotFoundError('Nouveau poste introuvable.');
+      if (assignment.memberRole === 'EQUIPE' && !acceptsTeam(newPos.title)) {
+        throw new BadRequestError('Seuls les postes de « Responsable » peuvent avoir une équipe.');
+      }
       updateData.positionId = data.positionId;
     }
     if (data.mandateYear !== undefined) {

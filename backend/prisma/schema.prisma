@@ -434,6 +434,9 @@ model ClubAssignment {
   endDate      DateTime?
   isActive     Boolean      @default(true)
   notes        String?
+  // TITULAIRE : la personne nommée au poste ; EQUIPE : membre de l'équipe
+  // d'un poste de responsable (pôle)
+  memberRole   String       @default("TITULAIRE")
   assignedById String?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt

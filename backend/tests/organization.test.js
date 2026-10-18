@@ -23,7 +23,7 @@ describe('Organization & Bureau Club Integration Tests', () => {
     });
     await prisma.clubPosition.deleteMany({
       where: {
-        title: { in: ['Délégué Général Test', 'Poste Modifié Test', 'Poste Doublon Test'] },
+        title: { in: ['Délégué Général Test', 'Poste Modifié Test', 'Poste Doublon Test', 'Responsable Équipe Test', 'Trésorier Test'] },
       },
     });
     await prisma.userAdminRole.deleteMany({
@@ -114,7 +114,7 @@ describe('Organization & Bureau Club Integration Tests', () => {
       },
     });
     await prisma.clubPosition.deleteMany({
-      where: { title: { in: ['Délégué Général Test', 'Poste Modifié Test', 'Poste Doublon Test'] } },
+      where: { title: { in: ['Délégué Général Test', 'Poste Modifié Test', 'Poste Doublon Test', 'Responsable Équipe Test', 'Trésorier Test'] } },
     });
     await prisma.userAdminRole.deleteMany({
       where: { user: { email: { in: ['org-ultra@test.com', 'org-blog@test.com', 'org-member@test.com'] } } },
@@ -332,6 +332,56 @@ describe('Organization & Bureau Club Integration Tests', () => {
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
       testPositionId = null;
+    });
+  });
+  describe('4. Équipe des postes de Responsable', () => {
+    let respPositionId, otherPositionId;
+    const post = (url, body) => request(app).post(url).set('Authorization', `Bearer ${ultraToken}`).send(body);
+    const bureauPosition = async (id) => {
+      const res = await request(app).get('/api/organization/bureau').set('Authorization', `Bearer ${ultraToken}`);
+      return res.body.data.find((p) => p.id === id);
+    };
+
+    beforeAll(async () => {
+      respPositionId = (await post('/api/organization/positions', { title: 'Responsable Équipe Test', category: 'POLE_COMMUNICATION' })).body.data.id;
+      otherPositionId = (await post('/api/organization/positions', { title: 'Trésorier Test' })).body.data.id;
+    });
+
+    it('un poste de Responsable accepte une équipe, séparée du titulaire', async () => {
+      const holder = await post('/api/organization/assignments', { positionId: respPositionId, userId: ultraAdmin.id });
+      expect(holder.status).toBe(201);
+      for (const user of [member, blogAdmin]) {
+        const res = await post('/api/organization/assignments', { positionId: respPositionId, userId: user.id, memberRole: 'EQUIPE' });
+        expect(res.status).toBe(201);
+        expect(res.body.data.memberRole).toBe('EQUIPE');
+      }
+      const pos = await bureauPosition(respPositionId);
+      expect(pos.acceptsTeam).toBe(true);
+      expect(pos.currentHolders.map((h) => h.userId)).toEqual([ultraAdmin.id]);
+      expect(pos.team.map((m) => m.userId).sort()).toEqual([member.id, blogAdmin.id].sort());
+    });
+
+    it("changer le titulaire n'efface pas l'équipe", async () => {
+      const res = await post('/api/organization/assignments', { positionId: respPositionId, userId: member.id, replaceCurrent: true });
+      expect(res.status).toBe(409);
+      // Un autre membre devient titulaire : l'équipe reste en place
+      await prisma.clubAssignment.updateMany({ where: { positionId: respPositionId, userId: blogAdmin.id }, data: { isActive: false } });
+      const swap = await post('/api/organization/assignments', { positionId: respPositionId, userId: blogAdmin.id, replaceCurrent: true });
+      expect(swap.status).toBe(201);
+      const pos = await bureauPosition(respPositionId);
+      expect(pos.currentHolders.map((h) => h.userId)).toEqual([blogAdmin.id]);
+      expect(pos.team.map((m) => m.userId)).toEqual([member.id]);
+    });
+
+    it("refuse une équipe sur un poste qui n'est pas de Responsable", async () => {
+      const res = await post('/api/organization/assignments', { positionId: otherPositionId, userId: member.id, memberRole: 'EQUIPE' });
+      expect(res.status).toBe(400);
+      expect((await bureauPosition(otherPositionId)).acceptsTeam).toBe(false);
+    });
+
+    it('refuse un rôle de membre inconnu', async () => {
+      const res = await post('/api/organization/assignments', { positionId: respPositionId, userId: member.id, memberRole: 'CHEF' });
+      expect(res.status).toBe(400);
     });
   });
 });
