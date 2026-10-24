@@ -58,3 +58,10 @@ Le service public **meet.jit.si** n'autorise plus son intégration dans un autre
 5. **Fermer la salle** rend le lien inutilisable depuis le site.
 
 Le nom de la salle n'apparaît ni dans la liste publique des formations ni dans leur fiche publique : seule `GET /api/formations/:id/visio` le donne, et uniquement quand la salle est ouverte.
+
+## JaaS : réunion intégrée au site (octobre 2026)
+
+- Activée dès que `JAAS_APP_ID`, `JAAS_KEY_ID` et `JAAS_PRIVATE_KEY` sont définies sur Vercel ; sinon retour automatique à meet.jit.si (nouvel onglet).
+- `POST /api/formations/:id/visio/join` (connexion facultative, `{ name }`) renvoie `{ domain: '8x8.vc', roomName: '<AppID>/<salle>', scriptUrl, jwt, isModerator }` ; 409 si la salle est fermée.
+- Jeton RS256 (`backend/src/services/jaasService.js`) : `kid = <AppID>/<KeyID>`, valable 4 h et pour la seule salle ouverte ; `moderator: "true"` pour l'animateur (`canHostVisio`) ; enregistrement, diffusion, transcription et appels désactivés (options payantes).
+- Facturation JaaS au nombre de participants distincts par mois (gratuit jusqu'à 25) : surveiller le tableau de bord 8x8.

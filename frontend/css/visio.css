@@ -532,3 +532,28 @@ body.visio-body {
 .visio-status-badge.is-closed .live-dot { background: #94a3b8; animation: none; }
 .visio-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 1000; padding: 10px 18px; border-radius: 9999px; background: #0f172a; color: #f8fafc; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); transition: opacity 0.3s ease; }
 .lobby-card h2, .lobby-card > p { text-align: center; }
+
+/* Réunion intégrée (JaaS) */
+.visio-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  z-index: 2;
+}
+.visio-stage-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.visio-stage-bar span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.visio-stage-bar .lobby-btn { padding: 0.35rem 0.8rem; font-size: 0.8rem; }
+.visio-stage-frame { flex: 1; min-height: 0; }
+.visio-stage-frame iframe { display: block; border: 0; }
+.visio-lobby[hidden] { display: none; }

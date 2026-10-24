@@ -1,10 +1,12 @@
 const prisma = require('../config/database');
-const { NotFoundError, BadRequestError } = require('../utils/errors');
+const { NotFoundError, BadRequestError, ConflictError } = require('../utils/errors');
 const logger = require('../utils/logger');
 const crypto = require('crypto');
 const RbacService = require('./rbacService');
+const JaasService = require('./jaasService');
 
-// Visio : service public Jitsi, ouvert dans un nouvel onglet (l'intégration au site n'est plus permise)
+// Visio : JaaS (réunion intégrée au site) quand la clé est configurée, sinon service public
+// meet.jit.si ouvert dans un nouvel onglet (l'intégration au site n'y est plus permise)
 const VISIO_DOMAIN = 'meet.jit.si';
 
 class FormationService {
@@ -593,6 +595,7 @@ class FormationService {
     const formation = await this.getFormationOrThrow(formationId);
     const isModerator = await this.canHostVisio(user, formation.id);
     const live = formation.visioStatus === 'LIVE' && Boolean(formation.visioRoomId);
+    const jaas = JaasService.isConfigured();
 
     return {
       formationId: formation.id,
@@ -609,12 +612,37 @@ class FormationService {
       visioStatus: live ? 'LIVE' : (formation.visioStatus === 'LIVE' ? 'INACTIVE' : formation.visioStatus || 'INACTIVE'),
       visioScheduledAt: formation.visioScheduledAt || null,
       roomId: live ? formation.visioRoomId : null,
-      meetingUrl: live ? `https://${VISIO_DOMAIN}/${formation.visioRoomId}` : null,
+      // JaaS : pas de lien direct, chacun rejoint depuis le site avec son jeton (joinVisio)
+      provider: jaas ? 'jaas' : 'jitsi',
+      meetingUrl: live && !jaas ? `https://${VISIO_DOMAIN}/${formation.visioRoomId}` : null,
       isModerator,
-      domain: VISIO_DOMAIN,
+      domain: jaas ? JaasService.DOMAIN : VISIO_DOMAIN,
       // Durée maximale d'une réunion sur le service public meet.jit.si (depuis octobre 2026)
-      maxDurationMinutes: 95,
+      maxDurationMinutes: jaas ? null : 95,
       userName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || null : null,
+    };
+  }
+
+  // 7. Entrer dans une salle JaaS : jeton personnel, valable pour cette salle uniquement
+  static async joinVisio(formationId, { user, name } = {}) {
+    if (!JaasService.isConfigured()) {
+      throw new ConflictError('La visio intégrée n\'est pas activée : utilisez le lien de la réunion.');
+    }
+    const formation = await this.getFormationOrThrow(formationId);
+    if (formation.visioStatus !== 'LIVE' || !formation.visioRoomId) {
+      throw new ConflictError('La salle n\'est pas encore ouverte.');
+    }
+    const account = user?.id
+      ? await prisma.user.findUnique({ where: { id: user.id }, select: { id: true, firstName: true, lastName: true, avatarUrl: true } })
+      : null;
+    const fullName = account ? `${account.firstName || ''} ${account.lastName || ''}`.trim() : '';
+    const displayName = String(name || '').replace(/[<>]/g, '').trim().slice(0, 60) || fullName || 'Participant';
+    const moderator = await this.canHostVisio(user, formation.id);
+    return {
+      ...JaasService.publicInfo(formation.visioRoomId),
+      jwt: JaasService.createToken({ room: formation.visioRoomId, user: account || {}, name: displayName, moderator }),
+      displayName,
+      isModerator: moderator,
     };
   }
 }

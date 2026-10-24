@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 const request = require('supertest');
 const { app } = require('../src/app');
 const { signAccessToken } = require('../src/utils/tokens');
@@ -57,6 +59,7 @@ describe('Salle virtuelle', () => {
     await request(app).post(`/api/mentoring/formations/${formation.id}/visio/start`).set('Authorization', `Bearer ${mentorToken}`).expect(200);
     const res = await session();
     expect(res.body.data.visioStatus).toBe('LIVE');
+    expect(res.body.data.provider).toBe('jitsi');
     expect(res.body.data.meetingUrl).toMatch(/^https:\/\/meet\.jit\.si\/lmdt-formation-visio-test-[0-9a-f]{12}$/);
     expect(res.body.data.maxDurationMinutes).toBe(95);
   });
@@ -89,6 +92,62 @@ describe('Salle virtuelle', () => {
   it('refuse l\'ouverture aux membres', async () => {
     expect((await request(app).post(`/api/mentoring/formations/${formation.id}/visio/start`).set('Authorization', `Bearer ${memberToken}`)).status).toBe(403);
     expect((await request(app).post(`/api/formations/${formation.id}/visio/start`).set('Authorization', `Bearer ${memberToken}`)).status).toBe(403);
+  });
+
+  describe('réunion intégrée (JaaS)', () => {
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
+    const APP_ID = 'vpaas-magic-cookie-test123';
+    const join = (token, body = {}) => {
+      const req = request(app).post(`/api/formations/${SLUG}/visio/join`).send(body);
+      return token ? req.set('Authorization', `Bearer ${token}`) : req;
+    };
+
+    beforeAll(() => {
+      process.env.JAAS_APP_ID = APP_ID;
+      process.env.JAAS_KEY_ID = 'abc123';
+      // Clé collée sur une seule ligne, comme dans certains tableaux de bord
+      process.env.JAAS_PRIVATE_KEY = privateKey.export({ type: 'pkcs1', format: 'pem' }).replace(/\n/g, '\\n');
+    });
+    afterAll(() => {
+      delete process.env.JAAS_APP_ID;
+      delete process.env.JAAS_KEY_ID;
+      delete process.env.JAAS_PRIVATE_KEY;
+    });
+
+    it('n\'expose plus de lien direct et annonce la réunion intégrée', async () => {
+      const d = (await session()).body.data;
+      expect(d.provider).toBe('jaas');
+      expect(d.visioStatus).toBe('LIVE');
+      expect(d.meetingUrl).toBeNull();
+      expect(d.maxDurationMinutes).toBeNull();
+    });
+
+    it('délivre un jeton signé limité à la salle, modérateur pour l\'animateur', async () => {
+      const room = (await session()).body.data.roomId;
+      const res = await join(mentorToken);
+      expect(res.status).toBe(200);
+      expect(res.body.data).toMatchObject({ domain: '8x8.vc', roomName: `${APP_ID}/${room}`, scriptUrl: `https://8x8.vc/${APP_ID}/external_api.js`, isModerator: true });
+      const decoded = jwt.verify(res.body.data.jwt, publicKey, { algorithms: ['RS256'], complete: true });
+      expect(decoded.header.kid).toBe(`${APP_ID}/abc123`);
+      expect(decoded.payload).toMatchObject({ aud: 'jitsi', iss: 'chat', sub: APP_ID, room });
+      expect(decoded.payload.context.user.moderator).toBe('true');
+      expect(decoded.payload.context.features.recording).toBe(false);
+    });
+
+    it('fait entrer les invités sans compte, sans droits de modération', async () => {
+      const res = await join(null, { name: '  Awa <b>Ndiaye</b> ' });
+      expect(res.status).toBe(200);
+      const payload = jwt.decode(res.body.data.jwt);
+      expect(payload.context.user.name).toBe('Awa bNdiaye/b');
+      expect(payload.context.user.moderator).toBe('false');
+      expect(res.body.data.isModerator).toBe(false);
+      expect((await join(memberToken)).body.data.isModerator).toBe(false);
+    });
+
+    it('refuse l\'entrée quand la salle est fermée', async () => {
+      await request(app).post(`/api/mentoring/formations/${formation.id}/visio/stop`).set('Authorization', `Bearer ${mentorToken}`).expect(200);
+      expect((await join(memberToken)).status).toBe(409);
+    });
   });
 
   it('signale une formation inconnue', async () => {

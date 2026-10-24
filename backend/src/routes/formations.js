@@ -68,6 +68,7 @@ router.patch('/registrations/:registrationId', ...adminGate, authorize('formatio
 
 // Salle Virtuelle (Visioconférence Jitsi Meet)
 router.get('/:id/visio', optionalAuth, formationController.getVisioSession);
+router.post('/:id/visio/join', optionalAuth, formationController.joinVisio);
 router.post('/:id/visio/start', ...adminGate, authorize('formation.update'), formationController.startVisioSession);
 router.post('/:id/visio/stop', ...adminGate, authorize('formation.update'), formationController.stopVisioSession);
 

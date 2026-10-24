@@ -355,6 +355,16 @@ class FormationController {
     }
   }
 
+  // Rejoindre la salle intégrée (JaaS) : jeton personnel
+  static async joinVisio(req, res, next) {
+    try {
+      const result = await formationService.joinVisio(req.params.id, { user: req.user, name: req.body?.name });
+      res.json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // Obtenir les informations de la salle de visioconférence
   static async getVisioSession(req, res, next) {
     try {

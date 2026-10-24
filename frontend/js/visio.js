@@ -1,9 +1,11 @@
 /**
  * Salle virtuelle (visio.html?formation=<id ou slug>) : salle d'attente des formations en direct.
- * La réunion se tient sur meet.jit.si, ouverte dans un nouvel onglet : le service public
- * n'autorise plus son intégration dans un autre site. L'animateur (Présidence, mentor de la
- * formation, administrateur) ouvre et ferme la salle ; il se connecte sur Jitsi (Google, GitHub
- * ou Facebook) pour démarrer la réunion. Les participants n'ont besoin d'aucun compte.
+ * L'animateur (Présidence, mentor de la formation, administrateur) ouvre et ferme la salle.
+ * - JaaS configuré (session.provider === 'jaas') : la réunion s'affiche dans la page ; chacun
+ *   entre avec un jeton personnel délivré par le serveur, l'animateur y est modérateur d'office.
+ * - Sinon : réunion sur meet.jit.si dans un nouvel onglet (intégration non permise par le service
+ *   public) ; l'animateur s'y connecte avec Google, GitHub ou Facebook.
+ * Les participants n'ont besoin d'aucun compte.
  */
 (function () {
   'use strict';
@@ -17,6 +19,7 @@
 
   let session = null;
   let refreshTimer = null;
+  let meeting = null;
   const $ = (id) => document.getElementById(id);
   const esc = (value) => (window.escapeHtml ? window.escapeHtml(value) : String(value ?? ''));
 
@@ -32,6 +35,7 @@
 
   async function load() {
     clearTimeout(refreshTimer);
+    if (meeting) return;
     try {
       session = (await window.Api.formations.getVisioSession(formationId)).data;
     } catch (error) {
@@ -99,7 +103,15 @@
     return `
       <div class="lobby-host">
         <h3>🎙️ Vous animez cette session</h3>
-        ${live ? `
+        ${live && isEmbedded() ? `
+          <ol>
+            <li>Entrez dans la salle : vous êtes modérateur d'office (couper un micro, exclure, partager l'écran).</li>
+            <li>Partagez le lien de cette page : chacun y entre avec son nom, sans compte.</li>
+          </ol>
+          <div class="lobby-actions">
+            <button type="button" class="lobby-btn lobby-btn-ghost" data-act="copy">🔗 Copier le lien de la salle</button>
+            <button type="button" class="lobby-btn lobby-btn-danger" data-act="stop">⏹ Fermer la salle</button>
+          </div>` : live ? `
           <ol>
             <li>Cliquez sur « Rejoindre la visio » : la réunion s'ouvre dans un nouvel onglet.</li>
             <li>Jitsi vous demande de vous connecter : choisissez <strong>Google</strong> (compte du club ou le vôtre). Les participants patientent jusqu'à votre arrivée.</li>
@@ -139,9 +151,11 @@
           <input id="visioNameInput" maxlength="60" value="${esc(displayName())}" placeholder="Prénom Nom">
         </label>
         <label class="lobby-check"><input type="checkbox" id="visioEcoCheck" ${eco ? 'checked' : ''}> 📶 Mode Éco-Data : vidéo réduite, idéal en 4G</label>
-        <a class="lobby-btn lobby-btn-join" id="visioJoinBtn" href="#" target="_blank" rel="noopener">Rejoindre la visio ↗</a>
+        ${isEmbedded()
+          ? '<button type="button" class="lobby-btn lobby-btn-join" id="visioJoinBtn">Entrer dans la salle</button>'
+          : '<a class="lobby-btn lobby-btn-join" id="visioJoinBtn" href="#" target="_blank" rel="noopener">Rejoindre la visio ↗</a>'}
         <ul class="lobby-tips">
-          <li>La réunion s'ouvre dans un nouvel onglet sur <strong>meet.jit.si</strong> : aucun compte n'est nécessaire pour les participants.</li>
+          <li>${isEmbedded() ? 'La réunion s\'affiche ici, sans quitter le site' : 'La réunion s\'ouvre dans un nouvel onglet sur <strong>meet.jit.si</strong>'} : aucun compte n'est nécessaire pour les participants.</li>
           <li>Autorise l'accès au micro et à la caméra quand le navigateur le demande.</li>
           <li>Sur téléphone, reste dans le navigateur (Chrome ou Safari) : l'application n'est pas obligatoire.</li>
           <li>Si le message « en attente de l'organisateur » s'affiche, patiente : l'animateur arrive.</li>
@@ -149,7 +163,7 @@
         ${hostBlock(true)}
       </div>`;
     const join = $('visioJoinBtn');
-    const sync = () => { join.href = meetingLink(); };
+    const sync = () => { if (!isEmbedded()) join.href = meetingLink(); };
     sync();
     $('visioNameInput').addEventListener('input', () => {
       try { localStorage.setItem(NAME_KEY, $('visioNameInput').value.trim()); } catch (_) { /* stockage indisponible */ }
@@ -158,8 +172,87 @@
     $('visioEcoCheck').addEventListener('change', (e) => { setEco(e.target.checked); sync(); });
     join.addEventListener('click', () => {
       try { window.AnalyticsTracker?.track?.('visio_join', 'formation', session.slug || session.formationId, { host: session.isModerator }); } catch (_) { /* suivi facultatif */ }
+      if (isEmbedded()) enterRoom(join);
     });
     bindActions();
+  }
+
+  // ===== Réunion intégrée (JaaS) =====
+
+  function isEmbedded() {
+    return session?.provider === 'jaas';
+  }
+
+  const scripts = {};
+  function loadScript(src) {
+    scripts[src] = scripts[src] || new Promise((resolve, reject) => {
+      const el = Object.assign(document.createElement('script'), { src, async: true, onload: resolve });
+      el.onerror = () => { delete scripts[src]; el.remove(); reject(new Error('Le service de visio ne répond pas. Vérifie ta connexion puis réessaie.')); };
+      document.head.appendChild(el);
+    });
+    return scripts[src];
+  }
+
+  async function enterRoom(btn) {
+    btn.disabled = true;
+    btn.textContent = 'Connexion…';
+    try {
+      const access = (await window.Api.request(`/formations/${encodeURIComponent(session.formationId)}/visio/join`, {
+        method: 'POST',
+        body: JSON.stringify({ name: displayName() }),
+      })).data;
+      await loadScript(access.scriptUrl);
+      const eco = localStorage.getItem(ECO_KEY) === '1';
+      const area = $('visioStreamArea');
+      area.insertAdjacentHTML('beforeend', `
+        <div class="visio-stage" id="visioStage">
+          <div class="visio-stage-bar">
+            <span>🟢 ${esc(session.title || 'Session en direct')}</span>
+            ${access.isModerator ? '<button type="button" class="lobby-btn lobby-btn-danger" data-stage="stop">⏹ Fermer la salle</button>' : ''}
+            <button type="button" class="lobby-btn lobby-btn-ghost" data-stage="leave">Quitter</button>
+          </div>
+          <div class="visio-stage-frame" id="visioStageFrame"></div>
+        </div>`);
+      $('visioLobby').hidden = true;
+      meeting = new window.JitsiMeetExternalAPI(access.domain, {
+        roomName: access.roomName,
+        jwt: access.jwt,
+        parentNode: $('visioStageFrame'),
+        width: '100%',
+        height: '100%',
+        lang: 'fr',
+        userInfo: { displayName: access.displayName },
+        configOverwrite: {
+          prejoinConfig: { enabled: true },
+          disableDeepLinking: true,
+          startWithAudioMuted: !access.isModerator,
+          ...(eco ? { startAudioOnly: true, resolution: 180, constraints: { video: { height: { ideal: 180, max: 180 } } } } : {}),
+        },
+      });
+      meeting.addListener('readyToClose', leaveRoom);
+      $('visioStage').querySelectorAll('[data-stage]').forEach((b) => b.addEventListener('click', async () => {
+        if (b.dataset.stage === 'leave') return leaveRoom();
+        if (!window.confirm('Fermer la salle pour tout le monde ?')) return;
+        try {
+          meeting.executeCommand('endConference');
+        } catch (_) { /* fin de réunion facultative */ }
+        try { await hostRequest('stop'); notify('⏹ Salle fermée'); } catch (error) { notify(`⚠️ ${error.message || 'Action impossible'}`); }
+        leaveRoom();
+      }));
+    } catch (error) {
+      leaveRoom();
+      btn.disabled = false;
+      btn.textContent = 'Entrer dans la salle';
+      notify(`⚠️ ${error.message || 'Impossible d\'entrer dans la salle'}`);
+    }
+  }
+
+  function leaveRoom() {
+    try { meeting?.dispose(); } catch (_) { /* déjà fermée */ }
+    meeting = null;
+    $('visioStage')?.remove();
+    $('visioLobby').hidden = false;
+    load();
   }
 
   // ===== Actions de l'animateur =====
@@ -179,7 +272,8 @@
     $('visioLobby').querySelectorAll('[data-act]').forEach((btn) => btn.addEventListener('click', async () => {
       const act = btn.dataset.act;
       if (act === 'copy') {
-        const link = meetingLink({ withName: false });
+        // Réunion intégrée : on partage cette page (le jeton est délivré à l'entrée)
+        const link = isEmbedded() ? window.location.href.split('#')[0] : meetingLink({ withName: false });
         try { await navigator.clipboard.writeText(link); notify('🔗 Lien copié : partage-le aux participants'); } catch (_) { window.prompt('Lien de la salle :', link); }
         return;
       }
@@ -232,7 +326,7 @@
     $('btnDataSaver').addEventListener('click', () => {
       const on = localStorage.getItem(ECO_KEY) !== '1';
       setEco(on);
-      if (session?.visioStatus === 'LIVE') $('visioJoinBtn').href = meetingLink();
+      if (session?.visioStatus === 'LIVE' && !isEmbedded() && $('visioJoinBtn')) $('visioJoinBtn').href = meetingLink();
       notify(on ? '📶 Mode Éco-Data activé pour la réunion' : '📶 Qualité vidéo normale');
     });
   }
