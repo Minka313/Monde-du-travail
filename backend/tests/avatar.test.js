@@ -51,6 +51,13 @@ describe('Photo de profil', () => {
     expect(removed.body.data.avatarUrl).toBeNull();
   });
 
+  it('explique quoi faire quand une ancienne page envoie la photo en texte', async () => {
+    const res = await request(app).put('/api/auth/me/avatar').set('Authorization', `Bearer ${token}`)
+      .send({ avatarUrl: `data:image/jpeg;base64,${'A'.repeat(50000)}` });
+    expect(res.status).toBe(413);
+    expect(res.body.message).toMatch(/Recharge la page/);
+  });
+
   it('refuse les adresses dangereuses ou les images collées en texte', async () => {
     const put = (avatarUrl) => request(app).put('/api/auth/me/avatar').set('Authorization', `Bearer ${token}`).send({ avatarUrl });
     expect((await put('javascript:alert(1)')).status).toBe(400);

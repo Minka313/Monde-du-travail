@@ -23,6 +23,10 @@ const errorHandler = async (err, req, res, next) => {
   } else if (err.code === 'P2025') {
     statusCode = 404;
     message = 'Ressource non trouvée';
+  } else if (err.type === 'entity.too.large') {
+    // Corps JSON trop gros (ex. ancienne page profil qui envoyait la photo en texte)
+    statusCode = 413;
+    message = 'Envoi trop volumineux. Recharge la page (Ctrl+Maj+R sur ordinateur) puis réessaie.';
   } else if (err.name === 'ZodError') {
     statusCode = 400;
     message = err.errors?.map((e) => e.message).join(', ') || 'Validation invalide';
