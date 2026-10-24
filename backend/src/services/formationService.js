@@ -1,6 +1,11 @@
 const prisma = require('../config/database');
 const { NotFoundError, BadRequestError } = require('../utils/errors');
 const logger = require('../utils/logger');
+const crypto = require('crypto');
+const RbacService = require('./rbacService');
+
+// Visio : service public Jitsi, ouvert dans un nouvel onglet (l'intégration au site n'est plus permise)
+const VISIO_DOMAIN = 'meet.jit.si';
 
 class FormationService {
   // Liste publique : uniquement les formations publiées
@@ -22,10 +27,19 @@ class FormationService {
       }
     }
 
-    return prisma.formation.findMany({
+    const formations = await prisma.formation.findMany({
       where,
       orderBy: { createdAt: 'desc' },
     });
+    return formations.map((f) => FormationService.withoutRoom(f));
+  }
+
+  // Le nom de la salle visio n'est donné qu'aux personnes qui y accèdent (getVisioSession)
+  static withoutRoom(formation) {
+    if (!formation) return formation;
+    const rest = { ...formation };
+    delete rest.visioRoomId;
+    return rest;
   }
 
   // Catégories distinctes existantes via SQL distinct
@@ -278,8 +292,9 @@ class FormationService {
     return result.count;
   }
 
+  // Accepte l'identifiant ou le slug de la fiche pédagogique
   static async getFormationOrThrow(id) {
-    const formation = await prisma.formation.findUnique({ where: { id } });
+    const formation = await prisma.formation.findFirst({ where: { OR: [{ id }, { slug: id }] } });
     if (!formation) {
       throw new NotFoundError('Formation non trouvée');
     }
@@ -497,7 +512,10 @@ class FormationService {
       .replace(/(^-|-$)+/g, '')
       .slice(0, 30);
     
-    const roomId = formation.visioRoomId || `lmdt-${cleanSlug}-${formation.id.slice(-6)}`;
+    // Nom de salle imprévisible, renouvelé à chaque nouvelle session (l'ancien lien ne sert plus)
+    const roomId = formation.visioStatus === 'LIVE' && formation.visioRoomId
+      ? formation.visioRoomId
+      : `lmdt-${cleanSlug}-${crypto.randomBytes(6).toString('hex')}`;
 
     try {
       await prisma.formation.update({
@@ -519,15 +537,14 @@ class FormationService {
       } catch (err) {}
     }
 
-    const isModerator = user && ['SUPER_ADMIN', 'ADMIN', 'COACH'].includes(user.role);
-
     return {
       formationId: formation.id,
       formationTitle: formation.title,
       roomId,
       visioStatus: 'LIVE',
-      isModerator: !!isModerator,
-      domain: 'meet.jit.si',
+      isModerator: await this.canHostVisio(user, formation.id),
+      domain: VISIO_DOMAIN,
+      meetingUrl: `https://${VISIO_DOMAIN}/${roomId}`,
       userName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : 'Apprenant Invité',
       userEmail: user?.email || '',
       userAvatar: user?.avatarUrl || null,
@@ -557,36 +574,47 @@ class FormationService {
     return { formationId: formation.id, visioStatus: 'ENDED' };
   }
 
-  // 6. Consulter le statut de la session visio
+  /**
+   * Animateur d'une salle : Présidence et administrateurs, mentors à qui la formation
+   * est confiée, comptes autorisés à modifier les formations.
+   * `user` peut être le contenu du jeton (optionalAuth) : seuls id et role sont utilisés.
+   */
+  static async canHostVisio(user, formationId) {
+    if (!user?.id) return false;
+    if (['ULTRA_ADMIN', 'ADMIN'].includes(user.role)) return true;
+    const trainer = await prisma.formationTrainer.findUnique({ where: { formationId_userId: { formationId, userId: user.id } } });
+    if (trainer) return true;
+    const { permissions } = await RbacService.getUserAdminContext(user.id);
+    return permissions.includes('*') || permissions.includes('formation.update');
+  }
+
+  // 6. Consulter le statut de la session visio (lien de la salle uniquement quand elle est ouverte)
   static async getVisioSession(formationId, { user } = {}) {
     const formation = await this.getFormationOrThrow(formationId);
-
-    const cleanSlug = (formation.title || 'atelier')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '')
-      .slice(0, 30);
-    
-    const roomId = formation.visioRoomId || `lmdt-${cleanSlug}-${formation.id.slice(-6)}`;
-    const isModerator = user && ['SUPER_ADMIN', 'ADMIN', 'COACH'].includes(user.role);
+    const isModerator = await this.canHostVisio(user, formation.id);
+    const live = formation.visioStatus === 'LIVE' && Boolean(formation.visioRoomId);
 
     return {
       formationId: formation.id,
+      slug: formation.slug,
       formationTitle: formation.title,
+      title: formation.title,
       category: formation.category,
       duration: formation.duration,
       location: formation.location,
-      roomId,
+      objectives: formation.objectives,
+      syllabus: formation.syllabus,
+      startDate: formation.startDate,
       visioEnabled: !!formation.visioEnabled,
-      visioStatus: formation.visioStatus || 'INACTIVE',
+      visioStatus: live ? 'LIVE' : (formation.visioStatus === 'LIVE' ? 'INACTIVE' : formation.visioStatus || 'INACTIVE'),
       visioScheduledAt: formation.visioScheduledAt || null,
-      isModerator: !!isModerator,
-      domain: 'meet.jit.si',
-      userName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : 'Apprenant Invité',
-      userEmail: user?.email || '',
-      userAvatar: user?.avatarUrl || null,
+      roomId: live ? formation.visioRoomId : null,
+      meetingUrl: live ? `https://${VISIO_DOMAIN}/${formation.visioRoomId}` : null,
+      isModerator,
+      domain: VISIO_DOMAIN,
+      // Durée maximale d'une réunion sur le service public meet.jit.si (depuis octobre 2026)
+      maxDurationMinutes: 95,
+      userName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || null : null,
     };
   }
 }

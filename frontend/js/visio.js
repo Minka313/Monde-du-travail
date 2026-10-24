@@ -1,486 +1,288 @@
 /**
- * Contrôleur de Salle Virtuelle & Visioconférence (Jitsi Meet WebRTC)
- * Plateforme : Le Monde du Travail
+ * Salle virtuelle (visio.html?formation=<id ou slug>) : salle d'attente des formations en direct.
+ * La réunion se tient sur meet.jit.si, ouverte dans un nouvel onglet : le service public
+ * n'autorise plus son intégration dans un autre site. L'animateur (Présidence, mentor de la
+ * formation, administrateur) ouvre et ferme la salle ; il se connecte sur Jitsi (Google, GitHub
+ * ou Facebook) pour démarrer la réunion. Les participants n'ont besoin d'aucun compte.
  */
-
 (function () {
   'use strict';
 
-  // 1. État global de la session
-  let jitsiApi = null;
-  let currentFormation = null;
-  let currentSession = null;
-  let isDataSaverActive = false;
+  const params = new URLSearchParams(window.location.search);
+  const formationId = params.get('formation') || params.get('id') || '';
+  const NOTES_KEY = `lmdt_visio_notes_${formationId}`;
+  const ECO_KEY = 'lmdt_visio_eco';
+  const NAME_KEY = 'lmdt_user_name';
+  const REFRESH_MS = 30000;
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const formationId = urlParams.get('formation') || urlParams.get('id') || 'fb-3'; // fallback vers Prise de parole en public
-  const queryRoom = urlParams.get('room');
-  const queryRole = urlParams.get('role'); // 'moderator' ou 'participant'
-  const queryName = urlParams.get('name');
+  let session = null;
+  let refreshTimer = null;
+  const $ = (id) => document.getElementById(id);
+  const esc = (value) => (window.escapeHtml ? window.escapeHtml(value) : String(value ?? ''));
 
-  // Éléments DOM
-  const elements = {
-    title: document.getElementById('visioFormationTitle'),
-    statusBadge: document.getElementById('visioStatusBadge'),
-    statusLabel: document.getElementById('visioStatusLabel'),
-    loadingScreen: document.getElementById('visioLoadingScreen'),
-    loadingDesc: document.getElementById('visioLoadingDesc'),
-    meetContainer: document.getElementById('meetContainer'),
-    btnDataSaver: document.getElementById('btnDataSaver'),
-    dataSaverState: document.getElementById('dataSaverState'),
-    btnToggleSidebar: document.getElementById('btnToggleSidebar'),
-    btnCloseSidebar: document.getElementById('btnCloseSidebar'),
-    sidebar: document.getElementById('visioSidebar'),
-    objectives: document.getElementById('visioObjectivesContent'),
-    duration: document.getElementById('visioDuration'),
-    location: document.getElementById('visioLocation'),
-    syllabusList: document.getElementById('visioSyllabusList'),
-    relatedJobsList: document.getElementById('visioRelatedJobsList'),
-    notesInput: document.getElementById('visioNotesInput'),
-    notesSavedIndicator: document.getElementById('notesSavedIndicator'),
-    btnDownloadNotes: document.getElementById('btnDownloadNotes'),
-  };
-
-  // 2. Initialisation au chargement de la page
   document.addEventListener('DOMContentLoaded', async () => {
-    setupSidebarControls();
-    setupNotesPad();
-    setupDataSaverToggle();
-
-    try {
-      await loadSessionData();
-      await loadJitsiSdkAndInit();
-    } catch (error) {
-      console.error('[Visio] Erreur lors de l\'initialisation de la salle virtuelle :', error);
-      if (elements.loadingDesc) {
-        elements.loadingDesc.innerHTML = `<span style="color:#ef4444;">⚠️ Impossible de charger la session : ${escapeHtml(error.message)}</span>`;
-      }
-    }
+    setupSidebar();
+    setupNotes();
+    setupEcoToggle();
+    if (!formationId) return renderError('Aucune formation indiquée dans le lien.');
+    await load();
   });
 
-  // 3. Récupération des métadonnées de la session et de la formation
-  async function loadSessionData() {
-    let session = null;
-    let formation = null;
+  // ===== Données =====
 
+  async function load() {
+    clearTimeout(refreshTimer);
     try {
-      if (window.Api && window.Api.formations && typeof window.Api.formations.getVisioSession === 'function') {
-        const res = await window.Api.formations.getVisioSession(formationId);
-        if (res && res.data) {
-          session = res.data;
-          formation = session;
-        }
-      }
-    } catch (e) {
-      console.warn('[Visio] API session non disponible, utilisation des données de secours :', e);
-    }
-
-    // Données de secours enrichies si l'API est hors ligne ou formation mockée
-    if (!formation) {
-      const fallbackFormations = {
-        'fb-1': {
-          title: 'Leadership & Management',
-          duration: '4 semaines (30h)',
-          location: 'Dakar & En ligne',
-          objectives: 'Développer son intelligence managériale, fédérer des équipes multidisciplinaires et gérer les situations de crise.',
-          syllabus: [
-            { module: 'Module 1 : Posture et Styles de Leadership', duration: '1 sem.', lessons: ['Auto-évaluation de son leadership', 'Délégation efficace'] },
-            { module: 'Module 2 : Intelligence émotionnelle d\'équipe', duration: '1 sem.', lessons: ['Gestion des conflits', 'Communication non-violente'] },
-          ],
-          jobs: [{ title: 'Chef de projet', slug: 'chef-de-projet' }, { title: 'Directeur des opérations', slug: 'directeur-operations' }]
-        },
-        'fb-2': {
-          title: 'Communication efficace',
-          duration: '3 semaines (25h)',
-          location: 'Dakar & En ligne',
-          objectives: 'Adopter une écoute active bienveillante, formuler des feedbacks constructifs et négocier des accords gagnant-gagnant.',
-          syllabus: [
-            { module: 'Module 1 : Écoute active et questionnement', duration: '1 sem.', lessons: ['Filtres de communication', 'Feedback constructif'] }
-          ],
-          jobs: [{ title: 'Consultant en communication', slug: 'consultant-communication' }, { title: 'Responsable relations publiques', slug: 'charge-relations-publiques' }]
-        },
-        'fb-3': {
-          title: 'Prise de parole en public',
-          duration: '3 semaines (20h)',
-          location: 'Dakar & En ligne',
-          objectives: 'Maîtriser la gestion du trac, perfectionner sa posture scénique, poser sa voix et structurer un pitch persuasif d\'impact.',
-          syllabus: [
-            { module: 'Module 1 : Vaincre le trac et ancrage corporel', duration: '1 sem.', lessons: ['Respiration ventrale', 'Regard et occupation de l\'espace'] },
-            { module: 'Module 2 : Éloquence et structure de pitch', duration: '1 sem.', lessons: ['Règle des 3 arguments', 'Accroche et conclusion mémorable'] },
-          ],
-          jobs: [{ title: 'Juriste d\'affaires', slug: 'juriste-d-affaires' }, { title: 'Responsable plaidoyer', slug: 'responsable-plaidoyer' }, { title: 'Porte-parole', slug: 'porte-parole' }]
-        },
-        'fb-4': {
-          title: 'Énergies renouvelables & Solaire',
-          duration: '5 semaines (40h)',
-          location: 'Atelier Dakar & Hybride',
-          objectives: 'Dimensionner une installation photovoltaïque autonome et maîtriser les normes de sécurité en Afrique de l\'Ouest.',
-          syllabus: [
-            { module: 'Module 1 : Rayonnement et technologies solaires', duration: '2 sem.', lessons: ['Panneaux monocristallins', 'Onduleurs hybrides'] }
-          ],
-          jobs: [{ title: 'Ingénieur énergies renouvelables', slug: 'ingenieur-energies-renouvelables' }, { title: 'Technicien solaire', slug: 'technicien-solaire' }]
-        }
-      };
-
-      formation = fallbackFormations[formationId] || fallbackFormations['fb-3'];
-    }
-
-    currentFormation = formation;
-
-    // Normalisation de la salle Jitsi
-    const cleanTitle = (formation.title || 'atelier')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '');
-
-    currentSession = {
-      roomId: queryRoom || session?.roomId || `lmdt-${cleanTitle}-${formationId.slice(-6)}`,
-      domain: session?.domain || 'meet.jit.si',
-      isModerator: queryRole === 'moderator' || !!session?.isModerator,
-      userName: queryName || session?.userName || (window.localStorage.getItem('lmdt_user_name') || 'Apprenant Invité'),
-      userEmail: session?.userEmail || '',
-    };
-
-    // Rendu des informations de la sidebar
-    renderSidebarData(formation);
-  }
-
-  // 4. Affichage des informations pédagogiques
-  function renderSidebarData(f) {
-    if (elements.title) {
-      elements.title.textContent = f.title || 'Atelier en direct';
-      document.title = `${f.title} — Salle Virtuelle | Le Monde du Travail`;
-    }
-
-    if (elements.objectives) {
-      elements.objectives.textContent = f.objectives || 'Développer les compétences pratiques et l\'assurance professionnelle.';
-    }
-
-    if (elements.duration) elements.duration.textContent = f.duration || 'Session intensive';
-    if (elements.location) elements.location.textContent = f.location || 'Dakar / En ligne';
-
-    // Rendu Syllabus
-    if (elements.syllabusList) {
-      let syllabus = f.syllabus || [];
-      if (typeof syllabus === 'string') {
-        try { syllabus = JSON.parse(syllabus); } catch (e) { syllabus = []; }
-      }
-
-      if (Array.isArray(syllabus) && syllabus.length > 0) {
-        elements.syllabusList.innerHTML = syllabus.map((m, idx) => `
-          <div class="visio-module-card">
-            <div class="visio-module-title">
-              <span>${escapeHtml(m.module || `Étape ${idx + 1}`)}</span>
-              ${m.duration ? `<span class="visio-module-duration">${escapeHtml(m.duration)}</span>` : ''}
-            </div>
-            ${Array.isArray(m.lessons) ? `
-              <ul class="visio-lessons-list">
-                ${m.lessons.map(l => `<li>${escapeHtml(l)}</li>`).join('')}
-              </ul>
-            ` : ''}
-          </div>
-        `).join('');
-      } else {
-        elements.syllabusList.innerHTML = `
-          <div class="pane-card" style="font-size:0.82rem;color:#94a3b8;">
-            Les modules et exercices pratiques seront partagés en direct par l'intervenant.
-          </div>
-        `;
-      }
-    }
-
-    // Rendu Métiers associés
-    if (elements.relatedJobsList) {
-      const defaultJobs = [
-        { title: 'Chargé de mission & Projets', slug: 'chef-de-projet' },
-        { title: 'Consultant & Formateur', slug: 'consultant' },
-        { title: 'Responsable d\'équipe', slug: 'manager-equipe' }
-      ];
-      const jobs = f.jobs || defaultJobs;
-
-      elements.relatedJobsList.innerHTML = jobs.map(j => `
-        <a href="job-detail.html?slug=${encodeURIComponent(j.slug || '')}" target="_blank" class="visio-job-item" title="Consulter la fiche métier">
-          <span>🎯 ${escapeHtml(j.title)}</span>
-          <span style="color:#0284c7;">&rarr;</span>
-        </a>
-      `).join('');
-    }
-  }
-
-  // 5. Chargement dynamique du SDK Jitsi Meet et démarrage de la visio
-  async function loadJitsiSdkAndInit() {
-    if (window.JitsiMeetExternalAPI) {
-      initJitsiMeeting();
+      session = (await window.Api.formations.getVisioSession(formationId)).data;
+    } catch (error) {
+      renderError(error.status === 404 ? 'Cette formation est introuvable. Vérifie le lien reçu.' : (error.message || 'Salle indisponible pour le moment.'));
       return;
     }
-
-    const script = document.createElement('script');
-    script.src = 'https://meet.jit.si/external_api.js';
-    script.async = true;
-
-    script.onload = () => {
-      initJitsiMeeting();
-    };
-
-    script.onerror = () => {
-      throw new Error('Impossible de charger le moteur WebRTC Jitsi Meet. Vérifiez votre connexion Internet.');
-    };
-
-    document.head.appendChild(script);
+    renderSidebar(session);
+    if (session.visioStatus === 'LIVE') renderLive();
+    else renderClosed();
+    // Tant que la salle est fermée, on vérifie régulièrement si l'animateur l'a ouverte
+    if (session.visioStatus !== 'LIVE') refreshTimer = setTimeout(load, REFRESH_MS);
   }
 
-  function initJitsiMeeting() {
-    const domain = currentSession.domain || 'meet.jit.si';
-    const roomName = currentSession.roomId;
-    const isMod = currentSession.isModerator;
+  function setStatus(live) {
+    $('visioStatusBadge').classList.toggle('is-closed', !live);
+    $('visioStatusLabel').textContent = live ? 'EN DIRECT' : 'SALLE FERMÉE';
+  }
 
-    const options = {
-      roomName: roomName,
-      width: '100%',
-      height: '100%',
-      parentNode: elements.meetContainer,
-      userInfo: {
-        displayName: currentSession.userName,
-        email: currentSession.userEmail,
-      },
-      configOverwrite: {
-        startWithAudioMuted: !isMod, // Les apprenants entrent micro coupé pour préserver la clarté
-        startWithVideoMuted: false,
-        prejoinPageEnabled: true,
-        disableDeepLinking: true, // Très important : empêche de forcer l'installation de l'application mobile
-        defaultLanguage: 'fr',
-        enableWelcomePage: false,
-        enableClosePage: false,
-        disableInviteFunctions: false,
-        toolbarButtons: [
-          'microphone',
-          'camera',
-          'closedcaptions',
-          'desktop',
-          'fullscreen',
-          'fodeviceselection',
-          'hangup',
-          'profile',
-          'chat',
-          'recording',
-          'livestreaming',
-          'settings',
-          'raisehand',
-          'videoquality',
-          'filmstrip',
-          'tileview',
-          'select-background',
-          'mute-everyone',
-        ],
-      },
-      interfaceConfigOverwrite: {
-        SHOW_JITSI_WATERMARK: false,
-        SHOW_WATERMARK_FOR_GUESTS: false,
-        DEFAULT_BACKGROUND: '#090d16',
-        TOOLBAR_ALWAYS_VISIBLE: false,
-        MOBILE_APP_PROMO: false, // Pas de popup poussant vers les stores applicatifs
-        LANG_DETECTION: true,
-      },
-    };
+  // ===== Lien Jitsi =====
 
+  function accountName() {
     try {
-      jitsiApi = new window.JitsiMeetExternalAPI(domain, options);
+      const u = JSON.parse(localStorage.getItem('currentUser') || 'null');
+      return u ? `${u.firstName || ''} ${u.lastName || ''}`.trim() : '';
+    } catch (_) {
+      return '';
+    }
+  }
 
-      // Événements de la conférence
-      jitsiApi.addEventListener('videoConferenceJoined', onConferenceJoined);
-      jitsiApi.addEventListener('videoConferenceLeft', onConferenceLeft);
-      jitsiApi.addEventListener('readyToClose', onConferenceLeft);
-      jitsiApi.addEventListener('participantJoined', onParticipantJoined);
-    } catch (err) {
-      console.error('[Visio] Erreur lors de l\'instanciation Jitsi :', err);
-      if (elements.loadingDesc) {
-        elements.loadingDesc.textContent = 'Erreur d\'initialisation du flux vidéo.';
+  function displayName() {
+    return ($('visioNameInput')?.value || '').trim() || session.userName || localStorage.getItem(NAME_KEY) || accountName();
+  }
+
+  // Réglages passés à Jitsi dans l'adresse : langue, nom, micro coupé, mode économie de données
+  function meetingLink({ withName = true } = {}) {
+    const eco = localStorage.getItem(ECO_KEY) === '1';
+    const options = {
+      'config.defaultLanguage': 'fr',
+      'config.prejoinConfig.enabled': true,
+      'config.disableDeepLinking': true,
+      'config.startWithAudioMuted': !session.isModerator,
+      ...(eco ? { 'config.startAudioOnly': true, 'config.resolution': 180 } : {}),
+      ...(withName && displayName() ? { 'userInfo.displayName': displayName() } : {}),
+    };
+    const hash = Object.entries(options).map(([k, v]) => `${k}=${encodeURIComponent(JSON.stringify(v))}`).join('&');
+    return `${session.meetingUrl}#${hash}`;
+  }
+
+  // ===== Rendu =====
+
+  function renderError(message) {
+    setStatus(false);
+    $('visioFormationTitle').textContent = 'Salle virtuelle';
+    $('visioLobby').innerHTML = `
+      <div class="lobby-card">
+        <div class="lobby-icon">⚠️</div>
+        <h2>Salle indisponible</h2>
+        <p>${esc(message)}</p>
+        <a class="lobby-btn lobby-btn-ghost" href="formations.html">Voir les formations</a>
+      </div>`;
+  }
+
+  function hostBlock(live) {
+    if (!session.isModerator) return '';
+    return `
+      <div class="lobby-host">
+        <h3>🎙️ Vous animez cette session</h3>
+        ${live ? `
+          <ol>
+            <li>Cliquez sur « Rejoindre la visio » : la réunion s'ouvre dans un nouvel onglet.</li>
+            <li>Jitsi vous demande de vous connecter : choisissez <strong>Google</strong> (compte du club ou le vôtre). Les participants patientent jusqu'à votre arrivée.</li>
+            <li>Une réunion dure au maximum ${session.maxDurationMinutes} minutes sur meet.jit.si : au-delà, fermez puis rouvrez la salle ici pour obtenir un nouveau lien.</li>
+          </ol>
+          <div class="lobby-actions">
+            <button type="button" class="lobby-btn lobby-btn-ghost" data-act="copy">🔗 Copier le lien de la salle</button>
+            <button type="button" class="lobby-btn lobby-btn-danger" data-act="stop">⏹ Fermer la salle</button>
+          </div>` : `
+          <p>Ouvrez la salle quelques minutes avant le début : les participants qui attendent sur cette page verront le bouton « Rejoindre » apparaître automatiquement.</p>
+          <div class="lobby-actions"><button type="button" class="lobby-btn lobby-btn-primary" data-act="start">▶️ Ouvrir la salle</button></div>`}
+      </div>`;
+  }
+
+  function renderClosed() {
+    setStatus(false);
+    const when = session.visioScheduledAt || session.startDate;
+    $('visioLobby').innerHTML = `
+      <div class="lobby-card">
+        <div class="lobby-icon">🕒</div>
+        <h2>La salle n'est pas encore ouverte</h2>
+        <p>${when ? `Session prévue le <strong>${esc(new Date(when).toLocaleString('fr-FR', { dateStyle: 'full', timeStyle: 'short' }))}</strong>.` : 'L\'animateur ouvrira la salle au début de la session.'}</p>
+        <p class="lobby-muted">Garde cette page ouverte : elle se met à jour toute seule dès que la salle ouvre.</p>
+        ${hostBlock(false)}
+      </div>`;
+    bindActions();
+  }
+
+  function renderLive() {
+    setStatus(true);
+    const eco = localStorage.getItem(ECO_KEY) === '1';
+    $('visioLobby').innerHTML = `
+      <div class="lobby-card lobby-live">
+        <div class="lobby-icon">🟢</div>
+        <h2>La salle est ouverte</h2>
+        <label class="lobby-field" for="visioNameInput">Ton nom dans la réunion
+          <input id="visioNameInput" maxlength="60" value="${esc(displayName())}" placeholder="Prénom Nom">
+        </label>
+        <label class="lobby-check"><input type="checkbox" id="visioEcoCheck" ${eco ? 'checked' : ''}> 📶 Mode Éco-Data : vidéo réduite, idéal en 4G</label>
+        <a class="lobby-btn lobby-btn-join" id="visioJoinBtn" href="#" target="_blank" rel="noopener">Rejoindre la visio ↗</a>
+        <ul class="lobby-tips">
+          <li>La réunion s'ouvre dans un nouvel onglet sur <strong>meet.jit.si</strong> : aucun compte n'est nécessaire pour les participants.</li>
+          <li>Autorise l'accès au micro et à la caméra quand le navigateur le demande.</li>
+          <li>Sur téléphone, reste dans le navigateur (Chrome ou Safari) : l'application n'est pas obligatoire.</li>
+          <li>Si le message « en attente de l'organisateur » s'affiche, patiente : l'animateur arrive.</li>
+        </ul>
+        ${hostBlock(true)}
+      </div>`;
+    const join = $('visioJoinBtn');
+    const sync = () => { join.href = meetingLink(); };
+    sync();
+    $('visioNameInput').addEventListener('input', () => {
+      try { localStorage.setItem(NAME_KEY, $('visioNameInput').value.trim()); } catch (_) { /* stockage indisponible */ }
+      sync();
+    });
+    $('visioEcoCheck').addEventListener('change', (e) => { setEco(e.target.checked); sync(); });
+    join.addEventListener('click', () => {
+      try { window.AnalyticsTracker?.track?.('visio_join', 'formation', session.slug || session.formationId, { host: session.isModerator }); } catch (_) { /* suivi facultatif */ }
+    });
+    bindActions();
+  }
+
+  // ===== Actions de l'animateur =====
+
+  async function hostRequest(action) {
+    const id = encodeURIComponent(session.formationId);
+    // Mentors de la formation et Présidence : Espace Mentor ; autres administrateurs : API des formations
+    try {
+      return await window.Api.request(`/mentoring/formations/${id}/visio/${action}`, { method: 'POST' });
+    } catch (error) {
+      if (error.status !== 403) throw error;
+      return window.Api.request(`/formations/${id}/visio/${action}`, { method: 'POST' });
+    }
+  }
+
+  function bindActions() {
+    $('visioLobby').querySelectorAll('[data-act]').forEach((btn) => btn.addEventListener('click', async () => {
+      const act = btn.dataset.act;
+      if (act === 'copy') {
+        const link = meetingLink({ withName: false });
+        try { await navigator.clipboard.writeText(link); notify('🔗 Lien copié : partage-le aux participants'); } catch (_) { window.prompt('Lien de la salle :', link); }
+        return;
       }
-    }
-  }
-
-  function onConferenceJoined(event) {
-    if (elements.loadingScreen) {
-      elements.loadingScreen.style.opacity = '0';
-      elements.loadingScreen.style.pointerEvents = 'none';
-      setTimeout(() => {
-        elements.loadingScreen.style.display = 'none';
-      }, 350);
-    }
-
-    if (elements.statusLabel) {
-      elements.statusLabel.textContent = 'EN DIRECT';
-    }
-  }
-
-  function onConferenceLeft() {
-    if (confirm('Souhaitez-vous quitter la session et revenir aux formations ?')) {
-      window.location.href = 'formations.html';
-    }
-  }
-
-  function onParticipantJoined(participant) {
-    console.log('[Visio] Nouveau participant :', participant);
-  }
-
-  // 6. Mode Économie de Données (Optimisé pour forfaits 4G Sénégal)
-  function setupDataSaverToggle() {
-    if (!elements.btnDataSaver) return;
-
-    elements.btnDataSaver.addEventListener('click', () => {
-      isDataSaverActive = !isDataSaverActive;
-
-      if (isDataSaverActive) {
-        elements.btnDataSaver.classList.add('active');
-        if (elements.dataSaverState) elements.dataSaverState.textContent = 'ON';
-
-        if (jitsiApi) {
-          // Réduire drastiquement la résolution pour économiser la bande passante
-          jitsiApi.executeCommand('setVideoQuality', 180); // Basse définition (audio + diapos nettes)
-        }
-
-        showNotification('📶 Mode Éco-Data activé : la consommation de données est réduite au minimum.');
-      } else {
-        elements.btnDataSaver.classList.remove('active');
-        if (elements.dataSaverState) elements.dataSaverState.textContent = 'OFF';
-
-        if (jitsiApi) {
-          jitsiApi.executeCommand('setVideoQuality', 720); // Retour à la haute définition
-        }
-
-        showNotification('📶 Mode Haute Qualité rétabli.');
+      if (act === 'stop' && !window.confirm('Fermer la salle ? Le lien actuel ne fonctionnera plus.')) return;
+      btn.disabled = true;
+      try {
+        await hostRequest(act);
+        notify(act === 'start' ? '▶️ Salle ouverte' : '⏹ Salle fermée');
+        await load();
+      } catch (error) {
+        btn.disabled = false;
+        notify(`⚠️ ${error.message || 'Action impossible'}`);
       }
+    }));
+  }
+
+  // ===== Barre latérale, notes, mode Éco-Data =====
+
+  function renderSidebar(s) {
+    $('visioFormationTitle').textContent = s.title || 'Formation';
+    document.title = `${s.title} — Salle virtuelle | Le Monde du Travail`;
+    $('visioObjectivesContent').textContent = s.objectives || 'Les objectifs seront présentés par l\'animateur en début de session.';
+    $('visioDuration').textContent = s.duration || 'Session en direct';
+    $('visioLocation').textContent = s.location || 'En ligne';
+    let syllabus = s.syllabus || [];
+    if (typeof syllabus === 'string') { try { syllabus = JSON.parse(syllabus); } catch (_) { syllabus = []; } }
+    $('visioSyllabusList').innerHTML = Array.isArray(syllabus) && syllabus.length
+      ? syllabus.map((m, i) => `
+          <div class="visio-module-card">
+            <div class="visio-module-title"><span>${esc(m.module || `Étape ${i + 1}`)}</span>${m.duration ? `<span class="visio-module-duration">${esc(m.duration)}</span>` : ''}</div>
+            ${Array.isArray(m.lessons) ? `<ul class="visio-lessons-list">${m.lessons.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
+          </div>`).join('')
+      : '<div class="pane-card" style="font-size:0.82rem;color:#94a3b8;">Le programme sera partagé en direct par l\'animateur.</div>';
+    $('visioRelatedJobsList').innerHTML = s.slug
+      ? `<a href="formation-detail.html?slug=${encodeURIComponent(s.slug)}" target="_blank" rel="noopener" class="visio-job-item"><span>📚 Fiche complète de la formation</span><span style="color:#0284c7;">&rarr;</span></a>
+         <a href="job.html" target="_blank" rel="noopener" class="visio-job-item"><span>🎯 Explorer les métiers liés</span><span style="color:#0284c7;">&rarr;</span></a>`
+      : '<a href="job.html" target="_blank" rel="noopener" class="visio-job-item"><span>🎯 Explorer les métiers</span><span style="color:#0284c7;">&rarr;</span></a>';
+  }
+
+  function setEco(on) {
+    try { localStorage.setItem(ECO_KEY, on ? '1' : '0'); } catch (_) { /* stockage indisponible */ }
+    $('btnDataSaver').classList.toggle('active', on);
+    $('dataSaverState').textContent = on ? 'ON' : 'OFF';
+    const check = $('visioEcoCheck');
+    if (check) check.checked = on;
+  }
+
+  function setupEcoToggle() {
+    setEco(localStorage.getItem(ECO_KEY) === '1');
+    $('btnDataSaver').addEventListener('click', () => {
+      const on = localStorage.getItem(ECO_KEY) !== '1';
+      setEco(on);
+      if (session?.visioStatus === 'LIVE') $('visioJoinBtn').href = meetingLink();
+      notify(on ? '📶 Mode Éco-Data activé pour la réunion' : '📶 Qualité vidéo normale');
     });
   }
 
-  // 7. Bloc-notes Interactif avec Sauvegarde Locale
-  function setupNotesPad() {
-    if (!elements.notesInput) return;
-
-    const storageKey = `lmdt_visio_notes_${formationId}`;
-    const savedNotes = localStorage.getItem(storageKey);
-    if (savedNotes) {
-      elements.notesInput.value = savedNotes;
-    }
-
-    let saveTimeout = null;
-    elements.notesInput.addEventListener('input', () => {
-      if (elements.notesSavedIndicator) {
-        elements.notesSavedIndicator.textContent = '⏳ Enregistrement...';
-        elements.notesSavedIndicator.style.color = '#f59e0b';
-      }
-
-      clearTimeout(saveTimeout);
-      saveTimeout = setTimeout(() => {
-        localStorage.setItem(storageKey, elements.notesInput.value);
-        if (elements.notesSavedIndicator) {
-          elements.notesSavedIndicator.textContent = '✓ Enregistré';
-          elements.notesSavedIndicator.style.color = '#10b981';
-        }
+  function setupNotes() {
+    const input = $('visioNotesInput');
+    const saved = $('notesSavedIndicator');
+    input.value = localStorage.getItem(NOTES_KEY) || '';
+    let timer;
+    input.addEventListener('input', () => {
+      saved.textContent = '⏳ Enregistrement…';
+      saved.style.color = '#f59e0b';
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        try { localStorage.setItem(NOTES_KEY, input.value); } catch (_) { /* stockage indisponible */ }
+        saved.textContent = '✓ Enregistré';
+        saved.style.color = '#10b981';
       }, 500);
     });
-
-    if (elements.btnDownloadNotes) {
-      elements.btnDownloadNotes.addEventListener('click', () => {
-        const text = elements.notesInput.value;
-        if (!text.trim()) {
-          alert('Votre bloc-notes est vide.');
-          return;
-        }
-
-        const title = currentFormation?.title || 'formation';
-        const filename = `notes_${title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}_${new Date().toISOString().slice(0, 10)}.txt`;
-
-        const blob = new Blob([
-          `LE MONDE DU TRAVAIL — NOTES D'ATELIER\nFormation : ${title}\nDate : ${new Date().toLocaleString('fr-FR')}\n\n` + text
-        ], { type: 'text/plain;charset=utf-8' });
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      });
-    }
-  }
-
-  // 8. Contrôle de la Sidebar
-  function setupSidebarControls() {
-    // Basculer l'ouverture/fermeture de la sidebar
-    if (elements.btnToggleSidebar && elements.sidebar) {
-      elements.btnToggleSidebar.addEventListener('click', () => {
-        elements.sidebar.classList.toggle('collapsed');
-      });
-    }
-
-    if (elements.btnCloseSidebar && elements.sidebar) {
-      elements.btnCloseSidebar.addEventListener('click', () => {
-        elements.sidebar.classList.add('collapsed');
-      });
-    }
-
-    // Gestion des onglets de la sidebar
-    const tabs = document.querySelectorAll('.sidebar-tab');
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-
-        const targetId = tab.getAttribute('data-tab');
-        document.querySelectorAll('.sidebar-pane').forEach(pane => {
-          pane.classList.remove('active');
-        });
-        const targetPane = document.getElementById(targetId);
-        if (targetPane) targetPane.classList.add('active');
-      });
+    $('btnDownloadNotes').addEventListener('click', () => {
+      if (!input.value.trim()) { notify('Le bloc-notes est vide'); return; }
+      const title = session?.title || 'formation';
+      const blob = new Blob([`LE MONDE DU TRAVAIL — NOTES D'ATELIER\nFormation : ${title}\nDate : ${new Date().toLocaleString('fr-FR')}\n\n${input.value}`], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = Object.assign(document.createElement('a'), { href: url, download: `notes_${title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.txt` });
+      a.click();
+      URL.revokeObjectURL(url);
     });
   }
 
-  // Notification Toast légère
-  function showNotification(msg) {
-    const existing = document.getElementById('visioToast');
-    if (existing) existing.remove();
+  function setupSidebar() {
+    const sidebar = $('visioSidebar');
+    // Sur téléphone, la salle d'attente (bouton « Rejoindre ») passe avant le programme
+    if (window.matchMedia('(max-width: 860px)').matches) sidebar.classList.add('collapsed');
+    $('btnToggleSidebar').addEventListener('click', () => sidebar.classList.toggle('collapsed'));
+    $('btnCloseSidebar').addEventListener('click', () => sidebar.classList.add('collapsed'));
+    document.querySelectorAll('.sidebar-tab').forEach((tab) => tab.addEventListener('click', () => {
+      document.querySelectorAll('.sidebar-tab').forEach((t) => t.classList.toggle('active', t === tab));
+      document.querySelectorAll('.sidebar-pane').forEach((p) => p.classList.toggle('active', p.id === tab.dataset.tab));
+    }));
+  }
 
+  function notify(message) {
+    document.getElementById('visioToast')?.remove();
     const toast = document.createElement('div');
     toast.id = 'visioToast';
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #0f172a;
-      color: #f8fafc;
-      padding: 10px 18px;
-      border-radius: 9999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-      z-index: 1000;
-      transition: all 0.3s ease;
-    `;
-    toast.textContent = msg;
+    toast.className = 'visio-toast';
+    toast.setAttribute('role', 'status');
+    toast.textContent = message;
     document.body.appendChild(toast);
-
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      setTimeout(() => toast.remove(), 300);
-    }, 3500);
+    setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
   }
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  }
-
 })();

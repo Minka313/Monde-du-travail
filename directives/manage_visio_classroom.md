@@ -44,3 +44,17 @@ Le système repose sur le protocole standard **WebRTC** via l'API IFrame de **Ji
 ## 4. Mode Opératoire de Déploiement & Auto-Réparation
 * Les colonnes SQL associées (`visioEnabled`, `visioRoomId`, `visioStatus`, etc.) doivent disposer d'un fallback d'auto-création résilient pour ne pas bloquer les environnements serverless.
 * Toute modification du code doit être validée par le script `execution/verify_visio_system.js` avant le push Git sur la branche `main`.
+
+---
+
+## Mise à jour (octobre 2026) : réunion ouverte dans un nouvel onglet
+
+Le service public **meet.jit.si** n'autorise plus son intégration dans un autre site (coupure rapide), exige depuis août 2023 que la personne qui démarre la réunion se connecte (Google, GitHub ou Facebook) et limite les réunions à **95 minutes** depuis le 9 octobre 2026. La salle virtuelle fonctionne donc ainsi :
+
+1. **L'animateur ouvre la salle** (Présidence, administrateur, ou mentor à qui la formation est confiée) : bouton « Ouvrir la salle » sur `visio.html?formation=<id ou slug>`, dans l'Espace Mentor ou dans l'admin. Un **nom de salle imprévisible** est généré (`lmdt-<formation>-<12 caractères>`) ; il change à chaque nouvelle session.
+2. **Les participants** gardent `visio.html` ouverte : tant que la salle est fermée, la page l'indique et se met à jour toute seule (toutes les 30 s). Dès l'ouverture, le bouton **« Rejoindre la visio »** ouvre meet.jit.si dans un nouvel onglet, avec la langue, le nom et, si demandé, le **mode Éco-Data** (vidéo 180p, audio seul au départ) déjà réglés. Aucun compte n'est nécessaire pour eux.
+3. **L'animateur rejoint** et se connecte avec **Google** quand Jitsi le demande ; les participants patientent jusqu'à son arrivée.
+4. Au-delà de 95 minutes, l'animateur **ferme puis rouvre** la salle pour obtenir un nouveau lien.
+5. **Fermer la salle** rend le lien inutilisable depuis le site.
+
+Le nom de la salle n'apparaît ni dans la liste publique des formations ni dans leur fiche publique : seule `GET /api/formations/:id/visio` le donne, et uniquement quand la salle est ouverte.

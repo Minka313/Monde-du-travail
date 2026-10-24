@@ -7,7 +7,7 @@
     <meta name="description" content="Rejoins la salle de classe virtuelle et participe aux ateliers pratiques et formations en direct du club Le Monde du Travail.">
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/visio.css">
+    <link rel="stylesheet" href="css/visio.css?v=20261024-1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cabinet+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
             <div class="visio-formation-info">
                 <div class="visio-status-badge" id="visioStatusBadge">
                     <span class="live-dot"></span>
-                    <span id="visioStatusLabel">EN DIRECT</span>
+                    <span id="visioStatusLabel">…</span>
                 </div>
                 <h1 class="visio-room-title" id="visioFormationTitle">Chargement de la formation...</h1>
             </div>
@@ -32,7 +32,7 @@
 
         <div class="visio-header-right">
             <!-- Bouton Mode Économie de Données (Optimisé 4G Afrique) -->
-            <button type="button" class="btn-data-saver" id="btnDataSaver" title="Réduire la consommation de données mobiles (Audio-only)">
+            <button type="button" class="btn-data-saver" id="btnDataSaver" title="Réduire la consommation de données mobiles pendant la réunion">
                 <span class="data-saver-icon">📶</span>
                 <span class="data-saver-text">Mode Éco-Data : <strong id="dataSaverState">OFF</strong></span>
             </button>
@@ -49,22 +49,13 @@
     <div class="visio-workspace" id="visioWorkspace">
         <!-- Zone Vidéo / Jitsi Meet -->
         <main class="visio-stream-area" id="visioStreamArea">
-            <!-- Loader initial -->
-            <div class="visio-loading-screen" id="visioLoadingScreen">
-                <div class="visio-loading-card">
+            <!-- Salle d'attente : la réunion s'ouvre sur meet.jit.si dans un nouvel onglet -->
+            <div class="visio-lobby" id="visioLobby" aria-live="polite">
+                <div class="lobby-card">
                     <div class="visio-spinner"></div>
-                    <h2 style="font-size: 1.25rem; margin: 0 0 0.5rem 0; color: #f8fafc;">Connexion à la salle virtuelle...</h2>
-                    <p style="font-size: 0.9rem; color: #94a3b8; margin: 0 0 1.25rem 0;" id="visioLoadingDesc">
-                        Préparation du flux WebRTC haute performance.
-                    </p>
-                    <div class="visio-quick-tips">
-                        <span>💡 <strong>Astuce :</strong> Autorise l'accès à ton micro et ta caméra lorsqu'ils te seront demandés.</span>
-                    </div>
+                    <h2>Chargement de la salle…</h2>
                 </div>
             </div>
-
-            <!-- Conteneur Iframe de Jitsi -->
-            <div id="meetContainer" class="meet-container"></div>
         </main>
 
         <!-- Sidebar Pédagogique & Interactive (Collapsible) -->
@@ -154,6 +145,6 @@
     <!-- Scripts -->
     <script src="js/config.js"></script>
     <script src="js/frontend-api.js"></script>
-    <script src="js/visio.js"></script>
+    <script src="js/visio.js?v=20261024-1"></script>
 </body>
 </html>

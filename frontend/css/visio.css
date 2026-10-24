@@ -502,3 +502,33 @@ body.visio-body {
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
   }
 }
+
+/* ===== Salle d'attente (réunion ouverte dans un nouvel onglet) ===== */
+.visio-lobby { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1.5rem 1rem; overflow-y: auto; background: radial-gradient(circle at 50% 30%, #14385a 0%, #090d16 70%); }
+.lobby-card { width: 100%; max-width: 560px; margin: auto; padding: 2rem 1.75rem; border-radius: 22px; background: rgba(15, 23, 42, 0.92); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45); color: #e2e8f0; text-align: center; }
+.lobby-card h2 { margin: 0.4rem 0 0.6rem; font-size: 1.4rem; color: #f8fafc; }
+.lobby-card p { margin: 0 0 0.8rem; color: #cbd5e1; line-height: 1.6; }
+.lobby-muted { font-size: 0.85rem; color: #94a3b8 !important; }
+.lobby-icon { font-size: 2.4rem; }
+.lobby-live { border-color: rgba(34, 197, 94, 0.45); }
+.lobby-field { display: grid; gap: 0.35rem; margin: 1rem 0 0.6rem; text-align: left; font-size: 0.85rem; font-weight: 600; color: #cbd5e1; }
+.lobby-field input { font: inherit; padding: 0.7rem 0.9rem; border-radius: 12px; border: 1px solid #334155; background: #0b1220; color: #f8fafc; }
+.lobby-field input:focus { outline: none; border-color: #f5a623; box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.25); }
+.lobby-check { display: flex; align-items: center; gap: 0.5rem; margin: 0 0 1rem; font-size: 0.88rem; color: #cbd5e1; text-align: left; cursor: pointer; }
+.lobby-btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.7rem 1.2rem; border-radius: 12px; border: 1px solid transparent; font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+.lobby-btn:disabled { opacity: 0.6; cursor: wait; }
+.lobby-btn-join { width: 100%; padding: 1rem; font-size: 1.1rem; background: linear-gradient(135deg, #22c55e, #16a34a); color: #fff; box-shadow: 0 12px 30px rgba(22, 163, 74, 0.35); }
+.lobby-btn-join:hover { filter: brightness(1.06); }
+.lobby-btn-primary { background: #f5a623; color: #0f172a; }
+.lobby-btn-ghost { background: transparent; color: #e2e8f0; border-color: #475569; }
+.lobby-btn-danger { background: transparent; color: #fca5a5; border-color: rgba(248, 113, 113, 0.5); }
+.lobby-tips { margin: 1.1rem 0 0; padding: 0 0 0 1.1rem; text-align: left; font-size: 0.84rem; line-height: 1.6; color: #94a3b8; }
+.lobby-host { margin-top: 1.4rem; padding: 1rem 1.1rem; border-radius: 16px; text-align: left; background: rgba(245, 166, 35, 0.1); border: 1px solid rgba(245, 166, 35, 0.4); }
+.lobby-host h3 { margin: 0 0 0.5rem; font-size: 1rem; color: #ffc078; }
+.lobby-host ol { margin: 0 0 0.8rem; padding-left: 1.2rem; font-size: 0.86rem; line-height: 1.6; color: #e2e8f0; }
+.lobby-host p { font-size: 0.88rem; }
+.lobby-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.visio-status-badge.is-closed { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border-color: rgba(148, 163, 184, 0.35); }
+.visio-status-badge.is-closed .live-dot { background: #94a3b8; animation: none; }
+.visio-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 1000; padding: 10px 18px; border-radius: 9999px; background: #0f172a; color: #f8fafc; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4); transition: opacity 0.3s ease; }
+.lobby-card h2, .lobby-card > p { text-align: center; }

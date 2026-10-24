@@ -60,7 +60,13 @@ class FormationController {
         }
       }
 
-      res.json({ success: true, data: formation });
+      // Salle visio : réservée aux administrateurs ici (les participants passent par /visio)
+      let isStaff = false;
+      if (req.user) {
+        const { permissions } = await RbacService.getUserAdminContext(req.user.id);
+        isStaff = req.user.role === 'ULTRA_ADMIN' || permissions.includes('*') || permissions.includes('formation.read');
+      }
+      res.json({ success: true, data: isStaff ? formation : formationService.withoutRoom(formation) });
     } catch (error) {
       next(error);
     }
