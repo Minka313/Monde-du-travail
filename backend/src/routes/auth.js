@@ -4,6 +4,21 @@ const { z } = require('zod');
 const authController = require('../controllers/authController');
 const { authenticate, optionalAuth } = require('../middleware/auth');
 const validate = require('../middleware/validate');
+const multer = require('multer');
+const { BadRequestError } = require('../utils/errors');
+
+// Photo de profil : fichier en mémoire (serverless), 3 Mo au plus, images uniquement
+const avatarUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 3 * 1024 * 1024, files: 1 },
+  fileFilter: (req, file, cb) => (['image/jpeg', 'image/png', 'image/webp'].includes(file.mimetype)
+    ? cb(null, true)
+    : cb(new BadRequestError('Format non supporté : choisissez une photo JPG, PNG ou WebP.'))),
+});
+const receiveAvatar = (req, res, next) => avatarUpload.single('file')(req, res, (err) => {
+  if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') return next(new BadRequestError('Photo trop lourde (3 Mo au maximum).'));
+  return next(err);
+});
 
 // Schémas de validation Zod
 const registerSchema = z.object({
@@ -105,5 +120,6 @@ router.post('/refresh', validate(refreshSchema), authController.refresh);
 router.post('/logout', authenticate, authController.logout);
 router.get('/me', authenticate, authController.me);
 router.put('/me/avatar', authenticate, authController.updateAvatar);
+router.post('/me/avatar/upload', authenticate, receiveAvatar, authController.uploadAvatar);
 
 module.exports = router;

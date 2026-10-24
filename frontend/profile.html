@@ -13,7 +13,7 @@
     <meta name="description" content="Espace Membre — Le Monde du Travail. Gère tes inscriptions aux formations, consulte tes métiers favoris et tes échanges.">
     <title>Mon Espace Membre — Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
-    <link rel="stylesheet" href="css/styles.min.css?v=20261024-3">
+    <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -327,16 +327,18 @@
                 <div class="avatar-upload-zone" id="avatarDropZone">
                     <div class="avatar-upload-icon">📁</div>
                     <div class="avatar-upload-title">Glisse ta photo ici</div>
-                    <p class="avatar-upload-desc">Formats JPG, PNG ou WebP • Recadrage carré automatique</p>
+                    <p class="avatar-upload-desc">JPG, PNG ou WebP · tu pourras la recadrer avant d'enregistrer</p>
                     <button type="button" class="btn-upload-browse" id="btnUploadBrowse">Parcourir mes photos</button>
                 </div>
-                <div class="avatar-preview-section" id="uploadPreviewSection" style="display:none;">
-                    <div class="avatar-preview-img-wrapper">
-                        <img id="uploadPreviewImg" src="" alt="Aperçu de ta photo importée">
-                    </div>
-                    <div class="avatar-preview-info">
-                        <h5>Photo prête !</h5>
-                        <p>Clique sur "Enregistrer" pour l'appliquer à ton profil.</p>
+                <div class="avatar-crop" id="uploadPreviewSection" hidden>
+                    <canvas class="avatar-crop-canvas" id="avatarCropCanvas" width="480" height="480" aria-label="Recadrage de la photo : glisse pour déplacer"></canvas>
+                    <div class="avatar-crop-tools">
+                        <h5>Ajuste ta photo</h5>
+                        <p>Glisse l'image pour la placer dans le cercle, puis règle le zoom.</p>
+                        <label class="avatar-crop-zoom" for="avatarCropZoom"><span aria-hidden="true">➖</span>
+                            <input type="range" id="avatarCropZoom" min="1" max="3" step="0.01" value="1" aria-label="Zoom">
+                        <span aria-hidden="true">➕</span></label>
+                        <button type="button" class="btn-upload-browse" id="btnChangePhoto">Choisir une autre photo</button>
                     </div>
                 </div>
             </div>
@@ -362,7 +364,7 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script defer src="js/scrollytelling-engine.js"></script>
 <script defer src="js/config.js"></script>
-<script defer src="js/frontend-api.js"></script>
+<script defer src="js/frontend-api.js?v=20261024-4"></script>
 <script defer src="js/analytics-tracker.js"></script>
 <script defer src="js/layout.js"></script>
 <script defer src="js/main.js"></script>
@@ -540,7 +542,11 @@
     const avatarDropZone = document.getElementById('avatarDropZone');
     const avatarFileInput = document.getElementById('avatarFileInput');
     const uploadPreviewSection = document.getElementById('uploadPreviewSection');
-    const uploadPreviewImg = document.getElementById('uploadPreviewImg');
+    const cropCanvas = document.getElementById('avatarCropCanvas');
+    const cropZoom = document.getElementById('avatarCropZoom');
+    // Photo personnelle en cours de recadrage (envoyée comme fichier à l'enregistrement)
+    const UPLOAD = '__photo__';
+    const crop = { img: null, zoom: 1, x: 0, y: 0 };
 
     let selectedAvatarUrl = user.avatarUrl || null;
 
@@ -630,7 +636,7 @@
           document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           selectedAvatarUrl = uri;
-          if (uploadPreviewSection) uploadPreviewSection.style.display = 'none';
+          showCropper(false);
           updateModalLivePreview(uri, 'Avatar sélectionné : ' + p.label);
         });
         avatarPresetsGrid.appendChild(btn);
@@ -658,13 +664,7 @@
         b.classList.toggle('selected', uri === selectedAvatarUrl);
       });
 
-      // Aperçu upload si déjà personnalisé avec image
-      if (selectedAvatarUrl && (selectedAvatarUrl.startsWith('data:image/jpeg') || selectedAvatarUrl.startsWith('data:image/png') || selectedAvatarUrl.startsWith('data:image/webp'))) {
-        if (uploadPreviewImg) uploadPreviewImg.src = selectedAvatarUrl;
-        if (uploadPreviewSection) uploadPreviewSection.style.display = 'flex';
-      } else {
-        if (uploadPreviewSection) uploadPreviewSection.style.display = 'none';
-      }
+      showCropper(false);
 
       avatarModal?.classList.add('active');
       document.body.style.overflow = 'hidden';
@@ -736,56 +736,125 @@
       if (avatarFileInput.files?.[0]) {
         processCustomImageFile(avatarFileInput.files[0]);
       }
+      avatarFileInput.value = ''; // permet de rechoisir la même photo
     });
 
+    function showCropper(on) {
+      if (uploadPreviewSection) uploadPreviewSection.hidden = !on;
+      if (avatarDropZone) avatarDropZone.hidden = on;
+      if (!on) crop.img = null;
+    }
+
+    // Dessine la photo (cadrée par zoom et déplacement) dans le canevas carré
+    function drawCrop(target = cropCanvas, size = cropCanvas.width) {
+      if (!crop.img) return;
+      const ctx = target.getContext('2d');
+      const base = size / Math.min(crop.img.width, crop.img.height);
+      const scale = base * crop.zoom;
+      const w = crop.img.width * scale;
+      const h = crop.img.height * scale;
+      // La photo couvre toujours tout le cadre
+      const k = size / cropCanvas.width;
+      crop.x = Math.min(0, Math.max((cropCanvas.width - w / k), crop.x));
+      crop.y = Math.min(0, Math.max((cropCanvas.height - h / k), crop.y));
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
+      ctx.drawImage(crop.img, crop.x * k, crop.y * k, w, h);
+    }
+
+    // Aperçu en haut de la fenêtre : suit le recadrage (mis à jour à la fin d'un geste)
+    let previewTimer;
+    function syncCropPreview() {
+      clearTimeout(previewTimer);
+      previewTimer = setTimeout(() => {
+        if (crop.img) updateModalLivePreview(cropCanvas.toDataURL('image/jpeg', 0.7), 'Photo personnalisée : ajuste-la puis enregistre');
+      }, 120);
+    }
+
+    function setZoom(z, cx = cropCanvas.width / 2, cy = cropCanvas.height / 2) {
+      const prev = crop.zoom;
+      crop.zoom = Math.min(3, Math.max(1, z));
+      // Zoom centré sur le point visé
+      crop.x = cx - (cx - crop.x) * (crop.zoom / prev);
+      crop.y = cy - (cy - crop.y) * (crop.zoom / prev);
+      if (cropZoom) cropZoom.value = String(crop.zoom);
+      drawCrop();
+      syncCropPreview();
+    }
+
     function processCustomImageFile(file) {
-      if (!file || !file.type.startsWith('image/')) {
+      if (!file || !/^image\/(jpeg|png|webp)$/.test(file.type)) {
         if (window.toast) window.toast.error('Format non supporté. Choisis une image JPG, PNG ou WebP.');
         else alert('Format non supporté. Choisis une image JPG, PNG ou WebP.');
         return;
       }
-      if (file.size > 8 * 1024 * 1024) {
-        if (window.toast) window.toast.error('Fichier trop lourd (max 8 Mo).');
-        else alert('Fichier trop lourd (max 8 Mo).');
+      if (file.size > 15 * 1024 * 1024) {
+        if (window.toast) window.toast.error('Fichier trop lourd (max 15 Mo).');
+        else alert('Fichier trop lourd (max 15 Mo).');
         return;
       }
-
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const img = new Image();
-        img.onload = () => {
-          // Recadrage carré centré et redimensionnement optimal 320x320
-          const size = 320;
-          const canvas = document.createElement('canvas');
-          canvas.width = size;
-          canvas.height = size;
-          const ctx = canvas.getContext('2d');
-
-          const minDim = Math.min(img.width, img.height);
-          const sx = (img.width - minDim) / 2;
-          const sy = (img.height - minDim) / 2;
-          ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
-
-          const croppedUri = canvas.toDataURL('image/jpeg', 0.85);
-          selectedAvatarUrl = croppedUri;
-
-          if (uploadPreviewImg) uploadPreviewImg.src = croppedUri;
-          if (uploadPreviewSection) uploadPreviewSection.style.display = 'flex';
-          updateModalLivePreview(croppedUri, 'Photo personnalisée prête !');
-
-          // Décocher les presets
-          document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('selected'));
-        };
-        img.src = evt.target.result;
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        crop.img = img;
+        crop.zoom = 1;
+        const base = cropCanvas.width / Math.min(img.width, img.height);
+        crop.x = (cropCanvas.width - img.width * base) / 2;
+        crop.y = (cropCanvas.height - img.height * base) / 2;
+        if (cropZoom) cropZoom.value = '1';
+        showCropper(true);
+        drawCrop();
+        selectedAvatarUrl = UPLOAD;
+        syncCropPreview();
+        document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('selected'));
       };
-      reader.readAsDataURL(file);
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        if (window.toast) window.toast.error('Impossible de lire cette image.');
+      };
+      img.src = url;
+    }
+
+    // Déplacement à la souris ou au doigt, zoom à la molette ou au curseur
+    if (cropCanvas) {
+      let drag = null;
+      const ratio = () => cropCanvas.width / cropCanvas.getBoundingClientRect().width;
+      cropCanvas.addEventListener('pointerdown', (e) => {
+        drag = { x: e.clientX, y: e.clientY };
+        cropCanvas.setPointerCapture(e.pointerId);
+      });
+      cropCanvas.addEventListener('pointermove', (e) => {
+        if (!drag) return;
+        crop.x += (e.clientX - drag.x) * ratio();
+        crop.y += (e.clientY - drag.y) * ratio();
+        drag = { x: e.clientX, y: e.clientY };
+        drawCrop();
+      });
+      ['pointerup', 'pointercancel'].forEach((t) => cropCanvas.addEventListener(t, () => { drag = null; syncCropPreview(); }));
+      cropCanvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const r = cropCanvas.getBoundingClientRect();
+        setZoom(crop.zoom * (e.deltaY < 0 ? 1.08 : 1 / 1.08), (e.clientX - r.left) * ratio(), (e.clientY - r.top) * ratio());
+      }, { passive: false });
+    }
+    cropZoom?.addEventListener('input', () => setZoom(parseFloat(cropZoom.value)));
+    document.getElementById('btnChangePhoto')?.addEventListener('click', () => avatarFileInput?.click());
+
+    // Photo recadrée en 512 × 512, JPEG
+    function exportCrop() {
+      const out = document.createElement('canvas');
+      out.width = 512;
+      out.height = 512;
+      drawCrop(out, 512);
+      return new Promise((resolve, reject) => out.toBlob((b) => (b ? resolve(b) : reject(new Error('Recadrage impossible'))), 'image/jpeg', 0.88));
     }
 
     // Supprimer la photo de profil (réinitialiser aux initiales)
     btnRemoveAvatar?.addEventListener('click', () => {
       selectedAvatarUrl = null;
       document.querySelectorAll('.avatar-preset-btn').forEach(b => b.classList.remove('selected'));
-      if (uploadPreviewSection) uploadPreviewSection.style.display = 'none';
+      showCropper(false);
       if (avatarFileInput) avatarFileInput.value = '';
       updateModalLivePreview(null, 'Photo réinitialisée aux initiales.');
       if (window.toast) window.toast.info('Photo prête à être retirée. Clique sur "Enregistrer" pour valider.');
@@ -797,8 +866,11 @@
         btnSaveAvatar.disabled = true;
         btnSaveAvatar.innerHTML = '<span>⏳</span> Enregistrement...';
 
-        const res = await window.Api.auth.updateAvatar(selectedAvatarUrl);
+        const res = selectedAvatarUrl === UPLOAD
+          ? await window.Api.auth.uploadAvatar(await exportCrop())
+          : await window.Api.auth.updateAvatar(selectedAvatarUrl);
         if (res?.success) {
+          selectedAvatarUrl = res.data?.avatarUrl ?? null;
           user.avatarUrl = selectedAvatarUrl;
           try { localStorage.setItem('currentUser', JSON.stringify(user)); } catch (_) {}
           renderBigAvatar(selectedAvatarUrl);

@@ -15508,3 +15508,16 @@ body,
 .vp-submit { border: none; border-radius: 10px; padding: 0.5rem 1.1rem; background: #f5a623; color: #0f172a; font: inherit; font-weight: 700; cursor: pointer; }
 .vp-submit:disabled { opacity: 0.6; }
 .vp-note { margin: 0.75rem 0 0; font-size: 0.74rem; opacity: 0.7; }
+
+/* Photo de profil : recadrage avant envoi */
+.avatar-upload-zone[hidden], .avatar-crop[hidden] { display: none !important; }
+.avatar-crop { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.25rem; margin-top: 0.5rem; }
+.avatar-crop-canvas { width: 220px; height: 220px; border-radius: 50%; cursor: grab; touch-action: none; background: #f1f5f9; box-shadow: 0 0 0 4px #ffffff, 0 0 0 6px var(--color-secondary, #f5a623), 0 12px 30px rgba(15, 43, 70, 0.25); }
+.avatar-crop-canvas:active { cursor: grabbing; }
+.avatar-crop-tools { flex: 1 1 200px; display: flex; flex-direction: column; gap: 0.6rem; }
+.avatar-crop-tools h5 { margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-primary, #0f172a); }
+.avatar-crop-tools p { margin: 0; font-size: 0.8rem; color: var(--text-secondary, #475569); }
+.avatar-crop-zoom { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; }
+.avatar-crop-zoom input { flex: 1; accent-color: var(--color-secondary, #f5a623); }
+.avatar-crop-tools .btn-upload-browse { align-self: flex-start; }
+[data-theme="dark"] .avatar-crop-canvas { box-shadow: 0 0 0 4px #0f172a, 0 0 0 6px var(--color-secondary, #f5a623), 0 12px 30px rgba(0, 0, 0, 0.4); }

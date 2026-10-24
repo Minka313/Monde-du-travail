@@ -286,6 +286,11 @@ return headers;
         method: 'PUT',
         body: JSON.stringify({ avatarUrl }),
       }),
+      uploadAvatar: (blob) => {
+        const form = new FormData();
+        form.append('file', blob, 'avatar.jpg');
+        return apiRequestWithRefresh('/auth/me/avatar/upload', { method: 'POST', body: form });
+      },
     },
 
     // Blog / Actualités

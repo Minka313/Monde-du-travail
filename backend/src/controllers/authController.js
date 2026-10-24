@@ -1,6 +1,11 @@
 const authService = require('../services/authService');
 const prisma = require('../config/database');
 const logger = require('../utils/logger');
+const r2Storage = require('../services/r2StorageService');
+
+const AVATAR_USER_FIELDS = {
+  id: true, email: true, firstName: true, lastName: true, role: true, avatarUrl: true, isActive: true, isVerified: true,
+};
 
 class AuthController {
   // Inscription
@@ -143,39 +148,42 @@ class AuthController {
     }
   }
 
-  // Mise à jour de la photo de profil ou de l'avatar choisi
+  // Avatar illustré (SVG généré par la page profil), adresse d'image, ou null pour revenir aux initiales.
+  // Les photos personnelles passent par uploadAvatar (fichier envoyé au stockage).
   static async updateAvatar(req, res, next) {
     try {
       const { avatarUrl } = req.body || {};
-      if (!avatarUrl || typeof avatarUrl !== 'string') {
-        return res.status(400).json({ success: false, message: 'avatarUrl requis' });
+      const value = avatarUrl === null || avatarUrl === '' ? null : avatarUrl;
+      const valid = value === null || (typeof value === 'string' && (
+        (value.startsWith('data:image/svg+xml') && value.length <= 8 * 1024)
+        || (/^https:\/\/[^\s"'<>]+$/.test(value) && value.length <= 1000)
+      ));
+      if (!valid) {
+        return res.status(400).json({ success: false, message: 'Avatar invalide : choisissez un avatar illustré ou importez une photo.' });
       }
+      const updatedUser = await prisma.user.update({ where: { id: req.user.id }, data: { avatarUrl: value }, select: AVATAR_USER_FIELDS });
+      return res.json({ success: true, message: value ? 'Photo de profil mise à jour avec succès' : 'Photo de profil supprimée', data: updatedUser });
+    } catch (error) {
+      next(error);
+    }
+  }
 
-      // Limite raisonnable de taille (ex: max 2.5 Mo pour base64 ou url)
-      if (avatarUrl.length > 2.5 * 1024 * 1024) {
-        return res.status(400).json({ success: false, message: 'L\'image dépasse la taille maximale autorisée (2.5 Mo)' });
+  // Photo personnelle : image recadrée par la page profil, déposée dans le stockage (dossier avatars)
+  static async uploadAvatar(req, res, next) {
+    try {
+      const file = req.file;
+      if (!file) return res.status(400).json({ success: false, message: 'Aucune photo reçue.' });
+      const b = file.buffer;
+      const isJpeg = b.length > 3 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff;
+      const isPng = b.length > 8 && b.toString('hex', 0, 8) === '89504e470d0a1a0a';
+      const isWebp = b.length > 12 && b.toString('ascii', 0, 4) === 'RIFF' && b.toString('ascii', 8, 12) === 'WEBP';
+      if (!isJpeg && !isPng && !isWebp) {
+        return res.status(400).json({ success: false, message: 'Format non reconnu : utilisez une photo JPG, PNG ou WebP.' });
       }
-
-      const updatedUser = await prisma.user.update({
-        where: { id: req.user.id },
-        data: { avatarUrl },
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          role: true,
-          avatarUrl: true,
-          isActive: true,
-          isVerified: true,
-        },
-      });
-
-      return res.json({
-        success: true,
-        message: 'Photo de profil mise à jour avec succès',
-        data: updatedUser,
-      });
+      const mimeType = isJpeg ? 'image/jpeg' : isPng ? 'image/png' : 'image/webp';
+      const stored = await r2Storage.uploadFile({ buffer: b, originalName: `avatar.${mimeType.split('/')[1]}`, mimeType, folder: 'avatars' });
+      const updatedUser = await prisma.user.update({ where: { id: req.user.id }, data: { avatarUrl: stored.url }, select: AVATAR_USER_FIELDS });
+      return res.json({ success: true, message: 'Photo de profil enregistrée', data: updatedUser });
     } catch (error) {
       next(error);
     }
