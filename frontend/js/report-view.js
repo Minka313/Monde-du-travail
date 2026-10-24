@@ -164,6 +164,7 @@
     body { font-family: Inter, 'Segoe UI', system-ui, sans-serif; color: #0f172a; margin: 0; padding: 32px 40px; font-size: 13px; line-height: 1.55; }
     .doc-head { display: flex; align-items: center; gap: 14px; border-bottom: 3px solid #f5a623; padding-bottom: 14px; margin-bottom: 22px; }
     .doc-head img { width: 48px; height: 48px; }
+    .doc-head .wow-seal { flex: 0 0 auto; }
     .doc-head h1 { font-family: 'Playfair Display', Georgia, serif; font-size: 20px; margin: 0; color: #0f2b46; }
     .doc-head p { margin: 2px 0 0; color: #64748b; font-size: 12px; }
     .rv-report { page-break-after: always; }
@@ -210,15 +211,18 @@
       return;
     }
     const logo = new URL('/logo.png', window.location.origin).href;
+    const sealMark = window.WowBrand ? window.WowBrand.seal(52) : '';
     win.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
       <title>${esc(opts.title || reports[0]?.title || 'Rapport')}</title>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;600;700;800&family=Playfair+Display:wght@700&display=swap">
       <style>${PRINT_CSS}</style></head><body>
-      <div class="doc-head"><img src="${esc(logo)}" alt="">
+      <div class="doc-head">${sealMark}<img src="${esc(logo)}" alt="">
         <div><h1>${esc(opts.title || 'Le Monde du Travail — Rapport du bureau')}</h1>
         <p>${esc(opts.subtitle || `Édité le ${frDate(new Date())}`)}</p></div></div>
       ${opts.intro || ''}
       ${reports.map((r) => render(r, templates)).join('')}
-      <p class="doc-foot">Le Monde du Travail · document généré depuis l'espace bureau</p>
+      ${window.WowBrand ? window.WowBrand.signature({ kind: 'RAP', id: reports.map((r) => r.id).join(',') || opts.title || 'synthese' }) : ''}
+      <p class="doc-foot">WOW · World Of Work — Le Monde du Travail · document généré depuis l'espace bureau</p>
       </body></html>`);
     win.document.close();
     win.addEventListener('load', () => setTimeout(() => win.print(), 150));

@@ -1,0 +1,185 @@
+/*
+ * Impression / export PDF des fiches (métiers, formations) : document A4 aux couleurs WOW.
+ * Chargée avec media="print" : aucun effet à l'écran.
+ * Repères : body[data-print="dossier"], .print-only (en-tête et signature), [data-print-title] (titres de sections).
+ */
+
+@page {
+  size: A4;
+  margin: 14mm 13mm 16mm;
+}
+
+body[data-print="dossier"] {
+  display: block !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #fff !important;
+  color: #0f172a !important;
+  font-size: 10.5pt;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Interface du site : rien de tout cela n'a sa place sur le papier */
+body[data-print="dossier"] .site-header,
+body[data-print="dossier"] [data-layout="header"],
+body[data-print="dossier"] [data-layout="nav"],
+body[data-print="dossier"] .main-nav,
+body[data-print="dossier"] .site-footer,
+body[data-print="dossier"] [data-layout="footer"],
+body[data-print="dossier"] .skip-to-content,
+body[data-print="dossier"] #pageTransitionProgress,
+body[data-print="dossier"] #scrollProgressBar,
+body[data-print="dossier"] #wowLoader,
+body[data-print="dossier"] .lmt-push-prompt,
+body[data-print="dossier"] .breadcrumb-container,
+body[data-print="dossier"] .job-tabs-sticky-wrapper,
+body[data-print="dossier"] .job-actions-bar,
+body[data-print="dossier"] .job-detail-toast,
+body[data-print="dossier"] #jobDetailSkeleton,
+body[data-print="dossier"] .job-satisfaction-survey-card,
+body[data-print="dossier"] .job-mentor-cta-card,
+body[data-print="dossier"] .video-responsive-embed,
+body[data-print="dossier"] .print-hide,
+body[data-print="dossier"] .btn-back-clean,
+body[data-print="dossier"] .job-hero-media,
+body[data-print="dossier"] #panelRelated,
+body[data-print="dossier"] button,
+body[data-print="dossier"] iframe {
+  display: none !important;
+}
+
+/* Animations d'apparition au défilement : tout doit être visible sur le papier */
+body[data-print="dossier"] #jobContentWrapper *,
+body[data-print="dossier"] .dossier-content * {
+  opacity: 1 !important;
+  visibility: visible !important;
+  animation: none !important;
+  transition: none !important;
+}
+body[data-print="dossier"] [style*="translate"],
+body[data-print="dossier"] [style*="transform"] {
+  transform: none !important;
+}
+
+body[data-print="dossier"] .print-only {
+  display: block !important;
+}
+
+/* Mises en page flex / grilles de la page : en bloc, pour que les pages se remplissent */
+body[data-print="dossier"] main,
+body[data-print="dossier"] #jobDetailApp,
+body[data-print="dossier"] #jobContentWrapper,
+body[data-print="dossier"] .job-main-content-layout,
+body[data-print="dossier"] .job-panels-container {
+  display: block !important;
+  min-height: 0 !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Tous les onglets à la suite, chacun introduit par son titre */
+body[data-print="dossier"] .job-tab-panel,
+body[data-print="dossier"] .dossier-panel {
+  display: block !important;
+}
+body[data-print="dossier"] [data-print-title]::before {
+  content: attr(data-print-title);
+  display: block;
+  margin: 8mm 0 3mm;
+  padding-bottom: 1.5mm;
+  border-bottom: 2px solid #f5a623;
+  font: 700 14pt 'Playfair Display', Georgia, serif;
+  color: #0f2b46;
+  break-after: avoid;
+}
+
+/* Cartes et blocs : sobres, jamais coupés en deux */
+body[data-print="dossier"] .container {
+  max-width: none !important;
+  padding: 0 !important;
+}
+body[data-print="dossier"] [class*="-card"],
+body[data-print="dossier"] .job-info-card,
+body[data-print="dossier"] li,
+body[data-print="dossier"] tr,
+body[data-print="dossier"] figure {
+  box-shadow: none !important;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+body[data-print="dossier"] [class*="-card"] {
+  border: 1px solid #e2e8f0 !important;
+  background: #fff !important;
+}
+body[data-print="dossier"] h1,
+body[data-print="dossier"] h2,
+body[data-print="dossier"] h3 {
+  color: #0f2b46 !important;
+  break-after: avoid;
+}
+body[data-print="dossier"] a {
+  color: #0f2b46 !important;
+  text-decoration: none !important;
+}
+body[data-print="dossier"] img {
+  max-width: 100% !important;
+}
+
+/* Bandeau du haut de la fiche : fond clair pour l'encre */
+body[data-print="dossier"] .job-hero-section,
+body[data-print="dossier"] .dossier-hero {
+  background: #fff !important;
+  color: #0f172a !important;
+  padding: 0 0 4mm !important;
+  min-height: 0 !important;
+}
+body[data-print="dossier"] .job-hero-section *,
+body[data-print="dossier"] .dossier-hero * {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+body[data-print="dossier"] .job-hero-section::before,
+body[data-print="dossier"] .job-hero-section::after,
+body[data-print="dossier"] .dossier-hero::before,
+body[data-print="dossier"] .dossier-hero::after {
+  display: none !important;
+}
+
+/* En-tête WOW du document */
+.wow-print-head {
+  display: none;
+  margin-bottom: 6mm;
+  padding-bottom: 4mm;
+  border-bottom: 3px solid #f5a623;
+}
+body[data-print="dossier"] .wow-print-head {
+  display: flex !important;
+  align-items: center;
+  gap: 5mm;
+}
+.wow-print-head img {
+  width: 18mm;
+  height: 18mm;
+}
+.wow-print-head .wow-print-kicker {
+  font: 800 8.5pt Inter, Arial, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b7791f;
+}
+.wow-print-head .wow-print-title {
+  font: 700 18pt 'Playfair Display', Georgia, serif;
+  color: #0f2b46;
+  line-height: 1.2;
+}
+.wow-print-head .wow-print-meta {
+  font: 500 8.5pt Inter, Arial, sans-serif;
+  color: #64748b;
+}
+.wow-print-head .wow-print-logo {
+  margin-left: auto;
+  width: 16mm;
+  height: auto;
+}

@@ -198,6 +198,17 @@
     const breadcrumbJobTitle = document.getElementById('breadcrumbJobTitle');
     if (breadcrumbJobTitle) breadcrumbJobTitle.textContent = job.title;
 
+    // En-tête et sceau WOW du document imprimé / PDF
+    const printMeta = document.getElementById('printJobMeta');
+    if (printMeta) {
+      printMeta.textContent = [job.familyName, job.subdomain || job.domain, window.location.host + window.location.pathname]
+        .filter(Boolean).join(' · ');
+    }
+    const printSignature = document.getElementById('wowPrintSignature');
+    if (printSignature && window.WowBrand) {
+      printSignature.innerHTML = window.WowBrand.signature({ kind: 'MET', id: jobKey, sealSrc: 'images/wow-seal.svg' });
+    }
+
     const breadcrumbFamilyLink = document.getElementById('breadcrumbFamilyLink');
     if (breadcrumbFamilyLink) {
       breadcrumbFamilyLink.textContent = job.familyName || 'Métiers & Orientation';
@@ -421,6 +432,10 @@
     const btnPrint = document.getElementById('btnPrintJob');
     if (btnPrint) {
       btnPrint.addEventListener('click', () => {
+        // « Enregistrer au format PDF » dans la fenêtre d'impression du navigateur
+        const previousTitle = document.title;
+        document.title = `Fiche métier WOW - ${job.title}`;
+        window.addEventListener('afterprint', () => { document.title = previousTitle; }, { once: true });
         window.print();
       });
     }

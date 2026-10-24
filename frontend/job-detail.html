@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://unpkg.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" id="metaDescription" content="Explorez cette fiche métier complète : missions, compétences indispensables, formations au Sénégal, salaires et perspectives d'avenir.">
     <meta name="keywords" content="métier, fiche métier, orientation professionnelle, compétences, salaire Sénégal, formations Afrique, débouchés">
@@ -20,10 +20,12 @@
     <meta name="twitter:card" content="summary_large_image">
     <title id="pageTitle">Fiche Métier - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
-    <link rel="stylesheet" href="css/styles.css?v=2.4.2">
+    <link rel="stylesheet" href="css/styles.css?v=20261024-2">
+    <link rel="stylesheet" href="css/print-dossier.css?v=20261024-1" media="print">
     <script src="js/theme-engine.js"></script>
+    <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
-<body class="job-detail-page">
+<body class="job-detail-page" data-print="dossier">
 <a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
 
 <!-- Barre de progression de lecture -->
@@ -142,6 +144,15 @@
 
         <!-- Contenu réel de la fiche métier -->
         <div id="jobContentWrapper" style="display:none;">
+            <!-- En-tête du document imprimé / PDF -->
+            <div class="wow-print-head print-only" aria-hidden="true">
+                <img src="images/wow-seal.svg" alt="">
+                <div>
+                    <div class="wow-print-kicker">Fiche métier · WOW · World Of Work</div>
+                    <div class="wow-print-meta" id="printJobMeta"></div>
+                </div>
+                <img class="wow-print-logo" src="logo.png" alt="">
+            </div>
             <!-- HERO IMMERSIF MOBILE-FIRST -->
             <section class="job-hero-section" id="jobHeroSection">
                 <div class="job-hero-media" id="jobHeroMedia">
@@ -205,9 +216,9 @@
                                 <span class="tool-icon">🔗</span>
                                 <span class="tool-label">Partager</span>
                             </button>
-                            <button type="button" id="btnPrintJob" class="btn-job-tool" aria-label="Imprimer la fiche métier">
+                            <button type="button" id="btnPrintJob" class="btn-job-tool" aria-label="Télécharger la fiche métier en PDF">
                                 <span class="tool-icon">🖨️</span>
-                                <span class="tool-label">Imprimer / PDF</span>
+                                <span class="tool-label">Télécharger en PDF</span>
                             </button>
                             <a href="forum.html" class="btn-job-tool btn-tool-mentor" aria-label="Poser des questions sur le forum">
                                 <span class="tool-icon">💬</span>
@@ -254,7 +265,7 @@
             <div class="container job-main-content-layout">
                 <div class="job-panels-container">
                     <!-- 1. VUE D'ENSEMBLE & MISSIONS -->
-                    <section id="panelOverview" class="job-tab-panel active" role="tabpanel" aria-labelledby="tab-overview">
+                    <section id="panelOverview" data-print-title="Missions & présentation" class="job-tab-panel active" role="tabpanel" aria-labelledby="tab-overview">
                         <!-- Définition simple & vulgarisée -->
                         <div class="job-info-card job-highlight-card" id="simpleDefinitionCard">
                             <div class="card-icon-badge">💡</div>
@@ -284,7 +295,7 @@
                     </section>
 
                     <!-- 2. COMPÉTENCES & OUTILS -->
-                    <section id="panelSkills" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-skills" style="display:none;">
+                    <section id="panelSkills" data-print-title="Compétences & outils" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-skills" style="display:none;">
                         <div class="skills-tri-columns">
                             <!-- Compétences Techniques -->
                             <div class="skills-column-card">
@@ -325,7 +336,7 @@
                     </section>
 
                     <!-- 3. FORMATIONS & ÉTUDES AU SÉNÉGAL (CNOSP & VISION 2050) -->
-                    <section id="panelStudies" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-studies" style="display:none;">
+                    <section id="panelStudies" data-print-title="Formations au Sénégal" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-studies" style="display:none;">
                         <div class="senegal-studies-card">
                             <div class="studies-card-header">
                                 <span class="studies-flag-badge">🇸🇳</span>
@@ -387,7 +398,7 @@
                     </section>
 
                     <!-- 4. SALAIRES & CARRIÈRE -->
-                    <section id="panelCareer" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-career" style="display:none;">
+                    <section id="panelCareer" data-print-title="Salaires & carrière" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-career" style="display:none;">
                         <!-- Grille de rémunération -->
                         <div class="job-info-card">
                             <h2 class="card-section-title">Rémunération & Salaires indicatifs</h2>
@@ -408,7 +419,7 @@
                     </section>
 
                     <!-- 5. JOURNÉE TYPE -->
-                    <section id="panelTypicalDay" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-typicalDay" style="display:none;">
+                    <section id="panelTypicalDay" data-print-title="Journée type" class="job-tab-panel" role="tabpanel" aria-labelledby="tab-typicalDay" style="display:none;">
                         <div class="job-info-card">
                             <h2 class="card-section-title">Une journée dans la vie de ce professionnel</h2>
                             <p class="text-muted" style="margin-top:-0.35rem; margin-bottom:1.75rem; font-size:0.9rem;">
@@ -428,6 +439,9 @@
                             <div class="related-jobs-grid" id="relatedJobsGrid"></div>
                         </div>
                     </section>
+
+                    <!-- Signature WOW (impression / PDF uniquement) -->
+                    <div class="print-only" id="wowPrintSignature" style="display:none;"></div>
 
                     <!-- RESSOURCES & VIDÉO (SI PRÉSENTES) -->
                     <div class="job-info-card mt-2" id="jobVideoResourceCard" style="display:none;">
@@ -570,7 +584,7 @@
         </div>
 
         <div class="footer-bottom-bar">
-            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+            <p class="footer-wow-line"><img src="images/wow-mark.svg" alt="" class="footer-wow-mark" width="22" height="22" loading="lazy"> <span class="footer-wow-name">WOW · World Of Work</span> <span aria-hidden="true">·</span> &copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
         </div>
     </div>
 </footer>

@@ -1,0 +1,14 @@
+<svg class="wow-seal wow-seal-compact" width="48" height="48" viewBox="0 0 100 100" role="img" aria-label="Sceau WOW · World Of Work · Le Monde du Travail" xmlns="http://www.w3.org/2000/svg">
+  <title>Sceau WOW · World Of Work · Le Monde du Travail</title>
+  <defs>
+    <linearGradient id="markg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff1c1"/><stop offset=".45" stop-color="#f5b73d"/><stop offset="1" stop-color="#a86a12"/>
+    </linearGradient>
+    <radialGradient id="markn" cx=".38" cy=".32" r=".8">
+      <stop offset="0" stop-color="#1f4a6e"/><stop offset="1" stop-color="#071624"/>
+    </radialGradient>
+  </defs>
+  <circle cx="50" cy="50" r="49" fill="url(#markg)"/>
+  <circle cx="50" cy="50" r="43" fill="url(#markn)"/>
+  <text x="50" y="59" text-anchor="middle" font-family="'Playfair Display', Georgia, serif" font-size="27" font-weight="700" fill="url(#markg)">WOW</text>
+</svg>

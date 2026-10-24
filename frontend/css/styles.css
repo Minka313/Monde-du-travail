@@ -9526,7 +9526,7 @@ body.modal-open {
 }
 
 @media print {
-  body > *:not(#job-dossier-overlay) {
+  body:has(> #job-dossier-overlay) > *:not(#job-dossier-overlay) {
     display: none !important;
   }
   #job-dossier-overlay {
@@ -15485,3 +15485,13 @@ body,
 .profile-bureau-positions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .profile-bureau-pill { background: rgba(245, 166, 35, 0.14); color: #92400e; border: 1px solid rgba(245, 166, 35, 0.45); margin-top: 0; }
 [data-theme="dark"] .profile-bureau-pill { color: #fbbf24; }
+
+/* Signature WOW du pied de page */
+.footer-wow-line { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.35rem; }
+.footer-wow-mark { width: 22px; height: 22px; vertical-align: middle; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25)); }
+.footer-wow-name { font-weight: 800; letter-spacing: 0.08em; }
+
+/* Éléments réservés à l'impression / PDF (voir css/print-dossier.css) */
+@media screen { .print-only { display: none !important; } }
+.footer-bottom-bar .footer-wow-line { display: inline-flex; }
+.footer-bottom-bar .footer-wow-mark { position: static; display: inline-block; flex: 0 0 auto; margin: 0; transform: none; }
