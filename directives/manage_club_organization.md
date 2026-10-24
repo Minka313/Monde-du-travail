@@ -89,3 +89,21 @@ Un rapport soumis n'est plus modifiable par son auteur. Les rapports de l'Ultra 
 
 ### API (`/api/reports`, authentification requise)
 `GET /context`, `GET /templates`, `GET /` (`scope=mine|team|review|bureau`), `GET/PUT/DELETE /:id`, `POST /` , `POST /:id/submit`, `POST /:id/review` (Ultra Admin), `GET /summary` (Présidence), `PUT /positions/:id/settings` (Ultra Admin), `POST /attachments` (membres du bureau, 10 Mo).
+
+---
+
+## 6. Espace Mentor (mentors, coachs et professionnels du club)
+
+Un mentor est un compte doté du rôle `MENTOR_EXPERT` (Administrateurs › Mentors). Il travaille depuis **son espace sur le site** (`/mentor.html`, lien « Espace Mentor » du menu et de l'espace membre). La Présidence (Ultra Admin) dispose de la même interface dans l'espace mentor et dans l'admin (module **Mentorat**).
+
+| Fonction | Mentor | Présidence |
+| :--- | :--- | :--- |
+| Binômes mentor / mentoré | voit ses mentorés, précise les objectifs | crée les binômes (membre du site ou personne sans compte), change leur statut |
+| Formations | gère celles qu'on lui confie : inscrits (présence), planning, salle visio | confie les formations aux mentors |
+| Comptes rendus (séance de mentorat, session de formation) | rédige, soumet, corrige | valide ou demande des corrections (commentaire obligatoire) |
+| Messagerie | un fil avec la Présidence | un fil par mentor, compteur de non-lus |
+
+- Les comptes rendus sont **confidentiels** : seuls l'auteur et la Présidence les lisent (pas le reste du bureau). Export PDF signé du sceau WOW.
+- Notifications : nouveau binôme ou formation confiée (mentor, mentoré), compte rendu soumis (Présidence), décision (mentor), nouveau message (destinataire).
+- Modèles des comptes rendus : `MENTOR_TEMPLATES` dans `backend/src/config/reportTemplates.js`.
+- API : `/api/mentoring` (`context`, `mentors`, `members`, `mentorships`, `formations/:id/{trainers,registrations,schedule,visio}`, `registrations/:id`, `reports`, `threads`, `messages`). Droits vérifiés par `MentoringService`.

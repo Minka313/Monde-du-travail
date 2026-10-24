@@ -260,6 +260,8 @@ return headers;
   }
 
   window.Api = {
+    // Requête générique authentifiée (composants partagés site / admin, ex. Espace Mentor)
+    request: (endpoint, options = {}) => apiRequestWithRefresh(endpoint, options),
     // Authentification
     auth: {
       register: (userData) => apiRequestWithRefresh('/auth/register', {

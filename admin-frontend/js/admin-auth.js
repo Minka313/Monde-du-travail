@@ -229,6 +229,8 @@
   }
 
   window.AdminApi = {
+    // Requête générique authentifiée (composants partagés site / admin, ex. Espace Mentor)
+    request: (endpoint, options = {}) => apiRequestWithRefresh(endpoint, options),
     auth: {
       login: (email, password) => apiRequestWithRefresh('/auth/login', {
         method: 'POST',

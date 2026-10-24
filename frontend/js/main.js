@@ -880,6 +880,7 @@
     const adminUrl = window.location.protocol === 'file:' ? '../admin-frontend/index.html' : '/admin-frontend/index.html';
     // Membres du bureau (poste attribué) et Présidence : accès à l'espace bureau
     const isBureau = isUltraAdmin || (user.bureauPositions || []).length > 0;
+    const isMentor = isUltraAdmin || adminRoles.includes('MENTOR_EXPERT');
 
     let roleBadge = 'Membre du Club';
     if (isUltraAdmin) roleBadge = 'Ultra Admin';
@@ -923,6 +924,7 @@
             <div class="user-dropdown-divider"></div>
             <a href="profile.html" class="user-dropdown-item"><span>👤</span> Mon Espace & Profil</a>
             ${isBureau ? '<a href="bureau.html" class="user-dropdown-item"><span>🏛️</span> Espace Bureau</a>' : ''}
+            ${isMentor ? '<a href="mentor.html" class="user-dropdown-item"><span>🧑‍🏫</span> Espace Mentor</a>' : ''}
             <a href="formations.html" class="user-dropdown-item"><span>🎓</span> Mes Formations</a>
             <a href="forum.html" class="user-dropdown-item"><span>💬</span> Forum Communautaire</a>
             ${isAdmin ? `<a href="${adminUrl}" class="user-dropdown-item user-dropdown-admin"><span>🛡️</span> Administration</a>` : ''}
@@ -977,6 +979,7 @@
             <span>👤</span> Mon Espace (${escapeHtml(firstName)})
           </a>
           ${isBureau ? '<a href="bureau.html" class="btn-mobile-secondary"><span>🏛️</span> Espace Bureau</a>' : ''}
+          ${isMentor ? '<a href="mentor.html" class="btn-mobile-secondary"><span>🧑‍🏫</span> Espace Mentor</a>' : ''}
           ${isAdmin ? `<a href="${adminUrl}" class="btn-mobile-secondary"><span>🛡️</span> Administration</a>` : ''}
           <button type="button" class="btn-mobile-logout" id="btnMobileLogout">Se déconnecter</button>
         </div>

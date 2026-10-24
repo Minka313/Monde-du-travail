@@ -9,6 +9,8 @@
     organization: 'organization.read',
     // Examen des rapports : Présidence (Ultra Admin) uniquement
     rapports: 'reports.review',
+    // Mentorat : Présidence (Ultra Admin) uniquement ; les mentors utilisent leur Espace Mentor
+    mentorat: 'mentoring.manage',
     formations: 'formation.read',
     metiers: 'metier.read',
     opportunites: 'opportunite.read',

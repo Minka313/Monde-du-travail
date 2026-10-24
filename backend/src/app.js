@@ -29,6 +29,7 @@ const notificationRoutes = require('./routes/notifications');
 const analyticsRoutes = require('./routes/analytics');
 const uploadRoutes = require('./routes/upload');
 const reportRoutes = require('./routes/reports');
+const mentoringRoutes = require('./routes/mentoring');
 const prisma = require('./config/database');
 const app = express();
 
@@ -88,6 +89,7 @@ app.use('/api/', limiter);
 // Parsing du corps de la requête
 // Les rapports du bureau (tableaux de trésorerie, PV) dépassent la limite générale
 app.use('/api/reports', express.json({ limit: '300kb' }));
+app.use('/api/mentoring', express.json({ limit: '300kb' }));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
@@ -138,6 +140,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/mentoring', mentoringRoutes);
 
 // ===== GESTION DES ERREURS =====
 

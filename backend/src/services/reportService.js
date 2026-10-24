@@ -695,6 +695,6 @@ class ReportService {
 }
 
 ReportService.FREQUENCIES = FREQUENCIES;
-ReportService._internal = { periodKeyFor, parsePeriod, shiftPeriod, computeDeadlines, sanitizeContent, computeTotals };
+ReportService._internal = { periodKeyFor, parsePeriod, shiftPeriod, computeDeadlines, sanitizeContent, computeTotals, missingRequired };
 
 module.exports = ReportService;

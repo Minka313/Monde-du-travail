@@ -94,6 +94,8 @@ model Formation {
   updatedAt      DateTime      @updatedAt
 
   registrations FormationRegistration[]
+  trainers      FormationTrainer[]
+  mentorReports MentorReport[]
 
   // Salle Virtuelle (Visioconférence Jitsi Meet)
   visioEnabled      Boolean?  @default(false)
@@ -410,6 +412,14 @@ model User {
   positionReports        PositionReport[]        @relation("PositionReportAuthor")
   reviewedReports        PositionReport[]        @relation("PositionReportReviewer")
   positionReportEvents   PositionReportEvent[]   @relation("PositionReportActor")
+  mentorships            Mentorship[]            @relation("MentorshipMentor")
+  menteeships            Mentorship[]            @relation("MentorshipMentee")
+  createdMentorships     Mentorship[]            @relation("MentorshipCreator")
+  formationTrainings     FormationTrainer[]      @relation("FormationTrainerUser")
+  mentorReports          MentorReport[]          @relation("MentorReportAuthor")
+  reviewedMentorReports  MentorReport[]          @relation("MentorReportReviewer")
+  staffThreadMessages    StaffMessage[]          @relation("StaffMessageThread")
+  staffMessages          StaffMessage[]          @relation("StaffMessageAuthor")
 
   @@map("users")
 }
@@ -512,6 +522,93 @@ model PositionReportEvent {
 
   @@index([reportId])
   @@map("position_report_events")
+}
+
+// Binôme de mentorat attribué par la Présidence
+model Mentorship {
+  id            String         @id @default(cuid())
+  mentorId      String
+  // Mentoré inscrit sur le site, ou simple nom pour une personne sans compte
+  menteeId      String?
+  menteeName    String
+  menteeContact String?
+  goals         String?
+  status        String         @default("ACTIVE")
+  startDate     DateTime       @default(now())
+  endDate       DateTime?
+  createdById   String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  mentor        User           @relation("MentorshipMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentee        User?          @relation("MentorshipMentee", fields: [menteeId], references: [id], onDelete: SetNull)
+  createdBy     User?          @relation("MentorshipCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  reports       MentorReport[]
+
+  @@index([mentorId])
+  @@index([menteeId])
+  @@map("mentorships")
+}
+
+// Mentor animateur d'une formation
+model FormationTrainer {
+  id          String    @id @default(cuid())
+  formationId String
+  userId      String
+  createdAt   DateTime  @default(now())
+  formation   Formation @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  user        User      @relation("FormationTrainerUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([formationId, userId])
+  @@index([userId])
+  @@map("formation_trainers")
+}
+
+// Compte rendu d'un mentor : séance de mentorat ou session de formation animée.
+// Confidentiel : lu par son auteur et la Présidence uniquement.
+model MentorReport {
+  id            String               @id @default(cuid())
+  authorId      String
+  // MENTORAT ou SESSION_FORMATION
+  kind          String
+  mentorshipId  String?
+  formationId   String?
+  title         String
+  content       Json                 @default("{}")
+  attachments   Json                 @default("[]")
+  // Historique : [{ action, actorId, actor, comment, createdAt }]
+  history       Json                 @default("[]")
+  status        PositionReportStatus @default(DRAFT)
+  submittedAt   DateTime?
+  reviewedAt    DateTime?
+  reviewedById  String?
+  reviewComment String?
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  author        User                 @relation("MentorReportAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  reviewedBy    User?                @relation("MentorReportReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  mentorship    Mentorship?          @relation(fields: [mentorshipId], references: [id], onDelete: SetNull)
+  formation     Formation?           @relation(fields: [formationId], references: [id], onDelete: SetNull)
+
+  @@index([authorId])
+  @@index([status])
+  @@index([mentorshipId])
+  @@index([formationId])
+  @@map("mentor_reports")
+}
+
+// Messagerie de coordination : un fil par membre de l'équipe (mentor) avec la Présidence
+model StaffMessage {
+  id           String    @id @default(cuid())
+  threadUserId String
+  authorId     String
+  body         String
+  readAt       DateTime?
+  createdAt    DateTime  @default(now())
+  threadUser   User      @relation("StaffMessageThread", fields: [threadUserId], references: [id], onDelete: Cascade)
+  author       User      @relation("StaffMessageAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([threadUserId, createdAt])
+  @@map("staff_messages")
 }
 
 model AuditLog {

@@ -101,11 +101,11 @@
       "dest": "/frontend/logo.$1"
     },
     {
-      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail)$",
+      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor)$",
       "dest": "/frontend/$1.html"
     },
     {
-      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail)\\.html$",
+      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor)\\.html$",
       "dest": "/frontend/$1.html"
     },
     {

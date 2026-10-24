@@ -241,4 +241,48 @@ function templateKeyFor(position) {
   return rule ? rule[1] : 'GENERAL';
 }
 
-module.exports = { REPORT_TEMPLATES, templateKeyFor };
+// Comptes rendus des mentors (Espace Mentor) : hors des modèles proposés aux postes du bureau
+const MENTOR_TEMPLATES = {
+  MENTORAT: {
+    label: 'Compte rendu de séance de mentorat',
+    icon: '🤝',
+    description: 'Objectifs de la séance, points abordés, conseils donnés, progression et engagements.',
+    sections: [
+      { key: 'dateSeance', label: 'Date de la séance', type: 'date', required: true },
+      { key: 'format', label: 'Format', type: 'select', options: ['Présentiel', 'Visio', 'Téléphone', 'WhatsApp'] },
+      { key: 'duree', label: 'Durée (minutes)', type: 'number' },
+      { key: 'objectifs', label: 'Objectifs de la séance', type: 'textarea', required: true },
+      { key: 'echanges', label: 'Points abordés', type: 'textarea' },
+      { key: 'conseils', label: 'Conseils et ressources partagés', type: 'textarea' },
+      { key: 'progression', label: 'Progression du mentoré', type: 'select', options: ['En avance', 'Comme prévu', 'En difficulté', 'À recadrer'] },
+      {
+        key: 'engagements', label: 'Engagements pris', type: 'table',
+        columns: [
+          { key: 'action', label: 'Action', type: 'text' },
+          { key: 'responsable', label: 'Qui', type: 'text' },
+          { key: 'echeance', label: 'Échéance', type: 'date' },
+        ],
+      },
+      { key: 'prochaineSeance', label: 'Prochaine séance', type: 'date' },
+      { key: 'observations', label: 'Observations pour la Présidence', type: 'textarea' },
+    ],
+  },
+  SESSION_FORMATION: {
+    label: 'Compte rendu de session de formation',
+    icon: '🎓',
+    description: 'Déroulé de la session, participation, retours et suite prévue.',
+    sections: [
+      { key: 'dateSession', label: 'Date de la session', type: 'date', required: true },
+      { key: 'module', label: 'Module ou thème traité', type: 'text', required: true },
+      { key: 'participants', label: 'Participants présents', type: 'number' },
+      { key: 'deroule', label: 'Déroulé de la session', type: 'textarea', required: true },
+      { key: 'pointsForts', label: 'Points forts', type: 'textarea' },
+      { key: 'difficultes', label: 'Difficultés rencontrées', type: 'textarea' },
+      { key: 'retours', label: 'Retours des participants', type: 'textarea' },
+      { key: 'suite', label: 'Suite prévue', type: 'textarea' },
+      { key: 'prochaineSession', label: 'Prochaine session', type: 'date' },
+    ],
+  },
+};
+
+module.exports = { REPORT_TEMPLATES, MENTOR_TEMPLATES, templateKeyFor };

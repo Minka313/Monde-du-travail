@@ -114,6 +114,15 @@
                         <a href="bureau.html" class="btn btn-primary btn-sm">Ouvrir mon espace bureau &rarr;</a>
                     </div>
 
+                    <!-- Espace mentor : visible des mentors du club -->
+                    <div class="profile-box profile-bureau-box" id="profileMentorBox" hidden>
+                        <h2><span>🧑‍🏫</span> Espace Mentor</h2>
+                        <p style="color: var(--color-gray-600); font-size: 0.95rem; margin: 0 0 1rem;">
+                            Suis tes mentorés, anime tes formations, rédige tes comptes rendus et échange avec la Présidence.
+                        </p>
+                        <a href="mentor.html" class="btn btn-primary btn-sm">Ouvrir mon espace mentor &rarr;</a>
+                    </div>
+
                     <!-- Formations réservées -->
                     <div class="profile-box">
                         <h2><span>🎓</span> Mes Inscriptions aux Formations</h2>
@@ -415,6 +424,10 @@
       document.getElementById('profileBureauPositions').innerHTML = (bureauPositions.length ? bureauPositions : [{ title: 'Présidence' }])
         .map(p => `<span class="profile-status-pill profile-bureau-pill">🏛️ ${escapeHtml(p.title)}${p.memberRole === 'EQUIPE' ? ' · équipe' : ''}</span>`)
         .join(' ');
+    }
+
+    if ((user.adminRoles || []).includes('MENTOR_EXPERT')) {
+      document.getElementById('profileMentorBox').hidden = false;
     }
 
     // 3. Populate Formations

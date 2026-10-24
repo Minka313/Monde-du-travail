@@ -68,10 +68,10 @@ const settingsSchema = z.object({
   }),
 });
 
-// Téléversement réservé aux membres du bureau
+// Téléversement réservé aux membres du bureau et aux mentors (comptes rendus)
 async function requireBureauMember(req, res, next) {
   try {
-    if (req.user.role === 'ULTRA_ADMIN') return next();
+    if (req.user.role === 'ULTRA_ADMIN' || (req.user.adminRoles || []).includes('MENTOR_EXPERT')) return next();
     const count = await prisma.clubAssignment.count({ where: { userId: req.user.id, isActive: true } });
     return count ? next() : next(new ForbiddenError('Espace réservé aux membres du bureau'));
   } catch (error) {
