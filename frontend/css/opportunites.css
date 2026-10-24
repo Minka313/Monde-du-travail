@@ -189,3 +189,40 @@
   .opp-dialog { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; margin: 0; }
   .opp-dialog-head, .opp-dialog-body { padding-inline: 1rem; }
 }
+
+/* Stages, programmes et sessions annuelles */
+.opp-badge--STAGE { background: rgba(219, 39, 119, 0.1); color: #be185d; border-color: rgba(219, 39, 119, 0.3); }
+.opp-badge--PROGRAMME { background: rgba(13, 148, 136, 0.12); color: #0f766e; border-color: rgba(13, 148, 136, 0.35); }
+.opp-phase--NEXT { background: #fff7ed; color: #9a3412; border-color: #fdba74; }
+[data-theme="dark"] .opp-badge--STAGE { color: #f9a8d4; }
+[data-theme="dark"] .opp-badge--PROGRAMME { color: #5eead4; }
+[data-theme="dark"] .opp-phase--NEXT { background: rgba(234, 88, 12, 0.16); color: #fdba74; border-color: rgba(234, 88, 12, 0.45); }
+
+/* Séries du bac */
+.opp-series { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.35rem 0 0; }
+.opp-series span { padding: 0.12rem 0.5rem; border-radius: 6px; background: var(--color-gray-100, #f1f5f9); color: var(--color-gray-700, #334155); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.02em; }
+[data-theme="dark"] .opp-series span { background: #1f2a3c; color: #cbd5e1; }
+
+/* Tableau des épreuves */
+.opp-exams { overflow-x: auto; }
+.opp-exams table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.opp-exams th, .opp-exams td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--color-gray-200, #e2e8f0); text-align: left; vertical-align: top; }
+.opp-exams th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-gray-500, #64748b); }
+.opp-exams td:nth-child(2), .opp-exams td:nth-child(3) { white-space: nowrap; color: var(--color-gray-600, #475569); }
+[data-theme="dark"] .opp-exams th, [data-theme="dark"] .opp-exams td { border-color: #1f2a3c; }
+[data-theme="dark"] .opp-exams td:nth-child(2), [data-theme="dark"] .opp-exams td:nth-child(3) { color: #94a3b8; }
+
+/* Guide de préparation */
+.opp-guide-section { background: linear-gradient(180deg, transparent, rgba(15, 43, 70, 0.04)); }
+.opp-guide-title { margin: 0.4rem 0 0.5rem; font-family: var(--font-display, 'Playfair Display', serif); font-size: clamp(1.6rem, 3.4vw, 2.2rem); }
+.opp-guide-lead { margin: 0 0 1.5rem; max-width: 46rem; color: var(--color-gray-600, #475569); }
+.opp-guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+.opp-guide-card { padding: 1.2rem; border-radius: 16px; background: var(--surface-raised, #fff); border: 1px solid var(--border-subtle, #e2e8f0); }
+.opp-guide-card > span { font-size: 1.6rem; }
+.opp-guide-card h3 { margin: 0.5rem 0 0.4rem; font-size: 1.05rem; }
+.opp-guide-card p { margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--color-gray-600, #475569); }
+.opp-guide-cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+.opp-guide-source { margin: 1rem 0 0; font-size: 0.8rem; color: var(--color-gray-500, #64748b); }
+[data-theme="dark"] .opp-guide-section { background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02)); }
+[data-theme="dark"] .opp-guide-card { background: #111827; border-color: #1f2a3c; }
+[data-theme="dark"] .opp-guide-card p, [data-theme="dark"] .opp-guide-lead { color: #cbd5e1; }

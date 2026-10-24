@@ -2,8 +2,9 @@ const prisma = require('../config/database');
 const { NotFoundError, BadRequestError } = require('../utils/errors');
 
 // Rubrique « Concours & opportunités »
-const CATEGORIES = ['BOURSE', 'CONCOURS', 'EXAMEN', 'ADMISSION'];
-const LEVELS = ['COLLEGE', 'LYCEE', 'BACHELIER', 'ETUDIANT'];
+const CATEGORIES = ['BOURSE', 'CONCOURS', 'EXAMEN', 'ADMISSION', 'STAGE', 'PROGRAMME'];
+// PRIMAIRE : CM2 (Prytanée, Mariama Ba) ; DIPLOME : licence ou master ; PROFESSIONNEL : en poste (concours professionnels)
+const LEVELS = ['PRIMAIRE', 'COLLEGE', 'LYCEE', 'BACHELIER', 'ETUDIANT', 'DIPLOME', 'PROFESSIONNEL'];
 const DESTINATIONS = ['SENEGAL', 'AFRIQUE', 'INTERNATIONAL'];
 // UPCOMING : candidatures pas encore ouvertes ; OPEN : ouvertes ;
 // CLOSED : date limite passée ; RESULTS : résultats publiés (forçage manuel)
@@ -26,8 +27,24 @@ function normalizeKeyDates(keyDates) {
     .sort((a, b) => a.date.localeCompare(b.date));
 }
 
+// Session annuelle passée (date limite dépassée) ou pas encore datée : la prochaine session est attendue
+function isNextSession(opportunity, now = new Date()) {
+  if (!opportunity.recurring || opportunity.phaseOverride) return false;
+  if (opportunity.deadline) return now > opportunity.deadline;
+  return !opportunity.openingDate;
+}
+
+// Épreuves : matière obligatoire, durée et coefficient facultatifs
+function normalizeExams(exams) {
+  if (!Array.isArray(exams) || exams.length === 0) return null;
+  return exams
+    .map((e) => ({ subject: e.subject.trim(), ...(e.duration ? { duration: e.duration.trim() } : {}), ...(e.coefficient != null && e.coefficient !== '' ? { coefficient: String(e.coefficient).trim() } : {}) }))
+    .filter((e) => e.subject);
+}
+
 function computePhase(opportunity, now = new Date()) {
   if (opportunity.phaseOverride) return opportunity.phaseOverride;
+  if (isNextSession(opportunity, now)) return 'UPCOMING';
   if (opportunity.openingDate && now < opportunity.openingDate) return 'UPCOMING';
   if (opportunity.deadline && now > opportunity.deadline) return 'CLOSED';
   return 'OPEN';
@@ -49,13 +66,14 @@ function compareForDisplay(a, b) {
 }
 
 function withPhase(opportunity, now) {
-  return { ...opportunity, phase: computePhase(opportunity, now) };
+  return { ...opportunity, phase: computePhase(opportunity, now), nextSession: isNextSession(opportunity, now) };
 }
 
 function buildData(data) {
   const out = {};
   const text = ['title', 'organization', 'category', 'summary'];
-  const optionalText = ['details', 'eligibility', 'destination', 'country', 'benefits', 'officialUrl', 'phaseOverride', 'image'];
+  const optionalText = ['details', 'eligibility', 'destination', 'country', 'benefits', 'officialUrl', 'phaseOverride', 'image',
+    'fees', 'ageLimit', 'applyMode', 'contact', 'sourceNote', 'usualPeriod'];
   for (const key of text) if (data[key] !== undefined) out[key] = data[key].trim();
   for (const key of optionalText) {
     if (data[key] !== undefined) out[key] = typeof data[key] === 'string' && data[key].trim() ? data[key].trim() : null;
@@ -65,6 +83,10 @@ function buildData(data) {
   if (data.openingDate !== undefined) out.openingDate = parseDay(data.openingDate);
   if (data.deadline !== undefined) out.deadline = parseDay(data.deadline, true);
   if (data.keyDates !== undefined) out.keyDates = normalizeKeyDates(data.keyDates);
+  if (data.series !== undefined) out.series = [...new Set(data.series.map((x) => x.trim()).filter(Boolean))];
+  if (data.exams !== undefined) out.exams = normalizeExams(data.exams);
+  if (data.places !== undefined) out.places = data.places || null;
+  if (data.recurring !== undefined) out.recurring = Boolean(data.recurring);
   return out;
 }
 
@@ -86,6 +108,7 @@ class OpportunityService {
         { organization: { contains: search, mode: 'insensitive' } },
         { summary: { contains: search, mode: 'insensitive' } },
         { country: { contains: search, mode: 'insensitive' } },
+        { series: { has: search.toUpperCase() } },
       ];
     }
 
@@ -97,6 +120,7 @@ class OpportunityService {
         id: true, title: true, organization: true, category: true, summary: true,
         levels: true, destination: true, country: true, openingDate: true, deadline: true,
         officialUrl: true, lastVerifiedAt: true, phaseOverride: true, image: true, updatedAt: true,
+        fees: true, series: true, places: true, recurring: true, usualPeriod: true, ageLimit: true,
       },
     });
 
@@ -203,3 +227,5 @@ module.exports.LEVELS = LEVELS;
 module.exports.DESTINATIONS = DESTINATIONS;
 module.exports.PHASES = PHASES;
 module.exports.computePhase = computePhase;
+module.exports.isNextSession = isNextSession;
+module.exports.buildData = buildData;

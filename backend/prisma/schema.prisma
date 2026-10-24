@@ -133,6 +133,21 @@ model Opportunity {
   // Forçage manuel de la phase (ex. RESULTS) ; null = calculée depuis les dates
   phaseOverride  String?
   image          String?
+  // Identifiant stable des annonces importées (scripts/data/opportunites) : réimport sans doublon
+  slug           String?       @unique
+  // Fiche concours : frais, épreuves [{ subject, duration?, coefficient? }], séries du bac, âge, places
+  fees           String?
+  exams          Json?
+  series         String[]      @default([])
+  ageLimit       String?
+  places         Int?
+  applyMode      String?
+  contact        String?
+  // Origine de l'information quand elle n'a pas encore été revérifiée sur le site officiel
+  sourceNote     String?
+  // Concours ou bourse annuels : une fois la session passée, on annonce la prochaine (usualPeriod)
+  recurring      Boolean       @default(false)
+  usualPeriod    String?
   status         ContentStatus @default(DRAFT)
   createdById    String?
   createdBy      User?         @relation("OpportunityCreator", fields: [createdById], references: [id])

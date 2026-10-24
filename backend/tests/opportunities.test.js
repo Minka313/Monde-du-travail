@@ -2,7 +2,8 @@ const request = require('supertest');
 const { app } = require('../src/app');
 const { signAccessToken } = require('../src/utils/tokens');
 const { createTestUser, cleanupTestUsers, prisma } = require('./helpers/fixtures');
-const { computePhase } = require('../src/services/opportunityService');
+const { computePhase, isNextSession } = require('../src/services/opportunityService');
+const { run: importOpportunities, loadItems } = require('../src/scripts/import-opportunities');
 
 // Rubrique « Concours & opportunités » : publication réservée aux annonces
 // sourcées et vérifiées, filtres publics, phases calculées depuis les dates.
@@ -188,6 +189,82 @@ describe('Concours & opportunités', () => {
       expect(computePhase({ deadline: new Date('2026-06-15T23:59:59.999Z') }, now)).toBe('OPEN');
       expect(computePhase({ deadline: new Date('2026-06-14T23:59:59.999Z') }, now)).toBe('CLOSED');
       expect(computePhase({ deadline: new Date('2026-06-14T23:59:59.999Z'), phaseOverride: 'RESULTS' }, now)).toBe('RESULTS');
+    });
+  });
+
+  describe('Sessions annuelles', () => {
+    const now = new Date('2026-10-24T12:00:00Z');
+    it('annonce la prochaine session une fois la date limite passée, ou tant que les dates ne sont pas publiées', () => {
+      const past = { recurring: true, deadline: new Date('2026-04-15T23:59:59Z') };
+      expect(computePhase(past, now)).toBe('UPCOMING');
+      expect(isNextSession(past, now)).toBe(true);
+      expect(computePhase({ recurring: true }, now)).toBe('UPCOMING');
+      expect(computePhase({ recurring: true, openingDate: new Date('2026-10-01T00:00:00Z') }, now)).toBe('OPEN');
+      expect(computePhase({ recurring: true, deadline: new Date('2027-01-06T23:59:59Z') }, now)).toBe('OPEN');
+      expect(computePhase({ deadline: new Date('2026-04-15T23:59:59Z') }, now)).toBe('CLOSED');
+    });
+
+    it('enregistre la fiche concours complète et la publie dans la liste active', async () => {
+      const res = await create({
+        title: `${TAG} Concours annuel`,
+        category: 'CONCOURS',
+        levels: ['PRIMAIRE', 'PROFESSIONNEL'],
+        series: ['S1', 's2 ', 'S1'],
+        exams: [{ subject: 'Mathématiques', duration: '4 h', coefficient: 4 }, { subject: 'Français' }],
+        fees: '7 000 FCFA',
+        places: 60,
+        ageLimit: 'Moins de 22 ans',
+        applyMode: 'En ligne',
+        usualPeriod: 'Dépôt en avril · concours en juin',
+        recurring: true,
+        deadline: isoDay(-30),
+        officialUrl: 'https://example.org/concours',
+        markVerified: true,
+      });
+      expect(res.status).toBe(201);
+      const o = res.body.data;
+      expect(o).toMatchObject({ fees: '7 000 FCFA', places: 60, recurring: true, phase: 'UPCOMING', nextSession: true });
+      expect(o.series).toEqual(['S1', 's2']);
+      expect(o.exams).toEqual([{ subject: 'Mathématiques', duration: '4 h', coefficient: '4' }, { subject: 'Français' }]);
+      await request(app).post(`/api/opportunities/${o.id}/publish`).set('Authorization', `Bearer ${oppToken}`).expect(200);
+      const list = (await request(app).get('/api/opportunities?category=CONCOURS&level=PRIMAIRE')).body.data;
+      const item = list.find((x) => x.id === o.id);
+      expect(item).toMatchObject({ phase: 'UPCOMING', nextSession: true, usualPeriod: 'Dépôt en avril · concours en juin', fees: '7 000 FCFA' });
+    });
+
+    it('accepte les stages et programmes', async () => {
+      expect((await create({ title: `${TAG} Stage`, category: 'STAGE' })).status).toBe(201);
+      expect((await create({ title: `${TAG} Programme`, category: 'PROGRAMME' })).status).toBe(201);
+      expect((await create({ title: `${TAG} Inconnue`, category: 'AUTRE' })).status).toBe(400);
+    });
+  });
+
+  describe('Import des concours et bourses', () => {
+    let slugs;
+    beforeAll(() => { slugs = loadItems().items.map((i) => i.slug); });
+    afterAll(async () => { await prisma.opportunity.deleteMany({ where: { slug: { in: slugs } } }); });
+
+    it('valide tous les fichiers de données', () => {
+      const { items, errors } = loadItems();
+      expect(errors).toEqual([]);
+      expect(items.length).toBeGreaterThanOrEqual(40);
+      expect(items.every((i) => i.officialUrl && i.summary && i.sourceNote)).toBe(true);
+    });
+
+    it('crée les annonces une seule fois et conserve les corrections faites dans l\'admin', async () => {
+      await prisma.opportunity.deleteMany({ where: { slug: { in: slugs } } });
+      const first = await importOpportunities();
+      expect(first.created).toBe(slugs.length);
+      const ept = await prisma.opportunity.findUnique({ where: { slug: 'concours-ept-thies' } });
+      expect(ept).toMatchObject({ status: 'PUBLISHED', category: 'CONCOURS', recurring: true });
+      expect(ept.lastVerifiedAt).toBeTruthy();
+      const unchecked = await prisma.opportunity.findUnique({ where: { slug: 'concours-ufr-sefs-ugb' } });
+      expect(unchecked.status).toBe('DRAFT');
+
+      await prisma.opportunity.update({ where: { slug: 'concours-ept-thies' }, data: { fees: 'Corrigé par l\'admin' } });
+      const second = await importOpportunities();
+      expect(second).toMatchObject({ created: 0, skipped: slugs.length });
+      expect((await prisma.opportunity.findUnique({ where: { slug: 'concours-ept-thies' } })).fees).toBe('Corrigé par l\'admin');
     });
   });
 });

@@ -6,8 +6,11 @@
 (function () {
   'use strict';
 
-  const CATEGORY_LABELS = { BOURSE: '🎓 Bourse', CONCOURS: '🏆 Concours', EXAMEN: '📝 Examen', ADMISSION: '🏫 Admission' };
-  const LEVEL_LABELS = { COLLEGE: 'Collège', LYCEE: 'Lycée', BACHELIER: 'Bachelier', ETUDIANT: 'Étudiant' };
+  const CATEGORY_LABELS = { BOURSE: '🎓 Bourse', CONCOURS: '🏆 Concours', EXAMEN: '📝 Examen', ADMISSION: '🏫 Admission', STAGE: '💼 Stage', PROGRAMME: '🌍 Programme' };
+  const LEVEL_LABELS = {
+    PRIMAIRE: 'CM2', COLLEGE: 'Collège', LYCEE: 'Terminale', BACHELIER: 'Bachelier', ETUDIANT: 'Étudiant',
+    DIPLOME: 'Diplômé (licence/master)', PROFESSIONNEL: 'Professionnel',
+  };
   const DESTINATION_LABELS = { SENEGAL: '🇸🇳 Sénégal', AFRIQUE: '🌍 Afrique', INTERNATIONAL: '✈️ International' };
   const PHASE_LABELS = { OPEN: 'Ouvert', UPCOMING: 'À venir', CLOSED: 'Clôturé', RESULTS: 'Résultats publiés' };
   const FILTER_KEYS = ['category', 'level', 'destination', 'phase', 'search'];
@@ -24,7 +27,10 @@
     return new Date(value).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
   }
 
+  const phaseLabel = (o) => (o.nextSession ? 'Prochaine session' : PHASE_LABELS[o.phase] || '');
+
   function countdown(opportunity) {
+    if (opportunity.nextSession) return null;
     if (opportunity.phase === 'UPCOMING' && opportunity.openingDate) {
       return { text: `Ouverture le ${formatDay(opportunity.openingDate)}`, urgent: false };
     }
@@ -43,7 +49,7 @@
     if (phase === 'ACTIVE' && !['OPEN', 'UPCOMING'].includes(opportunity.phase)) return false;
     if (phase && phase !== 'ACTIVE' && opportunity.phase !== phase) return false;
     if (search) {
-      const haystack = [opportunity.title, opportunity.organization, opportunity.summary, opportunity.country]
+      const haystack = [opportunity.title, opportunity.organization, opportunity.summary, opportunity.country, ...(opportunity.series || [])]
         .filter(Boolean).join(' ').toLowerCase();
       if (!haystack.includes(search.toLowerCase())) return false;
     }
@@ -53,7 +59,7 @@
   function badges(opportunity) {
     return `
       <span class="opp-badge opp-badge--${esc(opportunity.category)}">${esc(CATEGORY_LABELS[opportunity.category] || opportunity.category)}</span>
-      <span class="opp-badge opp-phase--${esc(opportunity.phase)}">${esc(PHASE_LABELS[opportunity.phase] || '')}</span>
+      <span class="opp-badge opp-phase--${esc(opportunity.nextSession ? 'NEXT' : opportunity.phase)}">${esc(phaseLabel(opportunity))}</span>
       ${opportunity.destination ? `<span class="opp-badge">${esc(DESTINATION_LABELS[opportunity.destination])}${opportunity.country ? ` · ${esc(opportunity.country)}` : ''}</span>` : ''}`;
   }
 
@@ -68,8 +74,12 @@
         <p class="opp-org">${esc(opportunity.organization)}</p>
         <p class="opp-summary">${esc(opportunity.summary)}</p>
         ${levels ? `<p class="opp-org" style="font-weight:500;">👤 ${esc(levels)}</p>` : ''}
+        ${(opportunity.series || []).length ? `<p class="opp-series">${opportunity.series.slice(0, 6).map((x) => `<span>${esc(x)}</span>`).join('')}${opportunity.series.length > 6 ? `<span>+${opportunity.series.length - 6}</span>` : ''}</p>` : ''}
+        ${opportunity.fees ? `<p class="opp-org">💳 ${esc(opportunity.fees)}</p>` : ''}
         <div class="opp-deadline">
-          <span>${opportunity.deadline ? `📅 Date limite : <strong>${esc(formatDay(opportunity.deadline))}</strong>` : '📅 Date limite non communiquée'}</span>
+          <span>${opportunity.nextSession
+            ? `🔁 ${opportunity.usualPeriod ? esc(opportunity.usualPeriod) : 'Dates de la prochaine session à venir'}`
+            : opportunity.deadline ? `📅 Date limite : <strong>${esc(formatDay(opportunity.deadline))}</strong>` : '📅 Date limite non communiquée'}</span>
           ${timer ? `<span class="opp-countdown${timer.urgent ? ' is-urgent' : ''}">${esc(timer.text)}</span>` : ''}
         </div>
         <div class="opp-card-actions">
@@ -114,8 +124,14 @@
     const documents = (o.documents || []).filter(Boolean);
     const officialUrl = o.officialUrl ? window.safeUrl(o.officialUrl) : '';
 
+    const exams = Array.isArray(o.exams) ? o.exams : [];
+    const series = (o.series || []).filter(Boolean);
     const facts = [
-      ['Date limite', o.deadline ? formatDay(o.deadline) : 'Non communiquée'],
+      o.nextSession
+        ? ['Prochaine session', o.usualPeriod || 'Dates à venir']
+        : ['Date limite', o.deadline ? formatDay(o.deadline) : 'Non communiquée'],
+      o.fees ? ['Frais', o.fees] : null,
+      o.places ? ['Places', `${o.places}`] : null,
       o.openingDate ? ['Ouverture', formatDay(o.openingDate)] : null,
       levels ? ['Public', levels] : null,
       o.destination ? ['Destination', `${DESTINATION_LABELS[o.destination]}${o.country ? ` · ${o.country}` : ''}`] : null,
@@ -138,11 +154,18 @@
         ${section('En bref', paragraphs(o.summary))}
         ${o.details ? section('Détails', paragraphs(o.details)) : ''}
         ${o.eligibility ? section("Conditions d'éligibilité", paragraphs(o.eligibility)) : ''}
+        ${o.ageLimit ? section("Limite d'âge", paragraphs(o.ageLimit)) : ''}
+        ${series.length ? section('Séries du bac acceptées', `<p class="opp-series">${series.map((x) => `<span>${esc(x)}</span>`).join('')}</p>`) : ''}
         ${documents.length ? section('Documents à préparer', `<ul>${documents.map((d) => `<li>${esc(d)}</li>`).join('')}</ul>`) : ''}
+        ${exams.length ? section('Épreuves', `<div class="opp-exams"><table><thead><tr><th>Épreuve</th><th>Durée</th><th>Coef.</th></tr></thead><tbody>${exams.map((e) => `<tr><td>${esc(e.subject)}</td><td>${esc(e.duration || '—')}</td><td>${esc(e.coefficient || '—')}</td></tr>`).join('')}</tbody></table></div>`) : ''}
+        ${o.applyMode ? section('Comment candidater', paragraphs(o.applyMode)) : ''}
         ${o.benefits ? section('Avantages / financement', paragraphs(o.benefits)) : ''}
-        ${keyDates.length ? section('Dates importantes', `<ul class="opp-timeline">${keyDates.map((d) => `<li class="${d.date < today ? 'is-past' : ''}"><time datetime="${esc(d.date)}">${esc(formatDay(`${d.date}T00:00:00Z`))}</time><span>${esc(d.label)}</span></li>`).join('')}</ul>`) : ''}
+        ${o.contact ? section('Contact', paragraphs(o.contact)) : ''}
+        ${o.usualPeriod && !o.nextSession ? section('Calendrier habituel', paragraphs(o.usualPeriod)) : ''}
+        ${keyDates.length ? section(o.nextSession ? 'Dates de la dernière session' : 'Dates importantes', `<ul class="opp-timeline">${keyDates.map((d) => `<li class="${d.date < today ? 'is-past' : ''}"><time datetime="${esc(d.date)}">${esc(formatDay(`${d.date}T00:00:00Z`))}</time><span>${esc(d.label)}</span></li>`).join('')}</ul>`) : ''}
         <div class="opp-official">
-          <small>${o.lastVerifiedAt ? `✅ Vérifié par le club le ${esc(formatDay(o.lastVerifiedAt))}` : ''}<br>Les informations officielles font foi.</small>
+          <small>${o.lastVerifiedAt ? (o.sourceNote ? `🔗 Lien officiel contrôlé par le club le ${esc(formatDay(o.lastVerifiedAt))}` : `✅ Vérifié par le club le ${esc(formatDay(o.lastVerifiedAt))}`) : ''}
+            ${o.sourceNote ? `<br>ℹ️ ${esc(o.sourceNote)}` : ''}<br>Les informations officielles font foi.</small>
           ${officialUrl ? `<a class="btn btn-primary" href="${esc(officialUrl)}" target="_blank" rel="noopener noreferrer nofollow">Site officiel ↗</a>` : ''}
         </div>
       </div>`;

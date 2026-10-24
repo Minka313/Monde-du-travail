@@ -1,0 +1,1647 @@
+{
+  "_source": "Concours nationaux du Sénégal. Informations de la dernière session connue, d'après les communiqués officiels repris par « Le Manuel des concours au Sénégal », édition 2026 (Wakil Mouhamed Ba, STAR SCHOOL). Liens officiels contrôlés le 24/10/2026. Les communiqués officiels de chaque session font foi.",
+  "defaultSourceNote": "Communiqué officiel de la dernière session (2026 sauf mention contraire), repris dans « Le Manuel des concours au Sénégal », édition 2026 (Wakil Mouhamed Ba, STAR SCHOOL).",
+  "items": [
+    {
+      "slug": "concours-ept-thies",
+      "title": "Concours d'entrée en 1re année — École Polytechnique de Thiès (EPT)",
+      "organization": "École Polytechnique de Thiès (EPT)",
+      "category": "CONCOURS",
+      "summary": "La voie d'accès aux cycles d'ingénieur de l'EPT : génie civil, électromécanique, aéronautique, informatique et télécoms, génie industriel. Concours écrit organisé dans toutes les régions.",
+      "eligibility": "Élèves de Terminale scientifique ou technique (S1, S2, S3, STI2D, T1, T2), bacheliers et candidats libres au bac de ces séries.",
+      "ageLimit": "Moins de 22 ans au 1er octobre de l'année du concours (moins de 22 ans au 1er octobre 2026 pour la session 2026).",
+      "series": [
+        "S1",
+        "S2",
+        "S3",
+        "STI2D",
+        "T1",
+        "T2"
+      ],
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Fiche de candidature (établissement, CAOSP ou www.ept.edu.sn)",
+        "Élèves de Terminale : copies légalisées des bulletins de Seconde et de Première (2 semestres) et du 1er semestre de Terminale",
+        "Bacheliers : copies légalisées du diplôme et du relevé de notes du bac + bulletins de Seconde, Première et Terminale",
+        "Pièce d'identité valide ou carte scolaire signée et cachetée (le jour du concours)",
+        "Reçu des frais de dossier"
+      ],
+      "fees": "7 000 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Mathématiques"
+        },
+        {
+          "subject": "Physique"
+        },
+        {
+          "subject": "Français"
+        },
+        {
+          "subject": "Anglais"
+        }
+      ],
+      "applyMode": "Inscription en ligne obligatoire sur concours.ept.edu.sn (suivi du dossier) ET dépôt du dossier physique : par l'établissement ou le CAOSP en un seul lot, ou par le candidat à la scolarité de l'EPT (Thiès, 8 h–15 h, du lundi au vendredi). En cas de réussite au bac, envoyer le relevé de notes légalisé dans les 10 jours suivant les résultats.",
+      "contact": "Scolarité de l'EPT : 76 223 61 77 · scolarite@ept.edu.sn",
+      "details": "Options après le concours : génie civil, génie électromécanique, génie aéronautique, génie informatique et télécommunications, génie industriel.\n\nTout dossier incomplet ou hors limite d'âge est rejeté, sans remboursement des frais.",
+      "deadline": "2026-04-15",
+      "keyDates": [
+        {
+          "label": "Clôture du dépôt des dossiers à l'EPT (15 h)",
+          "date": "2026-04-15"
+        },
+        {
+          "label": "Concours écrit (15 h – 18 h, toutes les régions)",
+          "date": "2026-06-13"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Dépôt des dossiers de janvier à mi-avril · concours écrit mi-juin",
+      "officialUrl": "https://www.ept.edu.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-esp-dakar-dut",
+      "title": "Concours d'entrée en DUT — École Supérieure Polytechnique de Dakar (ESP)",
+      "organization": "École Supérieure Polytechnique (ESP) — UCAD",
+      "category": "CONCOURS",
+      "summary": "Accès aux diplômes universitaires de technologie de l'ESP : biologie, chimie, industries alimentaires, biomédical, génie électrique, civil, mécanique, informatique et télécoms, gestion.",
+      "eligibility": "Bacheliers, candidats libres et élèves de Terminale des séries indiquées pour chaque option (voir les épreuves).",
+      "series": [
+        "S1",
+        "S2",
+        "S3",
+        "F6",
+        "F7",
+        "T1",
+        "T2",
+        "G",
+        "L2"
+      ],
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Formulaire de candidature",
+        "Bacheliers : attestation et relevé de notes du bac + bulletins des 2 semestres de Seconde, Première et Terminale",
+        "Élèves de Terminale : bulletins du 2e semestre de Seconde et de Première",
+        "Photocopie de la carte nationale d'identité",
+        "Reçu des frais de dossier"
+      ],
+      "fees": "5 000 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Mathématiques (toutes options)"
+        },
+        {
+          "subject": "Français (toutes options)"
+        },
+        {
+          "subject": "Anglais (toutes options)"
+        },
+        {
+          "subject": "Chimie, biologie et physique — Analyses biologiques, génie chimique, industries alimentaires (S1, S2, S3, F6, F7)"
+        },
+        {
+          "subject": "Physique et électricité — Génie civil, génie électrique, génie informatique, génie mécanique (S1, S2, S3 ; T2 en électrique ; T1 en mécanique)"
+        },
+        {
+          "subject": "Économie — Gestion (G, L2, S1, S2)"
+        }
+      ],
+      "applyMode": "Inscription en ligne sur concours.esp.sn. Bacheliers : dépôt en ligne ou à la scolarité de l'ESP. Élèves de Terminale : dossiers groupés et déposés par l'établissement en un seul envoi.",
+      "deadline": "2026-04-30",
+      "keyDates": [
+        {
+          "label": "Date limite de dépôt",
+          "date": "2026-04-30"
+        },
+        {
+          "label": "Concours",
+          "date": "2026-06-06"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Dépôt jusqu'à fin avril · concours début juin",
+      "officialUrl": "https://concours.esp.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ipsl-ugb",
+      "title": "Concours du cycle préparatoire intégré — Institut Polytechnique de Saint-Louis (IPSL)",
+      "organization": "Institut Polytechnique de Saint-Louis — Université Gaston Berger",
+      "category": "CONCOURS",
+      "summary": "Entrée en 1re année du cycle préparatoire intégré, vers le diplôme d'ingénieur de conception (bac +5) en génie civil, électromécanique ou informatique et télécommunications.",
+      "eligibility": "Bacheliers et élèves de Terminale scientifique ou technique (S1, S2, S3, T1, T2).",
+      "ageLimit": "Moins de 22 ans au 1er octobre de l'année du concours.",
+      "series": [
+        "S1",
+        "S2",
+        "S3",
+        "T1",
+        "T2"
+      ],
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Bulletins du 2e semestre de Seconde, Première et Terminale",
+        "Extrait de naissance",
+        "Après le bac : relevé de notes du bac et bulletin du 2e semestre de Terminale"
+      ],
+      "fees": "7 000 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Mathématiques"
+        },
+        {
+          "subject": "Physique"
+        },
+        {
+          "subject": "Français"
+        },
+        {
+          "subject": "Anglais"
+        }
+      ],
+      "applyMode": "Inscription et dépôt exclusivement en ligne sur ipsl-concours.ugb.sn. Pièce d'identité obligatoire le jour du concours (début 7 h 30).",
+      "contact": "ipsl-admission@ugb.edu.sn",
+      "deadline": "2026-06-12",
+      "keyDates": [
+        {
+          "label": "Date limite de candidature",
+          "date": "2026-06-12"
+        },
+        {
+          "label": "Concours (7 h 30)",
+          "date": "2026-06-20"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Candidatures en ligne jusqu'à mi-juin · concours fin juin",
+      "officialUrl": "https://ipsl-concours.ugb.sn/",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ensa-thies",
+      "title": "Concours d'entrée — École Nationale Supérieure d'Agriculture (ENSA) de Thiès",
+      "organization": "École Nationale Supérieure d'Agriculture de Thiès",
+      "category": "CONCOURS",
+      "summary": "Formation d'ingénieurs en agronomie, productions végétales et animales, génie rural, économie agricole et développement rural.",
+      "eligibility": "Candidats de nationalité sénégalaise, élèves de Terminale ou bacheliers des séries S1, S2, S3, S4 et S5.",
+      "ageLimit": "22 ans au plus au 1er janvier de l'année du concours.",
+      "series": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Adresse e-mail valide",
+        "Numéro de téléphone lié à Orange Money, avec le montant des frais disponible"
+      ],
+      "fees": "7 500 FCFA (paiement Orange Money)",
+      "applyMode": "Candidature exclusivement en ligne sur le site du concours (www.concoursensa.com lors de la session 2026), étape par étape jusqu'à validation.",
+      "details": "Lieu du concours : ENSA, km 3 route de Khombole (RN3), Thiès.",
+      "deadline": "2026-05-15",
+      "keyDates": [
+        {
+          "label": "Date limite des candidatures (minuit)",
+          "date": "2026-05-15"
+        },
+        {
+          "label": "Concours",
+          "date": "2026-05-30"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Candidatures en ligne jusqu'à mi-mai · concours fin mai",
+      "officialUrl": "https://www.ensath.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ensmg-ucad",
+      "title": "Concours du cycle préparatoire intégré — École Nationale Supérieure des Mines et de la Géologie (ENSMG)",
+      "organization": "ENSMG (ex-Institut des Sciences de la Terre) — UCAD",
+      "category": "CONCOURS",
+      "summary": "Première étape vers les diplômes d'ingénieur en mines, géologie, géosciences, hydrogéologie et environnement.",
+      "eligibility": "Élèves de Terminale candidats au bac de l'année, séries S1, S2, S4 et S5.",
+      "series": [
+        "S1",
+        "S2",
+        "S4",
+        "S5"
+      ],
+      "levels": [
+        "LYCEE"
+      ],
+      "documents": [
+        "Demande manuscrite adressée au directeur de l'ENSMG",
+        "Copie légalisée de la carte nationale d'identité",
+        "Relevés de notes de Seconde, Première et Terminale (5 relevés ; le 2e semestre de Terminale est à régulariser)",
+        "Après le bac : copies légalisées du relevé et de l'attestation du bac",
+        "Reçu de paiement des frais"
+      ],
+      "fees": "10 000 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Mathématiques"
+        },
+        {
+          "subject": "Physique"
+        },
+        {
+          "subject": "Chimie"
+        },
+        {
+          "subject": "Sciences de la Terre"
+        }
+      ],
+      "applyMode": "Dépôt physique à l'ENSMG ou inscription en ligne sur la plateforme des concours de l'UCAD (pièces scannées en PDF). Les présélectionnés déposent ensuite un dossier physique complet.",
+      "details": "Débouchés : ingénieur des mines, géologue, hydrogéologue, géophysicien, expert en environnement, cadre des industries minières et pétrolières.",
+      "openingDate": "2026-05-23",
+      "deadline": "2026-07-18",
+      "keyDates": [
+        {
+          "label": "Ouverture des candidatures",
+          "date": "2026-05-23"
+        },
+        {
+          "label": "Clôture des candidatures (23 h)",
+          "date": "2026-07-18"
+        },
+        {
+          "label": "Concours à l'UCAD (14 h)",
+          "date": "2026-07-25"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Candidatures de fin mai à mi-juillet · concours fin juillet",
+      "officialUrl": "https://concours.ucad.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-cesti",
+      "title": "Concours d'entrée au CESTI — journalisme, communication, production audiovisuelle",
+      "organization": "Centre d'Études des Sciences et Techniques de l'Information (CESTI) — UCAD",
+      "category": "CONCOURS",
+      "summary": "La grande école publique de journalisme, de communication et de production audiovisuelle du Sénégal. Niveau bac ou niveau licence.",
+      "eligibility": "Niveau bac : bacheliers, élèves de Terminale (sous réserve du bac) ou professionnels avec au moins 4 ans d'expérience. Niveau licence : titulaires d'une licence ou équivalent. Agents de l'État : dossier par voie hiérarchique.",
+      "ageLimit": "Niveau bac : 17 à 24 ans (les professionnels de l'information et de la communication n'ont pas de limite). Niveau licence : pas de limite d'âge.",
+      "levels": [
+        "LYCEE",
+        "BACHELIER",
+        "DIPLOME",
+        "PROFESSIONNEL"
+      ],
+      "documents": [
+        "Demande manuscrite adressée au directeur du CESTI",
+        "Copie légalisée de la CNI ou extrait de naissance",
+        "Fiche individuelle (CESTI ou CAOSP)",
+        "Photo d'identité",
+        "Certificat de scolarité de l'année en cours",
+        "Relevés de Seconde et Première (candidats sous réserve du bac) ou copie légalisée du bac",
+        "Professionnels : contrat de travail ou 3 derniers bulletins de salaire",
+        "Niveau licence : copie légalisée du diplôme"
+      ],
+      "fees": "10 000 FCFA (régions de Thiès, Kaolack, Ziguinchor, Saint-Louis, Tambacounda) · 10 100 FCFA à Dakar (paiement Wave, facture à imprimer)",
+      "applyMode": "Dépôt à la scolarité du CESTI (Dakar) ou dans les CAOSP de Kaolack, Thiès, Tambacounda, Ziguinchor et Saint-Louis, de 8 h à 12 h et de 15 h à 17 h.",
+      "contact": "cesti@ucad.edu.sn · 77 587 07 64",
+      "openingDate": "2026-02-16",
+      "deadline": "2026-05-25",
+      "keyDates": [
+        {
+          "label": "Ouverture des inscriptions",
+          "date": "2026-02-16"
+        },
+        {
+          "label": "Clôture des dépôts (17 h)",
+          "date": "2026-05-25"
+        },
+        {
+          "label": "Présélection à l'UCAD (14 h 30)",
+          "date": "2026-06-13"
+        },
+        {
+          "label": "Concours au CESTI (23 au 25 juillet)",
+          "date": "2026-07-23"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Inscriptions de mi-février à fin mai · présélection en juin · concours fin juillet",
+      "officialUrl": "https://cesti.ucad.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ecole-militaire-sante",
+      "title": "Concours direct d'entrée — École Militaire de Santé (EMS)",
+      "organization": "État-major général des Armées — École Militaire de Santé",
+      "category": "CONCOURS",
+      "summary": "Recrutement d'élèves officiers médecins, pharmaciens, chirurgiens-dentistes et vétérinaires des Armées.",
+      "eligibility": "Nationalité sénégalaise ; célibataire sans enfant ; bac S1 ou S2 ou inscription en Terminale S1/S2 ; ne pas avoir été inscrit ni ajourné en faculté de médecine, pharmacie, odontostomatologie ou à l'EISMV ; aptitude physique (profil SIGYCOP 2 2 2 4 3 2 2, vision binoculaire normale, absence de protéinurie).",
+      "ageLimit": "Médecine : 17 à 20 ans au 31 décembre de l'année du concours. Pharmacie, chirurgie dentaire, vétérinaire : 17 à 22 ans au 31 août.",
+      "series": [
+        "S1",
+        "S2"
+      ],
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Demande d'inscription sur imprimé (site de l'EMS)",
+        "Certificat médical d'aptitude délivré par un médecin militaire (modèle officiel)",
+        "3 extraits d'acte de naissance de moins de 3 mois",
+        "Certificat de scolarité de Terminale S1/S2 ou 2 copies légalisées du bac",
+        "Copie de la carte d'étudiant (bacheliers)",
+        "Extrait de casier judiciaire n° 3 de moins de 3 mois",
+        "Copie légalisée du certificat de nationalité sénégalaise",
+        "Enveloppes timbrées (petit et grand format) avec adresse et téléphone",
+        "Autorisation parentale pour les candidats de 17 ans",
+        "Reçu de paiement des frais (compte du Centre comptable des Armées, Ecobank)"
+      ],
+      "fees": "5 500 FCFA, non remboursables (dont 500 FCFA de timbre)",
+      "exams": [
+        {
+          "subject": "Sciences de la vie et de la Terre"
+        },
+        {
+          "subject": "Français"
+        },
+        {
+          "subject": "Physique"
+        },
+        {
+          "subject": "Chimie"
+        }
+      ],
+      "applyMode": "Dépôt auprès des bureaux de garnison des zones militaires ou des brigades de gendarmerie. Convocations à retirer au centre de dépôt 15 jours avant le concours.",
+      "details": "Niveau des épreuves : bac S1/S2. Toute note inférieure à 5/20 est éliminatoire. Les candidats admis signent un engagement de remboursement éventuel.",
+      "deadline": "2026-02-06",
+      "keyDates": [
+        {
+          "label": "Clôture du dépôt des dossiers (17 h)",
+          "date": "2026-02-06"
+        },
+        {
+          "label": "Épreuves écrites (6 et 7 juin)",
+          "date": "2026-06-06"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Dépôt jusqu'en février · épreuves écrites début juin",
+      "officialUrl": "https://www.forcesarmees.gouv.sn",
+      "sourceNote": "Le communiqué 2026 cite à la fois le 6 et le 20 février comme clôture : vérifiez la date de la nouvelle session auprès des bureaux de garnison.",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-polytech-diamniadio-uam",
+      "title": "Concours d'entrée — Polytech Diamniadio (Université Amadou Mahtar Mbow)",
+      "organization": "Université Amadou Mahtar Mbow (UAM)",
+      "category": "CONCOURS",
+      "summary": "Cinq départements : agriculture et nutrition, sciences de l'ingénieur, urbanisme et architecture, géosciences et environnement, gestion des organisations.",
+      "eligibility": "Bacheliers de la session en cours. Candidats étrangers titulaires d'un bac reconnu : admission sur étude de dossier. Série L2 vers la gestion des organisations : 12/20 de moyenne en Terminale.",
+      "ageLimit": "22 ans au plus durant l'année du concours.",
+      "series": [
+        "S1",
+        "S1A",
+        "S2",
+        "S2A",
+        "S3",
+        "S4",
+        "S5",
+        "T1",
+        "T2",
+        "L2",
+        "L'1",
+        "L1a",
+        "F6",
+        "G"
+      ],
+      "levels": [
+        "BACHELIER"
+      ],
+      "documents": [
+        "Copie légalisée de la CNI (ou passeport pour les étrangers)",
+        "Relevé de notes du bac de la session",
+        "Bulletins de Seconde, Première et Terminale (6 bulletins)",
+        "Paiement des frais de dossier"
+      ],
+      "fees": "10 000 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Anglais"
+        },
+        {
+          "subject": "Français"
+        },
+        {
+          "subject": "Mathématiques (programme S ou L selon le département)"
+        },
+        {
+          "subject": "Culture générale / tests psychotechniques"
+        }
+      ],
+      "applyMode": "Pièces scannées et déposées en ligne sur depot.uam.sn ; préciser son centre d'examen. Tout dossier incomplet est rejeté.",
+      "details": "Filières : agroécologie, productions animales, technologies agro-alimentaires, leadership agro-environnemental ; génie des procédés, génie civil, électronique et télécoms, informatique, systèmes électriques et énergétiques ; urbanisme, architecture ; mines et géologie, environnement, hydraulique, géomatique ; finance-comptabilité, management des organisations.",
+      "recurring": true,
+      "usualPeriod": "Après les résultats du bac (dates annoncées à chaque session)",
+      "officialUrl": "https://depot.uam.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ensae-niveau-bac",
+      "title": "Concours ENSAE niveau bac — Ingénieurs statisticiens économistes (cycle long) et analystes statisticiens",
+      "organization": "École Nationale de la Statistique et de l'Analyse Économique Pierre Ndiaye (ENSAE)",
+      "category": "CONCOURS",
+      "summary": "ISE cycle long (5 ans) ou analyste statisticien (3 ans) après le bac. On peut candidater aux deux en indiquant son ordre de préférence.",
+      "eligibility": "Bac scientifique ou inscription en Terminale scientifique (admission sous réserve du bac). Fonctionnaires : appartenir au système statistique national.",
+      "ageLimit": "Au plus 22 ans l'année du concours (né après le 31/12/2003 pour 2026).",
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Fiche de renseignements d'inscription",
+        "Extrait d'acte de naissance",
+        "Copie certifiée conforme des diplômes",
+        "Certificat de scolarité (élèves de Terminale)"
+      ],
+      "fees": "5 000 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Test de présélection"
+        },
+        {
+          "subject": "1re composition de mathématiques",
+          "duration": "4 h",
+          "coefficient": "30"
+        },
+        {
+          "subject": "Ordre général",
+          "duration": "3 h",
+          "coefficient": "25"
+        },
+        {
+          "subject": "2e composition de mathématiques",
+          "duration": "4 h",
+          "coefficient": "30"
+        },
+        {
+          "subject": "Contraction de texte",
+          "duration": "3 h",
+          "coefficient": "15"
+        }
+      ],
+      "applyMode": "Inscription à l'ENSAE (immeuble ANSD, Rocade Fann Bel-Air, Cerf-Volant, Dakar) ou dans les centres régionaux. Seuls les candidats retenus au test de présélection passent le concours.",
+      "openingDate": "2025-11-24",
+      "deadline": "2026-01-30",
+      "keyDates": [
+        {
+          "label": "Ouverture des inscriptions",
+          "date": "2025-11-24"
+        },
+        {
+          "label": "Clôture des inscriptions",
+          "date": "2026-01-30"
+        },
+        {
+          "label": "Test de présélection (14 h 30)",
+          "date": "2026-02-14"
+        },
+        {
+          "label": "Épreuves écrites (7 et 8 avril)",
+          "date": "2026-04-07"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Inscriptions de fin novembre à fin janvier · présélection mi-février · épreuves début avril",
+      "officialUrl": "https://www.ensae.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ensae-niveau-licence",
+      "title": "Concours ENSAE niveau licence — Ingénieurs statisticiens économistes (options mathématiques ou économie)",
+      "organization": "École Nationale de la Statistique et de l'Analyse Économique Pierre Ndiaye (ENSAE)",
+      "category": "CONCOURS",
+      "summary": "Entrée en cycle d'ingénieur statisticien économiste pour les étudiants de 3e année de licence (mathématiques ou économie) ou de mathématiques spéciales.",
+      "eligibility": "Option mathématiques : inscription en L3 de mathématiques ou en mathématiques spéciales. Option économie : inscription en L3 de sciences économiques. Ouvert aux ITS et analystes statisticiens diplômés. Trois tentatives au maximum.",
+      "ageLimit": "Au plus 26 ans l'année du concours (né après le 31/12/1999 pour 2026).",
+      "levels": [
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "documents": [
+        "Fiche individuelle d'état civil ou extrait de naissance",
+        "Copie certifiée conforme des diplômes",
+        "Certificat de scolarité ou attestation d'inscription",
+        "Fonctionnaires statisticiens : attestation d'emploi de moins de 3 mois"
+      ],
+      "fees": "10 000 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Ordre général",
+          "duration": "4 h",
+          "coefficient": "15"
+        },
+        {
+          "subject": "1re composition de mathématiques",
+          "duration": "4 h",
+          "coefficient": "35 (option maths) · 30 (option éco)"
+        },
+        {
+          "subject": "2e composition de mathématiques",
+          "duration": "4 h / 3 h",
+          "coefficient": "30 (option maths) · 20 (option éco)"
+        },
+        {
+          "subject": "Contraction de texte (option maths)",
+          "duration": "3 h",
+          "coefficient": "15"
+        },
+        {
+          "subject": "Économie (option éco)",
+          "duration": "4 h",
+          "coefficient": "30"
+        },
+        {
+          "subject": "Anglais",
+          "duration": "1 h",
+          "coefficient": "5"
+        }
+      ],
+      "applyMode": "Inscription à l'ENSAE (Dakar) ou dans les centres régionaux. Épreuves à Dakar, Saint-Louis (UGB) et Thiès (CPGE).",
+      "openingDate": "2025-11-24",
+      "deadline": "2026-01-30",
+      "keyDates": [
+        {
+          "label": "Ouverture des inscriptions",
+          "date": "2025-11-24"
+        },
+        {
+          "label": "Clôture des inscriptions",
+          "date": "2026-01-30"
+        },
+        {
+          "label": "Épreuves écrites (9 et 10 avril)",
+          "date": "2026-04-09"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Inscriptions de fin novembre à fin janvier · épreuves en avril",
+      "officialUrl": "https://www.ensae.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-cugem",
+      "title": "Concours unique d'entrée dans les grandes écoles militaires étrangères (CUGEM)",
+      "organization": "État-major général des Armées",
+      "category": "CONCOURS",
+      "summary": "Recrutement d'élèves officiers formés dans des écoles militaires partenaires (France, Maroc, Allemagne, Brésil, Côte d'Ivoire, Turquie…). Niveau bac ou licence 3, options sciences ou lettres.",
+      "eligibility": "Jeunes Sénégalais des deux sexes, célibataires sans enfant, aptes médicalement (profil SIGYCOP 2 2 2 4 3 2 2). Niveau bac (ou sous réserve) ou licence 3 (ou sous réserve).",
+      "ageLimit": "Niveau bac : 18 à 21 ans au 1er septembre. Niveau licence 3 : 19 à 25 ans au 1er septembre.",
+      "levels": [
+        "LYCEE",
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "documents": [
+        "Demande manuscrite au ministre des Forces armées (niveau, option, matière dominante pour la licence sciences)",
+        "3 copies légalisées du certificat de nationalité",
+        "3 extraits d'acte de naissance et 3 casiers judiciaires n° 3 de moins de 3 mois",
+        "3 copies légalisées du diplôme exigé, ou certificat de scolarité / attestation d'inscription en L3",
+        "Certificat médical d'aptitude (médecin militaire, moins de 3 mois)",
+        "4 photos d'identité, 1 enveloppe timbrée grand format, 2 certificats de résidence",
+        "Reçu de paiement des frais (Ecobank, compte du Centre comptable des Armées)"
+      ],
+      "fees": "5 500 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Épreuves physiques : 100 m, 1 000 m, grimper de corde, saut en hauteur ou longueur",
+          "coefficient": "4 (moyenne)"
+        },
+        {
+          "subject": "Français",
+          "duration": "4 h"
+        },
+        {
+          "subject": "Anglais",
+          "duration": "3 h"
+        },
+        {
+          "subject": "Mathématiques (niveau bac)",
+          "duration": "4 h"
+        },
+        {
+          "subject": "Physique-chimie (bac scientifique)",
+          "duration": "4 h"
+        },
+        {
+          "subject": "Connaissances générales (option lettres)",
+          "duration": "1 h 30"
+        },
+        {
+          "subject": "Mathématiques ou physique-chimie au choix (licence sciences)",
+          "duration": "4 h"
+        }
+      ],
+      "applyMode": "Dépôt dans toutes les zones militaires (bureaux de garnison) ou brigades de gendarmerie. Listes des candidats autorisés affichées dans les zones militaires.",
+      "details": "Moins de 5/20 en moyenne physique, un zéro ou un abandon : élimination. Moins de 5/20 en français ou dans la matière dominante : élimination.",
+      "openingDate": "2025-11-19",
+      "deadline": "2026-02-13",
+      "keyDates": [
+        {
+          "label": "Ouverture des dépôts",
+          "date": "2025-11-19"
+        },
+        {
+          "label": "Clôture des dossiers (17 h)",
+          "date": "2026-02-13"
+        },
+        {
+          "label": "Épreuves physiques (11 et 12 avril)",
+          "date": "2026-04-11"
+        },
+        {
+          "label": "Épreuves écrites (2 et 3 mai)",
+          "date": "2026-05-02"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Dépôts de fin novembre à mi-février · épreuves physiques en avril · écrits début mai",
+      "officialUrl": "https://www.forcesarmees.gouv.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-isfar-bambey",
+      "title": "Concours direct d'entrée — Institut Supérieur de Formation Agricole et Rurale (ISFAR, ex-ENCR Bambey)",
+      "organization": "Université Alioune Diop de Bambey (UAD)",
+      "category": "CONCOURS",
+      "summary": "Formation aux métiers de l'agriculture et du développement rural, avec écrits dans 8 centres régionaux puis entretien.",
+      "eligibility": "Bacheliers de l'année des séries S1, S2, S3, S4 et S5.",
+      "series": [
+        "S1",
+        "S2",
+        "S3",
+        "S4",
+        "S5"
+      ],
+      "levels": [
+        "BACHELIER"
+      ],
+      "documents": [
+        "Demande manuscrite au directeur de l'ISFAR (centre d'examen, téléphone, e-mail)",
+        "Relevé de notes du bac ou attestation de réussite",
+        "Bon de versement des droits d'inscription"
+      ],
+      "fees": "10 000 FCFA (comptes UAD Ecobank/BICIS, Wave ou Orange Money)",
+      "exams": [
+        {
+          "subject": "Mathématiques",
+          "duration": "2 h",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Physique et chimie",
+          "duration": "2 h",
+          "coefficient": "2"
+        },
+        {
+          "subject": "SVT",
+          "duration": "2 h",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Dissertation",
+          "duration": "1 h",
+          "coefficient": "1"
+        },
+        {
+          "subject": "Entretien avec le jury (admissibles)"
+        }
+      ],
+      "applyMode": "Dossier physique à l'ISFAR ou dans un CAOSP, ou dossier scanné à concours.isfar@uadb.edu.sn. Admission définitive après visite médicale ; CNI obligatoire à chaque étape.",
+      "contact": "ISFAR Bambey : 77 477 50 22 · concours.isfar@uadb.edu.sn",
+      "recurring": true,
+      "usualPeriod": "Après le bac : dépôt jusqu'à mi-septembre · concours début octobre (dernière session publiée : 2024)",
+      "officialUrl": "https://www.uadb.edu.sn",
+      "sourceNote": "Dernier communiqué connu : session 2024 (dépôt avant le 16 septembre, concours le 2 octobre). Les dates de la session suivante sont à confirmer.",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-fastef-eleves-professeurs",
+      "title": "Concours de recrutement d'élèves-professeurs — FASTEF (UCAD)",
+      "organization": "Faculté des Sciences et Technologies de l'Éducation et de la Formation (FASTEF)",
+      "category": "CONCOURS",
+      "summary": "Devenir professeur de collège ou de lycée : options niveau bac, licence et master 2 (langues, lettres, histoire-géographie, mathématiques, physique-chimie, SVT, philosophie…).",
+      "eligibility": "Selon l'option : bac, licence ou master 2 complet (mémoire soutenu). Les candidats en Terminale, L3 ou M2 composent sous réserve et doivent produire leur diplôme avant fin août.",
+      "levels": [
+        "LYCEE",
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "documents": [
+        "Demande manuscrite au doyen de la FASTEF",
+        "Photocopie légalisée de la carte d'identité CEDEAO",
+        "Certificat de bonne vie et mœurs et casier judiciaire de moins de 3 mois",
+        "Certificat de visite et contre-visite médicale de moins de 3 mois",
+        "Photocopies légalisées des diplômes, attestations et relevés de notes"
+      ],
+      "applyMode": "Inscription en ligne sur concours.ucad.sn/fastef. Le dossier papier n'est exigé qu'en cas d'admissibilité.",
+      "details": "Options niveau bac : arabe, lettres-anglais, lettres-espagnol, lettres-portugais, lettres-histoire-géographie, maths-physique-chimie, maths-SVT. Niveau licence : allemand, anglais, arabe, espagnol, histoire-géographie, italien, lettres modernes, mathématiques, physique-chimie, portugais, russe, SVT. Niveau master 2 : mêmes disciplines + lettres classiques et philosophie.",
+      "openingDate": "2026-02-19",
+      "deadline": "2026-04-03",
+      "keyDates": [
+        {
+          "label": "Ouverture des inscriptions",
+          "date": "2026-02-19"
+        },
+        {
+          "label": "Clôture des inscriptions (23 h 59)",
+          "date": "2026-04-03"
+        },
+        {
+          "label": "Production du diplôme par les admis sous réserve",
+          "date": "2026-08-22"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Inscriptions de fin février à début avril",
+      "officialUrl": "https://concours.ucad.sn/fastef/",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ufr-sefs-ugb",
+      "title": "Concours d'élèves-professeurs — UFR SEFS, Université Gaston Berger",
+      "organization": "UFR Sciences de l'Éducation, de la Formation et du Sport — UGB Saint-Louis",
+      "category": "CONCOURS",
+      "summary": "Former les professeurs de collège et de lycée : CAE-CEM (niveau bac), CAEM (niveau licence) et CAES (master 2 en mathématiques).",
+      "eligibility": "Nationalité sénégalaise. CAE-CEM : bac (une seule option). CAEM : licence dans la spécialité (maths, physique-chimie, SVT). CAES : master 2 de mathématiques.",
+      "ageLimit": "CAE-CEM : 33 ans au plus au 31 juillet. CAEM et CAES : 34 ans au plus au 31 juillet.",
+      "levels": [
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "fees": "10 000 FCFA par concours, non remboursables (paiement Wave)",
+      "applyMode": "Dans Wave : Paiement ou Facture → UGB/UFR SEFS → payer 10 000 FCFA → lien de candidature reçu par SMS → formulaire en ligne. Admission définitive après dépôt d'un dossier physique conforme.",
+      "details": "Options CAE-CEM : maths/SVT, maths/physique-chimie, lettres-anglais, lettres-espagnol, lettres-histoire-géographie. On peut passer plusieurs concours de niveaux différents (frais distincts), mais une seule option CAE-CEM.",
+      "openingDate": "2026-05-25",
+      "deadline": "2026-07-30",
+      "keyDates": [
+        {
+          "label": "Ouverture des inscriptions",
+          "date": "2026-05-25"
+        },
+        {
+          "label": "Clôture des inscriptions",
+          "date": "2026-07-30"
+        },
+        {
+          "label": "Concours à l'UGB (8 et 9 août)",
+          "date": "2026-08-08"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Inscriptions de fin mai à fin juillet · concours début août",
+      "officialUrl": "https://www.ugb.sn",
+      "linkChecked": false
+    },
+    {
+      "slug": "concours-ecole-des-douanes",
+      "title": "Concours directs d'entrée à l'École des Douanes — contrôleurs, agents de constatation, préposés",
+      "organization": "Direction générale des Douanes du Sénégal",
+      "category": "CONCOURS",
+      "summary": "Recrutement d'agents des douanes selon le diplôme : bac (contrôleurs, sous-officiers), BFEM (agents de constatation, agents brevetés), CFEE (préposés).",
+      "eligibility": "Nationalité sénégalaise, droits civiques, bonne moralité, situation régulière vis-à-vis du recrutement. Taille minimale : 1,65 m (hommes), 1,60 m (femmes). Acuité visuelle d'au moins 15/10 sans correction. Aucune affection incompatible avec le métier. Candidats sous les drapeaux : autorisation de la hiérarchie.",
+      "ageLimit": "Concours directs : 20 à 30 ans. Emplois réservés : 35 ans au plus. Concours professionnels : 50 ans au plus (au 1er janvier de l'année concernée).",
+      "levels": [
+        "COLLEGE",
+        "LYCEE",
+        "BACHELIER",
+        "PROFESSIONNEL"
+      ],
+      "exams": [
+        {
+          "subject": "Bac — Culture générale : dissertation (fait économique, politique ou culturel)"
+        },
+        {
+          "subject": "Bac — Droit : institutions du Sénégal, pouvoirs publics, collectivités, décentralisation"
+        },
+        {
+          "subject": "Bac — Mathématiques : algèbre, probabilités, statistiques, analyse"
+        },
+        {
+          "subject": "Bac — Géographie du Sénégal"
+        },
+        {
+          "subject": "BFEM — Dissertation, mathématiques, géographie (Sénégal, Afrique), dictée"
+        },
+        {
+          "subject": "CFEE — Rédaction, arithmétique et géométrie de base, géographie du Sénégal, dictée avec questions"
+        }
+      ],
+      "applyMode": "Droits d'inscription payés via les plateformes agréées par l'École des Douanes ; candidatures validées par le ministère chargé du Budget.",
+      "recurring": true,
+      "usualPeriod": "Session ouverte par communiqué du ministère des Finances (pas de calendrier fixe)",
+      "officialUrl": "https://www.douanes.sn",
+      "sourceNote": "Le programme des épreuves est stable, mais le communiqué repris dans le manuel date des sessions 2017-2018 : âges et dates à vérifier sur douanes.sn à l'ouverture de la prochaine session.",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ena-senegal",
+      "title": "Concours d'entrée à l'École Nationale d'Administration (ENA) — cycles A et B",
+      "organization": "École Nationale d'Administration du Sénégal",
+      "category": "CONCOURS",
+      "summary": "La porte de la haute fonction publique : concours directs (cycle A niveau maîtrise/master, cycle B niveau bac) et concours professionnels pour les agents de l'État.",
+      "eligibility": "Cycle A direct : maîtrise ou diplôme classé au moins A3. Cycle B direct : baccalauréat. Professionnels : agents de l'État (hiérarchie B au moins et 5 ans de service pour le cycle A ; 4 ans en hiérarchie B ou C pour le cycle B), avec autorisation de l'autorité compétente.",
+      "ageLimit": "Concours directs : 18 à 33 ans. Concours professionnels : 53 ans au plus.",
+      "levels": [
+        "BACHELIER",
+        "DIPLOME",
+        "PROFESSIONNEL"
+      ],
+      "documents": [
+        "Demande manuscrite datée et signée au directeur général de l'ENA",
+        "Fiche de renseignements de l'ENA",
+        "Extrait de naissance et certificat de nationalité",
+        "Casier judiciaire n° 3 de moins de 3 mois",
+        "Certificat médical d'aptitude au service administratif",
+        "Copie légalisée du diplôme, CV, photo récente, enveloppe timbrée",
+        "Quittance des frais d'inscription"
+      ],
+      "fees": "10 000 FCFA",
+      "exams": [
+        {
+          "subject": "Cycle A : tests psychotechniques, culture générale, droit public ou économie politique ou gestion publique, épreuve de synthèse, oraux"
+        },
+        {
+          "subject": "Cycle B : tests psychotechniques, résumé de texte, dissertation de culture générale, oraux"
+        },
+        {
+          "subject": "Concours professionnels : matière de section, note de synthèse, droit public ou économie politique"
+        }
+      ],
+      "details": "Pour réussir : méthode de la synthèse, du résumé et de la dissertation, culture générale nationale et internationale, entraînement régulier aux tests psychotechniques et aux annales.",
+      "recurring": true,
+      "usualPeriod": "Session annuelle ouverte par arrêté (dates publiées par l'ENA)",
+      "officialUrl": "https://www.ena.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "admission-eismv",
+      "title": "Admission à l'École Inter-États des Sciences et Médecine Vétérinaires (EISMV)",
+      "organization": "École Inter-États des Sciences et Médecine Vétérinaires de Dakar",
+      "category": "ADMISSION",
+      "summary": "Devenir docteur vétérinaire dans une école régionale reconnue : santé animale, élevage, sécurité sanitaire des aliments, santé publique vétérinaire.",
+      "eligibility": "Bacheliers scientifiques remplissant les conditions fixées chaque année ; sélection sur dossier et critères académiques.",
+      "levels": [
+        "BACHELIER"
+      ],
+      "recurring": true,
+      "usualPeriod": "Selon le communiqué annuel de l'école",
+      "officialUrl": "https://www.eismv.org",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-iut-thies-dut",
+      "title": "Concours d'entrée en DUT — Institut Universitaire de Technologie (IUT) de Thiès",
+      "organization": "Université Iba Der Thiam de Thiès (UIDT)",
+      "category": "CONCOURS",
+      "summary": "Formations techniques et professionnalisantes en deux ans, avec un test QCM organisé dans 14 villes du pays.",
+      "eligibility": "Bacheliers ou élèves de Terminale.",
+      "ageLimit": "23 ans au plus au 1er janvier de l'année du concours.",
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Photocopie légalisée de la carte d'identité",
+        "Photocopie légalisée du bac (bacheliers)",
+        "Bulletins de Seconde, Première et Terminale (si disponibles)"
+      ],
+      "fees": "5 000 FCFA, non remboursables (paiement en ligne)",
+      "exams": [
+        {
+          "subject": "QCM : anglais, français, mathématiques, physique, logique (psychotechnique)"
+        }
+      ],
+      "applyMode": "Inscription en ligne sur iut.uidt.sn/admissions. Centres : Dakar, Guédiawaye, Rufisque, Thiès, Tivaouane, Mbour, Kaolack, Diourbel, Louga, Linguère, Saint-Louis, Tambacounda, Kolda, Ziguinchor.",
+      "details": "Après le DUT : emploi, licence professionnelle, école d'ingénieur ou création d'entreprise.",
+      "deadline": "2026-05-06",
+      "keyDates": [
+        {
+          "label": "Date limite des candidatures (23 h 59)",
+          "date": "2026-05-06"
+        },
+        {
+          "label": "Test QCM (15 h)",
+          "date": "2026-05-13"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Candidatures jusqu'à début mai · test mi-mai",
+      "officialUrl": "https://iut.uidt.sn/admissions",
+      "linkChecked": true
+    },
+    {
+      "slug": "admission-igt-ucad",
+      "title": "Licence en gouvernance territoriale et développement local — IGT (UCAD)",
+      "organization": "Institut de Gouvernance Territoriale et de Développement Local (IGT) — UCAD",
+      "category": "ADMISSION",
+      "summary": "Licence professionnelle en 3 ans : administration des collectivités, aménagement et développement territorial, animation territoriale et médiation sociale. 50 places après entretien.",
+      "eligibility": "Bacheliers de l'année, séries STEG, L et S.",
+      "series": [
+        "STEG",
+        "L",
+        "S"
+      ],
+      "places": 50,
+      "levels": [
+        "BACHELIER"
+      ],
+      "documents": [
+        "Demande manuscrite au directeur de l'IGT",
+        "Copies légalisées du bac, du relevé du bac et des relevés de Seconde, Première, Terminale",
+        "Copie légalisée de la CNI ou extrait de naissance de moins de 3 mois"
+      ],
+      "fees": "5 000 FCFA",
+      "applyMode": "Dépôt à la scolarité de l'IGT, dans les locaux de l'ESEA (route de Ouakam, Dakar). Sélection sur dossier puis entretien.",
+      "contact": "76 821 92 91 · igt@ucad.edu.sn",
+      "details": "Débouchés : administration publique, collectivités territoriales, agences de développement, ONG, projets de développement, services parapublics ; poursuite en master.",
+      "recurring": true,
+      "usualPeriod": "Dépôt de septembre à mi-octobre · rentrée en novembre (dernière session publiée : 2024)",
+      "officialUrl": "https://www.ucad.sn",
+      "sourceNote": "Dernier appel connu : session 2024 (dépôts du 1er septembre au 12 octobre). Vérifiez l'appel en cours auprès de l'IGT.",
+      "linkChecked": true
+    },
+    {
+      "slug": "admission-iupa-ucad",
+      "title": "Admission à l'Institut Universitaire de Pêche et d'Aquaculture (IUPA)",
+      "organization": "IUPA — Université Cheikh Anta Diop",
+      "category": "CONCOURS",
+      "summary": "Formations professionnalisantes en gestion des pêches, aquaculture, transformation des produits halieutiques et environnement côtier : les métiers de l'économie bleue.",
+      "eligibility": "Licence : titulaires d'un bac scientifique ou équivalent selon la filière. Cycles spécialisés : sur diplôme.",
+      "levels": [
+        "BACHELIER",
+        "DIPLOME"
+      ],
+      "documents": [
+        "Licence : demande manuscrite au directeur, copies légalisées du bac et du relevé, extrait de naissance de moins de 6 mois, copie légalisée de la CNI",
+        "Cycles spécialisés : extrait de naissance, diplômes et relevés légalisés, CNI, CV, lettre de motivation"
+      ],
+      "fees": "10 000 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Français"
+        },
+        {
+          "subject": "SVT"
+        },
+        {
+          "subject": "Mathématiques"
+        },
+        {
+          "subject": "Entretien avec le jury (admissibles)"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Appel à candidatures annuel de l'IUPA",
+      "officialUrl": "https://iupa.ucad.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-esea-ucad",
+      "title": "Concours direct d'entrée à l'École Supérieure d'Économie Appliquée (ESEA)",
+      "organization": "ESEA (ex-ENEA) — UCAD",
+      "category": "CONCOURS",
+      "summary": "Formations de 4 ans en aménagement du territoire et gestion urbaine (ATEGU), développement communautaire (DECOF) et planification économique (PEGO).",
+      "eligibility": "Étudiants sénégalais titulaires du bac des séries L, S ou STEG. Pas de double inscription la même année.",
+      "ageLimit": "24 ans au plus au 31 décembre de l'année du concours.",
+      "series": [
+        "L",
+        "S",
+        "STEG"
+      ],
+      "levels": [
+        "BACHELIER",
+        "ETUDIANT"
+      ],
+      "documents": [
+        "Demande manuscrite au directeur précisant la filière (ATEGU, DECOF ou PEGO)",
+        "Photocopie légalisée du bac ou de son relevé",
+        "Extrait de naissance de moins de 6 mois",
+        "Certificat de visite et contre-visite de moins de 3 mois",
+        "Admissibles : casier judiciaire et certificat de nationalité avant les oraux"
+      ],
+      "fees": "10 000 FCFA (plateforme InTouch)",
+      "exams": [
+        {
+          "subject": "Culture générale (commune)"
+        },
+        {
+          "subject": "Épreuve de spécialité"
+        },
+        {
+          "subject": "Mathématiques niveau Terminale L (ATEGU, DECOF) ou Terminale S/STEG (PEGO)"
+        },
+        {
+          "subject": "Oraux pour les admissibles"
+        }
+      ],
+      "applyMode": "Dépôt en ligne sur concours.ucad.sn.",
+      "openingDate": "2025-07-28",
+      "deadline": "2025-09-03",
+      "keyDates": [
+        {
+          "label": "Ouverture des dépôts",
+          "date": "2025-07-28"
+        },
+        {
+          "label": "Clôture des dépôts",
+          "date": "2025-09-03"
+        },
+        {
+          "label": "Épreuves écrites (9 et 10 septembre)",
+          "date": "2025-09-09"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Dépôts de fin juillet à début septembre · écrits mi-septembre",
+      "officialUrl": "https://esea.ucad.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ecole-armee-de-l-air",
+      "title": "Concours d'élèves officiers d'active — École de l'Armée de l'Air (EAA)",
+      "organization": "État-major général des Armées — École de l'Armée de l'Air",
+      "category": "CONCOURS",
+      "summary": "Former les futurs officiers de l'Armée de l'Air : pilotes, officiers de commandement, officiers techniques, sécurité aérienne.",
+      "eligibility": "Jeunes Sénégalais des deux sexes, civils ou militaires PDL, célibataires sans enfant, bac scientifique ou technique (candidature sous réserve acceptée), aptes médicalement (SIGYCOP 2 2 2 4 3 2 2).",
+      "ageLimit": "18 à 21 ans au 31 décembre de l'année du concours.",
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Formulaire de demande au ministre des Forces armées",
+        "Attestation, diplôme ou relevé du bac, ou certificat d'inscription en Terminale scientifique/technique",
+        "Photocopie de la CNI, extrait de naissance et casier judiciaire n° 3 de moins de 3 mois",
+        "Certificat médical (médecin militaire, moins de 3 mois)",
+        "Copie légalisée du certificat de nationalité, photo d'identité"
+      ],
+      "fees": "5 100 FCFA en ligne (Orange Money, Wave, KPay) · 5 000 FCFA en dépôt physique (Ecobank)",
+      "exams": [
+        {
+          "subject": "Épreuves physiques : 1 000 m, 100 m, corde, longueur, hauteur, poids",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Mathématiques",
+          "duration": "4 h",
+          "coefficient": "4"
+        },
+        {
+          "subject": "Sciences physiques",
+          "duration": "4 h",
+          "coefficient": "4"
+        },
+        {
+          "subject": "Français",
+          "duration": "4 h",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Anglais",
+          "duration": "2 h",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Tests psychotechniques (fin juin)"
+        }
+      ],
+      "applyMode": "Candidature en ligne sur concours.eaa.sn ou dépôt physique. Listes affichées dans les zones militaires de Dakar, Thiès, Saint-Louis, Ziguinchor et Kaolack.",
+      "deadline": "2026-02-27",
+      "keyDates": [
+        {
+          "label": "Clôture des inscriptions",
+          "date": "2026-02-27"
+        },
+        {
+          "label": "Épreuves physiques (14 et 15 mars)",
+          "date": "2026-03-14"
+        },
+        {
+          "label": "Épreuves écrites (16 et 17 mai)",
+          "date": "2026-05-16"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Inscriptions jusqu'à fin février · physique en mars · écrits mi-mai · psychotechniques fin juin",
+      "officialUrl": "https://concours.eaa.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ensetp-ucad",
+      "title": "Concours d'entrée à l'ENSETP — licences techniques (construction, électro-énergie, mécanique)",
+      "organization": "École Normale Supérieure d'Enseignement Technique et Professionnel (ENSETP) — UCAD",
+      "category": "CONCOURS",
+      "summary": "Formation des enseignants et professionnels du technique : licences en construction et ouvrages, systèmes électro-énergétiques, mécanique et procédés de fabrication.",
+      "eligibility": "Élèves de Terminale et bacheliers des séries S1, S2, S3, T1, T2, STIDD, ou titulaires d'un diplôme équivalent au bac.",
+      "series": [
+        "S1",
+        "S2",
+        "S3",
+        "T1",
+        "T2",
+        "STIDD"
+      ],
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Demande manuscrite au directeur de l'ENSETP",
+        "Copies légalisées de la CNI et du diplôme ou de l'attestation",
+        "Certificat de scolarité (élèves de Terminale)",
+        "Formulaire d'inscription (scolarité ou ensetp.ucad.sn)",
+        "Reçu des frais de dossier"
+      ],
+      "fees": "5 000 FCFA",
+      "applyMode": "Dépôt à la scolarité (Cité Claudel, Corniche Ouest, face à l'hôtel Terrou-Bi) ou par e-mail. La bourse n'est pas automatique.",
+      "contact": "Informations : M. Lat Niang, 77 521 03 43",
+      "recurring": true,
+      "usualPeriod": "Session annuelle (dates publiées par l'ENSETP)",
+      "officialUrl": "https://ensetp.ucad.sn/",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-inseps-ucad",
+      "title": "Tests d'entrée à l'INSEPS — licences sport, jeunesse et éducation physique",
+      "organization": "Institut National Supérieur de l'Éducation Populaire et du Sport (INSEPS) — UCAD",
+      "category": "CONCOURS",
+      "summary": "Trois voies : STASEJS (animation socio-éducative et jeunesse), STAPS-JL (métiers du sport et des loisirs) et parcours Éducation et motricité (futurs professeurs d'EPS).",
+      "eligibility": "Bacheliers des trois dernières sessions. Visite médicale obligatoire avant la rentrée pour les admis.",
+      "ageLimit": "24 ans au plus au 31 décembre de l'année des tests.",
+      "places": 40,
+      "levels": [
+        "BACHELIER",
+        "ETUDIANT"
+      ],
+      "documents": [
+        "Certificat de visite et contre-visite",
+        "Attestation de réussite ou diplôme du bac",
+        "Copie légalisée de la CNI",
+        "CV détaillé (STASEJS) ou CV sportif (STAPS-JL)",
+        "Reçu de paiement des frais"
+      ],
+      "fees": "10 000 FCFA",
+      "exams": [
+        {
+          "subject": "STASEJS — Test physique semi-Cooper (6 min)",
+          "coefficient": "1"
+        },
+        {
+          "subject": "STASEJS — Français",
+          "coefficient": "1,5"
+        },
+        {
+          "subject": "STASEJS — Entretien",
+          "coefficient": "1"
+        },
+        {
+          "subject": "STAPS-JL — 100 m, quintuple saut, 400 m ou Luc Léger (sur 20 chacun ; 30/60 requis)"
+        },
+        {
+          "subject": "STAPS-JL — Français (1 h 30), biologie humaine/SVT (1 h 30), sports collectifs, entretien"
+        }
+      ],
+      "details": "40 places en STAPS-JL (session 2025). Épreuves physiques au camp Général Idrissa Fall (Liberté 6).",
+      "recurring": true,
+      "usualPeriod": "Tests en octobre (dernière session publiée : 2025)",
+      "officialUrl": "https://inseps.ucad.sn",
+      "sourceNote": "Dernière session publiée : 2025 (tests du 7 au 30 octobre). Dates de la session suivante à confirmer.",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-endss-infirmier",
+      "title": "Concours direct — Licence en sciences infirmières (ENDSS, UCAD)",
+      "organization": "École Nationale de Développement Sanitaire et Social (ENDSS) — UCAD",
+      "category": "CONCOURS",
+      "summary": "Devenir infirmier ou infirmière diplômé(e) : licence en sciences infirmières et obstétricales, parcours infirmier. 50 places.",
+      "eligibility": "Nationalité sénégalaise ; bac L ou S, ou diplôme admis en équivalence.",
+      "series": [
+        "L",
+        "S"
+      ],
+      "places": 50,
+      "levels": [
+        "BACHELIER"
+      ],
+      "documents": [
+        "Demande manuscrite au recteur de l'UCAD",
+        "Copie légalisée du diplôme",
+        "Extrait de naissance et casier judiciaire de moins de 3 mois",
+        "Copie légalisée du certificat de nationalité",
+        "Certificat de visite et contre-visite de moins de 3 mois",
+        "Frais de dossier"
+      ],
+      "fees": "10 000 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Dissertation",
+          "duration": "3 h",
+          "coefficient": "1"
+        },
+        {
+          "subject": "Mathématiques ou SVT (au choix)",
+          "duration": "3 h",
+          "coefficient": "1"
+        }
+      ],
+      "applyMode": "Dépôt en ligne sur concours.ucad.sn/endss.",
+      "contact": "Scolarité ENDSS, km 4,5 avenue Cheikh Anta Diop · 76 276 76 44 / 71 057 77 35 · scolarite.endss@ucad.edu.sn",
+      "openingDate": "2025-08-22",
+      "deadline": "2025-09-30",
+      "keyDates": [
+        {
+          "label": "Ouverture des dépôts",
+          "date": "2025-08-22"
+        },
+        {
+          "label": "Clôture des dépôts",
+          "date": "2025-09-30"
+        },
+        {
+          "label": "Concours à Dakar",
+          "date": "2025-10-13"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Dépôts de fin août à fin septembre · concours mi-octobre",
+      "officialUrl": "https://endss.ucad.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ebad-ucad",
+      "title": "Concours d'entrée en licence — École de Bibliothécaires, Archivistes et Documentalistes (EBAD)",
+      "organization": "EBAD — Université Cheikh Anta Diop",
+      "category": "CONCOURS",
+      "summary": "Licence en sciences de l'information documentaire : archivistique, bibliothéconomie, documentation.",
+      "eligibility": "Bacheliers des deux dernières sessions et élèves de Terminale.",
+      "levels": [
+        "LYCEE",
+        "BACHELIER"
+      ],
+      "documents": [
+        "Demande manuscrite au directeur de l'EBAD",
+        "Photocopie légalisée du relevé du bac (ou certificat de scolarité en Terminale)",
+        "Photocopie légalisée de la CNI",
+        "Fiche de renseignements (ebad.ucad.sn)",
+        "Droits d'inscription"
+      ],
+      "fees": "10 000 FCFA, non remboursables",
+      "applyMode": "Dépôt à la scolarité de l'EBAD (Dakar) ou au bureau des examens du lycée Valdiodio Ndiaye (Kaolack). Test de présélection dans ces deux centres.",
+      "contact": "scolarite.ebad@ucad.edu.sn",
+      "recurring": true,
+      "usualPeriod": "Inscriptions d'avril à mi-juin · présélection fin juin (dernière session publiée : 2024)",
+      "officialUrl": "https://ebad.ucad.sn/",
+      "sourceNote": "Dernier communiqué connu : session 2024 (inscriptions du 23 avril au 15 juin, test le 22 juin). À confirmer pour la prochaine session.",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-ensoa",
+      "title": "Concours direct d'entrée à l'École Nationale des Sous-Officiers d'Active (ENSOA)",
+      "organization": "État-major général des Armées — ENSOA",
+      "category": "CONCOURS",
+      "summary": "Deux ans de formation pour devenir sous-officier des Forces armées. Admission sur titre (bac, BTS, DTS…) ou sur concours (BFEM).",
+      "eligibility": "Jeunes Sénégalais civils ou militaires PDL, aptes médicalement. Sur titre : bac, BTS, BPSM, DTS ou équivalent (informatique, électromécanique, électricité, hydraulique, maintenance, génie civil, administration). Sur concours : BFEM ou équivalent.",
+      "ageLimit": "18 à 21 ans au 1er novembre (jusqu'à 26 ans pour les titulaires de BTS, DTS ou équivalent).",
+      "levels": [
+        "COLLEGE",
+        "LYCEE",
+        "BACHELIER",
+        "ETUDIANT"
+      ],
+      "documents": [
+        "Demande manuscrite précisant l'option (sur titre ou sur concours)",
+        "Copie légalisée du certificat de nationalité",
+        "Extrait de naissance et casier judiciaire n° 3 de moins de 3 mois",
+        "Autorisation légalisée des parents ou tuteurs",
+        "Copie légalisée du diplôme, 2 photos, enveloppe timbrée",
+        "Certificat médical de moins de 3 mois",
+        "Reçu des frais (Ecobank, Centre comptable des Armées)"
+      ],
+      "fees": "5 500 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Course 100 m",
+          "coefficient": "3"
+        },
+        {
+          "subject": "Course 1 000 m",
+          "coefficient": "4"
+        },
+        {
+          "subject": "Saut en hauteur",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Lancer de poids",
+          "coefficient": "1"
+        },
+        {
+          "subject": "Grimper de corde 5 m",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Français (moins de 5/20 éliminatoire)",
+          "duration": "2 h",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Mathématiques",
+          "duration": "2 h",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Histoire",
+          "duration": "1 h",
+          "coefficient": "1"
+        },
+        {
+          "subject": "Géographie",
+          "duration": "1 h",
+          "coefficient": "1"
+        },
+        {
+          "subject": "Entretien (candidats sur titre)"
+        }
+      ],
+      "applyMode": "Dépôt aux bureaux de garnison des zones militaires ou aux brigades de gendarmerie. Moyenne physique inférieure à 10/20 éliminatoire.",
+      "deadline": "2026-02-20",
+      "keyDates": [
+        {
+          "label": "Clôture du dépôt (17 h)",
+          "date": "2026-02-20"
+        },
+        {
+          "label": "Épreuves physiques (18 et 19 avril)",
+          "date": "2026-04-18"
+        },
+        {
+          "label": "Épreuves écrites (9 et 10 mai)",
+          "date": "2026-05-09"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Dépôt jusqu'à fin février · physique en avril · écrits en mai · entretiens fin juin",
+      "officialUrl": "https://www.forcesarmees.gouv.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-cfj-2026",
+      "title": "Concours du Centre de Formation Judiciaire (CFJ) — magistrats, greffiers, éducateurs spécialisés",
+      "organization": "Centre de Formation Judiciaire — Ministère de la Justice",
+      "category": "CONCOURS",
+      "summary": "132 postes en 2026 : 35 magistrats, 45 greffiers, 12 inspecteurs de l'éducation surveillée (professionnel) et 40 éducateurs spécialisés.",
+      "eligibility": "Magistrature : master ou maîtrise en droit (direct) ; agents de l'État avec 5 ans en hiérarchie B au moins (professionnel). Greffiers : licence (direct) ; 5 ans en hiérarchie B (professionnel). Éducateurs spécialisés : bac. Diplômes du privé : reconnaissance CAMES ou ANAQ-Sup. Trois tentatives au plus par section.",
+      "ageLimit": "Magistrature directe : 40 ans · Greffiers directs : 33 ans · Éducateurs : 32 ans · Concours professionnels : 53 ans (au 1er janvier).",
+      "places": 132,
+      "levels": [
+        "BACHELIER",
+        "DIPLOME",
+        "PROFESSIONNEL"
+      ],
+      "documents": [
+        "Fiche de renseignements (site du CFJ)",
+        "Demande manuscrite au directeur général du CFJ (sous couvert du ministre de la Justice)",
+        "Copie certifiée conforme de la CNI et du diplôme",
+        "Certificat de nationalité, casier judiciaire et visite/contre-visite de moins de 3 mois (concours directs)",
+        "CV et certificat administratif de grade et d'ancienneté (concours professionnels)"
+      ],
+      "fees": "Magistrature 20 000 FCFA (direct) / 25 000 (professionnel) · Greffiers 15 000 / 20 000 · Inspecteurs 25 000 · Éducateurs 15 000 — via Orange Money",
+      "applyMode": "Inscription exclusivement en ligne sur le site du CFJ. Les admissibles déposent leur dossier physique au moins 48 h avant les épreuves d'admission.",
+      "contact": "CFJ, Fann boulevard Dial Diop, Dakar · 33 824 24 67",
+      "keyDates": [
+        {
+          "label": "Admissibilité — magistrature",
+          "date": "2026-09-20"
+        },
+        {
+          "label": "Admissibilité — greffiers",
+          "date": "2026-09-27"
+        },
+        {
+          "label": "Admissibilité — inspecteurs et éducateurs",
+          "date": "2026-10-04"
+        },
+        {
+          "label": "Admission — greffiers (professionnel)",
+          "date": "2026-10-12"
+        },
+        {
+          "label": "Admission — magistrature (professionnel)",
+          "date": "2026-10-19"
+        },
+        {
+          "label": "Admission — inspecteurs (professionnel)",
+          "date": "2026-11-23"
+        },
+        {
+          "label": "Admission — magistrature (direct)",
+          "date": "2026-11-30"
+        },
+        {
+          "label": "Admission — greffiers et éducateurs (direct)",
+          "date": "2026-12-14"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Inscriptions en ligne en été · admissibilité septembre-octobre · admission octobre à décembre",
+      "officialUrl": "https://www.cfj.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-lycee-scientifique-diourbel",
+      "title": "Concours d'entrée en Seconde — Lycée Scientifique d'Excellence de Diourbel (LSED)",
+      "organization": "Ministère de l'Éducation nationale",
+      "category": "CONCOURS",
+      "summary": "60 places en Seconde scientifique, avec bourse, internat et logements séparés filles/garçons.",
+      "eligibility": "Élèves sénégalais en classe de Troisième, sans redoublement au moyen. En Quatrième : 15/20 au moins en maths, SVT et sciences physiques, et 14/20 de moyenne générale. En Troisième : 16/20 dans ces trois matières et 14/20 de moyenne (sinon, rattrapage possible sur les notes du BFEM au 1er groupe : 16/20 par matière scientifique et 14/20 de moyenne).",
+      "ageLimit": "17 ans révolus au plus au 31 décembre de l'année du concours.",
+      "places": 60,
+      "levels": [
+        "COLLEGE"
+      ],
+      "documents": [
+        "Lettre manuscrite au ministre de l'Éducation nationale (adresses et téléphones de l'élève et d'un parent)",
+        "Extrait de naissance de moins d'un an",
+        "Copies certifiées des bulletins des 2 semestres de Quatrième et de Troisième",
+        "Attestation de l'inspecteur d'académie (notes scientifiques et moyenne au BFEM)",
+        "Certificat médical conforme au modèle officiel",
+        "Quittance des droits d'inscription"
+      ],
+      "fees": "10 000 FCFA, non remboursables",
+      "applyMode": "Dépôt à l'IEF de la circonscription de l'établissement du candidat. Liste des candidats, date et lieu du concours publiés par le ministère et les inspections.",
+      "openingDate": "2025-07-31",
+      "deadline": "2025-08-22",
+      "keyDates": [
+        {
+          "label": "Ouverture des dépôts (8 h)",
+          "date": "2025-07-31"
+        },
+        {
+          "label": "Clôture des dépôts (17 h)",
+          "date": "2025-08-22"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Dépôts de fin juillet à fin août, après le BFEM",
+      "officialUrl": "https://www.education.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-lynaqe",
+      "title": "Concours d'entrée en Seconde — Lycées Nation-Armée pour la Qualité et l'Équité (LYNAQE)",
+      "organization": "Ministère de l'Éducation nationale — Forces armées",
+      "category": "CONCOURS",
+      "summary": "240 places dans les lycées d'excellence de Sédhiou et Kaffrine, dirigés par un colonel avec un directeur des études : bourse, internat, encadrement militaire et civil.",
+      "eligibility": "Les 28 meilleurs élèves (14 filles, 14 garçons) retenus par chaque IEF parmi ses 100 premiers admis au BFEM ; nationalité sénégalaise ; inscrits en Troisième ; sans redoublement au moyen.",
+      "ageLimit": "17 ans au plus au 31 décembre de l'année du concours.",
+      "places": 240,
+      "levels": [
+        "COLLEGE"
+      ],
+      "documents": [
+        "Demande d'inscription signée par l'élève et contresignée par un parent ou le tuteur légal",
+        "Photocopie légalisée de la CNI du parent ou tuteur",
+        "Extrait de naissance",
+        "Bulletins certifiés des 2 semestres de Quatrième et de Troisième",
+        "Le cas échéant, tout document justifiant une vulnérabilité"
+      ],
+      "applyMode": "Les listes des 100 premiers au BFEM sont publiées dans les IA et IEF ; dépôt du dossier à l'IEF de l'établissement.",
+      "openingDate": "2025-08-13",
+      "deadline": "2025-08-22",
+      "keyDates": [
+        {
+          "label": "Publication des listes BFEM par IEF",
+          "date": "2025-08-12"
+        },
+        {
+          "label": "Ouverture des dépôts",
+          "date": "2025-08-13"
+        },
+        {
+          "label": "Clôture des dépôts (17 h)",
+          "date": "2025-08-22"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Mi-août, juste après les résultats du BFEM",
+      "officialUrl": "https://www.education.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "concours-prytanee-militaire",
+      "title": "Concours d'entrée en Sixième — Écoles militaires préparatoires (Prytanée militaire de Saint-Louis)",
+      "organization": "État-major général des Armées — Prytanée militaire",
+      "category": "CONCOURS",
+      "summary": "Pour les garçons de CM2 : un enseignement général d'excellence avec discipline, internat et préparation aux grandes écoles.",
+      "eligibility": "Élèves sénégalais de sexe masculin inscrits en CM2, aptes physiquement (acuité visuelle de 15/20 sans correction à la visite d'aptitude ; 10/10 avec ou sans verres à l'incorporation). Admission définitive après visite d'incorporation et production du certificat de nationalité.",
+      "ageLimit": "14 ans au plus au 31 décembre de l'année du concours.",
+      "levels": [
+        "PRIMAIRE"
+      ],
+      "documents": [
+        "Demande sur imprimé (garnisons, brigades, prytanee.sn) signée et légalisée par le parent ou tuteur",
+        "Extrait d'acte de naissance de moins de 3 mois (pas de jugement supplétif)",
+        "2 photos d'identité",
+        "Certificat médical d'un médecin militaire de moins de 3 mois",
+        "Certificat de scolarité de CM2 et relevé de notes du 1er semestre",
+        "Enveloppe timbrée 23 × 32 avec adresse et téléphone",
+        "Reçu des frais (Ecobank, compte du Centre comptable des Armées)",
+        "Le cas échéant, jugement de tutelle légalisé"
+      ],
+      "fees": "5 500 FCFA, non remboursables",
+      "exams": [
+        {
+          "subject": "Rédaction",
+          "duration": "1 h",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Problème",
+          "duration": "1 h",
+          "coefficient": "4"
+        },
+        {
+          "subject": "Opérations",
+          "duration": "30 min",
+          "coefficient": "2"
+        },
+        {
+          "subject": "Dictée",
+          "duration": "30 min",
+          "coefficient": "1"
+        },
+        {
+          "subject": "Texte suivi de questions",
+          "duration": "40 min",
+          "coefficient": "2"
+        }
+      ],
+      "applyMode": "Dépôt au bureau de garnison ou à la brigade de gendarmerie la plus proche. Convocation à retirer environ 15 jours avant le concours (ou sur prytanee.sn).",
+      "deadline": "2025-03-15",
+      "keyDates": [
+        {
+          "label": "Clôture des dépôts",
+          "date": "2025-03-15"
+        },
+        {
+          "label": "Concours",
+          "date": "2025-05-21"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Dépôts jusqu'à mi-mars · concours fin mai",
+      "officialUrl": "https://prytanee.sn",
+      "linkChecked": true
+    },
+    {
+      "slug": "admission-lycee-mariama-ba",
+      "title": "Intégrer le Lycée d'excellence Mariama Ba de Gorée",
+      "organization": "Ministère de l'Éducation nationale",
+      "category": "ADMISSION",
+      "summary": "Un des établissements les plus exigeants du pays, réservé aux jeunes filles : admission par le classement au concours national d'entrée en Sixième, puis dossier.",
+      "eligibility": "Jeunes filles de nationalité sénégalaise, parmi les meilleures au concours national d'entrée en Sixième. Une liste d'attente est établie : désistements et dossiers incomplets libèrent des places.",
+      "levels": [
+        "PRIMAIRE"
+      ],
+      "documents": [
+        "Lettre manuscrite du parent ou tuteur",
+        "Photocopie légalisée de la CNI du parent ou tuteur",
+        "Extrait de naissance de l'élève",
+        "Certificat de nationalité sénégalaise",
+        "Paiement des frais d'inscription"
+      ],
+      "details": "Se préparer dès le CM1 : viser les premières places, lire chaque jour, consolider les mathématiques et la rédaction. Les parents accompagnent les révisions et suivent les résultats.",
+      "recurring": true,
+      "usualPeriod": "Après les résultats du concours national d'entrée en Sixième",
+      "officialUrl": "https://www.education.sn",
+      "linkChecked": true
+    }
+  ]
+}

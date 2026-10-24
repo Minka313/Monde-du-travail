@@ -1,0 +1,356 @@
+{
+  "_source": "Bourses, programmes et stages ouverts aux Sénégalais, recherchés le 24/10/2026 sur les sites officiels (Chevening, Campus France, Stipendium Hungaricum, Türkiye Bursları, DAAD, MEXT, Mastercard Foundation, YALI, Erasmus+, ONU, Banque mondiale) et recoupés avec la presse spécialisée. Les dates des prochaines sessions sont indicatives tant que l'appel officiel n'est pas publié.",
+  "defaultSourceNote": "Recherche du club sur le site officiel (octobre 2026).",
+  "items": [
+    {
+      "slug": "bourse-eiffel-2027",
+      "title": "Bourse d'excellence Eiffel 2027 (France) — master et doctorat",
+      "organization": "Ministère de l'Europe et des Affaires étrangères — Campus France",
+      "category": "BOURSE",
+      "summary": "Programme phare de la France pour attirer les meilleurs étudiants étrangers en master et en doctorat. Attention : on ne candidate pas soi-même, c'est l'établissement français qui présente le dossier.",
+      "eligibility": "Étudiants étrangers de haut niveau admis ou en cours d'admission dans un établissement français (master ; doctorat en cotutelle ou codirection). Se renseigner tôt auprès de l'établissement visé : chaque université fixe sa propre date limite interne, souvent entre fin octobre et fin novembre.",
+      "levels": [
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "country": "France",
+      "benefits": "Allocation mensuelle, billet d'avion aller-retour, assurance santé et accompagnement de Campus France (frais de scolarité non couverts).",
+      "applyMode": "1) Choisir sa formation et contacter le service des relations internationales de l'établissement. 2) Déposer son dossier auprès de lui avant sa date interne. 3) L'établissement transmet les meilleurs dossiers à Campus France.",
+      "openingDate": "2026-10-02",
+      "deadline": "2027-01-06",
+      "keyDates": [
+        {
+          "label": "Ouverture de la campagne 2027",
+          "date": "2026-10-02"
+        },
+        {
+          "label": "Date limite de dépôt par les établissements (indicative)",
+          "date": "2027-01-06"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Campagne d'octobre à début janvier · résultats vers mars",
+      "officialUrl": "https://www.campusfrance.org/fr/le-programme-de-bourses-d-excellence-eiffel",
+      "sourceNote": "Dates relevées sur les pages d'universités partenaires (Paris Cité, Dauphine, Assas, Poitiers) : chaque établissement fixe une date limite interne plus précoce.",
+      "linkChecked": true
+    },
+    {
+      "slug": "campus-france-etudes-en-france-2027",
+      "title": "Études en France 2027 — procédure Campus France Sénégal",
+      "organization": "Campus France Sénégal",
+      "category": "ADMISSION",
+      "summary": "La procédure obligatoire pour candidater dans la plupart des formations en France depuis le Sénégal (licence, BUT, master, écoles). La campagne 2027 est ouverte depuis le 1er octobre 2026.",
+      "eligibility": "Bacheliers 2026 ou 2027 (bac obtenu avec au plus un redoublement), et étudiants ayant validé ou validant en 2027 un BTS, DUT, DiSEP, une licence ou un master au Sénégal (diplômes accrédités par l'ANAQ-Sup).",
+      "levels": [
+        "LYCEE",
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "country": "France",
+      "applyMode": "Créer son dossier sur la plateforme Études en France, payer les frais Campus France, passer l'entretien pédagogique, puis suivre les réponses des établissements avant la demande de visa.",
+      "openingDate": "2026-10-01",
+      "keyDates": [
+        {
+          "label": "Ouverture de la campagne Études en France 2027",
+          "date": "2026-10-01"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Ouverture début octobre · dépôts jusqu'en décembre-janvier selon les formations · fin de procédure en été",
+      "officialUrl": "https://senegal.campusfrance.org",
+      "sourceNote": "Les dates limites par type de formation (L1, master, écoles) sont publiées sur senegal.campusfrance.org : à consulter avant de déposer.",
+      "linkChecked": true
+    },
+    {
+      "slug": "bourse-chevening",
+      "title": "Bourse Chevening (Royaume-Uni) — master d'un an",
+      "organization": "Gouvernement britannique (FCDO) — Chevening",
+      "category": "BOURSE",
+      "summary": "Bourse entièrement financée pour un master d'un an dans l'université britannique de son choix, destinée aux futurs leaders. La session 2027-2028 a fermé le 6 octobre 2026.",
+      "eligibility": "Critères officiels sur chevening.org/eligibility : nationalité d'un pays éligible (dont le Sénégal), diplôme de premier cycle, expérience professionnelle (généralement 2 ans), engagement à revenir au pays, admission dans 3 masters britanniques.",
+      "levels": [
+        "DIPLOME",
+        "PROFESSIONNEL"
+      ],
+      "destination": "INTERNATIONAL",
+      "country": "Royaume-Uni",
+      "benefits": "Frais de scolarité, allocation mensuelle, billets d'avion et frais d'installation.",
+      "deadline": "2026-10-06",
+      "keyDates": [
+        {
+          "label": "Clôture des candidatures 2027-2028 (11 h UTC)",
+          "date": "2026-10-06"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Candidatures en ligne d'août à début octobre",
+      "officialUrl": "https://www.chevening.org/scholarship/senegal/",
+      "linkChecked": true
+    },
+    {
+      "slug": "bourse-stipendium-hungaricum",
+      "title": "Stipendium Hungaricum (Hongrie) — licence, master, doctorat",
+      "organization": "Gouvernement hongrois — Tempus Public Foundation",
+      "category": "BOURSE",
+      "summary": "Bourse du gouvernement hongrois pour étudier dans ses universités, en anglais ou en hongrois. Le Sénégal fait partie des pays partenaires ; les candidatures passent aussi par l'autorité de nomination nationale.",
+      "eligibility": "Ressortissants des pays partenaires ; conditions académiques et linguistiques propres à chaque programme ; nomination par l'autorité nationale compétente.",
+      "levels": [
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "country": "Hongrie",
+      "benefits": "Exonération des frais de scolarité, allocation mensuelle, logement ou aide au logement, assurance médicale.",
+      "applyMode": "Candidature en ligne sur apply.stipendiumhungaricum.hu (jusqu'à deux programmes) et respect de la procédure de l'autorité de nomination sénégalaise.",
+      "keyDates": [
+        {
+          "label": "Clôture de la session 2026/27 (14 h CET)",
+          "date": "2026-01-15"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Appel publié vers novembre · clôture mi-janvier (15 janvier lors de la dernière session)",
+      "officialUrl": "https://stipendiumhungaricum.hu",
+      "linkChecked": true
+    },
+    {
+      "slug": "bourse-turkiye-burslari",
+      "title": "Türkiye Bursları (Turquie) — bourses du gouvernement turc",
+      "organization": "Présidence des Turcs à l'étranger (YTB)",
+      "category": "BOURSE",
+      "summary": "Bourses complètes pour étudier en Turquie de la licence au doctorat, avec une année de turc préparatoire.",
+      "eligibility": "Selon le niveau : âge maximal et moyenne minimale fixés dans l'appel (consulter turkiyeburslari.gov.tr). Une seule candidature par cycle.",
+      "levels": [
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "country": "Turquie",
+      "benefits": "Frais de scolarité, allocation mensuelle, logement, assurance santé, billet d'avion, cours de turc.",
+      "applyMode": "Candidature en ligne gratuite sur le portail officiel ; entretiens pour les présélectionnés.",
+      "recurring": true,
+      "usualPeriod": "Candidatures en ligne de mi-janvier à fin février (habituellement du 10 janvier au 20 février)",
+      "officialUrl": "https://turkiyeburslari.gov.tr",
+      "sourceNote": "Calendrier 2027 non encore publié : fenêtre indiquée d'après les sessions précédentes.",
+      "linkChecked": true
+    },
+    {
+      "slug": "bourse-daad-epos",
+      "title": "DAAD EPOS (Allemagne) — masters et doctorats liés au développement",
+      "organization": "DAAD — Office allemand d'échanges universitaires",
+      "category": "BOURSE",
+      "summary": "Bourses pour des masters et doctorats en Allemagne dans des domaines liés au développement (agriculture, santé publique, économie, ingénierie, environnement…), réservées aux candidats avec expérience professionnelle.",
+      "eligibility": "Diplôme de licence (4 ans en général) et au moins deux ans d'expérience professionnelle dans le domaine ; diplôme obtenu depuis moins de 6 ans ; niveau de langue exigé par le programme.",
+      "levels": [
+        "DIPLOME",
+        "PROFESSIONNEL"
+      ],
+      "destination": "INTERNATIONAL",
+      "country": "Allemagne",
+      "benefits": "Allocation mensuelle, assurance, frais de voyage, cours d'allemand préparatoire selon les cas.",
+      "applyMode": "Candidater directement auprès de l'université qui porte le programme choisi (liste des cours EPOS sur le site du DAAD) ; chaque programme a sa propre date limite.",
+      "recurring": true,
+      "usualPeriod": "Dates limites entre août et octobre selon le programme, pour une rentrée l'année suivante",
+      "officialUrl": "https://www.daad.de/en/studying-in-germany/scholarships/",
+      "sourceNote": "Plusieurs programmes 2027/2028 ont fermé le 15 octobre 2026 ; vérifiez la date de chaque cours.",
+      "linkChecked": true
+    },
+    {
+      "slug": "bourse-mext-japon",
+      "title": "Bourses MEXT du gouvernement japonais",
+      "organization": "Gouvernement du Japon — Ambassade du Japon au Sénégal",
+      "category": "BOURSE",
+      "summary": "Études au Japon en recherche (master, doctorat), premier cycle, collège de technologie (KOSEN) ou formation spécialisée. La sélection se fait à l'Ambassade du Japon à Dakar.",
+      "eligibility": "Conditions d'âge et de diplôme par catégorie (voir l'appel de l'ambassade). Les dossiers envoyés directement au ministère japonais ne sont pas traités.",
+      "levels": [
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "country": "Japon",
+      "benefits": "Frais de scolarité, allocation mensuelle, billet d'avion aller-retour.",
+      "applyMode": "Dépôt du dossier à l'Ambassade du Japon au Sénégal, puis examen écrit et entretien à l'ambassade pour les présélectionnés.",
+      "recurring": true,
+      "usualPeriod": "Appel en avril · dossiers jusqu'à fin mai ou début juin · écrits et entretiens fin juin-juillet",
+      "officialUrl": "https://www.studyinjapan.go.jp/en/",
+      "sourceNote": "Session 2027 clôturée début juin 2026. Consultez aussi le site de l'Ambassade du Japon au Sénégal (sn.emb-japan.go.jp).",
+      "linkChecked": true
+    },
+    {
+      "slug": "bourse-mastercard-foundation-scholars",
+      "title": "Mastercard Foundation Scholars Program — universités partenaires",
+      "organization": "Mastercard Foundation",
+      "category": "BOURSE",
+      "summary": "Bourses complètes pour jeunes Africains talentueux à faibles revenus, avec un fort accent sur le leadership et l'engagement communautaire, dans des universités partenaires en Afrique et ailleurs.",
+      "eligibility": "Jeunes Africains au potentiel académique élevé, issus de milieux défavorisés, engagés dans leur communauté. Les critères exacts dépendent de chaque université partenaire.",
+      "levels": [
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "benefits": "Frais de scolarité, logement, voyage, accompagnement et programmes de leadership.",
+      "applyMode": "On candidate auprès de l'université partenaire (ex. Cape Town, Edinburgh, UBC, AUC…), chacune avec ses propres formulaires et dates.",
+      "recurring": true,
+      "usualPeriod": "Selon l'université, souvent entre septembre et novembre pour la rentrée suivante",
+      "officialUrl": "https://www.mastercardfdn.org/en/what-we-do/our-programs/mastercard-foundation-scholars-program/",
+      "linkChecked": true
+    },
+    {
+      "slug": "programme-mandela-washington-fellowship",
+      "title": "Mandela Washington Fellowship (YALI) — jeunes leaders africains",
+      "organization": "Département d'État des États-Unis — Young African Leaders Initiative",
+      "category": "PROGRAMME",
+      "summary": "Programme phare de leadership : six semaines dans une université américaine puis un sommet à Washington. Les candidatures 2027 ont fermé le 13 octobre 2026.",
+      "eligibility": "Avoir 25 à 35 ans à la date limite (21-24 ans à titre exceptionnel), un parcours de leadership avéré, maîtriser l'anglais, ne pas être citoyen ou résident permanent des États-Unis.",
+      "ageLimit": "25 à 35 ans (21-24 ans à titre exceptionnel)",
+      "levels": [
+        "DIPLOME",
+        "PROFESSIONNEL"
+      ],
+      "destination": "INTERNATIONAL",
+      "country": "États-Unis",
+      "benefits": "Programme entièrement pris en charge (voyage, hébergement, formation).",
+      "deadline": "2026-10-13",
+      "keyDates": [
+        {
+          "label": "Clôture des candidatures 2027",
+          "date": "2026-10-13"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Candidatures de fin septembre à mi-octobre · entretiens à l'ambassade de novembre à janvier",
+      "officialUrl": "https://www.mandelawashingtonfellowship.org",
+      "linkChecked": true
+    },
+    {
+      "slug": "bourses-amci-maroc",
+      "title": "Bourses de coopération du Royaume du Maroc (AMCI)",
+      "organization": "Agence Marocaine de Coopération Internationale — Direction des bourses (Sénégal)",
+      "category": "BOURSE",
+      "summary": "Chaque année, le Maroc offre des centaines de bourses aux bacheliers et étudiants sénégalais (260 places annoncées en 2026), du premier cycle au doctorat.",
+      "eligibility": "Bacheliers et étudiants sénégalais remplissant les critères de l'appel (série, mention, âge, filière). Sélection via le ministère sénégalais de l'Enseignement supérieur.",
+      "levels": [
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "AFRIQUE",
+      "country": "Maroc",
+      "benefits": "Bourse d'études et inscription dans un établissement marocain (conditions selon l'appel).",
+      "applyMode": "Dépôt papier (et version numérique sur clé USB lors de la session 2026) à la Direction des bourses, à Dakar.",
+      "deadline": "2026-07-14",
+      "keyDates": [
+        {
+          "label": "Clôture de la session 2026 à la Direction des bourses",
+          "date": "2026-07-14"
+        }
+      ],
+      "recurring": true,
+      "usualPeriod": "Appel en juin · dépôt jusqu'à mi-juillet",
+      "officialUrl": "https://www.amci.ma",
+      "linkChecked": true
+    },
+    {
+      "slug": "bourses-erasmus-mundus",
+      "title": "Masters Erasmus Mundus (Union européenne) — bourses complètes",
+      "organization": "Commission européenne — EACEA",
+      "category": "BOURSE",
+      "summary": "Des centaines de masters conjoints dans plusieurs pays européens, avec des bourses complètes ouvertes aux étudiants du monde entier, dont le Sénégal.",
+      "eligibility": "Licence (ou équivalent) dans la discipline ; conditions de langue et de dossier propres à chaque master.",
+      "levels": [
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "benefits": "Frais de participation, allocation mensuelle, voyage et installation.",
+      "applyMode": "Choisir un master dans le catalogue officiel et candidater directement auprès du consortium qui le porte.",
+      "recurring": true,
+      "usualPeriod": "Dates limites le plus souvent entre octobre et février pour la rentrée suivante",
+      "officialUrl": "https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en",
+      "linkChecked": true
+    },
+    {
+      "slug": "admission-aims-senegal",
+      "title": "Master en sciences mathématiques — AIMS Sénégal (bourse complète)",
+      "organization": "African Institute for Mathematical Sciences (AIMS) Sénégal",
+      "category": "ADMISSION",
+      "summary": "Master intensif en sciences mathématiques à Mbour, entièrement financé pour les étudiants admis, dans le réseau panafricain AIMS.",
+      "eligibility": "Licence en mathématiques, physique, informatique, ingénierie ou discipline proche, bon niveau en mathématiques. On ne peut pas candidater à deux centres AIMS à la fois.",
+      "levels": [
+        "DIPLOME"
+      ],
+      "destination": "SENEGAL",
+      "country": "Sénégal",
+      "benefits": "Frais de scolarité, hébergement, restauration et voyage pris en charge pour les admis.",
+      "recurring": true,
+      "usualPeriod": "Appel annuel commun au réseau AIMS (généralement entre la fin de l'année et le printemps)",
+      "officialUrl": "https://aims-senegal.org",
+      "sourceNote": "L'appel de la promotion 2027 n'est pas encore publié : surveillez le site d'AIMS Sénégal.",
+      "linkChecked": true
+    },
+    {
+      "slug": "stage-nations-unies",
+      "title": "Programme de stages des Nations Unies",
+      "organization": "Secrétariat de l'Organisation des Nations Unies",
+      "category": "STAGE",
+      "summary": "Stages de 2 à 6 mois dans les bureaux de l'ONU (New York, Genève, Nairobi, Addis-Abeba…) pour découvrir le travail des organisations internationales.",
+      "eligibility": "Étudiants en master ou doctorat, en dernière année de licence, ou jeunes diplômés (depuis moins d'un an) ; maîtrise de l'anglais ou du français.",
+      "levels": [
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "applyMode": "Offres publiées en continu sur le portail careers.un.org (filtre « Internship ») : candidater à chaque offre.",
+      "recurring": true,
+      "usualPeriod": "Offres publiées toute l'année",
+      "officialUrl": "https://careers.un.org",
+      "linkChecked": true
+    },
+    {
+      "slug": "stage-banque-mondiale",
+      "title": "Programme de stages de la Banque mondiale",
+      "organization": "Groupe de la Banque mondiale",
+      "category": "STAGE",
+      "summary": "Stages rémunérés à Washington ou dans les bureaux pays pour étudiants de master et de doctorat en économie, finance, développement, santé, éducation, environnement…",
+      "eligibility": "Étudiants inscrits en master ou doctorat (ou admis pour la rentrée suivante) ; maîtrise de l'anglais.",
+      "levels": [
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "benefits": "Rémunération horaire et, selon les cas, frais de voyage.",
+      "recurring": true,
+      "usualPeriod": "Deux sessions par an (stages d'été et d'hiver), candidatures publiées sur le site officiel",
+      "officialUrl": "https://www.worldbank.org/en/about/careers/programs-and-internships",
+      "linkChecked": true,
+      "sourceNote": "Calendrier indicatif : les fenêtres de candidature exactes sont annoncées sur la page officielle."
+    },
+    {
+      "slug": "bourse-gks-coree",
+      "title": "Global Korea Scholarship (GKS) — Corée du Sud",
+      "organization": "Gouvernement coréen — NIIED",
+      "category": "BOURSE",
+      "summary": "Bourses complètes du gouvernement coréen pour la licence, le master et le doctorat, avec une année de coréen.",
+      "eligibility": "Conditions d'âge, de moyenne et de nationalité fixées dans l'appel annuel ; candidature via l'ambassade de Corée ou directement auprès d'une université selon la voie choisie.",
+      "levels": [
+        "BACHELIER",
+        "ETUDIANT",
+        "DIPLOME"
+      ],
+      "destination": "INTERNATIONAL",
+      "country": "Corée du Sud",
+      "benefits": "Frais de scolarité, allocation mensuelle, billet d'avion, cours de coréen, assurance.",
+      "recurring": true,
+      "usualPeriod": "Programme graduate vers février-mars · programme undergraduate vers septembre-octobre",
+      "officialUrl": "https://www.studyinkorea.go.kr",
+      "linkChecked": true,
+      "sourceNote": "Calendrier indicatif d'après les sessions précédentes : vérifiez l'appel en cours sur studyinkorea.go.kr."
+    }
+  ]
+}

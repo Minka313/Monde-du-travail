@@ -6,8 +6,11 @@
 (function () {
   'use strict';
 
-  const CATEGORIES = { BOURSE: '🎓 Bourse', CONCOURS: '🏆 Concours', EXAMEN: '📝 Examen', ADMISSION: '🏫 Admission' };
-  const LEVELS = { COLLEGE: 'Collège', LYCEE: 'Lycée', BACHELIER: 'Bachelier', ETUDIANT: 'Étudiant' };
+  const CATEGORIES = { BOURSE: '🎓 Bourse', CONCOURS: '🏆 Concours', EXAMEN: '📝 Examen', ADMISSION: '🏫 Admission', STAGE: '💼 Stage', PROGRAMME: '🌍 Programme' };
+  const LEVELS = {
+    PRIMAIRE: 'Primaire (CM2)', COLLEGE: 'Collège', LYCEE: 'Lycée (Terminale)', BACHELIER: 'Bachelier', ETUDIANT: 'Étudiant',
+    DIPLOME: 'Diplômé (licence/master)', PROFESSIONNEL: 'Professionnel en poste',
+  };
   const DESTINATIONS = { SENEGAL: 'Sénégal', AFRIQUE: 'Afrique', INTERNATIONAL: 'International' };
   const PHASES = { OPEN: ['Ouvert', 'badge-success'], UPCOMING: ['À venir', 'badge-primary'], CLOSED: ['Clôturé', 'badge-muted'], RESULTS: ['Résultats', 'badge-warning'] };
   const STATUSES = { DRAFT: ['Brouillon', 'badge-muted'], PENDING_REVIEW: ['En attente', 'badge-warning'], PUBLISHED: ['Publiée', 'badge-success'], ARCHIVED: ['Archivée', 'badge-danger'] };
@@ -122,6 +125,17 @@
       </div>`;
   }
 
+  // Ligne d'épreuve : matière, durée et coefficient (facultatifs)
+  function examRow(exam = {}) {
+    return `
+      <div class="opp-exam-row" style="display:grid;grid-template-columns:3fr 1fr 1fr auto;gap:0.4rem;align-items:center;">
+        <input type="text" class="opp-exam-subject" value="${esc(exam.subject || '')}" maxlength="200" placeholder="Matière ou épreuve" aria-label="Épreuve">
+        <input type="text" class="opp-exam-duration" value="${esc(exam.duration || '')}" maxlength="30" placeholder="Durée (4 h)" aria-label="Durée">
+        <input type="text" class="opp-exam-coef" value="${esc(exam.coefficient || '')}" maxlength="40" placeholder="Coef." aria-label="Coefficient">
+        <button type="button" class="btn btn-sm btn-ghost opp-exam-remove" aria-label="Retirer cette épreuve">✕</button>
+      </div>`;
+  }
+
   function openForm(item) {
     document.getElementById('opp-modal-overlay')?.remove();
     const levels = item?.levels || [];
@@ -163,6 +177,23 @@
             <div id="opp-keydates" style="display:flex;flex-direction:column;gap:0.4rem;">${(item?.keyDates || []).map(keyDateRow).join('')}</div>
             <button type="button" class="btn btn-sm btn-secondary" id="opp-keydate-add" style="margin-top:0.4rem;">+ Ajouter une date</button>
             <label style="flex-direction:row;align-items:center;font-weight:500;margin-top:0.6rem;"><input type="checkbox" name="results" ${item?.phaseOverride === 'RESULTS' ? 'checked' : ''}> Les résultats sont publiés</label>
+            <label style="flex-direction:row;align-items:center;font-weight:500;margin-top:0.4rem;"><input type="checkbox" name="recurring" ${item?.recurring ? 'checked' : ''}> Session annuelle : une fois la date limite passée, annoncer la prochaine session</label>
+            <label style="margin-top:0.4rem;">Calendrier habituel<input name="usualPeriod" maxlength="200" value="${esc(item?.usualPeriod)}" placeholder="Ex. : Dépôt de janvier à mi-avril · concours mi-juin"></label>
+          </fieldset>
+
+          <fieldset style="border:1px solid #e2e8f0;border-radius:8px;padding:0.75rem;">
+            <legend style="font-weight:600;font-size:0.88rem;padding:0 0.3rem;">Fiche concours (facultatif)</legend>
+            <div style="display:grid;grid-template-columns:2fr 1fr;gap:0.75rem;">
+              <label>Frais de dossier<input name="fees" maxlength="300" value="${esc(item?.fees)}" placeholder="Ex. : 7 000 FCFA, non remboursables"></label>
+              <label>Nombre de places<input type="number" name="places" min="1" max="100000" value="${esc(item?.places ?? '')}"></label>
+            </div>
+            <label style="margin-top:0.6rem;">Limite d'âge<input name="ageLimit" maxlength="300" value="${esc(item?.ageLimit)}" placeholder="Ex. : Moins de 22 ans au 1er octobre de l'année du concours"></label>
+            <label style="margin-top:0.6rem;">Séries du bac acceptées (séparées par des virgules)<input name="series" maxlength="400" value="${esc((item?.series || []).join(', '))}" placeholder="S1, S2, S3, T1, T2"></label>
+            <p style="margin:0.6rem 0 0.35rem;font-size:0.85rem;font-weight:600;color:#334155;">Épreuves</p>
+            <div id="opp-exams" style="display:flex;flex-direction:column;gap:0.4rem;">${(item?.exams || []).map(examRow).join('')}</div>
+            <button type="button" class="btn btn-sm btn-secondary" id="opp-exam-add" style="margin-top:0.4rem;">+ Ajouter une épreuve</button>
+            <label style="margin-top:0.6rem;">Comment candidater<textarea name="applyMode" maxlength="1500" rows="2" placeholder="Plateforme, lieu de dépôt, étapes…">${esc(item?.applyMode)}</textarea></label>
+            <label style="margin-top:0.6rem;">Contact<input name="contact" maxlength="500" value="${esc(item?.contact)}" placeholder="Téléphone, e-mail de la scolarité…"></label>
           </fieldset>
 
           <label>Conditions d'éligibilité<textarea name="eligibility" maxlength="2000" rows="3" placeholder="Âge, moyenne, nationalité, série du bac…">${esc(item?.eligibility)}</textarea></label>
@@ -173,6 +204,7 @@
           <fieldset style="border:1px solid #fde68a;background:#fffbeb;border-radius:8px;padding:0.75rem;">
             <legend style="font-weight:600;font-size:0.88rem;padding:0 0.3rem;">Source officielle (obligatoire pour publier)</legend>
             <label>Lien officiel de l'annonce ou de la candidature<input type="url" name="officialUrl" maxlength="500" value="${esc(item?.officialUrl)}" placeholder="https://…"></label>
+            <label style="margin-top:0.6rem;">Origine des informations (affichée au public)<input name="sourceNote" maxlength="300" value="${esc(item?.sourceNote)}" placeholder="Ex. : Communiqué officiel de la session 2026"></label>
             <label style="flex-direction:row;align-items:flex-start;font-weight:500;margin-top:0.6rem;gap:0.5rem;">
               <input type="checkbox" name="markVerified" style="margin-top:0.2rem;">
               <span>J'ai vérifié aujourd'hui ces informations sur la source officielle.${item?.lastVerifiedAt ? ` <small style="color:#64748b;">(Dernière vérification : ${esc(frDate(item.lastVerifiedAt))})</small>` : ''}</span>
@@ -190,17 +222,24 @@
     document.body.appendChild(overlay);
     const form = overlay.querySelector('#opp-form');
     const keyDates = overlay.querySelector('#opp-keydates');
+    const exams = overlay.querySelector('#opp-exams');
     const close = () => overlay.remove();
 
     overlay.addEventListener('click', (event) => {
       if (event.target === overlay || event.target.closest('[data-opp-close]')) close();
       const remove = event.target.closest('.opp-keydate-remove');
       if (remove) remove.closest('.opp-keydate-row').remove();
+      const removeExam = event.target.closest('.opp-exam-remove');
+      if (removeExam) removeExam.closest('.opp-exam-row').remove();
     });
     overlay.addEventListener('keydown', (event) => { if (event.key === 'Escape') close(); });
     overlay.querySelector('#opp-keydate-add').addEventListener('click', () => {
       keyDates.insertAdjacentHTML('beforeend', keyDateRow());
       keyDates.lastElementChild.querySelector('input').focus();
+    });
+    overlay.querySelector('#opp-exam-add').addEventListener('click', () => {
+      exams.insertAdjacentHTML('beforeend', examRow());
+      exams.lastElementChild.querySelector('input').focus();
     });
     form.querySelector('[name="title"]').focus();
 
@@ -228,6 +267,22 @@
         benefits: text('benefits') || null,
         details: text('details') || null,
         officialUrl: text('officialUrl') || null,
+        sourceNote: text('sourceNote') || null,
+        recurring: Boolean(data.get('recurring')),
+        usualPeriod: text('usualPeriod') || null,
+        fees: text('fees') || null,
+        places: text('places') ? Number(text('places')) : null,
+        ageLimit: text('ageLimit') || null,
+        series: text('series').split(',').map((x) => x.trim()).filter(Boolean),
+        exams: [...exams.querySelectorAll('.opp-exam-row')]
+          .map((row) => ({
+            subject: row.querySelector('.opp-exam-subject').value.trim(),
+            duration: row.querySelector('.opp-exam-duration').value.trim() || null,
+            coefficient: row.querySelector('.opp-exam-coef').value.trim() || null,
+          }))
+          .filter((e) => e.subject),
+        applyMode: text('applyMode') || null,
+        contact: text('contact') || null,
       };
       if (data.get('markVerified')) payload.markVerified = true;
 

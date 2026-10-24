@@ -19,7 +19,7 @@
     <title>Concours & Opportunités - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
-    <link rel="stylesheet" href="css/opportunites.css?v=20261018-2">
+    <link rel="stylesheet" href="css/opportunites.css?v=20261025-1">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -81,9 +81,9 @@
     <main id="main-content">
         <section class="opp-hero hero-scene scene" data-scene="opp-hero">
             <div class="container reveal-up">
-                <span class="section-label">Bourses · Concours · Examens · Admissions</span>
+                <span class="section-label">Concours · Bourses · Admissions · Stages · Programmes</span>
                 <h1>Concours & Opportunités</h1>
-                <p>Les bourses, concours, examens et admissions à ne pas manquer, avec les dates limites, les conditions et le lien officiel pour candidater.</p>
+                <p>Les concours des grandes écoles et lycées d'excellence du Sénégal, les bourses pour étudier à l'étranger, les stages et programmes : conditions, dossier, épreuves, frais, calendrier et lien officiel.</p>
             </div>
         </section>
 
@@ -101,6 +101,8 @@
                         <button type="button" class="opp-pill" data-category="CONCOURS" aria-pressed="false">🏆 Concours</button>
                         <button type="button" class="opp-pill" data-category="EXAMEN" aria-pressed="false">📝 Examens</button>
                         <button type="button" class="opp-pill" data-category="ADMISSION" aria-pressed="false">🏫 Admissions</button>
+                        <button type="button" class="opp-pill" data-category="STAGE" aria-pressed="false">💼 Stages</button>
+                        <button type="button" class="opp-pill" data-category="PROGRAMME" aria-pressed="false">🌍 Programmes</button>
                     </div>
                     <div class="opp-selects">
                         <label>Rechercher
@@ -109,10 +111,13 @@
                         <label>Niveau
                             <select id="oppLevel">
                                 <option value="">Tous les niveaux</option>
-                                <option value="COLLEGE">Collège</option>
-                                <option value="LYCEE">Lycée</option>
+                                <option value="PRIMAIRE">Primaire (CM2)</option>
+                                <option value="COLLEGE">Collège (3e, BFEM)</option>
+                                <option value="LYCEE">Lycée (Terminale)</option>
                                 <option value="BACHELIER">Bachelier</option>
-                                <option value="ETUDIANT">Étudiant</option>
+                                <option value="ETUDIANT">Étudiant (licence)</option>
+                                <option value="DIPLOME">Diplômé (licence, master)</option>
+                                <option value="PROFESSIONNEL">Professionnel en poste</option>
                             </select>
                         </label>
                         <label>Destination
@@ -142,6 +147,28 @@
                     <div class="opp-skeleton"></div>
                     <div class="opp-skeleton"></div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Guide de préparation aux concours -->
+        <section class="section opp-guide-section" aria-labelledby="oppGuideTitle">
+            <div class="container page-content">
+                <span class="section-label">Méthode</span>
+                <h2 id="oppGuideTitle" class="opp-guide-title">Réussir un concours : la méthode en 6 étapes</h2>
+                <p class="opp-guide-lead">Les admis ne sont pas toujours les plus brillants : ce sont ceux qui s'organisent tôt, s'entraînent sur les vrais sujets et ne lâchent pas.</p>
+                <div class="opp-guide-grid">
+                    <article class="opp-guide-card"><span aria-hidden="true">🎯</span><h3>1. Choisir tôt ses cibles</h3><p>Repère dès la Première les 3 à 5 concours qui correspondent à ta série, à ton âge et à ton projet. Note leurs conditions d'âge : beaucoup s'arrêtent à 21 ou 22 ans.</p></article>
+                    <article class="opp-guide-card"><span aria-hidden="true">🗂️</span><h3>2. Préparer le dossier en avance</h3><p>Extraits de naissance et casier judiciaire de moins de 3 mois, copies légalisées, certificat de nationalité, visite médicale : ces pièces prennent des jours. Constitue un dossier type dès janvier.</p></article>
+                    <article class="opp-guide-card"><span aria-hidden="true">🗓️</span><h3>3. Un programme écrit</h3><p>Pas « je vais réviser » mais « mardi 18 h–20 h : suites numériques, 3 exercices ». Planifie la journée, la semaine et le mois, et vérifie chaque dimanche ce qui a été fait.</p></article>
+                    <article class="opp-guide-card"><span aria-hidden="true">📚</span><h3>4. Les annales avant tout</h3><p>Les concours se ressemblent d'une année à l'autre. Traite les sujets des sessions passées en temps réel : c'est là que tu comprends ce que le jury attend.</p></article>
+                    <article class="opp-guide-card"><span aria-hidden="true">⏱️</span><h3>5. Deux heures sans distraction</h3><p>Deux heures concentrées valent mieux que six heures dispersées. Téléphone hors de portée, objectif précis par séance, pauses courtes et régulières.</p></article>
+                    <article class="opp-guide-card"><span aria-hidden="true">💪</span><h3>6. Tenir dans la durée</h3><p>Une mauvaise note n'est pas une fin : c'est une information. La régularité bat l'intensité. Pour les concours militaires, l'entraînement physique commence des mois avant.</p></article>
+                </div>
+                <div class="opp-guide-cta">
+                    <a href="test-riasec.html" class="btn btn-outline">🧭 Quel concours pour mon profil ? Fais le test RIASEC</a>
+                    <a href="formations.html" class="btn btn-primary">Préparer l'oral et l'entretien avec le club →</a>
+                </div>
+                <p class="opp-guide-source">Fiches concours établies d'après les communiqués officiels, avec l'aimable référence du <em>Manuel des concours au Sénégal</em> (édition 2026, Wakil Mouhamed Ba, STAR SCHOOL).</p>
             </div>
         </section>
     </main>
@@ -255,6 +282,6 @@
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/main.js"></script>
-    <script defer src="js/opportunites.js?v=20261018-1"></script>
+    <script defer src="js/opportunites.js?v=20261025-1"></script>
 </body>
 </html>
