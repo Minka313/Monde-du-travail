@@ -21,8 +21,9 @@
     <meta name="twitter:card" content="summary_large_image">
     <title>Orientation & Métiers - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
-    <link rel="stylesheet" href="css/styles.min.css?v=20261018-2">
+    <link rel="stylesheet" href="css/styles.min.css?v=20261024-2">
     <script src="js/theme-engine.js"></script>
+    <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
 <body>
 <a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
@@ -608,7 +609,7 @@
 
         <!-- 4. Bandeau Inférieur Copyright Ocre / Ambré Centré -->
         <div class="footer-bottom-bar">
-            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+            <p class="footer-wow-line"><img src="images/wow-mark.svg" alt="" class="footer-wow-mark" width="22" height="22" loading="lazy"> <span class="footer-wow-name">WOW · World Of Work</span> <span aria-hidden="true">·</span> &copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
         </div>
     </div>
 </footer>
@@ -621,25 +622,13 @@
 <script defer src="js/config.js"></script>
 <script defer src="js/frontend-api.js"></script>
 <script defer src="js/analytics-tracker.js"></script>
-<script defer src="js/orientation-digital-data.js"></script>
-<script defer src="js/orientation-finance-data.js"></script>
-<script defer src="js/orientation-agri-data.js"></script>
-<script defer src="js/orientation-energy-data.js"></script>
-<script defer src="js/orientation-btp-data.js"></script>
-<script defer src="js/orientation-llsh-data.js"></script>
-<script defer src="js/orientation-industry-data.js"></script>
-<script defer src="js/orientation-geosciences-data.js"></script>
-<script defer src="js/orientation-health-data.js"></script>
-<script defer src="js/orientation-biochimie-data.js"></script>
-<script defer src="js/orientation-education-data.js"></script>
-<script defer src="js/orientation-environment-data.js"></script>
-<script defer src="js/orientation-hospitality-data.js"></script>
-<script defer src="js/orientation-communication-data.js"></script>
+<!-- Catalogue allégé : les fiches complètes ne sont chargées qu'à la recherche (voir scripts/build-job-data.js) -->
+<script defer src="data/catalog-lite.js?v=20261024-1"></script>
 <script defer src="js/job-merge.js"></script>
-<script defer src="js/orientation-data.js"></script>
+<script defer src="js/orientation-data.js?v=20261024-1"></script>
 <script defer src="js/orientation-quiz-data.js"></script>
 <script defer src="js/orientation-wheel.js"></script>
-<script defer src="js/orientation-ui.js?v=20261003-1"></script>
+<script defer src="js/orientation-ui.js?v=20261024-1"></script>
 <script defer src="js/notifications.js?v=2.3.1"></script>
 <script defer src="js/layout.js?v=2.3.1"></script>
 <script defer src="js/main.js"></script>

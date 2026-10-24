@@ -1791,7 +1791,10 @@
     getAllJobs: async function () {
       if (this._allJobsCache) return this._allJobsCache;
 
-      let combined = [...JOBS];
+      // Catalogue allégé (data/catalog-lite.js) : métiers déjà fusionnés, secteurs vides,
+      // les fusions ci-dessous sont alors sans effet
+      const lite = (typeof window !== 'undefined' && !this._fullCatalogLoaded) ? window.OrientationCatalogLite : null;
+      let combined = lite ? lite.jobs.map(job => Object.assign({}, job)) : [...JOBS];
 
       // 1. Intégration du catalogue numérique enrichi (OrientationDigitalData)
       const digitalData = (typeof window !== 'undefined' && window.OrientationDigitalData) 
@@ -2554,10 +2557,52 @@
     },
 
     // Recherche universelle en temps réel (métier, alias, famille, domaine, sous-domaine, compétence, outil, formation, école)
+    // Scripts complets des secteurs, chargés à la demande quand la page utilise le catalogue allégé
+    FULL_CATALOG_SCRIPTS: [
+      'js/orientation-digital-data.js', 'js/orientation-finance-data.js', 'js/orientation-agri-data.js',
+      'js/orientation-energy-data.js', 'js/orientation-btp-data.js', 'js/orientation-llsh-data.js',
+      'js/orientation-industry-data.js', 'js/orientation-geosciences-data.js', 'js/orientation-health-data.js',
+      'js/orientation-biochimie-data.js', 'js/orientation-education-data.js', 'js/orientation-environment-data.js',
+      'js/orientation-hospitality-data.js', 'js/orientation-communication-data.js',
+    ],
+    _fullCatalogLoaded: false,
+    _fullCatalogPromise: null,
+
+    /**
+     * Charge le contenu complet des fiches (recherche dans les études, écoles, missions…).
+     * Sans effet si la page a déjà chargé les scripts des secteurs.
+     */
+    loadFullCatalog: function () {
+      if (typeof window === 'undefined' || !window.OrientationCatalogLite || this._fullCatalogLoaded) {
+        return Promise.resolve();
+      }
+      if (this._fullCatalogPromise) return this._fullCatalogPromise;
+      const load = (src) => new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.async = false; // ordre d'exécution conservé
+        script.onload = resolve;
+        script.onerror = () => reject(new Error(`Chargement impossible : ${src}`));
+        document.head.appendChild(script);
+      });
+      this._fullCatalogPromise = Promise.all(this.FULL_CATALOG_SCRIPTS.map(load))
+        .then(() => {
+          this._fullCatalogLoaded = true;
+          this._allJobsCache = null;
+        })
+        .catch((error) => {
+          // Recherche dégradée sur le catalogue allégé plutôt qu'un échec
+          console.warn('[OrientationData]', error.message);
+          this._fullCatalogPromise = null;
+        });
+      return this._fullCatalogPromise;
+    },
+
     searchJobs: async function (query) {
       if (!query || typeof query !== 'string' || !query.trim()) {
         return [];
       }
+      await this.loadFullCatalog();
       const rawQ = query.trim().toLowerCase();
       const q = rawQ;
       const normalizeText = (s) => (s || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');

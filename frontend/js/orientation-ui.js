@@ -1748,6 +1748,11 @@
   function initUniversalSearch() {
     if (!dom.heroSearchInput) return;
 
+    // La recherche porte sur le contenu complet des fiches : chargé dès que l'on s'apprête à chercher
+    const warmFullCatalog = () => window.OrientationData.loadFullCatalog?.();
+    dom.heroSearchInput.addEventListener('focus', warmFullCatalog, { once: true });
+    dom.heroSearchInput.addEventListener('pointerenter', warmFullCatalog, { once: true });
+
     const closeSuggestions = () => {
       if (dom.searchSuggestionsBox) {
         dom.searchSuggestionsBox.style.display = 'none';
