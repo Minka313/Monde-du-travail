@@ -6,6 +6,7 @@ const STATIC_PAGES = [
   { path: '/metiers', changefreq: 'weekly', priority: '0.9' },
   { path: '/opportunites', changefreq: 'daily', priority: '0.8' },
   { path: '/formations', changefreq: 'weekly', priority: '0.8' },
+  { path: '/test-riasec', changefreq: 'monthly', priority: '0.8' },
   { path: '/blog', changefreq: 'daily', priority: '0.8' },
   { path: '/forum', changefreq: 'daily', priority: '0.7' },
   { path: '/about', changefreq: 'monthly', priority: '0.5' },

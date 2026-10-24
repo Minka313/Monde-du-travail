@@ -8,6 +8,7 @@
 
   const esc = (value) => window.AdminPages.escapeHtml(value == null ? '' : value);
   const toast = (message, type) => window.AdminPages.showToast(message, type);
+  const RIASEC = { R: 'Réaliste', I: 'Investigateur', A: 'Artistique', S: 'Social', E: 'Entreprenant', C: 'Conventionnel' };
   const PERIODS = [[7, '7 jours'], [30, '30 jours'], [90, '90 jours'], [365, '12 mois']];
   const state = { days: 30, data: null };
   const nf = new Intl.NumberFormat('fr-FR');
@@ -111,6 +112,8 @@
           ${bars('Centres d\'intérêt', d.byInterest, { total: k.profiled })}
           ${bars('Pays', d.byCountry, { labelOf: (r) => countryName(r.label), empty: 'La localisation est disponible une fois le site déployé sur Vercel.' })}
           ${bars('Villes', d.byCity)}
+          ${bars(`Type RIASEC dominant (${nf.format(d.riasec?.tests || 0)} tests d'orientation)`, d.riasec?.byType || [], { labelOf: (r) => `${r.label} · ${RIASEC[r.label] || r.label}`, empty: 'Aucun test d\'orientation RIASEC terminé sur la période.' })}
+          ${bars('Codes RIASEC les plus fréquents', d.riasec?.topCodes || [], { labelOf: (r) => `${r.label} (${r.label.split('').map((l) => RIASEC[l]).join(', ')})`, total: d.riasec?.tests, empty: 'Aucun test d\'orientation RIASEC terminé sur la période.' })}
           ${bars('Appareils', d.byDevice, { labelOf: (r) => ({ mobile: 'Téléphone', tablet: 'Tablette', desktop: 'Ordinateur' }[r.label] || r.label) })}
         </div>
 
@@ -134,6 +137,8 @@
     add('Pays', d.byCountry, (r) => countryName(r.label));
     add('Ville', d.byCity);
     add('Appareil', d.byDevice);
+    add('RIASEC dominant', d.riasec?.byType || []);
+    add('Code RIASEC', d.riasec?.topCodes || []);
     d.contentByProfile.forEach((p) => {
       p.jobs.forEach((j) => lines.push([`Métiers vus · ${p.profile}`, j.title, j.count]));
       p.formations.forEach((f) => lines.push([`Formations vues · ${p.profile}`, f.title, f.count]));

@@ -105,4 +105,17 @@ describe('Profils visiteurs', () => {
     const lyceen = d.contentByProfile.find((x) => x.profile === 'Lycéen');
     expect(lyceen.jobs[0]).toMatchObject({ id: 'developpeur-backend', title: 'Developpeur backend' });
   });
+
+  it('compte les profils RIASEC obtenus au test d\'orientation', async () => {
+    await prisma.analyticsEvent.createMany({ data: [
+      { sessionId: SESSION, eventType: 'riasec_result', entityType: 'riasec', entityId: 'IRC' },
+      { sessionId: SESSION_2, eventType: 'riasec_result', entityType: 'riasec', entityId: 'ISA' },
+      { sessionId: SESSION_2, eventType: 'riasec_result', entityType: 'riasec', entityId: '<x>' },
+    ] });
+    const d = (await request(app).get('/api/analytics/profiles?days=7').set('Authorization', `Bearer ${ultraToken}`)).body.data;
+    expect(d.riasec.tests).toBeGreaterThanOrEqual(2);
+    expect(d.riasec.byType.find((x) => x.label === 'I').count).toBeGreaterThanOrEqual(2);
+    expect(d.riasec.topCodes.map((x) => x.label)).toEqual(expect.arrayContaining(['IRC', 'ISA']));
+    expect(d.riasec.topCodes.map((x) => x.label)).not.toContain('<x>');
+  });
 });

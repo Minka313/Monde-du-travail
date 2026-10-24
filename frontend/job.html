@@ -21,7 +21,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <title>Orientation & Métiers - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
-    <link rel="stylesheet" href="css/styles.min.css?v=20261024-3">
+    <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -150,7 +150,7 @@
                 <button type="button" id="interestAccordionToggle" class="interest-accordion-toggle" aria-expanded="false" aria-controls="interestExplorerBox" style="display:none;">
                     <div class="accordion-toggle-left">
                         <span class="accordion-toggle-icon">🧭</span>
-                        <span class="accordion-toggle-text">Boussole d'orientation : Quiz RIASEC & Roue des Métiers</span>
+                        <span class="accordion-toggle-text">Boussole d'orientation : Test RIASEC & Roue des Métiers</span>
                     </div>
                     <span class="accordion-chevron" aria-hidden="true">&darr;</span>
                 </button>
@@ -161,7 +161,7 @@
                         <div class="interest-icon-badge">🧭</div>
                         <div>
                             <h3 style="margin:0 0 0.25rem 0;color:#0f172a;font-size:1.25rem;">Boussole d'orientation : Trouve ta voie d'avenir</h3>
-                            <p style="margin:0;color:#64748b;font-size:0.92rem;">Inspiré du CNOSP (Ministère de l'Éducation Nationale) et du test RIASEC : évalue ta personnalité, fais tourner la roue de l'orientation et découvre les métiers faits pour toi !</p>
+                            <p style="margin:0;color:#64748b;font-size:0.92rem;">Passe le test RIASEC (modèle de Holland) pour découvrir tes intérêts professionnels, fais tourner la roue de l'orientation ou explore par centres d'intérêt.</p>
                         </div>
                     </div>
 
@@ -169,7 +169,7 @@
                     <div class="boussole-modes-nav" role="tablist" aria-label="Modes de la boussole">
                         <button type="button" id="tabModeQuiz" class="boussole-mode-btn active" role="tab" aria-selected="true" aria-controls="boussoleQuizView">
                             <span>📝</span>
-                            <span>Quiz Personnalité & Métiers</span>
+                            <span>Test RIASEC complet</span>
                             <span class="boussole-mode-badge">Recommandé</span>
                         </button>
                         <button type="button" id="tabModeWheel" class="boussole-mode-btn" role="tab" aria-selected="false" aria-controls="boussoleWheelView">
@@ -182,39 +182,15 @@
                         </button>
                     </div>
 
-                    <!-- VUE 1 : QUIZ RIASEC INTERACTIF -->
+                    <!-- VUE 1 : TEST RIASEC (page dédiée test-riasec.html) -->
                     <div id="boussoleQuizView" class="boussole-view-panel active" role="tabpanel" aria-labelledby="tabModeQuiz">
-                        <div class="quiz-container">
-                            <!-- Barre de progression -->
-                            <div class="quiz-progress-bar-wrap">
-                                <div class="quiz-progress-header">
-                                    <span id="quizQuestionCategory" class="quiz-category-tag">Phase 1</span>
-                                    <span id="quizQuestionCounter" class="quiz-counter-text">Question 1 sur 8</span>
-                                </div>
-                                <div class="quiz-progress-track">
-                                    <div id="quizProgressFill" class="quiz-progress-fill" style="width: 12.5%;"></div>
-                                </div>
-                            </div>
-
-                            <!-- Carte de la Question -->
-                            <div class="quiz-card">
-                                <h4 id="quizQuestionText" class="quiz-question-title">Chargement du test...</h4>
-                                <p class="quiz-hint-text">Sélectionne la réponse qui correspond le plus spontanément à ce que tu es :</p>
-                                <div id="quizOptionsGrid" class="quiz-options-grid">
-                                    <!-- Options injectées par orientation-ui.js -->
-                                </div>
-                            </div>
-
-                            <!-- Actions de navigation du Quiz -->
-                            <div class="quiz-actions-bar">
-                                <button type="button" id="btnQuizPrev" class="btn btn-outline btn-sm" style="display:none;">
-                                    <span>&larr;</span>
-                                    <span>Question précédente</span>
-                                </button>
-                                <button type="button" id="btnQuizNext" class="btn btn-primary" disabled>
-                                    <span>Suivant</span>
-                                    <span>&rarr;</span>
-                                </button>
+                        <div class="riasec-cta-card">
+                            <div class="riasec-cta-letters" aria-hidden="true"><span>R</span><span>I</span><span>A</span><span>S</span><span>E</span><span>C</span></div>
+                            <div class="riasec-cta-body">
+                                <h4>Le test d'orientation RIASEC du club</h4>
+                                <p>48 activités (ou 24 en version express) pour mesurer tes six types d'intérêts, ton code de Holland, des indicateurs de fiabilité, et les métiers du catalogue classés par affinité. Gratuit, sans inscription, PDF signé WOW.</p>
+                                <p class="riasec-cta-last" id="riasecLastResult" hidden></p>
+                                <a href="test-riasec.html" class="btn btn-primary" id="riasecCtaBtn"><span>Commencer le test</span> <span>&rarr;</span></a>
                             </div>
                         </div>
                     </div>
@@ -632,5 +608,20 @@
 <script defer src="js/notifications.js?v=2.3.1"></script>
 <script defer src="js/layout.js?v=2.3.1"></script>
 <script defer src="js/main.js"></script>
+<script>
+  // Dernier profil RIASEC enregistré sur cet appareil (test-riasec.html)
+  (function () {
+    try {
+      var r = JSON.parse(localStorage.getItem('lmdt_riasec_result') || 'null');
+      if (!r || !/^[RIASEC]{3}$/.test(r.code)) return;
+      var p = document.getElementById('riasecLastResult');
+      p.textContent = 'Ton dernier profil : ' + r.code + ' (' + new Date(r.date).toLocaleDateString('fr-FR') + ').';
+      p.hidden = false;
+      var a = document.getElementById('riasecCtaBtn');
+      a.href = 'test-riasec.html?resultat';
+      a.firstElementChild.textContent = 'Voir mon profil et mes métiers';
+    } catch (e) { /* stockage indisponible */ }
+  })();
+</script>
 </body>
 </html>

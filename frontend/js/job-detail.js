@@ -305,6 +305,8 @@
       valReadingTime.textContent = `${readMin} min`;
     }
 
+    renderRiasecMetric(job);
+
     // 5. Actions d'en-tête (Favoris, Partage, Impression)
     setupActionsBar(job);
 
@@ -870,4 +872,28 @@
     });
   }
 
+
+  // Code RIASEC du métier ; si un profil a été enregistré sur cet appareil (test-riasec.html),
+  // affiche aussi l'affinité entre ce profil et le métier.
+  function renderRiasecMetric(job) {
+    const ribbon = document.getElementById('jobMetricsRibbon');
+    if (!ribbon || !/^[RIASEC]{3}$/.test(job.riasec || '')) return;
+    const engine = window.RiasecEngine;
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem('lmdt_riasec_result') || 'null'); } catch (_) { /* stockage indisponible */ }
+    const affinity = engine && saved?.scores ? engine.affinity(saved.scores, job.riasec) : null;
+    const names = engine ? job.riasec.split('').map((l) => engine.TYPES[l].name).join(', ') : '';
+    document.getElementById('metricCardRiasec')?.remove();
+    const card = document.createElement('a');
+    card.className = 'metric-ribbon-card metric-ribbon-link';
+    card.id = 'metricCardRiasec';
+    card.href = affinity != null ? 'test-riasec.html?resultat' : 'test-riasec.html';
+    card.title = affinity != null ? `Ton profil ${saved.code} comparé au code de ce métier` : `Profil d'intérêts du métier : ${names}. Fais le test pour comparer avec le tien.`;
+    card.innerHTML = `<span class="metric-icon" aria-hidden="true">🧭</span>
+      <div class="metric-text-group">
+        <span class="metric-label">Profil RIASEC</span>
+        <strong class="metric-val">${job.riasec.split('').join(' · ')}${affinity != null ? ` — ${affinity} % avec toi` : ''}</strong>
+      </div>`;
+    ribbon.appendChild(card);
+  }
 })();

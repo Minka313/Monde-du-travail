@@ -100,11 +100,11 @@
     return `WOW-${String(kind).toUpperCase().slice(0, 3)}-${code.slice(0, 3)}-${code.slice(3)}`;
   }
 
-  const KIND_LABELS = { MET: 'Fiche métier', FOR: 'Fiche formation', RAP: 'Rapport du bureau', MEN: 'Compte rendu de mentorat' };
+  const KIND_LABELS = { MET: 'Fiche métier', FOR: 'Fiche formation', RAP: 'Rapport du bureau', MEN: 'Compte rendu de mentorat', ORI: 'Profil d\'orientation' };
 
   /**
    * Bloc de signature WOW (HTML autonome, styles en ligne pour les fenêtres d'impression).
-   * @param {Object} opts { kind: 'MET'|'FOR'|'RAP'|'MEN', id, date, sealSrc }
+   * @param {Object} opts { kind: 'MET'|'FOR'|'RAP'|'MEN'|'ORI', id, date, sealSrc }
    * sealSrc : URL du fichier wow-seal.svg. À utiliser dans une page dont la signature est
    * masquée à l'écran : Chromium perd alors les dégradés d'un SVG en ligne à l'impression.
    */

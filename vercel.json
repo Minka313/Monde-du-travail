@@ -101,11 +101,11 @@
       "dest": "/frontend/logo.$1"
     },
     {
-      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor)$",
+      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor|test-riasec)$",
       "dest": "/frontend/$1.html"
     },
     {
-      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor)\\.html$",
+      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor|test-riasec)\\.html$",
       "dest": "/frontend/$1.html"
     },
     {
@@ -119,6 +119,10 @@
     {
       "src": "^/(connexion|adhesion)(\\.html)?$",
       "dest": "/frontend/login.html"
+    },
+    {
+      "src": "^/test-orientation(\\.html)?$",
+      "dest": "/frontend/test-riasec.html"
     },
     {
       "src": "/frontend/(.*)",

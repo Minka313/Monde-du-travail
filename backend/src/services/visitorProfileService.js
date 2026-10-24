@@ -124,7 +124,7 @@ class VisitorProfileService {
 
     const [
       visitors, newVisitors, returning, profiled, engagement,
-      byStatus, byLevel, byCountry, byCity, byDevice, interestRows, contentRows, pdfRows,
+      byStatus, byLevel, byCountry, byCity, byDevice, interestRows, contentRows, pdfRows, riasecRows,
     ] = await Promise.all([
       prisma.visitorProfile.count({ where: active }),
       prisma.visitorProfile.count({ where: { firstSeenAt: { gte: since } } }),
@@ -144,6 +144,10 @@ class VisitorProfileService {
         GROUP BY 1, 2, 3 ORDER BY count DESC LIMIT 400`,
       prisma.$queryRaw`SELECT event_type AS type, COUNT(*)::int AS count FROM analytics_events
         WHERE created_at >= ${since} AND event_type IN ('job_pdf', 'formation_pdf') GROUP BY 1`,
+      // Codes de Holland obtenus au test d'orientation (test-riasec.html)
+      prisma.$queryRaw`SELECT entity_id AS code, COUNT(*)::int AS count FROM analytics_events
+        WHERE created_at >= ${since} AND event_type = 'riasec_result' AND entity_id ~ '^[RIASEC]{3}$'
+        GROUP BY 1 ORDER BY count DESC`,
     ]);
 
     const sorted = (rows, key) => rows
@@ -190,6 +194,12 @@ class VisitorProfileService {
       byDevice: sorted(byDevice, 'device'),
       pdf: Object.fromEntries(pdfRows.map((r) => [r.type, r.count])),
       contentByProfile: Object.values(byProfile).sort((a, b) => b.views - a.views),
+      riasec: {
+        tests: riasecRows.reduce((n, r) => n + r.count, 0),
+        byType: Object.entries(riasecRows.reduce((acc, r) => ({ ...acc, [r.code[0]]: (acc[r.code[0]] || 0) + r.count }), {}))
+          .map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count),
+        topCodes: riasecRows.slice(0, 8).map((r) => ({ label: r.code, count: r.count })),
+      },
     };
   }
 }
