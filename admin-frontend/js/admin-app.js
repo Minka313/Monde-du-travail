@@ -6,6 +6,7 @@
   const MODULE_PERMISSIONS = {
     dashboard: 'dashboard.read',
     analytics: 'analytics.read',
+    visiteurs: 'analytics.read',
     organization: 'organization.read',
     // Examen des rapports : Présidence (Ultra Admin) uniquement
     rapports: 'reports.review',

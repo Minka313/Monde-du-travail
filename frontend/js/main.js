@@ -1139,14 +1139,34 @@
 
       const width = window.innerWidth || document.documentElement.clientWidth;
       const device = width <= 768 ? 'mobile' : width <= 1024 ? 'tablet' : 'desktop';
-      const apiBase = (window.LMT_CONFIG && window.LMT_CONFIG.API_URL) ? window.LMT_CONFIG.API_URL : (window.Api && window.Api.baseUrl ? window.Api.baseUrl : '/api');
+      const apiBase = window.AppConfig?.API_BASE || (window.LMT_CONFIG && window.LMT_CONFIG.API_URL) || '/api';
 
+      const sessionId = window.AnalyticsTracker?.getSessionId?.() || null;
       const payload = JSON.stringify({
         visitorId,
+        sessionId,
         path: window.location.pathname || '/',
         referrer: document.referrer || '',
         device,
       });
+
+      // Temps réellement passé sur la page (onglet visible), envoyé à la sortie
+      if (sessionId && navigator.sendBeacon) {
+        let visibleSince = document.visibilityState === 'visible' ? Date.now() : null;
+        let elapsed = 0;
+        const flush = () => {
+          if (visibleSince) { elapsed += Date.now() - visibleSince; visibleSince = null; }
+          const seconds = Math.round(elapsed / 1000);
+          if (seconds < 2) return;
+          elapsed = 0;
+          navigator.sendBeacon(`${window.AppConfig?.API_BASE || '/api'}/analytics/engagement`, new Blob([JSON.stringify({ sessionId, seconds })], { type: 'text/plain' }));
+        };
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden') flush();
+          else visibleSince = Date.now();
+        });
+        window.addEventListener('pagehide', flush);
+      }
 
       const token = window.Api?.getToken ? window.Api.getToken() : null;
       const headers = { 'Content-Type': 'application/json' };
@@ -1166,128 +1186,155 @@
   }
 
   /**
-   * PROFILAGE PROGRESSIF (ZÉRO FRICTION)
-   * Affiche une bannière discrète après 2 pages vues ou 45s de navigation
-   * pour qualifier le visiteur (Lycéen, Étudiant, Jeune Pro, Reconversion)
-   * et lier son profil à son session_id pour les analytics d'orientation.
+   * PROFIL VISITEUR (FACULTATIF, ANONYME)
+   * Questionnaire en 3 étapes (situation, niveau, centres d'intérêt) proposé après
+   * 2 pages vues ou 45 s, rappel 7 jours plus tard en cas de fermeture.
+   * Réouvrable depuis l'espace membre : window.VisitorSurvey.open().
    */
+  const SURVEY_DONE_KEY = 'lmt_visitor_profile';
+  const SURVEY_OPTIONS = {
+    statuses: [
+      ['Collégien', '🧒'], ['Lycéen', '🎒'], ['Étudiant', '🎓'], ['Jeune diplômé', '📜'],
+      ['Professionnel', '💼'], ['En reconversion', '🔄'], ['Parent', '👪'], ['Enseignant ou conseiller', '🧑‍🏫'],
+    ],
+    levels: ['Collège', 'Seconde ou Première', 'Terminale / Bac', 'Bac+1 à Bac+3', 'Bac+4 et plus', 'Formation professionnelle', 'Autre'],
+    interests: [
+      'Numérique & IA', 'Santé', 'Finance & banque', 'Entrepreneuriat & commerce', 'BTP & architecture',
+      'Agriculture & agroalimentaire', 'Énergie & environnement', 'Communication & médias', 'Éducation & social',
+      'Industrie & ingénierie', 'Droit & administration', 'Arts & culture', 'Tourisme & hôtellerie',
+    ],
+  };
+  // Anciennes réponses (bandeau à 4 choix) reprises comme point de départ
+  const LEGACY_STATUS = { 'Lycéen': 'Lycéen', 'Étudiant': 'Étudiant', 'Jeune Pro': 'Jeune diplômé', 'Reconversion': 'En reconversion' };
+
+  function apiBaseUrl() {
+    return window.AppConfig?.API_BASE || window.LMT_CONFIG?.API_URL || '/api';
+  }
+
+  function readSurvey() {
+    try { return JSON.parse(localStorage.getItem(SURVEY_DONE_KEY) || 'null'); } catch (_) { return null; }
+  }
+
+  function openVisitorSurvey({ manual = false } = {}) {
+    if (document.getElementById('progressiveProfileBanner')) return;
+    const previous = readSurvey() || {};
+    let legacy = null;
+    try { legacy = localStorage.getItem('lmt_user_profile'); } catch (_) { /* stockage indisponible */ }
+    const answers = {
+      status: previous.status || LEGACY_STATUS[legacy] || null,
+      educationLevel: previous.educationLevel || null,
+      interests: Array.isArray(previous.interests) ? previous.interests.slice() : [],
+    };
+    const skipLevel = () => ['Parent', 'Enseignant ou conseiller'].includes(answers.status);
+
+    const banner = document.createElement('div');
+    banner.className = 'progressive-profile-banner vp-survey';
+    banner.id = 'progressiveProfileBanner';
+    banner.setAttribute('role', 'dialog');
+    banner.setAttribute('aria-label', 'Mieux te connaître');
+    document.body.appendChild(banner);
+
+    const chip = (value, label, selected, attr) => `<button type="button" class="prog-profile-chip${selected ? ' is-selected' : ''}" ${attr}="${escapeHtml(value)}" aria-pressed="${selected}">${label}</button>`;
+
+    function step(n) {
+      const total = skipLevel() ? 2 : 3;
+      const index = n === 3 && skipLevel() ? 2 : n;
+      const head = `
+        <div class="prog-profile-header">
+          <span class="prog-profile-badge">🎯 Étape ${index} / ${total}</span>
+          <button type="button" class="prog-profile-close" data-vp="close" aria-label="Fermer pour l'instant">&times;</button>
+        </div>`;
+      const foot = '<p class="vp-note">🔒 Anonyme et facultatif : sert à adapter le site et à mieux comprendre nos visiteurs.</p>';
+      if (n === 1) {
+        banner.innerHTML = `${head}
+          <h3 class="prog-profile-title">Pour t'orienter au mieux, tu es…</h3>
+          <div class="prog-profile-chips vp-chips">${SURVEY_OPTIONS.statuses.map(([v, e]) => chip(v, `<span class="chip-emoji">${e}</span><span>${escapeHtml(v)}</span>`, answers.status === v, 'data-status')).join('')}</div>${foot}`;
+      } else if (n === 2) {
+        banner.innerHTML = `${head}
+          <h3 class="prog-profile-title">Ton niveau d'études actuel</h3>
+          <div class="prog-profile-chips vp-chips">${SURVEY_OPTIONS.levels.map((v) => chip(v, escapeHtml(v), answers.educationLevel === v, 'data-level')).join('')}</div>
+          <div class="vp-actions"><button type="button" class="vp-link" data-vp="back1">← Retour</button><button type="button" class="vp-link" data-vp="skip2">Passer</button></div>${foot}`;
+      } else {
+        banner.innerHTML = `${head}
+          <h3 class="prog-profile-title">Ce qui t'intéresse <small>(3 au maximum)</small></h3>
+          <div class="prog-profile-chips vp-chips vp-interests">${SURVEY_OPTIONS.interests.map((v) => chip(v, escapeHtml(v), answers.interests.includes(v), 'data-interest')).join('')}</div>
+          <div class="vp-actions"><button type="button" class="vp-link" data-vp="back2">← Retour</button><button type="button" class="vp-submit" data-vp="finish">Terminer</button></div>${foot}`;
+      }
+    }
+
+    async function finish() {
+      const sessionId = window.AnalyticsTracker?.getSessionId?.();
+      const btn = banner.querySelector('[data-vp="finish"]');
+      if (btn) btn.disabled = true;
+      try {
+        if (sessionId) {
+          await fetch(`${apiBaseUrl()}/analytics/visitor-profile`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...(window.Api?.getToken?.() ? { Authorization: `Bearer ${window.Api.getToken()}` } : {}) },
+            body: JSON.stringify({ sessionId, ...answers }),
+            keepalive: true,
+          });
+        }
+        localStorage.setItem(SURVEY_DONE_KEY, JSON.stringify({ ...answers, savedAt: Date.now() }));
+        if (answers.status) {
+          localStorage.setItem('lmt_user_profile', answers.status);
+          if (window.AnalyticsTracker) window.AnalyticsTracker.userProfile = answers.status;
+        }
+      } catch (_) { /* le site reste utilisable même si l'envoi échoue */ }
+      banner.innerHTML = '<div class="prog-profile-success" style="display:flex;"><span>✨</span><span>Merci ! Le site s\'adapte désormais à ton profil.</span></div>';
+      document.dispatchEvent(new CustomEvent('visitor-profile:saved', { detail: answers }));
+      setTimeout(() => { banner.classList.remove('visible'); setTimeout(() => banner.remove(), 350); }, 1800);
+    }
+
+    banner.addEventListener('click', (e) => {
+      const statusBtn = e.target.closest('[data-status]');
+      if (statusBtn) { answers.status = statusBtn.dataset.status; step(skipLevel() ? 3 : 2); return; }
+      const levelBtn = e.target.closest('[data-level]');
+      if (levelBtn) { answers.educationLevel = levelBtn.dataset.level; step(3); return; }
+      const interestBtn = e.target.closest('[data-interest]');
+      if (interestBtn) {
+        const v = interestBtn.dataset.interest;
+        const i = answers.interests.indexOf(v);
+        if (i >= 0) answers.interests.splice(i, 1);
+        else if (answers.interests.length < 3) answers.interests.push(v);
+        step(3);
+        return;
+      }
+      const action = e.target.closest('[data-vp]')?.dataset.vp;
+      if (action === 'back1') step(1);
+      if (action === 'back2') step(skipLevel() ? 1 : 2);
+      if (action === 'skip2') { answers.educationLevel = null; step(3); }
+      if (action === 'finish') finish();
+      if (action === 'close') {
+        if (!manual) {
+          try { localStorage.setItem('lmt_profile_dismissed_until', Date.now() + 7 * 24 * 3600 * 1000); } catch (_) { /* stockage indisponible */ }
+        }
+        banner.classList.remove('visible');
+        setTimeout(() => banner.remove(), 350);
+      }
+    });
+
+    step(1);
+    setTimeout(() => banner.classList.add('visible'), 50);
+  }
+
+  window.VisitorSurvey = { open: () => openVisitorSurvey({ manual: true }), read: readSurvey };
+
   function initProgressiveProfiling() {
     try {
-      // 1. Si le profil est déjà connu, ne rien afficher
-      const existingProfile = (window.AnalyticsTracker && typeof window.AnalyticsTracker.getUserProfile === 'function')
-        ? window.AnalyticsTracker.getUserProfile()
-        : localStorage.getItem('lmt_user_profile');
-      if (existingProfile) return;
-
-      // 2. Si l'utilisateur a fermé la bannière récemment (rappel dans 7 jours)
+      if (readSurvey()) return;
       const dismissedUntil = localStorage.getItem('lmt_profile_dismissed_until');
       if (dismissedUntil && Date.now() < Number(dismissedUntil)) return;
 
-      // 3. Calcul du seuil de déclenchement (2 pages vues dans la session ou 45 secondes)
       let sessionViews = 1;
       try {
         sessionViews = (parseInt(sessionStorage.getItem('lmt_session_views'), 10) || 0) + 1;
         sessionStorage.setItem('lmt_session_views', sessionViews);
-      } catch (_) {}
+      } catch (_) { /* stockage indisponible */ }
 
-      let bannerShown = false;
-
-      function renderBanner() {
-        if (bannerShown) return;
-        if (document.getElementById('progressiveProfileBanner')) return;
-
-        bannerShown = true;
-
-        const banner = document.createElement('div');
-        banner.className = 'progressive-profile-banner';
-        banner.id = 'progressiveProfileBanner';
-        banner.setAttribute('role', 'dialog');
-        banner.setAttribute('aria-label', 'Profilage d\'orientation personnalisé');
-
-        banner.innerHTML = `
-          <div class="prog-profile-header">
-            <span class="prog-profile-badge">🎯 Orientation sur-mesure</span>
-            <button type="button" class="prog-profile-close" id="closeProfileBanner" aria-label="Fermer pour l'instant">&times;</button>
-          </div>
-          <h3 class="prog-profile-title">Pour te suggérer de meilleurs parcours...</h3>
-          <p class="prog-profile-desc">Dis-nous qui tu es pour adapter automatiquement les opportunités et les conseils à ta situation :</p>
-          <div class="prog-profile-chips" id="progProfileChips">
-            <button type="button" class="prog-profile-chip" data-profile="Lycéen">
-              <span class="chip-emoji">🎒</span>
-              <span>Lycéen</span>
-            </button>
-            <button type="button" class="prog-profile-chip" data-profile="Étudiant">
-              <span class="chip-emoji">🎓</span>
-              <span>Étudiant</span>
-            </button>
-            <button type="button" class="prog-profile-chip" data-profile="Jeune Pro">
-              <span class="chip-emoji">💼</span>
-              <span>Jeune Pro</span>
-            </button>
-            <button type="button" class="prog-profile-chip" data-profile="Reconversion">
-              <span class="chip-emoji">🔄</span>
-              <span>Reconversion</span>
-            </button>
-          </div>
-          <div class="prog-profile-success" id="progProfileSuccess" style="display:none;">
-            <span>✨</span>
-            <span>Profil mémorisé ! Les parcours d'orientation s'adaptent désormais à toi.</span>
-          </div>
-        `;
-
-        document.body.appendChild(banner);
-
-        // Animation d'entrée douce
-        setTimeout(() => banner.classList.add('visible'), 50);
-
-        // Écouteur de sélection de profil
-        banner.querySelectorAll('.prog-profile-chip').forEach(chip => {
-          chip.addEventListener('click', async () => {
-            const selectedProfile = chip.getAttribute('data-profile');
-            chip.disabled = true;
-            if (window.AnalyticsTracker) {
-              const saved = await window.AnalyticsTracker.setUserProfile(selectedProfile);
-              if (!saved) {
-                chip.disabled = false;
-                return;
-              }
-            } else {
-              try { localStorage.setItem('lmt_user_profile', selectedProfile); } catch (_) {}
-            }
-
-            const chipsContainer = banner.querySelector('#progProfileChips');
-            const successBox = banner.querySelector('#progProfileSuccess');
-            if (chipsContainer) chipsContainer.style.display = 'none';
-            if (successBox) successBox.style.display = 'flex';
-
-            // Fermeture automatique après confirmation
-            setTimeout(() => {
-              banner.classList.remove('visible');
-              setTimeout(() => banner.remove(), 350);
-            }, 1800);
-          });
-        });
-
-        // Écouteur de fermeture discrète
-        const closeBtn = banner.querySelector('#closeProfileBanner');
-        if (closeBtn) {
-          closeBtn.addEventListener('click', () => {
-            try {
-              localStorage.setItem('lmt_profile_dismissed_until', Date.now() + 7 * 24 * 3600 * 1000);
-            } catch (_) {}
-            banner.classList.remove('visible');
-            setTimeout(() => banner.remove(), 350);
-          });
-        }
-      }
-
-      // Déclenchement conditionnel : immédiat si >= 2 pages explorées, sinon après 45 secondes
-      if (sessionViews >= 2) {
-        setTimeout(renderBanner, 1500);
-      } else {
-        setTimeout(renderBanner, 45000);
-      }
-    } catch (_) {}
+      // Déclenchement : vite après 2 pages explorées, sinon après 45 secondes
+      setTimeout(() => openVisitorSurvey(), sessionViews >= 2 ? 1500 : 45000);
+    } catch (_) { /* jamais bloquant */ }
   }
 
   function init() {

@@ -5,6 +5,7 @@
     dashboard: { label: 'Tableau de bord', icon: '📊' },
     vitrine: { label: 'Vitrine & Éditorial', icon: '🎨' },
     analytics: { label: 'Audience & Présence', icon: '📈' },
+    visiteurs: { label: 'Profils visiteurs', icon: '🧭' },
     organization: { label: 'Organisation & Fonctionnement', icon: '🏛️' },
     rapports: { label: 'Rapports du bureau', icon: '📑' },
     mentorat: { label: 'Mentorat', icon: '🧑‍🏫' },
@@ -208,6 +209,7 @@
         { module: 'users', label: 'Gestion des Utilisateurs', icon: '👥', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('users') },
         { module: 'organization', label: 'Organisation & Bureau', icon: '🏛️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('organization') },
         { module: 'rapports', label: 'Rapports du bureau (secrétariat, trésorerie…)', icon: '📑', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('rapports') },
+        { module: 'visiteurs', label: 'Profils visiteurs (situation, pays, contenus consultés)', icon: '🧭', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('visiteurs') },
         { module: 'mentorat', label: 'Mentorat (binômes, comptes rendus, messages des mentors)', icon: '🧑‍🏫', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('mentorat') },
         { module: 'notifications', label: 'Notifications Push', icon: '🔔', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('notifications') },
         { module: 'logs', label: 'Journal d\'activité (Logs)', icon: '📋', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('logs') },
@@ -559,6 +561,9 @@
           break;
         case 'rapports':
           html = await window.AdminReports.render();
+          break;
+        case 'visiteurs':
+          html = await window.AdminVisitors.render();
           break;
         case 'mentorat':
           html = '<div class="card"><div class="card-header"><div><h2 style="margin:0 0 0.25rem;">🧑‍🏫 Mentorat</h2><p style="margin:0;font-size:0.85rem;color:#64748b;">Binômes, formations confiées aux mentors, comptes rendus à valider et messages. Les mentors travaillent depuis leur Espace Mentor sur le site.</p></div><a class="btn btn-outline" style="text-decoration:none;" href="../frontend/mentor.html" target="_blank" rel="noopener">Espace Mentor du site</a></div></div><div id="admin-mentor-root"></div>';
@@ -6634,6 +6639,10 @@
     }
     if (module === 'rapports') {
       window.AdminReports.bind();
+      return;
+    }
+    if (module === 'visiteurs') {
+      window.AdminVisitors.bind();
       return;
     }
     if (module === 'mentorat') {

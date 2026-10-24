@@ -1,4 +1,5 @@
 const AnalyticsService = require('../services/analyticsService');
+const VisitorProfileService = require('../services/visitorProfileService');
 
 /**
  * Contrôleur d'analyse d'audience et de mesure de la présence des membres.
@@ -10,7 +11,7 @@ class AnalyticsController {
    */
   static async track(req, res) {
     try {
-      const { visitorId, path, referrer, device } = req.body || {};
+      const { visitorId, path, referrer, device, sessionId } = req.body || {};
 
       // Détection de l'IP réelle y compris derrière proxy Vercel
       const forwarded = req.headers['x-forwarded-for'];
@@ -28,6 +29,8 @@ class AnalyticsController {
         userAgent,
         userId,
       });
+      // Profil anonyme du visiteur : visites, pages, localisation approximative
+      VisitorProfileService.recordVisit({ sessionId, userId, device, headers: req.headers });
 
       return res.status(200).json({ success: true });
     } catch (_) {
@@ -118,5 +121,41 @@ class AnalyticsController {
     }
   }
 }
+
+// ===== Profils visiteurs =====
+
+AnalyticsController.getVisitorOptions = (req, res) => {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.json({ success: true, data: VisitorProfileService.options() });
+};
+
+AnalyticsController.saveVisitorProfile = async (req, res, next) => {
+  try {
+    const { sessionId, status, educationLevel, interests } = req.body || {};
+    const data = await VisitorProfileService.saveProfile({
+      sessionId, status, educationLevel, interests, userId: req.user?.id || null, headers: req.headers,
+    });
+    res.json({ success: true, data });
+  } catch (error) {
+    next(error);
+  }
+};
+
+AnalyticsController.recordEngagement = async (req, res) => {
+  try {
+    // Envoyé par navigator.sendBeacon : corps JSON parfois transmis en texte brut
+    const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+    await VisitorProfileService.recordEngagement(body);
+  } catch (_) { /* jamais d'erreur pour un envoi de sortie de page */ }
+  res.status(204).end();
+};
+
+AnalyticsController.getVisitorDashboard = async (req, res, next) => {
+  try {
+    res.json({ success: true, data: await VisitorProfileService.getDashboard({ days: req.query.days }) });
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = AnalyticsController;

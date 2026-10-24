@@ -457,3 +457,16 @@
 @media screen { .print-only { display: none !important; } }
 .footer-bottom-bar .footer-wow-line { display: inline-flex; }
 .footer-bottom-bar .footer-wow-mark { position: static; display: inline-block; flex: 0 0 auto; margin: 0; transform: none; }
+
+/* Questionnaire profil visiteur (3 étapes) */
+.vp-survey { max-width: 440px; }
+.vp-survey .vp-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.vp-survey .vp-chips .prog-profile-chip { flex: 0 0 auto; }
+.vp-survey .vp-interests .prog-profile-chip { font-size: 0.82rem; padding: 0.4rem 0.7rem; }
+.prog-profile-chip.is-selected { background: #f5a623; color: #0f172a; border-color: #f5a623; box-shadow: 0 0 0 2px rgba(245, 166, 35, 0.35); }
+.vp-survey .prog-profile-title small { font-size: 0.75rem; font-weight: 500; opacity: 0.75; }
+.vp-actions { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-top: 0.8rem; }
+.vp-link { border: none; background: none; padding: 0.3rem 0; color: inherit; opacity: 0.75; font: inherit; font-size: 0.85rem; cursor: pointer; text-decoration: underline; }
+.vp-submit { border: none; border-radius: 10px; padding: 0.5rem 1.1rem; background: #f5a623; color: #0f172a; font: inherit; font-weight: 700; cursor: pointer; }
+.vp-submit:disabled { opacity: 0.6; }
+.vp-note { margin: 0.75rem 0 0; font-size: 0.74rem; opacity: 0.7; }

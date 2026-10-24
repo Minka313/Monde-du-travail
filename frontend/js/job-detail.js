@@ -436,6 +436,7 @@
         const previousTitle = document.title;
         document.title = `Fiche métier WOW - ${job.title}`;
         window.addEventListener('afterprint', () => { document.title = previousTitle; }, { once: true });
+        try { window.AnalyticsTracker?.track?.('job_pdf', 'job', job.slug || job.id); } catch (_) { /* suivi facultatif */ }
         window.print();
       });
     }

@@ -611,6 +611,34 @@ model StaffMessage {
   @@map("staff_messages")
 }
 
+// Profil anonyme d'un visiteur (identifiant de session du navigateur, aucune adresse IP)
+model VisitorProfile {
+  id             String    @id @default(cuid())
+  sessionId      String    @unique @db.VarChar(128)
+  userId         String?
+  // Déclaré par le visiteur (facultatif)
+  status         String?   @db.VarChar(50)
+  educationLevel String?   @db.VarChar(60)
+  interests      String[]  @default([])
+  // Déduit des en-têtes de la plateforme d'hébergement (pays / région / ville)
+  country        String?   @db.VarChar(2)
+  region         String?   @db.VarChar(80)
+  city           String?   @db.VarChar(120)
+  device         String?   @db.VarChar(20)
+  firstSeenAt    DateTime  @default(now())
+  lastSeenAt     DateTime  @default(now())
+  visitsCount    Int       @default(1)
+  pagesCount     Int       @default(0)
+  totalSeconds   Int       @default(0)
+  profiledAt     DateTime?
+
+  @@index([status])
+  @@index([country])
+  @@index([lastSeenAt])
+  @@index([firstSeenAt])
+  @@map("visitor_profiles")
+}
+
 model AuditLog {
   id         String   @id @default(cuid())
   userId     String?

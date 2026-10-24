@@ -13,7 +13,7 @@
     <meta name="description" content="Espace Membre — Le Monde du Travail. Gère tes inscriptions aux formations, consulte tes métiers favoris et tes échanges.">
     <title>Mon Espace Membre — Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
-    <link rel="stylesheet" href="css/styles.min.css?v=20261024-2">
+    <link rel="stylesheet" href="css/styles.min.css?v=20261024-3">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -160,6 +160,14 @@
 
                 <!-- Colonne Latérale / Sidebar Membre -->
                 <aside class="profile-side-col">
+                    <div class="profile-box">
+                        <h2><span>🎯</span> Mon profil d'orientation</h2>
+                        <div id="profileSurveySummary" style="font-size: 0.9rem; line-height: 1.7; color: var(--color-gray-700);">
+                            <p style="margin:0;">Dis-nous qui tu es pour recevoir des suggestions adaptées.</p>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-sm" id="btnEditSurvey" style="width: 100%; justify-content: center; margin-top: 0.75rem;">Compléter mon profil</button>
+                    </div>
+
                     <div class="profile-box">
                         <h2><span>📋</span> Informations Compte</h2>
                         <div style="font-size: 0.9rem; line-height: 1.8; color: var(--color-gray-700);">
@@ -429,6 +437,21 @@
     if ((user.adminRoles || []).includes('MENTOR_EXPERT')) {
       document.getElementById('profileMentorBox').hidden = false;
     }
+
+    // 2 ter. Profil d'orientation (questionnaire visiteur, anonyme)
+    function renderSurveySummary() {
+      const box = document.getElementById('profileSurveySummary');
+      const data = window.VisitorSurvey?.read();
+      if (!box || !data) return;
+      box.innerHTML = `
+        <div><strong>Situation :</strong> ${escapeHtml(data.status || '—')}</div>
+        <div><strong>Niveau :</strong> ${escapeHtml(data.educationLevel || '—')}</div>
+        <div><strong>Intérêts :</strong> ${escapeHtml((data.interests || []).join(', ') || '—')}</div>`;
+      document.getElementById('btnEditSurvey').textContent = 'Modifier mon profil';
+    }
+    renderSurveySummary();
+    document.getElementById('btnEditSurvey')?.addEventListener('click', () => window.VisitorSurvey?.open());
+    document.addEventListener('visitor-profile:saved', renderSurveySummary);
 
     // 3. Populate Formations
     const formationsContainer = document.getElementById('profileFormationsList');

@@ -45,3 +45,14 @@ Permettre aux administrateurs de la plateforme « Le Monde du Travail » de mesu
 ## 3. Garde-Fous de Sécurité & Confidentialité
 * **RGPD & Anonymisation** : Aucune donnée biométrique ou traçage intrusif. Les adresses IP sont tronquées/anonymisées si nécessaire.
 * **Performance** : Les calculs d'agrégation d'audience utilisent un cache mémoire serveur court (TTL 20s) pour garantir un affichage instantané sous 100ms.
+
+---
+
+## Profils visiteurs (questionnaire, localisation, parcours)
+
+- **Questionnaire facultatif et anonyme** (3 étapes : situation, niveau d'études, 3 centres d'intérêt au maximum), proposé après 2 pages vues ou 45 s, rappel 7 jours après une fermeture ; modifiable depuis l'espace membre (« Mon profil d'orientation »). Code : `initProgressiveProfiling` / `window.VisitorSurvey` dans `frontend/js/main.js`.
+- **Table `visitor_profiles`** (une ligne par identifiant de session du navigateur) : situation, niveau, intérêts, pays / région / ville, appareil, première et dernière visite, nombre de visites (nouvelle visite après 30 min d'inactivité), pages vues, temps passé.
+- **Localisation** : en-têtes `x-vercel-ip-country`, `x-vercel-ip-country-region`, `x-vercel-ip-city` fournis par Vercel. Aucune adresse IP n'est stockée dans ce profil. En local, la localisation reste vide.
+- **Temps passé** : envoyé à la sortie de page (`navigator.sendBeacon` vers `POST /api/analytics/engagement`), plafonné à 30 min par page.
+- **Tableau de bord** : admin › Profils visiteurs (`GET /api/analytics/profiles?days=7|30|90|365`, permission `analytics.read`) ; indicateurs, répartitions, contenus consultés par profil, export CSV.
+- Les événements de parcours (`job_view`, `formation_view`, `job_pdf`, `formation_pdf`…) sont rattachés à la situation déclarée.
