@@ -1,0 +1,389 @@
+{
+  "slug": "communication-efficace",
+  "title": "Communication efficace",
+  "icon": "💬",
+  "image": "images/about_team.webp",
+  "category": "Soft Skills & Communication",
+  "level": "Tous niveaux",
+  "duration": "4 semaines · 24 h",
+  "format": "Ateliers, jeux de rôle et exercices d'écriture",
+  "tagline": "Écouter vraiment, s'exprimer clairement et écrire des messages professionnels qui obtiennent une réponse.",
+  "audience": "Étudiants, stagiaires, jeunes salariés et bénévoles qui veulent mieux travailler avec les autres.",
+  "prerequisites": "Aucun.",
+  "hook": {
+    "title": "Le message envoyé n'est pas toujours le message reçu",
+    "text": "La plupart des tensions au travail viennent de malentendus : une consigne floue, un mail sec, une écoute distraite. Bien communiquer, c'est s'assurer que l'autre a compris ce que tu voulais dire, et comprendre vraiment ce qu'il te dit. Cela s'apprend avec des techniques simples."
+  },
+  "keyFacts": [
+    {
+      "value": "Top 10",
+      "label": "« empathie et écoute active » figure parmi les compétences clés citées par les employeurs",
+      "source": "Forum économique mondial, Future of Jobs Report 2025"
+    },
+    {
+      "value": "4",
+      "label": "étapes de la Communication NonViolente : observation, sentiment, besoin, demande",
+      "source": "Marshall B. Rosenberg"
+    },
+    {
+      "value": "1",
+      "label": "seul objet par e-mail : un message, une demande, une échéance",
+      "source": "Bonnes pratiques de communication écrite professionnelle"
+    }
+  ],
+  "outcomes": [
+    "Pratiquer l'écoute active : reformuler, questionner, vérifier",
+    "Exprimer une demande ou un désaccord sans agressivité grâce à la CNV",
+    "Adapter ton message à ton interlocuteur (professeur, client, collègue, responsable)",
+    "Rédiger des e-mails et des messages WhatsApp professionnels clairs",
+    "Animer un échange en groupe et faire circuler la parole",
+    "Communiquer à distance : visio, messagerie, réseaux professionnels"
+  ],
+  "modules": [
+    {
+      "title": "Les bases de la communication",
+      "duration": "Semaine 1",
+      "goal": "Comprendre pourquoi les messages se déforment et comment l'éviter.",
+      "lessons": [
+        {
+          "title": "Émetteur, message, récepteur",
+          "content": "Chaque message passe par des filtres : vocabulaire, culture, humeur, attentes. Ce que tu dis n'est pas forcément ce que l'autre entend. La seule façon de le savoir est de vérifier.",
+          "keyPoints": [
+            "Le sens d'un message est celui qui est compris",
+            "Vérifier plutôt que supposer",
+            "Adapter le vocabulaire à l'interlocuteur"
+          ]
+        },
+        {
+          "title": "Verbal et non-verbal",
+          "content": "Le ton, le regard, la posture et le moment choisi comptent autant que les mots. Un « d'accord » dit en soupirant n'est pas un accord.",
+          "keyPoints": [
+            "Soigner le ton autant que les mots",
+            "Choisir le bon moment et le bon lieu",
+            "Être attentif aux signaux non verbaux de l'autre"
+          ]
+        },
+        {
+          "title": "Le registre adapté",
+          "content": "On ne s'adresse pas de la même façon à un ami, à un professeur ou à un recruteur. Le vouvoiement, les formules de politesse et un vocabulaire précis montrent ton professionnalisme.",
+          "keyPoints": [
+            "Vouvoyer par défaut dans un cadre professionnel",
+            "Éviter le langage SMS dans les écrits professionnels",
+            "Rester simple : phrases courtes, mots précis"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Vérifier la compréhension",
+        "steps": [
+          "Dire l'essentiel en une phrase",
+          "Demander : « Qu'est-ce que tu retiens ? »",
+          "Corriger si besoin",
+          "Confirmer par écrit les points importants"
+        ]
+      },
+      "exercise": {
+        "title": "Le dessin dicté",
+        "instructions": [
+          "En binôme, décris une figure sans la montrer",
+          "Ton partenaire la dessine sans poser de questions, puis avec questions",
+          "Comparez les deux résultats"
+        ],
+        "deliverable": "Les deux dessins et 3 enseignements"
+      }
+    },
+    {
+      "title": "Écouter vraiment",
+      "duration": "Semaine 2",
+      "goal": "Comprendre l'autre avant de chercher à être compris.",
+      "lessons": [
+        {
+          "title": "L'écoute active",
+          "content": "Écouter activement, c'est se concentrer sur l'autre, ne pas préparer sa réponse pendant qu'il parle, reformuler ce qu'on a compris et poser des questions ouvertes.",
+          "keyPoints": [
+            "Poser le téléphone",
+            "Reformuler : « Si je comprends bien… »",
+            "Questions ouvertes : comment, qu'est-ce que, pourquoi"
+          ]
+        },
+        {
+          "title": "Questions ouvertes et fermées",
+          "content": "Une question fermée (oui / non) sert à confirmer. Une question ouverte invite à développer. Commencer par des questions ouvertes, puis fermer pour décider.",
+          "keyPoints": [
+            "Ouvrir pour explorer",
+            "Fermer pour valider",
+            "Éviter les questions qui contiennent déjà la réponse"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Reformulation en 3 temps",
+        "steps": [
+          "« Si je comprends bien, tu dis que… »",
+          "« Et ce qui te préoccupe, c'est… »",
+          "« C'est bien ça ? »"
+        ]
+      },
+      "exercise": {
+        "title": "3 minutes d'écoute",
+        "instructions": [
+          "Ton partenaire raconte un problème pendant 3 minutes",
+          "Tu n'as le droit que de reformuler et de poser des questions ouvertes",
+          "Il évalue s'il s'est senti compris"
+        ],
+        "deliverable": "Grille d'auto-évaluation de l'écoute"
+      }
+    },
+    {
+      "title": "S'affirmer avec respect",
+      "duration": "Semaine 3",
+      "goal": "Dire ce qui ne va pas et formuler des demandes claires sans blesser.",
+      "lessons": [
+        {
+          "title": "La Communication NonViolente (CNV)",
+          "content": "Développée par Marshall Rosenberg, elle propose quatre étapes : décrire l'observation sans jugement, exprimer ton sentiment, nommer ton besoin, formuler une demande concrète et négociable.",
+          "keyPoints": [
+            "Observation : des faits, pas des reproches",
+            "Parler en « je » plutôt qu'en « tu »",
+            "Une demande précise et réalisable"
+          ]
+        },
+        {
+          "title": "Dire non et poser des limites",
+          "content": "Refuser poliment protège ton temps et ta crédibilité. Un non clair, accompagné d'une raison courte et si possible d'une alternative, est mieux reçu qu'un oui non tenu.",
+          "keyPoints": [
+            "Remercier, refuser, proposer une alternative",
+            "Ne pas se justifier longuement",
+            "Mieux vaut un non honnête qu'un oui non tenu"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Phrase CNV",
+        "steps": [
+          "Quand je vois / j'entends… (fait observable)",
+          "je me sens… (sentiment)",
+          "parce que j'ai besoin de… (besoin)",
+          "est-ce que tu serais d'accord pour… ? (demande)"
+        ]
+      },
+      "exercise": {
+        "title": "Transformer des reproches",
+        "instructions": [
+          "Écris 3 reproches que tu as déjà faits ou reçus",
+          "Réécris-les en phrases CNV",
+          "Joue-les en binôme"
+        ],
+        "deliverable": "Tes 3 phrases CNV"
+      }
+    },
+    {
+      "title": "Écrire et communiquer à distance",
+      "duration": "Semaine 4",
+      "goal": "Rédiger des messages professionnels qui obtiennent une réponse.",
+      "lessons": [
+        {
+          "title": "L'e-mail professionnel",
+          "content": "Un objet explicite, une formule d'appel, le message principal dès la première phrase, une demande claire avec une échéance, une formule de politesse et une signature complète. Relis toujours avant d'envoyer.",
+          "keyPoints": [
+            "Objet : action + sujet + date (« Demande de stage – juin 2026 »)",
+            "L'essentiel dans les deux premières lignes",
+            "Une demande claire, une échéance"
+          ]
+        },
+        {
+          "title": "WhatsApp et messages pros",
+          "content": "Les messageries sont devenues des outils de travail. Se présenter, rester bref, éviter les messages vocaux de 5 minutes et respecter les horaires sont des marques de respect.",
+          "keyPoints": [
+            "Se présenter au premier message",
+            "Préférer l'écrit court au vocal long",
+            "Éviter les messages tard le soir"
+          ]
+        },
+        {
+          "title": "Visio et réseaux professionnels",
+          "content": "En visio : caméra allumée, micro coupé quand on ne parle pas, lieu calme. Sur LinkedIn : photo professionnelle, titre clair, messages personnalisés plutôt que génériques.",
+          "keyPoints": [
+            "Tester son matériel avant",
+            "Regarder la caméra pour regarder l'autre",
+            "Personnaliser chaque demande de contact"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Structure d'un e-mail",
+        "steps": [
+          "Objet explicite",
+          "Formule d'appel adaptée",
+          "Contexte en une phrase",
+          "Demande précise avec échéance",
+          "Remerciement et signature (nom, téléphone)"
+        ]
+      },
+      "exercise": {
+        "title": "Trois messages professionnels",
+        "instructions": [
+          "Rédige un e-mail de demande de stage",
+          "Rédige un message WhatsApp pour relancer un partenaire",
+          "Rédige une demande de contact LinkedIn personnalisée"
+        ],
+        "deliverable": "Les 3 messages relus par ton binôme"
+      }
+    }
+  ],
+  "toolkit": [
+    {
+      "name": "Reformulation",
+      "use": "Vérifier la compréhension",
+      "how": "« Si je comprends bien… C'est bien ça ? »"
+    },
+    {
+      "name": "Communication NonViolente",
+      "use": "Exprimer un désaccord",
+      "how": "Observation, sentiment, besoin, demande."
+    },
+    {
+      "name": "Refus constructif",
+      "use": "Poser une limite",
+      "how": "Remercier, refuser clairement, proposer une alternative."
+    },
+    {
+      "name": "E-mail en 5 blocs",
+      "use": "Écrit professionnel",
+      "how": "Objet, appel, contexte, demande datée, signature."
+    }
+  ],
+  "caseStudy": {
+    "title": "Le stage de Khadija",
+    "context": "Khadija, stagiaire, reçoit des consignes rapides de son tuteur entre deux réunions.",
+    "challenge": "Elle livre un travail qui ne correspond pas à l'attente et se sent injustement critiquée.",
+    "solution": "Elle prend l'habitude de reformuler chaque consigne et de l'envoyer par écrit (« Pour résumer, tu attends… pour vendredi »), et utilise la CNV pour exprimer son besoin de consignes plus précises.",
+    "lesson": "Les malentendus disparaissent presque et son tuteur apprécie sa rigueur : la reformulation écrite protège les deux parties."
+  },
+  "pitfalls": [
+    "Préparer sa réponse au lieu d'écouter",
+    "Répondre par écrit sous le coup de la colère",
+    "Envoyer un e-mail sans objet ou un long message vocal",
+    "Généraliser (« tu fais toujours… », « tu ne fais jamais… »)",
+    "Accepter une consigne floue sans la reformuler"
+  ],
+  "quiz": [
+    {
+      "q": "Quelle phrase est une observation au sens de la CNV ?",
+      "options": [
+        "Tu es toujours en retard",
+        "Tu es arrivé à 9 h 40 pour une réunion prévue à 9 h",
+        "Tu te moques de l'équipe"
+      ],
+      "answer": 1,
+      "explanation": "Une observation décrit un fait vérifiable, sans jugement ni généralisation."
+    },
+    {
+      "q": "Quel est le meilleur objet d'e-mail ?",
+      "options": [
+        "Bonjour",
+        "Demande de stage en communication – juin 2026",
+        "Urgent !!!"
+      ],
+      "answer": 1,
+      "explanation": "Il annonce l'action, le sujet et la date."
+    },
+    {
+      "q": "Que faire face à une consigne floue ?",
+      "options": [
+        "Faire au mieux et espérer",
+        "La reformuler et la confirmer par écrit",
+        "Attendre une nouvelle explication"
+      ],
+      "answer": 1,
+      "explanation": "La reformulation écrite évite les malentendus et crée une trace."
+    },
+    {
+      "q": "À quoi sert une question ouverte ?",
+      "options": [
+        "À obtenir oui ou non",
+        "À faire développer l'interlocuteur",
+        "À clore la discussion"
+      ],
+      "answer": 1,
+      "explanation": "Elle invite à expliquer et révèle des informations."
+    }
+  ],
+  "actionPlan": [
+    {
+      "period": "Jours 1 à 7",
+      "action": "Reformule au moins une consigne par jour."
+    },
+    {
+      "period": "Jours 8 à 14",
+      "action": "Pratique 3 minutes d'écoute active avec un proche chaque jour."
+    },
+    {
+      "period": "Jours 15 à 21",
+      "action": "Exprime une demande délicate avec une phrase CNV."
+    },
+    {
+      "period": "Jours 22 à 30",
+      "action": "Envoie 3 messages professionnels (stage, réseau, partenaire) structurés en 5 blocs."
+    }
+  ],
+  "resources": [
+    {
+      "type": "Livre",
+      "title": "Les mots sont des fenêtres (ou bien ce sont des murs)",
+      "org": "Marshall B. Rosenberg",
+      "free": false,
+      "note": "L'ouvrage de référence sur la Communication NonViolente."
+    },
+    {
+      "type": "Site",
+      "title": "Centre pour la Communication NonViolente",
+      "org": "CNVC",
+      "url": "https://www.cnvc.org/",
+      "free": true
+    },
+    {
+      "type": "Pratique",
+      "title": "Forum du club",
+      "org": "Le Monde du Travail",
+      "url": "forum.html",
+      "free": true
+    }
+  ],
+  "sources": [
+    {
+      "title": "Nonviolent Communication: A Language of Life",
+      "org": "Marshall B. Rosenberg",
+      "year": 2003
+    },
+    {
+      "title": "The Future of Jobs Report 2025",
+      "org": "Forum économique mondial",
+      "year": 2025,
+      "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/"
+    },
+    {
+      "title": "Client-Centered Therapy (écoute active et reformulation)",
+      "org": "Carl Rogers",
+      "year": 1951
+    }
+  ],
+  "relatedJobs": [
+    "charge-de-communication",
+    "community-manager",
+    "consultant-rp",
+    "mediateur-culturel",
+    "conseiller-commercial-assurance"
+  ],
+  "certification": "Attestation WOW de communication professionnelle, délivrée après les jeux de rôle et la remise des 3 messages professionnels.",
+  "faq": [
+    {
+      "q": "En quoi est-ce différent de la prise de parole en public ?",
+      "a": "La prise de parole travaille l'intervention devant un groupe. Ici, on travaille les échanges du quotidien : écoute, dialogue, écrits."
+    },
+    {
+      "q": "Peut-on suivre les deux ?",
+      "a": "Oui, elles sont complémentaires."
+    }
+  ]
+}

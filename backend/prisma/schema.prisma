@@ -69,6 +69,8 @@ model Job {
 
 model Formation {
   id             String        @id @default(cuid())
+  // Identifiant lisible, lien avec la fiche pédagogique frontend/data/formations/<slug>.json
+  slug           String?       @unique
   title          String
   description    String
   content        String?

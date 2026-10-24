@@ -1,0 +1,128 @@
+{
+  "slug": "gestion-de-projet",
+  "title": "Gestion de projet",
+  "icon": "🗂️",
+  "image": "images/formations_hero.webp",
+  "category": "Management & Direction",
+  "level": "Débutant à intermédiaire",
+  "duration": "4 semaines · 28 h",
+  "format": "Ateliers, étude d'un projet réel du participant ou du club, outils gratuits",
+  "tagline": "Cadrer, planifier, piloter et livrer un projet à l'heure, avec des méthodes classiques et agiles.",
+  "audience": "Étudiants, responsables associatifs, organisateurs d'événements, jeunes salariés et porteurs de projets.",
+  "prerequisites": "Avoir un projet à mener (événement, mémoire, lancement de produit, action associative) ou en choisir un pendant la formation.",
+  "hook": {
+    "title": "Un projet, c'est un objectif, une date et des ressources limitées",
+    "text": "Organiser un forum, rédiger un mémoire, lancer une boutique en ligne : ce sont des projets. Sans méthode, ils dérapent en délais et en budget. Avec quelques outils simples (cadrage, découpage, planning, suivi), tu sauras livrer à temps et garder ton équipe alignée."
+  },
+  "keyFacts": [
+    { "value": "3", "label": "contraintes à équilibrer dans tout projet : périmètre, délai, coût (le « triangle du projet »)", "source": "Project Management Institute, référentiel PMBOK" },
+    { "value": "5", "label": "événements du cadre Scrum : sprint, planification, mêlée quotidienne, revue, rétrospective", "source": "The Scrum Guide, Schwaber & Sutherland, 2020" },
+    { "value": "2e", "label": "« Résilience, flexibilité et agilité » : compétence parmi les plus recherchées par les employeurs", "source": "Forum économique mondial, Future of Jobs Report 2025" }
+  ],
+  "outcomes": [
+    "Cadrer un projet : objectif, périmètre, livrables, parties prenantes",
+    "Découper le travail en tâches (organigramme des tâches) et estimer leur durée",
+    "Construire un planning et repérer le chemin critique",
+    "Établir un budget prévisionnel et le suivre",
+    "Identifier et traiter les risques",
+    "Piloter en mode agile avec un tableau Kanban et des sprints",
+    "Clôturer un projet et en tirer les leçons"
+  ],
+  "modules": [
+    {
+      "title": "Cadrer le projet",
+      "duration": "Semaine 1",
+      "goal": "Savoir précisément ce qu'on va livrer, pour qui et pourquoi.",
+      "lessons": [
+        { "title": "La note de cadrage", "content": "Contexte, objectif SMART, livrables, ce qui est inclus et ce qui ne l'est pas, date de fin, budget, équipe, parties prenantes. Une page validée par les décideurs évite la plupart des malentendus futurs.", "keyPoints": ["Écrire ce qui est hors périmètre", "Faire valider la note", "Une date de fin ferme"] },
+        { "title": "Les parties prenantes", "content": "Toutes les personnes concernées par le projet : financeurs, bénéficiaires, équipe, autorités, partenaires. Pour chacune : son intérêt, son influence et la façon de la tenir informée.", "keyPoints": ["Cartographier influence et intérêt", "Impliquer tôt les décideurs", "Prévoir qui informer et quand"] }
+      ],
+      "method": { "name": "Note de cadrage en 8 rubriques", "steps": ["Contexte et problème", "Objectif SMART", "Livrables", "Périmètre (inclus / exclu)", "Échéance", "Budget", "Équipe et rôles", "Parties prenantes"] },
+      "exercise": { "title": "Cadrer mon projet", "instructions": ["Choisis ton projet", "Rédige la note de cadrage", "Fais-la relire par une partie prenante"], "deliverable": "Note de cadrage d'une page" }
+    },
+    {
+      "title": "Planifier",
+      "duration": "Semaine 2",
+      "goal": "Transformer l'objectif en tâches, durées, responsables et dates.",
+      "lessons": [
+        { "title": "Découper le travail", "content": "L'organigramme des tâches (WBS) décompose chaque livrable en sous-livrables puis en tâches assez petites pour être estimées et confiées à une personne (quelques jours au plus).", "keyPoints": ["Partir des livrables", "Une tâche = un verbe, un responsable", "Descendre jusqu'à des tâches de quelques jours"] },
+        { "title": "Le planning et le chemin critique", "content": "Ordonne les tâches selon leurs dépendances (on ne réserve pas la salle avant de connaître la date). La suite de tâches la plus longue est le chemin critique : tout retard sur ces tâches retarde le projet.", "keyPoints": ["Identifier les dépendances", "Repérer le chemin critique", "Diagramme de Gantt : visualiser les tâches dans le temps"] },
+        { "title": "Le budget", "content": "Additionne les coûts de chaque tâche (achats, location, transport, communication) et ajoute une réserve pour imprévus d'environ 10 %. Suis les dépenses réelles chaque semaine.", "keyPoints": ["Budget par tâche", "Réserve pour imprévus", "Comparer prévu et réel chaque semaine"] }
+      ],
+      "method": { "name": "Planifier en 5 étapes", "steps": ["Lister les livrables", "Découper en tâches avec un responsable", "Estimer chaque durée", "Ordonner selon les dépendances", "Placer sur un calendrier (Gantt) et repérer le chemin critique"] },
+      "exercise": { "title": "Mon Gantt", "instructions": ["Construis l'organigramme des tâches de ton projet", "Estime les durées et les dépendances", "Réalise un Gantt dans un tableur", "Établis le budget prévisionnel"], "deliverable": "Planning Gantt et budget" }
+    },
+    {
+      "title": "Risques et pilotage",
+      "duration": "Semaine 3",
+      "goal": "Anticiper les problèmes et garder le projet sous contrôle.",
+      "lessons": [
+        { "title": "Gérer les risques", "content": "Un risque est un événement incertain qui menacerait le projet : pluie le jour de l'événement, partenaire qui se retire, coupure d'électricité. Pour chacun, évalue probabilité et impact, puis prévois une parade.", "keyPoints": ["Lister les risques avec l'équipe", "Probabilité × impact pour prioriser", "Une action préventive et un plan B par risque majeur"] },
+        { "title": "Suivre l'avancement", "content": "Un point d'équipe court et régulier, un tableau des tâches à jour et des indicateurs simples (tâches terminées, budget consommé, jours restants) permettent de réagir tôt.", "keyPoints": ["Réunion de suivi hebdomadaire de 30 minutes", "Indicateurs : délai, coût, qualité", "Alerter tôt plutôt que cacher un retard"] }
+      ],
+      "method": { "name": "Registre des risques", "steps": ["Risque décrit en une phrase", "Probabilité (1 à 3) et impact (1 à 3)", "Score = probabilité × impact", "Action préventive", "Plan B et responsable"] },
+      "exercise": { "title": "Registre et tableau de bord", "instructions": ["Liste 8 risques de ton projet", "Priorise et prévois les parades", "Construis un tableau de bord d'une page"], "deliverable": "Registre des risques et tableau de bord" }
+    },
+    {
+      "title": "L'agilité et la clôture",
+      "duration": "Semaine 4",
+      "goal": "Avancer par petites livraisons et apprendre de chaque projet.",
+      "lessons": [
+        { "title": "Kanban", "content": "Un tableau en trois colonnes, À faire, En cours, Terminé, avec une carte par tâche. On limite le nombre de tâches en cours pour finir avant de commencer.", "keyPoints": ["Visualiser tout le travail", "Limiter le travail en cours", "Mettre à jour le tableau chaque jour"] },
+        { "title": "Scrum en bref", "content": "Le travail avance par sprints de 1 à 4 semaines. Chaque sprint commence par une planification, comprend une courte réunion quotidienne, se termine par une revue (on montre ce qui est fait) et une rétrospective (on améliore la façon de travailler).", "keyPoints": ["Livrer quelque chose d'utilisable à chaque sprint", "Un responsable du produit priorise", "La rétrospective améliore l'équipe"] },
+        { "title": "Clôturer", "content": "Livrer, faire valider, remercier, archiver les documents et organiser un retour d'expérience : ce qui a marché, ce qui n'a pas marché, ce qu'on refera.", "keyPoints": ["Validation formelle des livrables", "Retour d'expérience écrit", "Célébrer avec l'équipe"] }
+      ],
+      "method": { "name": "Rétrospective en 3 questions", "steps": ["Qu'est-ce qui a bien marché ?", "Qu'est-ce qui nous a freinés ?", "Que changeons-nous la prochaine fois ?"] },
+      "exercise": { "title": "Sprint de deux semaines", "instructions": ["Monte un tableau Kanban (papier, Trello ou tableur)", "Mène ton projet en sprint de 2 semaines", "Fais la revue et la rétrospective avec l'équipe"], "deliverable": "Tableau Kanban, compte rendu de revue et de rétrospective" }
+    }
+  ],
+  "toolkit": [
+    { "name": "Note de cadrage", "use": "Démarrer un projet", "how": "Une page : objectif, livrables, périmètre, délai, budget, équipe." },
+    { "name": "Organigramme des tâches", "use": "Découper", "how": "Livrables → sous-livrables → tâches de quelques jours." },
+    { "name": "Diagramme de Gantt", "use": "Planifier", "how": "Tâches, durées et dépendances sur un calendrier." },
+    { "name": "Registre des risques", "use": "Anticiper", "how": "Probabilité × impact, prévention, plan B." },
+    { "name": "Kanban", "use": "Piloter au quotidien", "how": "À faire / En cours / Terminé, travail en cours limité." }
+  ],
+  "caseStudy": {
+    "title": "Le forum des métiers du club",
+    "context": "Le club veut organiser un forum des métiers avec 10 intervenants et 300 lycéens.",
+    "challenge": "Trois semaines avant, la salle n'est pas confirmée, deux intervenants se désistent et le budget est dépassé.",
+    "solution": "L'équipe reprend le projet : note de cadrage validée par la Présidence, Gantt avec chemin critique (salle, intervenants, communication), registre des risques avec une liste d'intervenants de secours, et un Kanban suivi chaque jour.",
+    "lesson": "Le forum a lieu à la date prévue. Le registre des risques a permis de remplacer les intervenants en 48 heures."
+  },
+  "pitfalls": [
+    "Commencer à agir sans objectif ni périmètre écrits",
+    "Sous-estimer les durées et oublier les dépendances",
+    "Ne pas prévoir de réserve budgétaire",
+    "Cacher un retard jusqu'au dernier moment",
+    "Ne jamais faire de retour d'expérience"
+  ],
+  "quiz": [
+    { "q": "Qu'est-ce que le chemin critique ?", "options": ["Les tâches les plus chères", "La suite de tâches dont le retard retarde tout le projet", "Les tâches les plus difficiles"], "answer": 1, "explanation": "C'est l'enchaînement le plus long ; il fixe la date de fin." },
+    { "q": "Un risque a une probabilité de 3 et un impact de 3. Que faire ?", "options": ["L'ignorer", "Le traiter en priorité avec une prévention et un plan B", "Attendre qu'il arrive"], "answer": 1, "explanation": "Score 9 sur 9 : c'est le risque le plus urgent à traiter." },
+    { "q": "À quoi sert la rétrospective en Scrum ?", "options": ["Montrer le produit au client", "Améliorer la façon de travailler de l'équipe", "Planifier le budget"], "answer": 1, "explanation": "La revue montre le produit ; la rétrospective améliore le fonctionnement." },
+    { "q": "Pourquoi limiter le nombre de tâches « en cours » dans un Kanban ?", "options": ["Pour finir les tâches avant d'en commencer d'autres", "Pour que le tableau soit joli", "Ce n'est pas utile"], "answer": 0, "explanation": "Trop de tâches commencées en parallèle ralentit la livraison." }
+  ],
+  "actionPlan": [
+    { "period": "Jours 1 à 7", "action": "Rédige et fais valider la note de cadrage de ton projet." },
+    { "period": "Jours 8 à 14", "action": "Construis le découpage, le Gantt et le budget." },
+    { "period": "Jours 15 à 21", "action": "Établis le registre des risques et lance un Kanban." },
+    { "period": "Jours 22 à 30", "action": "Mène un sprint, puis une revue et une rétrospective." }
+  ],
+  "resources": [
+    { "type": "Guide", "title": "The Scrum Guide (version française disponible)", "org": "Ken Schwaber & Jeff Sutherland", "url": "https://scrumguides.org/", "free": true },
+    { "type": "Référentiel", "title": "Ressources en gestion de projet", "org": "Project Management Institute (PMI)", "url": "https://www.pmi.org/", "free": true },
+    { "type": "Outil", "title": "Trello : tableaux Kanban gratuits", "org": "Atlassian", "url": "https://trello.com/", "free": true }
+  ],
+  "sources": [
+    { "title": "The Scrum Guide", "org": "Ken Schwaber & Jeff Sutherland", "year": 2020, "url": "https://scrumguides.org/" },
+    { "title": "A Guide to the Project Management Body of Knowledge (PMBOK Guide)", "org": "Project Management Institute" },
+    { "title": "The Future of Jobs Report 2025", "org": "Forum économique mondial", "year": 2025, "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/" }
+  ],
+  "relatedJobs": ["chef-de-projet-digital", "product-owner", "chef-projet-developpement-durable", "chef-projet-hospitality", "business-analyst"],
+  "certification": "Attestation WOW de gestion de projet, délivrée après la présentation du dossier de projet (cadrage, planning, risques, sprint et rétrospective).",
+  "faq": [
+    { "q": "Faut-il un logiciel payant ?", "a": "Non. Un tableur, du papier ou des outils gratuits comme Trello suffisent." },
+    { "q": "La formation prépare-t-elle à une certification internationale ?", "a": "Elle donne les bases utiles pour aller ensuite vers des certifications reconnues, sans les remplacer." }
+  ]
+}

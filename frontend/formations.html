@@ -1189,13 +1189,19 @@
                     </div>
                     <h3 style="margin-top:0.25rem;font-size:1.15rem;color:#0f172a;">${escapeHtml(formation.title)}</h3>
                     <p style="color:#64748b;font-size:0.88rem;margin-top:0.4rem;line-height:1.55;">${escapeHtml(formation.description)}</p>
+                    ${formation.modulesCount ? `<p class="formation-card-program" style="margin-top:0.6rem;font-size:0.8rem;font-weight:700;color:#b7791f;">📚 ${formation.modulesCount} modules · ${formation.lessonsCount} leçons · quiz · PDF</p>` : ''}
                   </div>
                 </div>
                 <div style="padding:0 1.25rem 1.25rem 1.25rem;display:flex;gap:0.5rem;align-items:center;">
+                  ${formation.slug ? `
+                  <a href="${escapeHtml(detailUrl(formation))}" class="btn btn-primary btn-sm btn-formation-detail" style="flex:1;text-align:center;padding:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:0.4rem;text-decoration:none;">
+                    <span>Voir la fiche complète</span>
+                    <span>&rarr;</span>
+                  </a>` : `
                   <button type="button" class="btn btn-outline btn-sm btn-formation-detail" data-id="${formation.id}" style="flex:1;text-align:center;padding:0.65rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:0.4rem;">
                     <span>Consulter le programme</span>
                     <span>&rarr;</span>
-                  </button>
+                  </button>`}
                   <a href="visio.html?formation=${encodeURIComponent(formation.id)}" class="btn btn-sm btn-visio-card-quick" title="Rejoindre la salle virtuelle" style="padding:0.65rem 0.85rem;background:rgba(2,132,199,0.1);color:#0284c7;border:1px solid rgba(2,132,199,0.3);border-radius:8px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;font-weight:700;">
                     <span>🎥</span>
                   </a>
@@ -1210,7 +1216,9 @@
               if (e.target.closest('.btn-visio-card-quick')) return;
               const id = card.getAttribute('data-id');
               const f = formationsMap[id];
-              if (f) openFormationDetailModal(f);
+              if (!f) return;
+              if (f.slug) { if (!e.target.closest('a')) window.location.href = detailUrl(f); return; }
+              openFormationDetailModal(f);
             });
           });
         }
@@ -1335,80 +1343,96 @@
           }
         ];
 
-        try {
-          const response = await window.Api.formations.getAll();
-          let formations = response.data || [];
+        // Fiches pédagogiques complètes (data/formations) : la page de détail porte le slug
+        const detailUrl = (f) => `formation-detail.html?slug=${encodeURIComponent(f.slug)}`;
 
-          if (formations.length === 0) {
-            formations = enrichedFallbackFormations;
-          }
+        function checkInitialUrlParams() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const searchParam = urlParams.get('search');
+          const catParam = urlParams.get('category');
+          const idParam = urlParams.get('id') || urlParams.get('formation') || (window.location.hash ? window.location.hash.replace(/^#/, '') : null);
 
-          const seen = new Set();
-          allFormations = formations.filter(f => {
-            const key = `${f.title}-${f.category || 'default'}`;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-          });
-
-          if (!container) return;
-
-          allFormations.forEach(f => { formationsMap[f.id] = f; });
-
-          await loadCategories();
-          initSearchInput();
-          initSimulator();
-          renderCards();
-
-          function checkInitialUrlParams() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const searchParam = urlParams.get('search');
-            const catParam = urlParams.get('category');
-            const idParam = urlParams.get('id') || urlParams.get('formation') || (window.location.hash ? window.location.hash.replace(/^#/, '') : null);
-
-            if (catParam) {
-              currentCategory = catParam;
-              if (categoryPillsContainer) {
-                const targetPill = Array.from(categoryPillsContainer.querySelectorAll('.domain-pill')).find(p => p.getAttribute('data-category') === catParam);
-                if (targetPill) {
-                  categoryPillsContainer.querySelectorAll('.domain-pill').forEach(b => b.classList.remove('active'));
-                  targetPill.classList.add('active');
-                }
-              }
-              renderCards();
-            }
-
-            if (idParam) {
-              const matchedById = allFormations.find(f => f.id === idParam);
-              if (matchedById) {
-                openFormationDetailModal(matchedById);
-                return;
+          if (catParam) {
+            currentCategory = catParam;
+            if (categoryPillsContainer) {
+              const targetPill = Array.from(categoryPillsContainer.querySelectorAll('.domain-pill')).find(p => p.getAttribute('data-category') === catParam);
+              if (targetPill) {
+                categoryPillsContainer.querySelectorAll('.domain-pill').forEach(b => b.classList.remove('active'));
+                targetPill.classList.add('active');
               }
             }
-
-            if (searchParam) {
-              const q = searchParam.toLowerCase();
-              const matched = allFormations.find(f => f.title.toLowerCase().includes(q) || (f.category && f.category.toLowerCase().includes(q)));
-              if (matched) {
-                openFormationDetailModal(matched);
-              }
-            }
-          }
-
-          checkInitialUrlParams();
-
-        } catch (error) {
-          console.warn('API non disponible, affichage des formations de secours :', error);
-          if (container) {
-            allFormations = enrichedFallbackFormations;
-            allFormations.forEach(f => { formationsMap[f.id] = f; });
-            await loadCategories();
-            initSearchInput();
-            initSimulator();
             renderCards();
-            checkInitialUrlParams();
+          }
+
+          if (idParam) {
+            const matchedById = allFormations.find(f => f.id === idParam || f.slug === idParam);
+            if (matchedById) {
+              if (matchedById.slug) window.location.replace(detailUrl(matchedById));
+              else openFormationDetailModal(matchedById);
+              return;
+            }
+          }
+
+          if (searchParam) {
+            const q = searchParam.toLowerCase();
+            const matched = allFormations.find(f => f.title.toLowerCase().includes(q) || (f.category && f.category.toLowerCase().includes(q)));
+            if (matched) {
+              if (matched.slug) window.location.assign(detailUrl(matched));
+              else openFormationDetailModal(matched);
+            }
           }
         }
+
+        // Fusion : fiche pédagogique (contenu) + base (identifiant, dates, lieu, ajouts de l'admin)
+        function mergeCatalog(dbFormations, index) {
+          const bySlug = new Map(index.map(item => [item.slug, item]));
+          const merged = dbFormations.map(f => {
+            const sheet = f.slug && bySlug.get(f.slug);
+            if (!sheet) return f;
+            bySlug.delete(f.slug);
+            return { ...f, slug: sheet.slug, description: f.description || sheet.tagline, tagline: sheet.tagline, modulesCount: sheet.modulesCount, lessonsCount: sheet.lessonsCount };
+          });
+          // Fiches pas encore en base (ou API indisponible) : affichées depuis l'index
+          bySlug.forEach(sheet => merged.push({
+            id: sheet.slug, slug: sheet.slug, title: sheet.title, category: sheet.category, icon: sheet.icon, image: sheet.image,
+            duration: sheet.duration, description: sheet.tagline, tagline: sheet.tagline, objectives: (sheet.outcomes || []).join(' '),
+            modulesCount: sheet.modulesCount, lessonsCount: sheet.lessonsCount, location: 'Dakar & En ligne',
+          }));
+          return merged;
+        }
+
+        const indexPromise = fetch('data/formations/index.json')
+          .then(r => (r.ok ? r.json() : { formations: [] }))
+          .then(d => d.formations || [])
+          .catch(() => []);
+
+        let dbFormations = [];
+        try {
+          const response = await window.Api.formations.getAll();
+          dbFormations = response.data || [];
+        } catch (error) {
+          console.warn('API non disponible, affichage du catalogue des fiches :', error);
+        }
+        const catalogIndex = await indexPromise;
+        let formations = mergeCatalog(dbFormations, catalogIndex);
+        if (formations.length === 0) formations = enrichedFallbackFormations;
+
+        const seen = new Set();
+        allFormations = formations.filter(f => {
+          const key = `${f.title}-${f.category || 'default'}`;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+        if (!container) return;
+        allFormations.forEach(f => { formationsMap[f.id] = f; });
+
+        await loadCategories();
+        initSearchInput();
+        initSimulator();
+        renderCards();
+        checkInitialUrlParams();
       });
     </script>
 </body>

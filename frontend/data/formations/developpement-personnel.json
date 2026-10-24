@@ -1,0 +1,129 @@
+{
+  "slug": "developpement-personnel",
+  "title": "Développement personnel",
+  "icon": "🧠",
+  "image": "images/about_mission.webp",
+  "category": "Soft Skills & Épanouissement",
+  "level": "Tous niveaux",
+  "duration": "4 semaines · 24 h",
+  "format": "Ateliers interactifs, exercices personnels et suivi en binôme",
+  "tagline": "Mieux te connaître, gérer ton temps et ton stress, et tenir tes objectifs dans la durée.",
+  "audience": "Lycéens, étudiants, jeunes diplômés et toute personne qui veut reprendre la main sur ses études, son projet ou son organisation.",
+  "prerequisites": "Aucun. Un carnet et l'envie d'expérimenter de nouvelles habitudes pendant un mois.",
+  "hook": {
+    "title": "Des méthodes, pas des formules magiques",
+    "text": "Le développement personnel est souvent réduit à des slogans. Ici, on s'appuie sur des méthodes éprouvées : fixer des objectifs précis, construire des habitudes, gérer son temps et son stress, apprendre de ses échecs. Le but : être plus efficace et plus serein dans tes études, ton travail et tes projets."
+  },
+  "keyFacts": [
+    { "value": "2e", "label": "« Résilience, flexibilité et agilité » : 2e compétence jugée essentielle par 67 % des employeurs", "source": "Forum économique mondial, Future of Jobs Report 2025" },
+    { "value": "39 %", "label": "des compétences clés des travailleurs devraient changer d'ici 2030 : apprendre à apprendre devient vital", "source": "Forum économique mondial, Future of Jobs Report 2025" },
+    { "value": "25 min", "label": "durée d'un « pomodoro », bloc de concentration suivi d'une courte pause", "source": "Francesco Cirillo, méthode Pomodoro" }
+  ],
+  "outcomes": [
+    "Identifier tes valeurs, tes forces et ce qui te motive",
+    "Formuler des objectifs SMART et les découper en actions",
+    "Construire une habitude et en supprimer une autre",
+    "Prioriser avec la matrice urgent / important et te concentrer avec la méthode Pomodoro",
+    "Reconnaître les signes de stress et appliquer des techniques de régulation",
+    "Adopter un état d'esprit de progression face aux échecs",
+    "Construire ton plan de développement sur 90 jours"
+  ],
+  "modules": [
+    {
+      "title": "Se connaître",
+      "duration": "Semaine 1",
+      "goal": "Partir de qui tu es vraiment pour choisir où tu vas.",
+      "lessons": [
+        { "title": "Valeurs et motivations", "content": "Tes valeurs (famille, réussite, justice, liberté, foi, solidarité…) guident tes choix. Quand un objectif contredit tes valeurs, il est difficile à tenir. Les identifier évite de poursuivre des objectifs qui ne sont pas les tiens.", "keyPoints": ["Choisir 5 valeurs essentielles", "Repérer les moments où tu t'es senti fier et pourquoi", "Vérifier l'alignement de tes objectifs"] },
+        { "title": "Forces et points de vigilance", "content": "Nous voyons mal nos propres forces. Demander à des proches ce qu'ils viennent te demander et ce que tu fais facilement révèle des talents utiles pour ton orientation.", "keyPoints": ["Ce que les autres te demandent souvent", "Ce que tu fais sans effort", "Ce qui te fait perdre la notion du temps"] }
+      ],
+      "method": { "name": "Ma carte d'identité personnelle", "steps": ["5 valeurs classées", "3 forces confirmées par d'autres", "2 points de vigilance", "1 phrase : ce que je veux apporter aux autres"] },
+      "exercise": { "title": "Le questionnaire des proches", "instructions": ["Pose 3 questions à 3 proches : mes forces, ce qu'on vient me demander, ce que je devrais oser", "Compare avec ta propre perception", "Rédige ta carte d'identité personnelle"], "deliverable": "Ta carte d'identité personnelle" }
+    },
+    {
+      "title": "Objectifs et habitudes",
+      "duration": "Semaine 2",
+      "goal": "Passer des bonnes résolutions aux actions régulières.",
+      "lessons": [
+        { "title": "Des objectifs SMART", "content": "« Réussir mon année » est un souhait. « Obtenir au moins 13 de moyenne au second semestre en révisant 1 h chaque soir du lundi au jeudi » est un objectif : spécifique, mesurable, atteignable, réaliste et daté.", "keyPoints": ["Un objectif = un résultat + un indicateur + une date", "Découper en étapes hebdomadaires", "Écrire et relire ses objectifs"] },
+        { "title": "La mécanique des habitudes", "content": "Une habitude suit une boucle : un déclencheur, une action, une récompense. Pour en créer une, rends-la évidente, facile, attrayante et satisfaisante ; pour en supprimer une, fais l'inverse.", "keyPoints": ["Commencer petit : 2 minutes par jour", "Accrocher la nouvelle habitude à une existante (après la prière, après le petit-déjeuner…)", "Suivre ses progrès sur un calendrier"] }
+      ],
+      "method": { "name": "Plan d'habitude", "steps": ["Habitude choisie, version minimale (2 minutes)", "Déclencheur : « Après… je… »", "Lieu et heure fixes", "Suivi : une croix par jour sur un calendrier", "Récompense immédiate"] },
+      "exercise": { "title": "21 jours d'habitude", "instructions": ["Choisis une habitude utile (lecture, révision, sport, épargne)", "Rédige ton plan d'habitude", "Coche chaque jour réalisé pendant 21 jours", "Fais le point avec ton binôme chaque semaine"], "deliverable": "Calendrier de suivi et bilan" }
+    },
+    {
+      "title": "Temps et concentration",
+      "duration": "Semaine 3",
+      "goal": "Faire l'important avant l'urgent et protéger ta concentration.",
+      "lessons": [
+        { "title": "La matrice urgent / important", "content": "Classe tes tâches en quatre cases : urgent et important (faire maintenant), important mais pas urgent (planifier), urgent mais pas important (déléguer ou réduire), ni urgent ni important (supprimer). Le progrès se joue dans la case « important, pas urgent ».", "keyPoints": ["Réviser régulièrement est important et non urgent", "Les notifications sont souvent urgentes et non importantes", "Planifier chaque semaine les tâches importantes"] },
+        { "title": "La méthode Pomodoro", "content": "25 minutes de travail sur une seule tâche, téléphone hors de portée, puis 5 minutes de pause. Après quatre cycles, une pause plus longue. La concentration se travaille comme un muscle.", "keyPoints": ["Une seule tâche par pomodoro", "Téléphone en mode avion ou dans une autre pièce", "Noter les distractions plutôt que d'y céder"] },
+        { "title": "Planifier sa semaine", "content": "Le dimanche, 20 minutes suffisent : relire ses objectifs, placer les blocs importants dans l'agenda, prévoir du repos.", "keyPoints": ["Bloquer les créneaux importants en premier", "Garder des marges pour l'imprévu", "Prévoir le repos et la vie sociale"] }
+      ],
+      "method": { "name": "Revue hebdomadaire", "steps": ["Qu'ai-je accompli cette semaine ?", "Qu'est-ce qui a bloqué ?", "Quelles sont mes 3 priorités de la semaine prochaine ?", "Placer ces priorités dans l'agenda"] },
+      "exercise": { "title": "Une semaine sous contrôle", "instructions": ["Note pendant 2 jours comment tu utilises ton temps", "Classe tes tâches dans la matrice", "Planifie ta semaine et travaille en pomodoros"], "deliverable": "Journal de temps et planning hebdomadaire" }
+    },
+    {
+      "title": "Stress, échecs et état d'esprit",
+      "duration": "Semaine 4",
+      "goal": "Rester serein sous pression et apprendre de chaque difficulté.",
+      "lessons": [
+        { "title": "Comprendre et réguler le stress", "content": "Le stress est une réaction normale face à un défi. Il devient un problème quand il dure. Respiration lente, activité physique, sommeil suffisant et parler à quelqu'un de confiance sont les leviers les plus efficaces.", "keyPoints": ["Respiration : inspirer 5 secondes, expirer 5 secondes, pendant 5 minutes", "Bouger chaque jour", "Demander de l'aide n'est pas une faiblesse"] },
+        { "title": "L'état d'esprit de progression", "content": "Les travaux de la psychologue Carol Dweck distinguent l'état d'esprit « fixe » (« je suis nul en maths ») et l'état d'esprit « de progression » (« je ne maîtrise pas encore les maths »). Croire qu'on peut progresser change la façon d'affronter les difficultés.", "keyPoints": ["Ajouter « pas encore » à ses phrases négatives", "Voir l'erreur comme une information", "Comparer à soi-même hier, pas aux autres"] },
+        { "title": "Rebondir après un échec", "content": "Après un échec (examen, refus, projet), analyse calmement : qu'est-ce qui dépendait de moi ? Qu'est-ce que je ferai autrement ? Puis reprends une petite action rapidement.", "keyPoints": ["Séparer les faits de l'émotion", "Une leçon, une action", "Célébrer les progrès, même petits"] }
+      ],
+      "method": { "name": "Analyse après échec", "steps": ["Que s'est-il passé, factuellement ?", "Qu'est-ce qui dépendait de moi ?", "Qu'est-ce que je change la prochaine fois ?", "Quelle petite action je fais dès demain ?"] },
+      "exercise": { "title": "Mon plan de développement 90 jours", "instructions": ["Fixe 3 objectifs SMART alignés avec tes valeurs", "Associe une habitude à chaque objectif", "Prévois ta revue hebdomadaire et un binôme de suivi"], "deliverable": "Plan de développement 90 jours" }
+    }
+  ],
+  "toolkit": [
+    { "name": "Objectif SMART", "use": "Transformer un souhait en plan", "how": "Spécifique, mesurable, atteignable, réaliste, daté." },
+    { "name": "Matrice urgent / important", "use": "Prioriser", "how": "Faire, planifier, déléguer, supprimer." },
+    { "name": "Pomodoro", "use": "Se concentrer", "how": "25 minutes sur une tâche, 5 minutes de pause, téléphone éloigné." },
+    { "name": "Plan d'habitude", "use": "Tenir dans la durée", "how": "Version de 2 minutes, déclencheur, suivi quotidien, récompense." },
+    { "name": "Respiration 5-5", "use": "Faire baisser le stress", "how": "Inspirer 5 s, expirer 5 s, pendant 5 minutes." }
+  ],
+  "caseStudy": {
+    "title": "Ibrahima et le bac",
+    "context": "Ibrahima, en terminale, passe ses soirées sur son téléphone et révise la veille des devoirs.",
+    "challenge": "Ses notes baissent et le stress augmente à l'approche du bac.",
+    "solution": "Il fixe un objectif SMART (13 de moyenne au trimestre), installe l'habitude de 2 pomodoros chaque soir après le dîner, laisse son téléphone au salon pendant ce temps et fait une revue chaque dimanche avec un camarade.",
+    "lesson": "Au bout de 6 semaines, ses notes remontent. Ce n'est pas la motivation qui a changé, mais le système qui la rend inutile."
+  },
+  "pitfalls": [
+    "Se fixer 10 objectifs à la fois",
+    "Viser des habitudes trop ambitieuses dès le premier jour",
+    "Confondre être occupé et être efficace",
+    "Se comparer en permanence aux autres sur les réseaux sociaux",
+    "Garder le stress pour soi trop longtemps"
+  ],
+  "quiz": [
+    { "q": "Dans la matrice urgent / important, que faire des tâches importantes mais pas urgentes ?", "options": ["Les supprimer", "Les planifier", "Les déléguer"], "answer": 1, "explanation": "C'est la case du progrès : il faut leur réserver du temps." },
+    { "q": "Quelle est la meilleure façon de démarrer une habitude de lecture ?", "options": ["Lire un livre par jour", "Lire 2 pages chaque soir après le dîner", "Attendre d'avoir du temps"], "answer": 1, "explanation": "Une version minimale, accrochée à un déclencheur, a plus de chances de durer." },
+    { "q": "Quelle phrase traduit un état d'esprit de progression ?", "options": ["Je suis nul en anglais", "Je ne maîtrise pas encore l'anglais", "L'anglais, ce n'est pas pour moi"], "answer": 1, "explanation": "Le « pas encore » ouvre la possibilité de progresser." },
+    { "q": "Combien dure un pomodoro classique ?", "options": ["10 minutes", "25 minutes", "2 heures"], "answer": 1, "explanation": "25 minutes de concentration puis 5 minutes de pause." }
+  ],
+  "actionPlan": [
+    { "period": "Jours 1 à 7", "action": "Rédige ta carte d'identité personnelle et choisis 3 objectifs SMART." },
+    { "period": "Jours 8 à 14", "action": "Lance une habitude de 2 minutes et coche chaque jour." },
+    { "period": "Jours 15 à 21", "action": "Planifie ta semaine et travaille en pomodoros." },
+    { "period": "Jours 22 à 30", "action": "Fais ta première revue de 30 jours avec ton binôme et ajuste ton plan." }
+  ],
+  "resources": [
+    { "type": "Livre", "title": "Changer d'état d'esprit (Mindset)", "org": "Carol S. Dweck", "free": false },
+    { "type": "Livre", "title": "Un rien peut tout changer (Atomic Habits)", "org": "James Clear", "free": false },
+    { "type": "Écoute", "title": "Communauté et forum du club", "org": "Le Monde du Travail", "url": "forum.html", "free": true, "note": "Trouve un binôme de suivi." }
+  ],
+  "sources": [
+    { "title": "The Future of Jobs Report 2025", "org": "Forum économique mondial", "year": 2025, "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/" },
+    { "title": "Mindset: The New Psychology of Success", "org": "Carol S. Dweck", "year": 2006 },
+    { "title": "La méthode Pomodoro", "org": "Francesco Cirillo" },
+    { "title": "There's a S.M.A.R.T. way to write management's goals and objectives", "org": "George T. Doran, Management Review", "year": 1981 }
+  ],
+  "relatedJobs": ["conseiller-orientation-psychologue", "psychologue-du-travail", "formateur-professionnel-adultes", "conseiller-principal-education"],
+  "certification": "Attestation WOW de développement personnel, délivrée après la présentation de ton plan de développement 90 jours.",
+  "faq": [
+    { "q": "Est-ce une thérapie ?", "a": "Non. C'est une formation à des méthodes d'organisation et de régulation. En cas de souffrance psychologique, il faut consulter un professionnel de santé." },
+    { "q": "Combien de temps par semaine ?", "a": "Environ 6 heures : les ateliers et 20 à 30 minutes de pratique quotidienne." }
+  ]
+}

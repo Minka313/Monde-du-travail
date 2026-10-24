@@ -1,0 +1,117 @@
+{
+  "slug": "ethique-citoyennete-professionnelle",
+  "title": "Éthique & citoyenneté professionnelle",
+  "icon": "🧭",
+  "image": "images/ethique.webp",
+  "category": "Compétences de vie",
+  "level": "Tous niveaux",
+  "duration": "3 semaines · 15 h",
+  "format": "Débats, études de cas réels, rencontre avec des professionnels",
+  "tagline": "Connaître ses droits et devoirs au travail, agir avec intégrité et prendre sa place de citoyen engagé.",
+  "audience": "Lycéens, étudiants, stagiaires, jeunes salariés et bénévoles.",
+  "prerequisites": "Aucun.",
+  "hook": {
+    "title": "La compétence qui rend les autres crédibles",
+    "text": "Une entreprise peut apprendre une technique à un jeune ; elle peut difficilement lui apprendre l'honnêteté, la ponctualité et le sens des responsabilités. Connaître ses droits et ses devoirs, savoir dire non à une demande contraire à l'éthique et respecter les autres sont des atouts qui ouvrent des portes."
+  },
+  "keyFacts": [
+    { "value": "Loi 97-17", "label": "Code du travail du Sénégal, adopté le 1er décembre 1997 : il fixe notamment la durée légale de 40 heures par semaine", "source": "République du Sénégal, Code du travail" },
+    { "value": "Loi 2008-12", "label": "protection des données à caractère personnel : respecter la vie privée des clients et collègues est une obligation légale", "source": "Commission de Protection des Données Personnelles du Sénégal" },
+    { "value": "10", "label": "principes du Pacte mondial des Nations unies : droits de l'homme, travail, environnement, lutte contre la corruption", "source": "Pacte mondial des Nations unies" }
+  ],
+  "outcomes": [
+    "Connaître les règles de base du contrat de travail et du stage au Sénégal",
+    "Identifier tes droits (rémunération, durée du travail, sécurité) et tes devoirs",
+    "Reconnaître les situations de conflit d'intérêts, de corruption et de harcèlement",
+    "Prendre une décision éthique avec une méthode simple",
+    "Respecter la confidentialité et les données personnelles",
+    "Adopter les codes professionnels : ponctualité, fiabilité, présentation, respect",
+    "T'engager comme citoyen : bénévolat, vie associative, participation civique"
+  ],
+  "modules": [
+    {
+      "title": "Droits et devoirs au travail",
+      "duration": "Semaine 1",
+      "goal": "Savoir ce que la loi garantit et ce qu'elle exige.",
+      "lessons": [
+        { "title": "Le contrat de travail", "content": "Le Code du travail sénégalais (loi 97-17) encadre le contrat : nature (durée déterminée ou indéterminée), période d'essai, rémunération, durée légale de 40 heures par semaine, congés. Lis toujours un contrat avant de le signer et garde-en une copie.", "keyPoints": ["Un contrat écrit protège les deux parties", "Vérifier poste, salaire, durée, période d'essai", "Garder copies des documents et bulletins de paie"] },
+        { "title": "Stages et premières expériences", "content": "Un stage a un objectif de formation, encadré par une convention entre l'établissement, l'organisme d'accueil et le stagiaire. Il précise les missions, la durée, les horaires et l'éventuelle indemnité.", "keyPoints": ["Exiger une convention de stage", "Des missions en lien avec la formation", "Un tuteur identifié"] },
+        { "title": "Les devoirs du salarié", "content": "Exécuter son travail avec soin, respecter les horaires et le règlement intérieur, être loyal envers son employeur, protéger les informations confidentielles.", "keyPoints": ["Ponctualité et assiduité", "Loyauté et discrétion", "Respect des règles de sécurité"] }
+      ],
+      "method": { "name": "Check-list avant de signer", "steps": ["Intitulé du poste et missions", "Type de contrat et durée", "Rémunération et date de paiement", "Horaires et lieu de travail", "Période d'essai", "Ce que je ne comprends pas : je pose la question avant de signer"] },
+      "exercise": { "title": "Lire un contrat", "instructions": ["Analyse un modèle de contrat ou de convention de stage fourni", "Repère les clauses essentielles avec la check-list", "Liste les questions à poser"], "deliverable": "Contrat annoté" }
+    },
+    {
+      "title": "Intégrité et décisions éthiques",
+      "duration": "Semaine 2",
+      "goal": "Savoir réagir face à une situation qui pose un problème moral.",
+      "lessons": [
+        { "title": "Conflit d'intérêts et corruption", "content": "Un conflit d'intérêts existe quand un intérêt personnel peut influencer une décision professionnelle (recruter un proche, choisir le fournisseur d'un ami). La corruption consiste à offrir ou accepter un avantage pour obtenir une décision. Les deux exposent à des sanctions et détruisent la confiance.", "keyPoints": ["Déclarer un lien personnel", "Refuser cadeaux et avantages qui créent une obligation", "Au Sénégal, l'OFNAC est l'office de lutte contre la fraude et la corruption"] },
+        { "title": "Une méthode de décision éthique", "content": "Face à un dilemme : est-ce légal ? Est-ce conforme aux règles de mon organisation ? Serais-je à l'aise si c'était publié ? Qui est affecté et comment ? Quelle option respecte le mieux chacun ?", "keyPoints": ["Prendre le temps de réfléchir", "Demander conseil à une personne de confiance", "Garder une trace écrite"] },
+        { "title": "Dire non avec tact", "content": "Refuser une demande contraire à l'éthique peut se faire calmement : rappeler la règle, proposer une alternative légitime, et en parler à un responsable si la pression continue.", "keyPoints": ["Rappeler la règle, pas accuser", "Proposer une alternative", "Ne pas rester seul face à la pression"] }
+      ],
+      "method": { "name": "Test éthique en 5 questions", "steps": ["Est-ce légal ?", "Est-ce conforme aux règles de mon organisation ?", "Serais-je à l'aise si ma famille ou la presse le savait ?", "Qui est affecté, et comment ?", "Quelle option respecte le mieux chacun ?"] },
+      "exercise": { "title": "Dilemmes en débat", "instructions": ["En groupe, analysez 4 dilemmes (cadeau d'un fournisseur, recrutement d'un cousin, falsification d'une note de frais, données clients)", "Appliquez le test en 5 questions", "Présentez la décision et ses raisons"], "deliverable": "Fiche de décision pour chaque dilemme" }
+    },
+    {
+      "title": "Respect, confidentialité et engagement citoyen",
+      "duration": "Semaine 3",
+      "goal": "Contribuer à un environnement de travail sain et à la vie de la communauté.",
+      "lessons": [
+        { "title": "Respect et lutte contre le harcèlement", "content": "Moqueries répétées, propos sexistes, pressions, discriminations : ces comportements sont inacceptables et peuvent être sanctionnés. Si tu en es victime ou témoin, note les faits (dates, témoins) et alerte une personne de confiance ou un responsable.", "keyPoints": ["Respecter chacun, quelles que soient ses origines, son sexe, sa religion", "Noter les faits précisément", "Ne pas rester seul : en parler"] },
+        { "title": "Confidentialité et données personnelles", "content": "Numéros de téléphone, dossiers de santé, informations sur les clients : ces données sont protégées par la loi 2008-12. Ne les partage pas sur les réseaux ou dans des groupes WhatsApp, et n'utilise que ce qui est nécessaire à ton travail.", "keyPoints": ["Partager uniquement ce qui est nécessaire", "Pas de captures d'écran de données clients", "Verrouiller ses appareils"] },
+        { "title": "L'engagement citoyen", "content": "Bénévolat, vie associative, set setal, participation aux consultations et aux élections : l'engagement développe le leadership, le réseau et le sens des responsabilités, et il se valorise dans un CV.", "keyPoints": ["Choisir une cause qui te touche", "S'engager régulièrement, même peu de temps", "Valoriser ses engagements"] }
+      ],
+      "method": { "name": "Que faire si je suis témoin d'un problème", "steps": ["Noter les faits : quoi, quand, qui, témoins", "En parler à une personne de confiance", "Alerter le responsable ou l'instance prévue", "Se protéger : garder des copies, ne pas agir seul"] },
+      "exercise": { "title": "Projet citoyen", "instructions": ["En équipe, choisis une action citoyenne simple (nettoyage, collecte, tutorat)", "Planifie-la et réalise-la", "Présente le résultat et ce que vous avez appris"], "deliverable": "Compte rendu illustré du projet citoyen" }
+    }
+  ],
+  "toolkit": [
+    { "name": "Check-list avant de signer", "use": "Contrat ou convention de stage", "how": "Poste, type de contrat, rémunération, horaires, période d'essai, questions." },
+    { "name": "Test éthique en 5 questions", "use": "Dilemme", "how": "Légal ? Conforme aux règles ? Publiable ? Qui est affecté ? Quelle option respecte chacun ?" },
+    { "name": "Refus avec tact", "use": "Demande inappropriée", "how": "Rappeler la règle, proposer une alternative, alerter si la pression continue." },
+    { "name": "Signalement", "use": "Témoin d'un problème", "how": "Noter les faits, en parler, alerter, se protéger." }
+  ],
+  "caseStudy": {
+    "title": "Le cadeau du fournisseur",
+    "context": "Awa, assistante dans une PME, est chargée de comparer trois devis pour l'achat d'ordinateurs.",
+    "challenge": "L'un des fournisseurs lui propose un téléphone neuf « pour la remercier » si son offre est retenue.",
+    "solution": "Elle applique le test éthique : le cadeau crée une obligation et fausserait la comparaison. Elle refuse poliment, en informe son responsable et compare les devis selon des critères écrits (prix, garantie, délai).",
+    "lesson": "Son responsable salue son intégrité et lui confie ensuite la gestion des achats. La confiance est un capital professionnel."
+  },
+  "pitfalls": [
+    "Signer un contrat sans le lire",
+    "Accepter un stage sans convention",
+    "Accepter un cadeau qui crée une obligation",
+    "Partager des données de clients ou de collègues dans des groupes",
+    "Rester silencieux face au harcèlement"
+  ],
+  "quiz": [
+    { "q": "Quelle est la durée légale hebdomadaire du travail au Sénégal (hors agriculture) ?", "options": ["35 heures", "40 heures", "48 heures"], "answer": 1, "explanation": "Le Code du travail (loi 97-17) fixe la durée légale à 40 heures par semaine." },
+    { "q": "Tu dois recruter un stagiaire et ton cousin postule. Que faire ?", "options": ["Le choisir discrètement", "Déclarer le lien et te retirer de la décision", "Refuser sa candidature sans rien dire"], "answer": 1, "explanation": "Déclarer un conflit d'intérêts protège la décision et ta crédibilité." },
+    { "q": "Peut-on partager une capture d'écran de la liste des clients dans un groupe WhatsApp d'amis ?", "options": ["Oui", "Non, ce sont des données personnelles protégées", "Oui si on floute le logo"], "answer": 1, "explanation": "La loi 2008-12 protège les données personnelles ; elles ne doivent servir qu'au travail." },
+    { "q": "Quelle est la première chose à faire quand on est témoin de harcèlement ?", "options": ["L'ignorer", "Noter les faits et en parler à une personne de confiance", "En parler sur les réseaux sociaux"], "answer": 1, "explanation": "Des faits précis et un relais fiable permettent d'agir efficacement." }
+  ],
+  "actionPlan": [
+    { "period": "Jours 1 à 7", "action": "Lis un modèle de contrat ou de convention avec la check-list." },
+    { "period": "Jours 8 à 14", "action": "Applique le test éthique à une décision réelle." },
+    { "period": "Jours 15 à 21", "action": "Vérifie tes groupes et appareils : quelles données personnelles y circulent ?" },
+    { "period": "Jours 22 à 30", "action": "Engage-toi dans une action citoyenne avec le club ou une association." }
+  ],
+  "resources": [
+    { "type": "Référence", "title": "Pacte mondial des Nations unies : les 10 principes", "org": "Nations unies", "url": "https://unglobalcompact.org/", "free": true },
+    { "type": "Institution", "title": "Office national de lutte contre la fraude et la corruption", "org": "OFNAC (Sénégal)", "free": true, "note": "Organe chargé de prévenir et lutter contre la corruption au Sénégal." },
+    { "type": "Engagement", "title": "Vie du club et actions citoyennes", "org": "Le Monde du Travail", "url": "forum.html", "free": true }
+  ],
+  "sources": [
+    { "title": "Code du travail (loi n° 97-17 du 1er décembre 1997)", "org": "République du Sénégal", "year": 1997 },
+    { "title": "Loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel", "org": "République du Sénégal", "year": 2008 },
+    { "title": "Les dix principes du Pacte mondial", "org": "Nations unies", "url": "https://unglobalcompact.org/" }
+  ],
+  "relatedJobs": ["juriste-entreprise-conformite", "responsable-conformite-compliance", "auditeur-interne-charte-qualite", "consultant-rse", "juriste-entreprise"],
+  "certification": "Attestation WOW d'éthique et de citoyenneté professionnelle, délivrée après les débats de dilemmes et le projet citoyen.",
+  "faq": [
+    { "q": "Est-ce un cours de droit ?", "a": "Non : on y apprend l'essentiel des règles pour se protéger et agir correctement. Pour un cas précis, il faut consulter un juriste ou l'inspection du travail." },
+    { "q": "Pourquoi cette formation au club ?", "a": "Parce que l'intégrité et le sens des responsabilités sont au cœur de la mission du club : préparer une relève professionnelle consciente." }
+  ]
+}

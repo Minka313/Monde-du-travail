@@ -1,0 +1,403 @@
+{
+  "slug": "energies-renouvelables",
+  "title": "Énergies renouvelables",
+  "icon": "🌱",
+  "image": "images/hero_senegalese_youth.webp",
+  "category": "Transition Écologique & Climat",
+  "level": "Débutant",
+  "duration": "4 semaines · 28 h",
+  "format": "Cours illustrés, calculs pratiques et visite d'installation quand c'est possible",
+  "tagline": "Comprendre le solaire, l'éolien et l'efficacité énergétique, et découvrir les métiers verts qui recrutent.",
+  "audience": "Lycéens et étudiants curieux des sciences, techniciens, porteurs de projets agricoles ou commerciaux qui veulent réduire leur facture d'électricité.",
+  "prerequisites": "Les quatre opérations et la règle de trois. Aucune connaissance en électricité n'est exigée.",
+  "hook": {
+    "title": "Le soleil, une ressource qui ne s'épuise pas",
+    "text": "Le Sénégal reçoit un ensoleillement parmi les plus généreux au monde et vise 40 % d'électricité renouvelable d'ici 2030. Installer, entretenir, dimensionner ou vendre des systèmes solaires : ces compétences ouvrent des métiers concrets, dans les villes comme dans les zones rurales non raccordées."
+  },
+  "keyFacts": [
+    {
+      "value": "158,7 MW",
+      "label": "puissance du parc éolien de Taïba Ndiaye (46 éoliennes), le plus grand d'Afrique de l'Ouest à sa mise en service",
+      "source": "AFP / Connaissance des Énergies, 2024"
+    },
+    {
+      "value": "40 %",
+      "label": "objectif d'électricité renouvelable dans le mix électrique sénégalais à l'horizon 2030",
+      "source": "Partenariat pour une transition énergétique juste (JETP) Sénégal"
+    },
+    {
+      "value": "Top 10",
+      "label": "la gestion environnementale figure parmi les compétences à la plus forte croissance d'ici 2030",
+      "source": "Forum économique mondial, Future of Jobs Report 2025"
+    }
+  ],
+  "outcomes": [
+    "Distinguer énergie et puissance, kW et kWh, et lire une facture d'électricité",
+    "Expliquer le fonctionnement d'une installation solaire photovoltaïque (panneaux, régulateur, batterie, onduleur)",
+    "Dimensionner un petit système solaire pour une maison, une boutique ou une pompe",
+    "Comprendre l'éolien, l'hydraulique et la biomasse, avec leurs avantages et limites",
+    "Repérer les économies d'énergie les plus rentables",
+    "Appliquer les règles de sécurité de base face à l'électricité",
+    "Connaître les métiers et formations de la filière au Sénégal"
+  ],
+  "modules": [
+    {
+      "title": "Les bases de l'énergie",
+      "duration": "Semaine 1",
+      "goal": "Parler le langage de l'énergie sans se tromper d'unité.",
+      "lessons": [
+        {
+          "title": "Puissance et énergie",
+          "content": "La puissance (en watts, W) dit à quel rythme un appareil consomme. L'énergie (en wattheures, Wh) dit combien il a consommé sur une durée. Une ampoule de 10 W allumée 5 heures consomme 50 Wh.",
+          "keyPoints": [
+            "Énergie (Wh) = puissance (W) × durée (h)",
+            "1 kWh = 1 000 Wh : c'est l'unité de la facture",
+            "Un ventilateur de 50 W pendant 8 h consomme 400 Wh"
+          ]
+        },
+        {
+          "title": "D'où vient notre électricité",
+          "content": "Une grande partie de l'électricité au Sénégal a longtemps été produite par des centrales thermiques au fioul ou au charbon, coûteuses et polluantes. Les centrales solaires et le parc éolien de Taïba Ndiaye diversifient progressivement le mix.",
+          "keyPoints": [
+            "Énergies fossiles : fioul, charbon, gaz",
+            "Énergies renouvelables : soleil, vent, eau, biomasse",
+            "Le réseau national est géré par la Senelec"
+          ]
+        },
+        {
+          "title": "Lire sa facture",
+          "content": "La facture indique les kWh consommés sur la période. En la comparant mois après mois, on repère les appareils gourmands et l'effet des économies.",
+          "keyPoints": [
+            "Repérer les kWh consommés",
+            "Comparer d'un mois à l'autre",
+            "Identifier les gros consommateurs (froid, climatisation, fer à repasser)"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Bilan de consommation",
+        "steps": [
+          "Lister les appareils et leur puissance (étiquette)",
+          "Estimer les heures d'utilisation par jour",
+          "Calculer l'énergie journalière de chaque appareil",
+          "Additionner pour obtenir les Wh par jour"
+        ]
+      },
+      "exercise": {
+        "title": "Le bilan de ma maison",
+        "instructions": [
+          "Fais le bilan de consommation de ta maison ou de ta chambre",
+          "Identifie les 3 appareils qui consomment le plus",
+          "Compare avec ta facture si tu y as accès"
+        ],
+        "deliverable": "Tableau de consommation journalière"
+      }
+    },
+    {
+      "title": "Le solaire photovoltaïque",
+      "duration": "Semaine 2",
+      "goal": "Comprendre et dimensionner une petite installation solaire autonome.",
+      "lessons": [
+        {
+          "title": "Les composants",
+          "content": "Les panneaux transforment la lumière en électricité continue. Le régulateur protège la batterie. La batterie stocke l'énergie pour la nuit. L'onduleur transforme le courant continu en courant alternatif 220 V pour les appareils domestiques.",
+          "keyPoints": [
+            "Puissance des panneaux en watts-crête (Wc)",
+            "Capacité des batteries en ampères-heures (Ah) à une tension donnée",
+            "Ne jamais décharger complètement une batterie"
+          ]
+        },
+        {
+          "title": "Dimensionner les panneaux",
+          "content": "Un panneau produit environ sa puissance crête multipliée par le nombre d'heures d'ensoleillement équivalent plein soleil, moins les pertes. On prend une marge pour les pertes (câbles, chaleur, poussière) d'environ 30 %.",
+          "keyPoints": [
+            "Puissance panneaux ≈ besoin journalier ÷ (heures de plein soleil × 0,7)",
+            "Nettoyer régulièrement les panneaux (poussière, harmattan)",
+            "Orienter plein sud, sans ombre"
+          ]
+        },
+        {
+          "title": "Dimensionner la batterie",
+          "content": "La batterie doit couvrir la consommation de nuit et les jours peu ensoleillés, sans être trop déchargée. Pour une batterie au lithium on peut utiliser une grande partie de sa capacité ; pour une batterie au plomb, environ la moitié.",
+          "keyPoints": [
+            "Capacité (Wh) ≈ besoin × jours d'autonomie ÷ profondeur de décharge",
+            "Capacité (Ah) = capacité (Wh) ÷ tension (12, 24 ou 48 V)",
+            "Ventiler le local des batteries"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Dimensionnement en 4 étapes",
+        "steps": [
+          "Besoin journalier (Wh/jour) issu du bilan",
+          "Panneaux (Wc) = besoin ÷ (heures de plein soleil × 0,7)",
+          "Batterie (Wh) = besoin × jours d'autonomie ÷ profondeur de décharge",
+          "Onduleur : puissance supérieure à la somme des appareils utilisés en même temps"
+        ]
+      },
+      "exercise": {
+        "title": "Kit solaire pour une boutique",
+        "instructions": [
+          "Une boutique utilise 4 ampoules de 10 W pendant 5 h, un ventilateur de 50 W pendant 6 h et un téléphone (10 Wh)",
+          "Calcule le besoin journalier",
+          "Dimensionne panneaux et batterie avec 5 h de plein soleil, 1 jour d'autonomie, batterie lithium (80 %)"
+        ],
+        "deliverable": "Fiche de dimensionnement commentée"
+      }
+    },
+    {
+      "title": "Éolien, hydraulique, biomasse et efficacité",
+      "duration": "Semaine 3",
+      "goal": "Avoir une vision d'ensemble des solutions et savoir réduire la consommation.",
+      "lessons": [
+        {
+          "title": "L'éolien",
+          "content": "Une éolienne transforme l'énergie du vent en électricité. Le littoral nord du Sénégal, régulièrement venté, accueille le parc de Taïba Ndiaye. L'éolien produit aussi la nuit, en complément du solaire.",
+          "keyPoints": [
+            "Production variable selon le vent",
+            "Complémentaire du solaire",
+            "Grands parcs raccordés au réseau"
+          ]
+        },
+        {
+          "title": "Hydraulique et biomasse",
+          "content": "Les barrages produisent de l'électricité à partir des cours d'eau (le Sénégal bénéficie de l'hydroélectricité du bassin du fleuve Sénégal). La biomasse valorise déchets agricoles et biogaz, utile en milieu rural.",
+          "keyPoints": [
+            "Hydraulique : production stable",
+            "Biogaz : cuisson et électricité à partir de déchets",
+            "Toujours vérifier l'impact environnemental"
+          ]
+        },
+        {
+          "title": "L'énergie la moins chère est celle qu'on ne consomme pas",
+          "content": "Ampoules LED, réfrigérateur bien réglé et dégivré, climatisation à 26 °C, appareils éteints plutôt qu'en veille : ces gestes réduisent la facture et la taille d'une installation solaire.",
+          "keyPoints": [
+            "Remplacer les ampoules par des LED",
+            "Couper les veilles",
+            "Réduire d'abord, produire ensuite"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Plan d'économies d'énergie",
+        "steps": [
+          "Classer les appareils par consommation",
+          "Pour chacun : un geste d'économie",
+          "Estimer les kWh économisés par mois",
+          "Prioriser les actions gratuites, puis les plus rentables"
+        ]
+      },
+      "exercise": {
+        "title": "Défi -15 %",
+        "instructions": [
+          "Applique un plan d'économies pendant un mois",
+          "Relève la consommation (compteur ou facture)",
+          "Calcule l'économie obtenue"
+        ],
+        "deliverable": "Bilan avant / après"
+      }
+    },
+    {
+      "title": "Sécurité, métiers et projet",
+      "duration": "Semaine 4",
+      "goal": "Travailler en sécurité et choisir une voie dans la filière.",
+      "lessons": [
+        {
+          "title": "Sécurité électrique",
+          "content": "Toute intervention sur une installation doit se faire hors tension, avec un matériel adapté et, au-delà de la découverte, par une personne formée et habilitée. Les batteries peuvent provoquer des courts-circuits et des brûlures.",
+          "keyPoints": [
+            "Couper avant d'intervenir",
+            "Protections : disjoncteurs, fusibles, mise à la terre",
+            "Ne jamais improviser une installation sans formation"
+          ]
+        },
+        {
+          "title": "Les métiers de la filière",
+          "content": "Installateur-mainteneur photovoltaïque, technicien en efficacité énergétique, chef de projet solaire ou éolien, technico-commercial, auditeur énergétique, ingénieur en énergies renouvelables : les niveaux vont du CAP/BT à l'ingénieur.",
+          "keyPoints": [
+            "Formations techniques : lycées techniques, centres de formation professionnelle",
+            "Formations supérieures : universités et écoles d'ingénieurs",
+            "Certifications fabricant appréciées"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Choisir sa voie",
+        "steps": [
+          "Lister ce qui t'attire : terrain, calcul, vente, gestion",
+          "Explorer 3 fiches métiers liées",
+          "Identifier la formation d'accès et sa durée",
+          "Contacter un professionnel du secteur"
+        ]
+      },
+      "exercise": {
+        "title": "Projet solaire de quartier",
+        "instructions": [
+          "Choisis un lieu (case de santé, école, boutique)",
+          "Fais son bilan de consommation",
+          "Dimensionne un kit et estime son coût auprès de fournisseurs",
+          "Présente le projet en 3 minutes"
+        ],
+        "deliverable": "Mini-dossier de projet solaire"
+      }
+    }
+  ],
+  "toolkit": [
+    {
+      "name": "Formule de l'énergie",
+      "use": "Toute estimation",
+      "how": "Énergie (Wh) = puissance (W) × durée (h)."
+    },
+    {
+      "name": "Dimensionnement solaire",
+      "use": "Kit autonome",
+      "how": "Panneaux (Wc) = besoin ÷ (heures de plein soleil × 0,7) ; batterie (Wh) = besoin × autonomie ÷ profondeur de décharge."
+    },
+    {
+      "name": "Plan d'économies",
+      "use": "Réduire la facture",
+      "how": "Classer les appareils, un geste par appareil, prioriser le gratuit."
+    },
+    {
+      "name": "Règle de sécurité",
+      "use": "Avant toute intervention",
+      "how": "Couper, vérifier l'absence de tension, protéger, intervenir seulement si formé."
+    }
+  ],
+  "caseStudy": {
+    "title": "Le moulin de Ndèye",
+    "context": "Ndèye gère un moulin à mil dans un village où les coupures sont fréquentes et le carburant du groupe électrogène coûte cher.",
+    "challenge": "Elle veut savoir si le solaire peut réduire ses dépenses.",
+    "solution": "Avec un technicien, elle fait le bilan de consommation, regroupe les heures de mouture en journée, quand le soleil produit, et dimensionne une installation avec peu de batteries. Le groupe électrogène ne sert plus qu'en secours.",
+    "lesson": "Adapter les usages au soleil (travailler en journée) réduit la taille et le coût des batteries, souvent l'élément le plus cher."
+  },
+  "pitfalls": [
+    "Confondre kW (puissance) et kWh (énergie)",
+    "Dimensionner sans bilan de consommation",
+    "Oublier les pertes et la poussière sur les panneaux",
+    "Décharger complètement les batteries",
+    "Intervenir sur une installation sans couper le courant ni être formé"
+  ],
+  "quiz": [
+    {
+      "q": "Une ampoule de 10 W allumée 6 heures consomme :",
+      "options": [
+        "16 Wh",
+        "60 Wh",
+        "600 Wh"
+      ],
+      "answer": 1,
+      "explanation": "10 W × 6 h = 60 Wh."
+    },
+    {
+      "q": "Quel composant stocke l'énergie pour la nuit ?",
+      "options": [
+        "L'onduleur",
+        "La batterie",
+        "Le régulateur"
+      ],
+      "answer": 1,
+      "explanation": "L'onduleur convertit, le régulateur protège, la batterie stocke."
+    },
+    {
+      "q": "Besoin 500 Wh/jour, 5 h de plein soleil, coefficient 0,7. Puissance panneaux ?",
+      "options": [
+        "Environ 100 Wc",
+        "Environ 143 Wc",
+        "Environ 700 Wc"
+      ],
+      "answer": 1,
+      "explanation": "500 ÷ (5 × 0,7) ≈ 143 Wc."
+    },
+    {
+      "q": "Quelle est la première action pour réduire une facture ?",
+      "options": [
+        "Acheter des panneaux",
+        "Réduire la consommation (LED, veilles, réglages)",
+        "Changer de compteur"
+      ],
+      "answer": 1,
+      "explanation": "L'énergie la moins chère est celle qu'on ne consomme pas."
+    }
+  ],
+  "actionPlan": [
+    {
+      "period": "Jours 1 à 7",
+      "action": "Fais le bilan de consommation de ta maison."
+    },
+    {
+      "period": "Jours 8 à 14",
+      "action": "Applique 3 gestes d'économie et relève le compteur."
+    },
+    {
+      "period": "Jours 15 à 21",
+      "action": "Dimensionne un kit solaire pour un lieu que tu connais."
+    },
+    {
+      "period": "Jours 22 à 30",
+      "action": "Explore 3 fiches métiers de la filière et contacte un professionnel."
+    }
+  ],
+  "resources": [
+    {
+      "type": "Rapports",
+      "title": "Statistiques et rapports sur les énergies renouvelables",
+      "org": "IRENA (Agence internationale pour les énergies renouvelables)",
+      "url": "https://www.irena.org/",
+      "free": true
+    },
+    {
+      "type": "Outil",
+      "title": "PVGIS : estimer la production solaire d'un lieu",
+      "org": "Commission européenne, Centre commun de recherche",
+      "url": "https://re.jrc.ec.europa.eu/pvg_tools/fr/",
+      "free": true,
+      "note": "Couvre l'Afrique : choisis ton lieu sur la carte."
+    },
+    {
+      "type": "Fiches métiers",
+      "title": "Métiers de l'énergie",
+      "org": "Le Monde du Travail",
+      "url": "job.html",
+      "free": true
+    }
+  ],
+  "sources": [
+    {
+      "title": "Le Sénégal en avance pour la mise en service de son grand parc éolien de Taïba Ndiaye",
+      "org": "AFP / Connaissance des Énergies",
+      "year": 2024,
+      "url": "https://www.connaissancedesenergies.org/"
+    },
+    {
+      "title": "Partenariat pour une transition énergétique juste (JETP) : objectif de 40 % de renouvelables dans le mix électrique en 2030",
+      "org": "Gouvernement du Sénégal et partenaires",
+      "year": 2023
+    },
+    {
+      "title": "The Future of Jobs Report 2025",
+      "org": "Forum économique mondial",
+      "year": 2025,
+      "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/"
+    }
+  ],
+  "relatedJobs": [
+    "installateur-mainteneur-photovoltaique",
+    "chef-projet-energie-solaire-photovoltaique",
+    "chef-projet-eolien-onshore-offshore",
+    "energy-manager-auditeur-energetique",
+    "technico-commercial-solutions-energetiques",
+    "technicien-solaire-thermique"
+  ],
+  "certification": "Attestation WOW de sensibilisation aux énergies renouvelables, délivrée après le mini-dossier de projet solaire. Elle ne remplace pas une habilitation électrique.",
+  "faq": [
+    {
+      "q": "Pourrai-je installer des panneaux après la formation ?",
+      "a": "Tu sauras dimensionner et comprendre une installation. Pour installer, il faut une formation technique et une habilitation électrique : la formation t'oriente vers ces parcours."
+    },
+    {
+      "q": "Faut-il être fort en physique ?",
+      "a": "Non, les calculs se limitent à des multiplications et divisions expliquées pas à pas."
+    }
+  ]
+}

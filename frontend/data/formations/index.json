@@ -1,0 +1,221 @@
+{
+  "count": 12,
+  "formations": [
+    {
+      "slug": "communication-efficace",
+      "title": "Communication efficace",
+      "icon": "💬",
+      "image": "images/about_team.webp",
+      "category": "Soft Skills & Communication",
+      "level": "Tous niveaux",
+      "duration": "4 semaines · 24 h",
+      "format": "Ateliers, jeux de rôle et exercices d'écriture",
+      "tagline": "Écouter vraiment, s'exprimer clairement et écrire des messages professionnels qui obtiennent une réponse.",
+      "modulesCount": 4,
+      "lessonsCount": 10,
+      "outcomes": [
+        "Pratiquer l'écoute active : reformuler, questionner, vérifier",
+        "Exprimer une demande ou un désaccord sans agressivité grâce à la CNV",
+        "Adapter ton message à ton interlocuteur (professeur, client, collègue, responsable)"
+      ]
+    },
+    {
+      "slug": "cv-entretien-embauche",
+      "title": "CV, lettre et entretien d'embauche",
+      "icon": "📄",
+      "image": "images/orientation.webp",
+      "category": "Insertion professionnelle",
+      "level": "Débutant",
+      "duration": "3 semaines · 18 h",
+      "format": "Ateliers pratiques, relecture individuelle et simulations d'entretien filmées",
+      "tagline": "Un CV qui passe le tri en 30 secondes, une lettre qui donne envie, un entretien préparé avec la méthode STAR.",
+      "modulesCount": 4,
+      "lessonsCount": 11,
+      "outcomes": [
+        "Construire un CV clair d'une page, adapté à chaque offre",
+        "Transformer tes expériences (stages, associations, petits boulots) en résultats concrets",
+        "Rédiger une lettre de motivation courte et personnalisée"
+      ]
+    },
+    {
+      "slug": "developpement-personnel",
+      "title": "Développement personnel",
+      "icon": "🧠",
+      "image": "images/about_mission.webp",
+      "category": "Soft Skills & Épanouissement",
+      "level": "Tous niveaux",
+      "duration": "4 semaines · 24 h",
+      "format": "Ateliers interactifs, exercices personnels et suivi en binôme",
+      "tagline": "Mieux te connaître, gérer ton temps et ton stress, et tenir tes objectifs dans la durée.",
+      "modulesCount": 4,
+      "lessonsCount": 10,
+      "outcomes": [
+        "Identifier tes valeurs, tes forces et ce qui te motive",
+        "Formuler des objectifs SMART et les découper en actions",
+        "Construire une habitude et en supprimer une autre"
+      ]
+    },
+    {
+      "slug": "energies-renouvelables",
+      "title": "Énergies renouvelables",
+      "icon": "🌱",
+      "image": "images/hero_senegalese_youth.webp",
+      "category": "Transition Écologique & Climat",
+      "level": "Débutant",
+      "duration": "4 semaines · 28 h",
+      "format": "Cours illustrés, calculs pratiques et visite d'installation quand c'est possible",
+      "tagline": "Comprendre le solaire, l'éolien et l'efficacité énergétique, et découvrir les métiers verts qui recrutent.",
+      "modulesCount": 4,
+      "lessonsCount": 11,
+      "outcomes": [
+        "Distinguer énergie et puissance, kW et kWh, et lire une facture d'électricité",
+        "Expliquer le fonctionnement d'une installation solaire photovoltaïque (panneaux, régulateur, batterie, onduleur)",
+        "Dimensionner un petit système solaire pour une maison, une boutique ou une pompe"
+      ]
+    },
+    {
+      "slug": "entrepreneuriat",
+      "title": "Entrepreneuriat",
+      "icon": "💡",
+      "image": "images/innovation.webp",
+      "category": "Entrepreneuriat & Innovation",
+      "level": "Débutant à intermédiaire",
+      "duration": "6 semaines · 40 h",
+      "format": "Ateliers, travail sur ton propre projet et pitch final",
+      "tagline": "De l'idée au premier client : tester vite, dépenser peu, se formaliser au bon moment.",
+      "modulesCount": 6,
+      "lessonsCount": 14,
+      "outcomes": [
+        "Transformer une idée en problème client clairement formulé",
+        "Mener des entretiens clients qui révèlent la vérité, pas des compliments",
+        "Construire ton modèle économique sur une page (Business Model Canvas)"
+      ]
+    },
+    {
+      "slug": "ethique-citoyennete-professionnelle",
+      "title": "Éthique & citoyenneté professionnelle",
+      "icon": "🧭",
+      "image": "images/ethique.webp",
+      "category": "Compétences de vie",
+      "level": "Tous niveaux",
+      "duration": "3 semaines · 15 h",
+      "format": "Débats, études de cas réels, rencontre avec des professionnels",
+      "tagline": "Connaître ses droits et devoirs au travail, agir avec intégrité et prendre sa place de citoyen engagé.",
+      "modulesCount": 3,
+      "lessonsCount": 9,
+      "outcomes": [
+        "Connaître les règles de base du contrat de travail et du stage au Sénégal",
+        "Identifier tes droits (rémunération, durée du travail, sécurité) et tes devoirs",
+        "Reconnaître les situations de conflit d'intérêts, de corruption et de harcèlement"
+      ]
+    },
+    {
+      "slug": "finance-personnelle",
+      "title": "Finance personnelle & budget",
+      "icon": "💰",
+      "image": "images/citoyennete.webp",
+      "category": "Compétences de vie",
+      "level": "Débutant",
+      "duration": "3 semaines · 15 h",
+      "format": "Ateliers, cas pratiques en FCFA et outils à télécharger",
+      "tagline": "Tenir un budget, épargner même avec peu, utiliser le mobile money en sécurité et éviter les pièges du crédit.",
+      "modulesCount": 4,
+      "lessonsCount": 9,
+      "outcomes": [
+        "Suivre tes revenus et dépenses et savoir où va ton argent",
+        "Construire un budget mensuel réaliste",
+        "Constituer une épargne de précaution, même petite"
+      ]
+    },
+    {
+      "slug": "gestion-de-projet",
+      "title": "Gestion de projet",
+      "icon": "🗂️",
+      "image": "images/formations_hero.webp",
+      "category": "Management & Direction",
+      "level": "Débutant à intermédiaire",
+      "duration": "4 semaines · 28 h",
+      "format": "Ateliers, étude d'un projet réel du participant ou du club, outils gratuits",
+      "tagline": "Cadrer, planifier, piloter et livrer un projet à l'heure, avec des méthodes classiques et agiles.",
+      "modulesCount": 4,
+      "lessonsCount": 10,
+      "outcomes": [
+        "Cadrer un projet : objectif, périmètre, livrables, parties prenantes",
+        "Découper le travail en tâches (organigramme des tâches) et estimer leur durée",
+        "Construire un planning et repérer le chemin critique"
+      ]
+    },
+    {
+      "slug": "leadership-management",
+      "title": "Leadership & Management",
+      "icon": "🤝",
+      "image": "images/leadership.webp",
+      "category": "Management & Direction",
+      "level": "Intermédiaire",
+      "duration": "5 semaines · 35 h",
+      "format": "Ateliers pratiques, mises en situation et coaching de groupe",
+      "tagline": "Fédérer une équipe, décider et faire grandir les autres, même sans titre de chef.",
+      "modulesCount": 5,
+      "lessonsCount": 11,
+      "outcomes": [
+        "Identifier ton style de leadership naturel et ses angles morts",
+        "Adapter ta façon de diriger au niveau d'autonomie de chaque personne",
+        "Fixer des objectifs clairs et suivre leur avancement"
+      ]
+    },
+    {
+      "slug": "negociation-gestion-conflits",
+      "title": "Négociation & gestion des conflits",
+      "icon": "⚖️",
+      "image": "images/about_team.webp",
+      "category": "Soft Skills & Communication",
+      "level": "Intermédiaire",
+      "duration": "3 semaines · 18 h",
+      "format": "Jeux de rôle, études de cas et débriefings filmés",
+      "tagline": "Obtenir un accord juste sans abîmer la relation, et transformer les tensions en solutions.",
+      "modulesCount": 3,
+      "lessonsCount": 9,
+      "outcomes": [
+        "Préparer une négociation : objectifs, limites, alternative de repli",
+        "Distinguer les positions (ce que l'on demande) des intérêts (pourquoi on le demande)",
+        "Proposer plusieurs options et s'appuyer sur des critères objectifs"
+      ]
+    },
+    {
+      "slug": "numerique-ia-au-travail",
+      "title": "Outils numériques & IA au travail",
+      "icon": "🤖",
+      "image": "images/innovation.webp",
+      "category": "Numérique & Intelligence artificielle",
+      "level": "Débutant",
+      "duration": "4 semaines · 24 h",
+      "format": "Ateliers sur ordinateur ou smartphone, exercices guidés, outils gratuits",
+      "tagline": "Bureautique efficace, IA générative utilisée avec méthode et esprit critique, et bonnes pratiques de cybersécurité.",
+      "modulesCount": 4,
+      "lessonsCount": 12,
+      "outcomes": [
+        "Organiser tes fichiers et travailler dans le cloud (Google Drive, OneDrive)",
+        "Produire des documents, tableaux et présentations professionnels",
+        "Rédiger des consignes efficaces (prompts) pour un assistant d'IA"
+      ]
+    },
+    {
+      "slug": "prise-de-parole-en-public",
+      "title": "Prise de parole en public",
+      "icon": "🗣️",
+      "image": "images/communication.webp",
+      "category": "Soft Skills & Communication",
+      "level": "Tous niveaux",
+      "duration": "4 semaines · 30 h",
+      "format": "Ateliers en présentiel à Dakar et sessions en ligne",
+      "tagline": "Transformer le trac en énergie et faire passer un message qui reste.",
+      "modulesCount": 5,
+      "lessonsCount": 13,
+      "outcomes": [
+        "Gérer le trac avec des techniques de respiration et d'ancrage utilisables le jour J",
+        "Structurer n'importe quelle intervention en 3 parties claires avec une accroche et une conclusion qui marquent",
+        "Raconter une histoire courte qui rend ton message concret et mémorable"
+      ]
+    }
+  ]
+}

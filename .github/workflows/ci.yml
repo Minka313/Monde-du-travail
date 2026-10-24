@@ -94,4 +94,4 @@ jobs:
 
       # Les fiches métiers pré-calculées doivent suivre le catalogue d'orientation
       - name: Vérifier les données des fiches métiers
-        run: node scripts/build-job-data.js --check
+        run: node scripts/build-job-data.js --check && node scripts/build-formation-data.js --check

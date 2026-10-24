@@ -52,6 +52,7 @@ body[data-print="dossier"] iframe {
 
 /* Animations d'apparition au défilement : tout doit être visible sur le papier */
 body[data-print="dossier"] #jobContentWrapper *,
+body[data-print="dossier"] #fdContent *,
 body[data-print="dossier"] .dossier-content * {
   opacity: 1 !important;
   visibility: visible !important;
@@ -71,6 +72,8 @@ body[data-print="dossier"] .print-only {
 body[data-print="dossier"] main,
 body[data-print="dossier"] #jobDetailApp,
 body[data-print="dossier"] #jobContentWrapper,
+body[data-print="dossier"] #formationDetailApp,
+body[data-print="dossier"] #fdContent,
 body[data-print="dossier"] .job-main-content-layout,
 body[data-print="dossier"] .job-panels-container {
   display: block !important;
@@ -83,6 +86,9 @@ body[data-print="dossier"] .job-panels-container {
 body[data-print="dossier"] .job-tab-panel,
 body[data-print="dossier"] .dossier-panel {
   display: block !important;
+}
+body[data-print="dossier"] .job-tab-panel.print-hide {
+  display: none !important;
 }
 body[data-print="dossier"] [data-print-title]::before {
   content: attr(data-print-title);

@@ -1,0 +1,129 @@
+{
+  "slug": "cv-entretien-embauche",
+  "title": "CV, lettre et entretien d'embauche",
+  "icon": "📄",
+  "image": "images/orientation.webp",
+  "category": "Insertion professionnelle",
+  "level": "Débutant",
+  "duration": "3 semaines · 18 h",
+  "format": "Ateliers pratiques, relecture individuelle et simulations d'entretien filmées",
+  "tagline": "Un CV qui passe le tri en 30 secondes, une lettre qui donne envie, un entretien préparé avec la méthode STAR.",
+  "audience": "Étudiants en recherche de stage, jeunes diplômés, personnes en reconversion.",
+  "prerequisites": "Avoir un projet de candidature (stage, emploi, alternance, bourse) même approximatif.",
+  "hook": {
+    "title": "Le recrutement est un concours de clarté",
+    "text": "Un recruteur parcourt un CV en quelques dizaines de secondes. Il cherche des réponses simples : que sais-tu faire, qu'as-tu déjà prouvé, pourquoi ce poste ? Cette formation t'apprend à présenter ton parcours, même court, sous forme de résultats concrets, puis à le défendre en entretien."
+  },
+  "keyFacts": [
+    { "value": "34,1 %", "label": "des 15-24 ans au Sénégal ne sont ni en emploi, ni en études, ni en formation (NEET) au 3e trimestre 2024", "source": "ANSD, Enquête nationale sur l'emploi au Sénégal" },
+    { "value": "STAR", "label": "Situation, Tâche, Action, Résultat : la méthode de référence pour répondre aux questions comportementales", "source": "Pratique standard des entretiens structurés" },
+    { "value": "1 page", "label": "suffit pour un CV de jeune diplômé : la clarté prime sur la quantité", "source": "Recommandations courantes des services d'orientation et de recrutement" }
+  ],
+  "outcomes": [
+    "Construire un CV clair d'une page, adapté à chaque offre",
+    "Transformer tes expériences (stages, associations, petits boulots) en résultats concrets",
+    "Rédiger une lettre de motivation courte et personnalisée",
+    "Optimiser ton profil LinkedIn",
+    "Préparer un entretien : recherche sur l'entreprise, questions probables, histoires STAR",
+    "Répondre aux questions pièges et poser tes propres questions",
+    "Assurer le suivi après l'entretien"
+  ],
+  "modules": [
+    {
+      "title": "Le CV qui passe le tri",
+      "duration": "Semaine 1",
+      "goal": "Produire un CV lisible en 30 secondes et adapté à l'offre.",
+      "lessons": [
+        { "title": "La structure", "content": "En haut : nom, titre visé (« Assistant comptable junior »), téléphone, e-mail professionnel, ville, lien LinkedIn. Puis une accroche de 2 lignes, les expériences, la formation, les compétences, les langues et les activités qui montrent ton engagement.", "keyPoints": ["Un titre qui correspond au poste visé", "E-mail professionnel (prenom.nom@…)", "Ordre chronologique inverse"] },
+        { "title": "Des résultats, pas des tâches", "content": "« Chargé de la communication de l'association » dit peu. « Animé la page Facebook de l'association : 1 200 abonnés en 6 mois, 3 événements remplis » montre un résultat. Un verbe d'action, une action, un chiffre ou un effet.", "keyPoints": ["Commencer par un verbe d'action", "Chiffrer dès que possible", "Valoriser associations, projets, petits boulots"] },
+        { "title": "Adapter à chaque offre", "content": "Relève les mots-clés de l'offre (compétences, logiciels, qualités) et vérifie qu'ils apparaissent dans ton CV quand c'est vrai. Certains recruteurs utilisent des logiciels de tri qui recherchent ces mots.", "keyPoints": ["Un CV par type de poste", "Reprendre le vocabulaire de l'offre", "Jamais de mensonge : tout peut être vérifié"] }
+      ],
+      "method": { "name": "Formule d'une ligne d'expérience", "steps": ["Verbe d'action au passé (organisé, conçu, vendu…)", "Ce que tu as fait", "Pour qui ou dans quel contexte", "Résultat chiffré ou effet observable"] },
+      "exercise": { "title": "Mon CV en une page", "instructions": ["Liste toutes tes expériences, même informelles", "Réécris chaque ligne avec la formule", "Mets en page sur une page avec un modèle sobre", "Fais-le relire par ton binôme"], "deliverable": "CV d'une page en PDF" }
+    },
+    {
+      "title": "Lettre de motivation et présence en ligne",
+      "duration": "Semaine 1",
+      "goal": "Donner envie de te rencontrer.",
+      "lessons": [
+        { "title": "La lettre en 3 paragraphes", "content": "Vous : ce qui t'attire dans cette organisation précisément. Moi : 2 ou 3 preuves que tu peux contribuer. Nous : ce que tu proposes et ta demande d'entretien. 250 à 300 mots suffisent.", "keyPoints": ["Personnaliser le premier paragraphe à chaque fois", "Des preuves, pas des adjectifs", "Terminer par une demande claire"] },
+        { "title": "Ton profil LinkedIn", "content": "Une photo nette et souriante, un titre explicite, un résumé de 3 lignes, les expériences avec résultats, et quelques publications ou partages en lien avec ton domaine.", "keyPoints": ["Titre : ce que tu fais et ce que tu cherches", "Demander des recommandations à tes tuteurs", "Vérifier ce qu'on trouve sur toi en ligne"] }
+      ],
+      "method": { "name": "Lettre Vous – Moi – Nous", "steps": ["Vous : pourquoi cette organisation (un fait précis)", "Moi : 2-3 réalisations liées au poste", "Nous : ce que tu apporteras, demande d'entretien", "Formule de politesse sobre"] },
+      "exercise": { "title": "Candidature complète", "instructions": ["Choisis une offre réelle", "Adapte ton CV et rédige ta lettre", "Mets à jour ton profil LinkedIn"], "deliverable": "Dossier de candidature prêt à envoyer" }
+    },
+    {
+      "title": "Préparer l'entretien",
+      "duration": "Semaine 2",
+      "goal": "Arriver avec des réponses préparées et des histoires prouvées.",
+      "lessons": [
+        { "title": "Se renseigner", "content": "Site de l'organisation, réseaux sociaux, actualités, produits, clients, valeurs. Prépare 3 faits précis à citer : ils montrent ton intérêt réel.", "keyPoints": ["Activité, clients, actualité récente", "Le poste : missions et compétences clés", "La personne qui te reçoit, si possible"] },
+        { "title": "Les questions classiques", "content": "Présentez-vous. Pourquoi ce poste ? Vos qualités et défauts ? Un échec ? Une situation difficile ? Où vous voyez-vous dans 3 ans ? Vos prétentions salariales ? Chacune se prépare.", "keyPoints": ["Présentation de 90 secondes : passé, présent, futur", "Un vrai défaut, avec ce que tu fais pour le corriger", "Se renseigner sur les salaires du secteur avant"] },
+        { "title": "La méthode STAR", "content": "Pour « Parlez-moi d'une fois où… » : Situation (contexte), Tâche (ton rôle, l'objectif), Action (ce que TU as fait), Résultat (chiffré si possible, et ce que tu en as appris).", "keyPoints": ["Préparer 5 histoires STAR", "Insister sur l'Action et le Résultat", "Parler en « je » pour ta contribution"] }
+      ],
+      "method": { "name": "Fiche STAR", "steps": ["Situation : où, quand, quel contexte", "Tâche : quel était ton rôle et l'enjeu", "Action : les 2-3 actions que tu as menées", "Résultat : ce qui a changé, ce que tu as appris"] },
+      "exercise": { "title": "5 histoires STAR", "instructions": ["Rédige 5 histoires : réussite, échec, travail d'équipe, conflit, initiative", "Raconte chacune en moins de 2 minutes", "Fais-toi chronométrer"], "deliverable": "5 fiches STAR" }
+    },
+    {
+      "title": "Le jour J et après",
+      "duration": "Semaine 3",
+      "goal": "Faire bonne impression et transformer l'entretien en offre.",
+      "lessons": [
+        { "title": "Présentation et attitude", "content": "Arriver 10 minutes en avance (ou tester sa connexion pour une visio), tenue adaptée au secteur, CV imprimé, poignée de main ou salutation respectueuse, regard, sourire. Écoute bien chaque question avant de répondre.", "keyPoints": ["Ponctualité absolue", "Téléphone éteint", "Prendre quelques notes"] },
+        { "title": "Tes questions au recruteur", "content": "À la fin, poser 2 ou 3 questions montre ton intérêt : à quoi ressemble une journée type ? Quels sont les défis du poste ? Comment se passe l'intégration ? Quelles sont les prochaines étapes ?", "keyPoints": ["Jamais « Je n'ai pas de questions »", "Éviter de commencer par le salaire et les congés", "Demander les prochaines étapes"] },
+        { "title": "Le suivi", "content": "Dans les 24 heures, un court message de remerciement rappelant un point de l'échange. Sans réponse après le délai annoncé, une relance polie. En cas de refus, demander un retour pour progresser.", "keyPoints": ["Remercier sous 24 h", "Relancer une fois, poliment", "Tenir un tableau de suivi des candidatures"] }
+      ],
+      "method": { "name": "Tableau de suivi des candidatures", "steps": ["Organisation, poste, date d'envoi", "Contact et canal", "Statut : envoyé, entretien, relancé, réponse", "Prochaine action et date"] },
+      "exercise": { "title": "Simulation filmée", "instructions": ["Entretien de 20 minutes avec un membre du club jouant le recruteur", "Revoir la vidéo avec la grille d'évaluation", "Refaire les deux réponses les plus faibles"], "deliverable": "Vidéo de la simulation et plan d'amélioration" }
+    }
+  ],
+  "toolkit": [
+    { "name": "Ligne d'expérience", "use": "CV", "how": "Verbe d'action + action + contexte + résultat chiffré." },
+    { "name": "Lettre Vous – Moi – Nous", "use": "Lettre de motivation", "how": "Pourquoi eux, ce que tu prouves, ce que tu proposes." },
+    { "name": "Méthode STAR", "use": "Entretien", "how": "Situation, Tâche, Action, Résultat." },
+    { "name": "Présentation 90 secondes", "use": "« Présentez-vous »", "how": "Passé (formation), présent (compétences), futur (pourquoi ce poste)." },
+    { "name": "Tableau de suivi", "use": "Recherche d'emploi", "how": "Une ligne par candidature, une prochaine action datée." }
+  ],
+  "caseStudy": {
+    "title": "Mamadou, 47 candidatures sans réponse",
+    "context": "Mamadou, titulaire d'une licence en gestion, envoie le même CV de trois pages et une lettre générique à toutes les offres.",
+    "challenge": "Aucune réponse en trois mois.",
+    "solution": "Il réduit son CV à une page avec un titre ciblé, réécrit ses expériences avec des résultats (dont la trésorerie d'une association : budget de 2 millions FCFA suivi au franc près), adapte chaque candidature et prépare 5 histoires STAR.",
+    "lesson": "Sur ses 10 candidatures suivantes, il obtient 3 entretiens et un stage. Moins de candidatures, mieux ciblées, valent mieux qu'un envoi en masse."
+  },
+  "pitfalls": [
+    "Envoyer le même CV et la même lettre partout",
+    "Une adresse e-mail fantaisiste",
+    "Lister des tâches sans résultats",
+    "Mentir ou exagérer : tout peut être vérifié",
+    "Arriver sans rien savoir de l'organisation",
+    "Dire du mal d'un ancien employeur ou enseignant"
+  ],
+  "quiz": [
+    { "q": "Quelle ligne de CV est la plus forte ?", "options": ["Responsable des ventes", "Vendu 300 abonnements en 2 mois en porte-à-porte, 1er de l'équipe", "Dynamique et motivé"], "answer": 1, "explanation": "Elle combine verbe d'action, contexte et résultat chiffré." },
+    { "q": "Dans la méthode STAR, sur quoi faut-il insister ?", "options": ["La situation", "L'action personnelle et le résultat", "Les autres membres de l'équipe"], "answer": 1, "explanation": "Le recruteur veut savoir ce que toi tu as fait et ce que cela a produit." },
+    { "q": "Que répondre à « Avez-vous des questions ? »", "options": ["Non, merci", "Une ou deux questions sur le poste et les prochaines étapes", "Combien de jours de congés ?"], "answer": 1, "explanation": "Des questions sur le poste montrent ton intérêt et ta préparation." },
+    { "q": "Que faire après l'entretien ?", "options": ["Attendre sans rien faire", "Envoyer un message de remerciement sous 24 h", "Appeler tous les jours"], "answer": 1, "explanation": "Un remerciement court laisse une bonne impression ; une relance unique suffit ensuite." }
+  ],
+  "actionPlan": [
+    { "period": "Jours 1 à 7", "action": "Réécris ton CV sur une page avec des lignes de résultats." },
+    { "period": "Jours 8 à 14", "action": "Optimise ton profil LinkedIn et prépare une lettre type Vous – Moi – Nous." },
+    { "period": "Jours 15 à 21", "action": "Rédige tes 5 histoires STAR et ta présentation de 90 secondes." },
+    { "period": "Jours 22 à 30", "action": "Envoie 5 candidatures ciblées et tiens ton tableau de suivi." }
+  ],
+  "resources": [
+    { "type": "Opportunités", "title": "Concours, bourses et opportunités", "org": "Le Monde du Travail", "url": "opportunites.html", "free": true },
+    { "type": "Emploi des jeunes", "title": "Agence nationale pour la promotion de l'emploi des jeunes", "org": "ANPEJ", "free": true, "note": "Renseigne-toi sur les programmes d'insertion et de stage auprès de ses antennes." },
+    { "type": "Réseau", "title": "LinkedIn", "org": "LinkedIn", "url": "https://www.linkedin.com/", "free": true }
+  ],
+  "sources": [
+    { "title": "Enquête nationale sur l'emploi au Sénégal (ENES), 3e trimestre 2024", "org": "ANSD", "year": 2025, "url": "https://www.ansd.sn/" },
+    { "title": "Code du travail du Sénégal (loi n° 97-17 du 1er décembre 1997)", "org": "République du Sénégal", "year": 1997 }
+  ],
+  "relatedJobs": ["psychologue-du-travail", "conseiller-orientation-psychologue", "business-analyst", "conseiller-bancaire", "charge-de-communication"],
+  "certification": "Attestation WOW de préparation à l'emploi, délivrée après la simulation d'entretien filmée et la remise d'un dossier de candidature complet.",
+  "faq": [
+    { "q": "Je n'ai aucune expérience professionnelle, que mettre sur mon CV ?", "a": "Projets d'études, associations, bénévolat, petits boulots, activités familiales : tout ce qui montre des compétences. La formation t'aide à les valoriser." },
+    { "q": "Le club relit-il mon CV ?", "a": "Oui, chaque participant bénéficie d'une relecture individuelle." }
+  ]
+}

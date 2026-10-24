@@ -1,0 +1,138 @@
+{
+  "slug": "leadership-management",
+  "title": "Leadership & Management",
+  "icon": "🤝",
+  "image": "images/leadership.webp",
+  "category": "Management & Direction",
+  "level": "Intermédiaire",
+  "duration": "5 semaines · 35 h",
+  "format": "Ateliers pratiques, mises en situation et coaching de groupe",
+  "tagline": "Fédérer une équipe, décider et faire grandir les autres, même sans titre de chef.",
+  "audience": "Responsables d'association, délégués, chefs de projet étudiants, jeunes managers et entrepreneurs.",
+  "prerequisites": "Avoir déjà travaillé en groupe (projet, association, club, entreprise).",
+  "hook": {
+    "title": "Le leadership n'est pas un grade",
+    "text": "On peut diriger une équipe sans être son leader, et être un leader sans titre. Le leadership, c'est la capacité à donner une direction et à faire avancer un groupe ensemble. Le management, c'est l'art d'organiser ce travail. Cette formation travaille les deux."
+  },
+  "keyFacts": [
+    { "value": "3e", "label": "« Leadership et influence sociale » : 3e compétence la plus citée par les employeurs, après la pensée analytique et la résilience", "source": "Forum économique mondial, Future of Jobs Report 2025" },
+    { "value": "4", "label": "styles de leadership situationnel : diriger, entraîner, soutenir, déléguer", "source": "Hersey & Blanchard, modèle du leadership situationnel" },
+    { "value": "SBI", "label": "méthode de feedback Situation – Comportement – Impact utilisée dans les formations de managers", "source": "Center for Creative Leadership" }
+  ],
+  "outcomes": [
+    "Identifier ton style de leadership naturel et ses angles morts",
+    "Adapter ta façon de diriger au niveau d'autonomie de chaque personne",
+    "Fixer des objectifs clairs et suivre leur avancement",
+    "Donner un feedback utile, positif comme correctif, sans blesser",
+    "Déléguer sans perdre le contrôle",
+    "Animer une réunion efficace et prendre des décisions en groupe",
+    "Motiver une équipe de bénévoles ou de salariés dans la durée"
+  ],
+  "modules": [
+    {
+      "title": "Se connaître pour diriger",
+      "duration": "Semaine 1",
+      "goal": "Comprendre ce qui fait un leader et partir de tes forces.",
+      "lessons": [
+        { "title": "Leader et manager : deux rôles complémentaires", "content": "Le leader donne le sens (pourquoi on avance), le manager organise le chemin (qui fait quoi, quand). Une petite équipe a besoin des deux, souvent chez la même personne.", "keyPoints": ["Vision, exemplarité et écoute pour le leader", "Organisation, suivi et arbitrage pour le manager", "L'exemplarité est le premier outil de crédibilité"] },
+        { "title": "Ton style naturel", "content": "Certains décident vite et entraînent, d'autres consultent et rassemblent. Aucun style n'est meilleur dans l'absolu : l'enjeu est de connaître le tien et de savoir en changer quand la situation l'exige.", "keyPoints": ["Demander à 3 personnes comment elles te perçoivent en équipe", "Repérer ce qui te met en difficulté (conflit, délégation…)", "Choisir un comportement à travailler"] }
+      ],
+      "method": { "name": "Mini-bilan 360°", "steps": ["Choisir 3 personnes ayant travaillé avec toi", "Leur demander : une chose à continuer, une à arrêter, une à commencer", "Regrouper les réponses par thème", "En tirer un objectif personnel pour la formation"] },
+      "exercise": { "title": "Mon portrait de leader", "instructions": ["Réalise ton mini-bilan 360°", "Décris une situation où tu as entraîné un groupe et ce qui a marché", "Fixe un objectif de progression"], "deliverable": "Une fiche « mon style, mes forces, mon objectif »" }
+    },
+    {
+      "title": "Adapter son style : le leadership situationnel",
+      "duration": "Semaine 2",
+      "goal": "Donner à chaque personne le bon niveau de direction et de soutien.",
+      "lessons": [
+        { "title": "Compétence et motivation", "content": "Une personne débutante mais enthousiaste a besoin de consignes précises. Une personne compétente mais démotivée a besoin d'écoute et de soutien. Une personne compétente et motivée a besoin d'autonomie.", "keyPoints": ["Diagnostiquer avant d'agir", "Le niveau change selon la tâche", "Trop diriger un expert le démotive"] },
+        { "title": "Les 4 styles", "content": "Diriger (expliquer quoi et comment), entraîner (expliquer et encourager), soutenir (écouter et faciliter), déléguer (confier et faire confiance).", "keyPoints": ["Diriger un débutant", "Entraîner quelqu'un qui progresse", "Soutenir quelqu'un qui doute", "Déléguer à quelqu'un d'autonome"] }
+      ],
+      "method": { "name": "Tableau de l'équipe", "steps": ["Lister les membres et leurs tâches principales", "Évaluer compétence et motivation pour chaque tâche", "Choisir le style adapté", "Le revoir chaque mois"] },
+      "exercise": { "title": "Diagnostic de ton équipe", "instructions": ["Applique le tableau à un groupe réel (association, projet)", "Identifie la personne pour qui ton style actuel ne convient pas", "Prépare un entretien avec elle"], "deliverable": "Tableau de l'équipe et plan d'entretien" }
+    },
+    {
+      "title": "Objectifs, délégation et suivi",
+      "duration": "Semaine 3",
+      "goal": "Faire avancer le travail sans tout faire soi-même.",
+      "lessons": [
+        { "title": "Des objectifs SMART", "content": "Spécifique, Mesurable, Atteignable, Réaliste, Temporellement défini. « Améliorer la communication » n'est pas un objectif ; « publier 2 articles par mois sur le blog du club jusqu'en juin » en est un.", "keyPoints": ["Un objectif = un résultat mesurable et une date", "Peu d'objectifs, bien suivis", "Écrire les objectifs et les partager"] },
+        { "title": "Déléguer pour de vrai", "content": "Déléguer, c'est confier un résultat, pas seulement une tâche. Explique le pourquoi, le résultat attendu, les moyens, l'échéance, et convenez des points d'étape.", "keyPoints": ["Déléguer le résultat, pas la méthode", "Fixer les points d'étape dès le départ", "Accepter que l'autre fasse différemment"] }
+      ],
+      "method": { "name": "Fiche de délégation", "steps": ["Pourquoi cette mission est importante", "Résultat attendu et critère de réussite", "Moyens, budget et personnes ressources", "Échéance et points d'étape", "Ce que la personne peut décider seule"] },
+      "exercise": { "title": "Déléguer une mission réelle", "instructions": ["Choisis une tâche que tu fais toujours toi-même", "Rédige la fiche de délégation", "Confie-la et fais un point d'étape une semaine plus tard"], "deliverable": "Fiche de délégation et bilan du point d'étape" }
+    },
+    {
+      "title": "Feedback, réunions et décisions",
+      "duration": "Semaine 4",
+      "goal": "Communiquer en manager : reconnaître, recadrer, décider.",
+      "lessons": [
+        { "title": "Le feedback SBI", "content": "Situation (quand, où), Comportement (ce que tu as observé, sans jugement), Impact (l'effet sur l'équipe ou le projet). Puis laisse la personne réagir et cherchez ensemble la suite.", "keyPoints": ["Factuel, jamais sur la personnalité", "Aussi pour féliciter, pas seulement pour corriger", "À chaud mais en privé pour un recadrage"] },
+        { "title": "Des réunions utiles", "content": "Un objectif annoncé, un ordre du jour, une durée, un animateur, un compte rendu avec qui fait quoi et pour quand. Sans décision ni action, une réunion était probablement inutile.", "keyPoints": ["Envoyer l'ordre du jour avant", "Commencer et finir à l'heure", "Terminer par le tableau des actions"] },
+        { "title": "Décider en groupe", "content": "Selon l'enjeu : décision du responsable après consultation, vote, ou consensus. Annonce la règle avant le débat pour éviter les frustrations.", "keyPoints": ["Annoncer qui décide et comment", "Consulter ceux qui appliqueront la décision", "Expliquer la décision prise"] }
+      ],
+      "method": { "name": "Feedback Situation – Comportement – Impact", "steps": ["Situation : « Lors de la réunion de mardi… »", "Comportement : « … tu as coupé la parole à Fatou trois fois… »", "Impact : « … elle n'a pas pu présenter son idée »", "Ouverture : « Comment vois-tu les choses ? »"] },
+      "exercise": { "title": "Jeu de rôle feedback", "instructions": ["Prépare deux feedbacks SBI : un positif, un correctif", "Joue-les en binôme", "Échangez les rôles et débriefez"], "deliverable": "Tes deux feedbacks rédigés et les retours du binôme" }
+    },
+    {
+      "title": "Motiver et faire grandir",
+      "duration": "Semaine 5",
+      "goal": "Créer une équipe engagée, en particulier avec des bénévoles.",
+      "lessons": [
+        { "title": "Ce qui motive vraiment", "content": "Au-delà de l'argent, les personnes s'engagent quand elles comprennent le sens de leur travail, progressent et sont reconnues. C'est particulièrement vrai dans une association où personne n'est payé.", "keyPoints": ["Donner du sens : relier chaque tâche au projet", "Faire progresser : confier des défis", "Reconnaître : remercier publiquement et précisément"] },
+        { "title": "Gérer les tensions", "content": "Un conflit ignoré grandit. Écoute chaque partie séparément, ramène la discussion aux faits et à l'objectif commun, et cherchez une solution ensemble.", "keyPoints": ["Intervenir tôt", "Séparer les faits des interprétations", "Rappeler l'objectif commun"] }
+      ],
+      "method": { "name": "Rituel de reconnaissance", "steps": ["Chaque semaine, noter une contribution précise de chaque membre", "La mentionner en réunion ou par message", "Célébrer les étapes franchies"] },
+      "exercise": { "title": "Plan de leadership 90 jours", "instructions": ["Fixe 3 objectifs d'équipe SMART", "Prévois un style par membre", "Planifie les rituels : réunion, feedback, reconnaissance"], "deliverable": "Plan de leadership sur 90 jours présenté au groupe" }
+    }
+  ],
+  "toolkit": [
+    { "name": "Objectifs SMART", "use": "Fixer un cap clair", "how": "Spécifique, mesurable, atteignable, réaliste, daté." },
+    { "name": "Leadership situationnel", "use": "Adapter son style", "how": "Diriger, entraîner, soutenir ou déléguer selon compétence et motivation." },
+    { "name": "Feedback SBI", "use": "Reconnaître ou recadrer", "how": "Situation, comportement observé, impact, puis dialogue." },
+    { "name": "Tableau des actions", "use": "Fin de réunion", "how": "Action, responsable, échéance, statut, revu à chaque réunion." }
+  ],
+  "caseStudy": {
+    "title": "Fatou relance une association en sommeil",
+    "context": "Fatou est élue présidente d'une association étudiante de 30 membres, dont seulement 5 sont encore actifs.",
+    "challenge": "Les réunions durent deux heures sans décision et les mêmes personnes font tout.",
+    "solution": "Elle fixe trois objectifs SMART pour le semestre, crée trois commissions avec un responsable chacune, délègue avec des fiches de mission, limite les réunions à 45 minutes avec un tableau d'actions et remercie publiquement les contributions.",
+    "lesson": "En trois mois, 15 membres sont actifs. Le leadership a surtout consisté à clarifier, déléguer et reconnaître."
+  },
+  "pitfalls": [
+    "Vouloir tout contrôler et tout faire soi-même",
+    "Diriger tout le monde de la même façon",
+    "Ne donner du feedback que pour critiquer",
+    "Organiser des réunions sans décision ni compte rendu",
+    "Laisser pourrir un conflit en espérant qu'il disparaisse"
+  ],
+  "quiz": [
+    { "q": "Un nouveau membre motivé mais sans expérience doit organiser un événement. Quel style adopter ?", "options": ["Déléguer complètement", "Diriger : consignes précises et suivi rapproché", "Le laisser se débrouiller pour qu'il apprenne"], "answer": 1, "explanation": "Un débutant enthousiaste a besoin de direction ; déléguer trop tôt le mettrait en échec." },
+    { "q": "Lequel est un objectif SMART ?", "options": ["Être plus présent sur les réseaux", "Publier 8 posts sur Instagram en octobre avec 500 vues en moyenne", "Faire mieux que l'an dernier"], "answer": 1, "explanation": "Il est spécifique, mesurable et daté." },
+    { "q": "Dans un feedback SBI, que décrit le « B » (behaviour) ?", "options": ["La personnalité de la personne", "Le comportement observé, factuellement", "Le bilan de l'année"], "answer": 1, "explanation": "On parle d'un comportement observable, jamais d'un trait de caractère." },
+    { "q": "Que doit produire chaque réunion ?", "options": ["Un long compte rendu", "Des décisions et des actions avec un responsable et une date", "Rien de particulier"], "answer": 1, "explanation": "Le tableau des actions transforme la discussion en résultats." }
+  ],
+  "actionPlan": [
+    { "period": "Jours 1 à 7", "action": "Réalise ton mini-bilan 360° et choisis ton objectif personnel." },
+    { "period": "Jours 8 à 14", "action": "Établis le tableau de ton équipe et fixe 3 objectifs SMART." },
+    { "period": "Jours 15 à 21", "action": "Délègue une mission avec une fiche de délégation." },
+    { "period": "Jours 22 à 30", "action": "Donne un feedback SBI positif à chaque membre et anime une réunion de 45 minutes avec tableau d'actions." }
+  ],
+  "resources": [
+    { "type": "MOOC", "title": "Cours de management et leadership en audit libre", "org": "Coursera (cours universitaires, audit gratuit)", "url": "https://www.coursera.org/", "free": true, "note": "Choisis l'option « auditer le cours » pour un accès gratuit au contenu." },
+    { "type": "Article", "title": "Feedback SBI : Situation – Behavior – Impact", "org": "Center for Creative Leadership", "url": "https://www.ccl.org/", "free": true },
+    { "type": "Livre", "title": "Le manager minute", "org": "Ken Blanchard & Spencer Johnson", "free": false, "note": "Un classique court sur les objectifs, la reconnaissance et le recadrage." }
+  ],
+  "sources": [
+    { "title": "The Future of Jobs Report 2025", "org": "Forum économique mondial", "year": 2025, "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/" },
+    { "title": "Modèle du leadership situationnel", "org": "Paul Hersey & Ken Blanchard" },
+    { "title": "There's a S.M.A.R.T. way to write management's goals and objectives", "org": "George T. Doran, Management Review", "year": 1981 },
+    { "title": "Situation-Behavior-Impact feedback", "org": "Center for Creative Leadership", "url": "https://www.ccl.org/" }
+  ],
+  "relatedJobs": ["chef-de-projet-digital", "product-owner", "directeur-hotel", "psychologue-du-travail", "chef-de-projet-daccompagnement-au-changement-en-entreprise"],
+  "certification": "Attestation WOW de leadership, délivrée sur la base du plan de leadership 90 jours présenté et défendu devant le groupe.",
+  "faq": [
+    { "q": "Je ne dirige personne, est-ce utile ?", "a": "Oui : délégué de classe, projet de groupe, association… Les outils servent dès qu'on travaille à plusieurs." },
+    { "q": "La formation remplace-t-elle un diplôme de management ?", "a": "Non, c'est une formation pratique courte qui complète un parcours et donne des outils immédiatement applicables." }
+  ]
+}

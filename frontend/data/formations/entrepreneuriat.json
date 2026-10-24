@@ -1,0 +1,153 @@
+{
+  "slug": "entrepreneuriat",
+  "title": "Entrepreneuriat",
+  "icon": "💡",
+  "image": "images/innovation.webp",
+  "category": "Entrepreneuriat & Innovation",
+  "level": "Débutant à intermédiaire",
+  "duration": "6 semaines · 40 h",
+  "format": "Ateliers, travail sur ton propre projet et pitch final",
+  "tagline": "De l'idée au premier client : tester vite, dépenser peu, se formaliser au bon moment.",
+  "audience": "Jeunes porteurs d'idées, étudiants, artisans et commerçants qui veulent structurer leur activité.",
+  "prerequisites": "Avoir une idée de projet, même floue, ou l'envie d'en trouver une.",
+  "hook": {
+    "title": "Entreprendre, c'est réduire l'incertitude",
+    "text": "La plupart des projets échouent non par manque de travail, mais parce qu'ils fabriquent quelque chose que personne n'achète. Cette formation t'apprend à vérifier ton idée auprès de vrais clients avant d'investir, à calculer si ton activité peut être rentable, puis à créer ton entreprise dans les règles au Sénégal."
+  },
+  "keyFacts": [
+    { "value": "100 000 FCFA", "label": "capital social minimum d'une SARL au Sénégal depuis 2014 (au lieu d'un million auparavant)", "source": "Application de l'article 311 de l'Acte uniforme OHADA révisé, OHADA.com" },
+    { "value": "46", "label": "départements couverts par la DER/FJ, qui finance et accompagne les femmes et les jeunes entrepreneurs", "source": "Délégation générale à l'Entrepreneuriat Rapide des Femmes et des Jeunes" },
+    { "value": "20,3 %", "label": "taux de chômage élargi au Sénégal au 3e trimestre 2024 : l'auto-emploi est une voie majeure", "source": "ANSD, Enquête nationale sur l'emploi au Sénégal (ENES)" }
+  ],
+  "outcomes": [
+    "Transformer une idée en problème client clairement formulé",
+    "Mener des entretiens clients qui révèlent la vérité, pas des compliments",
+    "Construire ton modèle économique sur une page (Business Model Canvas)",
+    "Tester une offre minimale (MVP) avec un petit budget",
+    "Calculer prix de revient, marge et seuil de rentabilité",
+    "Choisir un statut juridique et connaître les étapes de création au Sénégal",
+    "Présenter ton projet à un financeur ou à un incubateur"
+  ],
+  "modules": [
+    {
+      "title": "Du problème à l'idée",
+      "duration": "Semaine 1",
+      "goal": "Partir d'un vrai problème, vécu par des personnes identifiées.",
+      "lessons": [
+        { "title": "Tomber amoureux du problème, pas de la solution", "content": "Une bonne idée répond à un problème fréquent, douloureux et pour lequel des gens dépensent déjà du temps ou de l'argent. Avant de penser produit, décris précisément qui souffre de quoi.", "keyPoints": ["Qui exactement ? (âge, lieu, situation)", "Quel problème, à quelle fréquence ?", "Comment se débrouillent-ils aujourd'hui ?"] },
+        { "title": "Observer son environnement", "content": "Les opportunités sont souvent près de toi : file d'attente, produit introuvable dans ton quartier, service mal fait, déchets non valorisés. Note pendant une semaine tout ce qui agace les gens autour de toi.", "keyPoints": ["Carnet d'irritants quotidien", "Chercher ce qui coûte du temps ou de l'argent", "Regarder ce qui marche ailleurs et l'adapter localement"] }
+      ],
+      "method": { "name": "Fiche problème", "steps": ["Client cible : qui, où ?", "Problème : en une phrase, du point de vue du client", "Solution actuelle : comment fait-il aujourd'hui ?", "Pourquoi elle ne suffit pas", "Hypothèse : ce que tu pourrais proposer"] },
+      "exercise": { "title": "Carnet d'irritants", "instructions": ["Note pendant 7 jours les problèmes observés autour de toi", "Choisis les 3 plus fréquents", "Remplis une fiche problème pour chacun"], "deliverable": "3 fiches problème" }
+    },
+    {
+      "title": "Parler aux clients",
+      "duration": "Semaine 2",
+      "goal": "Vérifier que le problème existe et que des gens paieraient pour le résoudre.",
+      "lessons": [
+        { "title": "L'entretien client qui dit la vérité", "content": "Ne demande pas « Est-ce que tu achèterais mon produit ? » : par politesse, tout le monde dit oui. Demande ce que la personne a fait la dernière fois qu'elle a eu ce problème, combien ça lui a coûté, ce qu'elle a essayé.", "keyPoints": ["Parler du passé réel, pas d'intentions futures", "Écouter 80 % du temps", "Ne pas présenter ta solution avant la fin"] },
+        { "title": "Combien d'entretiens ?", "content": "Une dizaine d'entretiens avec ta cible permettent déjà de voir si le problème revient. Si personne ne cite spontanément ton problème, change de cible ou de problème.", "keyPoints": ["10 entretiens minimum", "Noter les phrases exactes des clients", "Chercher les signaux d'achat : ils paient déjà pour une solution"] }
+      ],
+      "method": { "name": "Grille d'entretien en 5 questions", "steps": ["Raconte-moi la dernière fois que tu as eu ce problème", "Qu'as-tu fait pour le résoudre ?", "Combien cela t'a coûté (temps, argent) ?", "Qu'est-ce qui était le plus pénible ?", "Connais-tu d'autres personnes dans ce cas ?"] },
+      "exercise": { "title": "10 entretiens", "instructions": ["Mène 10 entretiens avec ta cible", "Note les citations marquantes", "Conclus : problème confirmé, à revoir ou abandonné"], "deliverable": "Synthèse des 10 entretiens" }
+    },
+    {
+      "title": "Construire son modèle économique",
+      "duration": "Semaine 3",
+      "goal": "Voir sur une page comment ton projet crée et gagne de la valeur.",
+      "lessons": [
+        { "title": "Le Business Model Canvas", "content": "Neuf cases : segments de clients, proposition de valeur, canaux, relation client, sources de revenus, ressources clés, activités clés, partenaires clés, structure de coûts. Il se remplit au crayon et se corrige à chaque apprentissage.", "keyPoints": ["Commencer par clients et proposition de valeur", "Une case = des hypothèses à tester", "Le mettre à jour après chaque test"] },
+        { "title": "La proposition de valeur", "content": "En une phrase : pour [client], qui a [problème], [ton offre] permet [bénéfice], contrairement à [solution actuelle].", "keyPoints": ["Parler bénéfice client, pas caractéristiques", "Être plus simple, moins cher ou plus pratique que l'existant", "Tester la phrase auprès de clients"] }
+      ],
+      "method": { "name": "Phrase de proposition de valeur", "steps": ["Pour… (client cible)", "Qui… (problème)", "Notre offre… (solution)", "Permet… (bénéfice principal)", "Contrairement à… (alternative actuelle)"] },
+      "exercise": { "title": "Mon canevas", "instructions": ["Remplis le Business Model Canvas de ton projet", "Entoure les 3 hypothèses les plus risquées", "Prévois un test pour chacune"], "deliverable": "Canevas complété et plan de tests" }
+    },
+    {
+      "title": "Tester petit : le produit minimum viable",
+      "duration": "Semaine 4",
+      "goal": "Obtenir une première preuve d'achat en dépensant le moins possible.",
+      "lessons": [
+        { "title": "Le MVP", "content": "Le produit minimum viable est la version la plus simple qui permet d'apprendre si les clients paient : une page WhatsApp Business avec photos, une précommande, un premier lot fabriqué à la main, un service rendu manuellement.", "keyPoints": ["Apprendre vite plutôt que perfectionner", "Mesurer : combien ont payé, pas combien ont aimé", "Itérer selon les retours"] },
+        { "title": "Vendre ses premières unités", "content": "Les premiers clients viennent de ton réseau proche, des groupes WhatsApp, des marchés, des réseaux sociaux. Une précommande avec acompte, même petit, est la meilleure preuve.", "keyPoints": ["Viser 10 premiers clients payants", "Demander un avis après chaque vente", "Noter ce qui fait hésiter ceux qui n'achètent pas"] }
+      ],
+      "method": { "name": "Cycle Construire – Mesurer – Apprendre", "steps": ["Construire la version la plus simple", "Mesurer un indicateur clair (ventes, précommandes)", "Apprendre : garder, modifier ou abandonner", "Recommencer avec la nouvelle version"] },
+      "exercise": { "title": "Première vente", "instructions": ["Conçois ton MVP avec moins de 25 000 FCFA", "Présente-le à 20 personnes de ta cible", "Note le nombre de ventes ou de précommandes"], "deliverable": "Bilan du test : chiffres et décisions" }
+    },
+    {
+      "title": "Chiffres : prix, marge, rentabilité",
+      "duration": "Semaine 5",
+      "goal": "Savoir si ton activité peut te faire vivre.",
+      "lessons": [
+        { "title": "Prix de revient et marge", "content": "Prix de revient = tout ce que coûte une unité (matières, emballage, transport, commission mobile money). Marge = prix de vente − prix de revient. Beaucoup de jeunes entrepreneurs oublient de compter leur propre temps et le transport.", "keyPoints": ["Compter tous les coûts variables", "Inclure ta rémunération", "Vérifier le prix des concurrents"] },
+        { "title": "Seuil de rentabilité", "content": "Les charges fixes (loyer, internet, salaire) doivent être couvertes par la marge. Seuil = charges fixes mensuelles ÷ marge par unité : c'est le nombre d'unités à vendre chaque mois pour ne pas perdre d'argent.", "keyPoints": ["Lister les charges fixes mensuelles", "Calculer le seuil en unités", "Comparer à ce que tu peux réellement vendre"] },
+        { "title": "Séparer argent perso et argent pro", "content": "Un compte ou un portefeuille mobile dédié à l'activité, et un cahier des recettes et dépenses tenu chaque jour, évitent de confondre chiffre d'affaires et bénéfice.", "keyPoints": ["Un compte dédié", "Noter chaque entrée et sortie", "Faire le point chaque semaine"] }
+      ],
+      "method": { "name": "Calcul du seuil de rentabilité", "steps": ["Prix de vente unitaire − coût variable unitaire = marge unitaire", "Additionner les charges fixes du mois", "Seuil (unités) = charges fixes ÷ marge unitaire", "Seuil (FCFA) = seuil en unités × prix de vente"] },
+      "exercise": { "title": "Ma fiche financière", "instructions": ["Calcule le prix de revient de ton produit ou service", "Liste tes charges fixes", "Calcule ton seuil de rentabilité", "Conclus : objectif de ventes mensuel"], "deliverable": "Fiche financière d'une page" }
+    },
+    {
+      "title": "Se formaliser, se financer, pitcher",
+      "duration": "Semaine 6",
+      "goal": "Donner un cadre légal à ton activité et convaincre des partenaires.",
+      "lessons": [
+        { "title": "Choisir un statut", "content": "Entreprise individuelle (simple, mais tes biens personnels répondent des dettes), SUARL ou SARL (responsabilité limitée aux apports, capital minimum de 100 000 FCFA au Sénégal), GIE pour mutualiser une activité à plusieurs. La création se fait au guichet unique de l'APIX.", "keyPoints": ["Le statut dépend des risques et du nombre d'associés", "Se faire conseiller avant de signer des statuts", "Formaliser permet d'accéder aux marchés et aux financements"] },
+        { "title": "Les sources de financement", "content": "Épargne personnelle et tontine, famille et amis, microfinance, programmes publics comme la DER/FJ, concours et incubateurs, puis banques une fois l'activité prouvée. Le meilleur financement reste souvent l'argent de tes premiers clients.", "keyPoints": ["Commencer avec peu et prouver", "Préparer un dossier : problème, preuves, chiffres", "Ne jamais emprunter sans plan de remboursement"] },
+        { "title": "Le pitch du projet", "content": "En 3 minutes : problème, solution, preuves (ventes, entretiens), marché, modèle économique, équipe, besoin. Les preuves comptent plus que les promesses.", "keyPoints": ["Montrer les preuves obtenues pendant la formation", "Chiffrer précisément le besoin", "Préparer les questions sur les chiffres"] }
+      ],
+      "method": { "name": "Plan de pitch en 7 diapositives", "steps": ["Problème", "Solution", "Preuves (clients, ventes)", "Marché et concurrence", "Modèle économique et chiffres", "Équipe", "Besoin et utilisation des fonds"] },
+      "exercise": { "title": "Pitch devant le jury", "instructions": ["Prépare tes 7 diapositives", "Pitche 3 minutes devant le groupe", "Réponds à 3 questions du jury"], "deliverable": "Pitch final filmé et dossier projet" }
+    }
+  ],
+  "toolkit": [
+    { "name": "Fiche problème", "use": "Clarifier une idée", "how": "Client, problème, solution actuelle, limite, hypothèse." },
+    { "name": "Grille d'entretien client", "use": "Valider le problème", "how": "5 questions sur le passé réel du client, jamais sur ses intentions." },
+    { "name": "Business Model Canvas", "use": "Modèle économique", "how": "9 cases à remplir et corriger après chaque test." },
+    { "name": "Seuil de rentabilité", "use": "Vérifier la viabilité", "how": "Charges fixes ÷ marge unitaire = unités à vendre par mois." },
+    { "name": "Cahier de caisse", "use": "Suivi quotidien", "how": "Date, libellé, entrée, sortie, solde ; bilan chaque semaine." }
+  ],
+  "caseStudy": {
+    "title": "Aïssatou et le jus de bissap",
+    "context": "Aïssatou veut vendre du jus de bissap en bouteilles près de son université.",
+    "challenge": "Elle pensait acheter une machine d'embouteillage à 600 000 FCFA avant d'avoir vendu une seule bouteille.",
+    "solution": "Elle interroge 15 étudiants, découvre qu'ils veulent des petits formats bien frais à moins de 300 FCFA, teste 40 bouteilles faites à la main avec une glacière, calcule son prix de revient (180 FCFA) et vend tout en deux jours. Elle prend ensuite des précommandes par WhatsApp.",
+    "lesson": "Les preuves de vente obtenues avec 20 000 FCFA lui permettent de présenter un dossier solide à un programme de financement, au lieu de s'endetter sur une intuition."
+  },
+  "pitfalls": [
+    "Investir dans du matériel avant d'avoir des clients",
+    "Demander à ses proches s'ils aiment l'idée (ils diront oui)",
+    "Fixer son prix sans calculer son prix de revient",
+    "Mélanger argent personnel et argent de l'activité",
+    "Copier un concept sans l'adapter au marché local",
+    "Signer des statuts sans conseil"
+  ],
+  "quiz": [
+    { "q": "Quelle question est la plus utile en entretien client ?", "options": ["Est-ce que tu achèterais mon produit ?", "Raconte-moi la dernière fois que tu as eu ce problème", "Tu trouves mon idée bonne ?"], "answer": 1, "explanation": "Les faits passés révèlent la réalité ; les intentions sont souvent des politesses." },
+    { "q": "Charges fixes 150 000 FCFA, prix 1 000 FCFA, coût variable 400 FCFA. Seuil de rentabilité ?", "options": ["150 unités", "250 unités", "375 unités"], "answer": 1, "explanation": "Marge unitaire 600 FCFA ; 150 000 ÷ 600 = 250 unités par mois." },
+    { "q": "Quel est le capital minimum d'une SARL au Sénégal ?", "options": ["1 000 000 FCFA", "100 000 FCFA", "10 000 000 FCFA"], "answer": 1, "explanation": "Le Sénégal a abaissé le capital minimum de la SARL à 100 000 FCFA en 2014." },
+    { "q": "Qu'est-ce qu'un MVP ?", "options": ["Le meilleur produit possible", "La version la plus simple qui permet d'apprendre si les clients paient", "Un plan d'affaires de 50 pages"], "answer": 1, "explanation": "Le MVP sert à apprendre vite et à moindre coût." }
+  ],
+  "actionPlan": [
+    { "period": "Jours 1 à 7", "action": "Tiens ton carnet d'irritants et remplis 3 fiches problème." },
+    { "period": "Jours 8 à 14", "action": "Mène 10 entretiens clients sur le problème le plus prometteur." },
+    { "period": "Jours 15 à 21", "action": "Remplis ton canevas et lance un MVP à moins de 25 000 FCFA." },
+    { "period": "Jours 22 à 30", "action": "Calcule ton seuil de rentabilité et prépare ton pitch en 7 diapositives." }
+  ],
+  "resources": [
+    { "type": "Démarches", "title": "Création d'entreprise au guichet unique", "org": "APIX (Agence pour la promotion des investissements et des grands travaux)", "url": "https://www.apix.sn/", "free": true },
+    { "type": "Financement", "title": "Programmes de financement des femmes et des jeunes", "org": "DER/FJ", "free": true, "note": "Consulte les conditions d'éligibilité à jour auprès de la DER/FJ (antennes dans les 46 départements)." },
+    { "type": "Outil", "title": "Business Model Canvas", "org": "Strategyzer", "url": "https://www.strategyzer.com/", "free": true, "note": "Le canevas est téléchargeable gratuitement." },
+    { "type": "Livre", "title": "Lean Startup", "org": "Eric Ries", "free": false, "note": "La référence du cycle construire – mesurer – apprendre." }
+  ],
+  "sources": [
+    { "title": "OHADA Sénégal : capital social minimum de la SARL abaissé à 100 000 FCFA (application de l'article 311 de l'AUSCGIE révisé)", "org": "OHADA.com", "year": 2014, "url": "https://www.ohada.com/" },
+    { "title": "Enquête nationale sur l'emploi au Sénégal (ENES), 3e trimestre 2024", "org": "ANSD", "year": 2025, "url": "https://www.ansd.sn/" },
+    { "title": "Business Model Generation", "org": "Alexander Osterwalder & Yves Pigneur", "year": 2010 },
+    { "title": "The Lean Startup", "org": "Eric Ries", "year": 2011 }
+  ],
+  "relatedJobs": ["business-analyst", "chef-de-projet-marketing", "conseiller-bancaire", "credit-manager", "technico-commercial-solutions-energetiques"],
+  "certification": "Attestation WOW d'entrepreneuriat, délivrée après le pitch final et la remise du dossier projet (preuves clients, canevas, fiche financière).",
+  "faq": [
+    { "q": "Je n'ai pas encore d'idée, puis-je participer ?", "a": "Oui. Le premier module t'aide à repérer des problèmes autour de toi et à choisir une piste." },
+    { "q": "La formation finance-t-elle mon projet ?", "a": "Non, mais elle t'aide à préparer un dossier solide et à identifier les programmes de financement adaptés." }
+  ]
+}

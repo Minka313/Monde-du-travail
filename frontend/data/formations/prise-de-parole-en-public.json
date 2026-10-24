@@ -1,0 +1,192 @@
+{
+  "slug": "prise-de-parole-en-public",
+  "title": "Prise de parole en public",
+  "icon": "🗣️",
+  "image": "images/communication.webp",
+  "category": "Soft Skills & Communication",
+  "level": "Tous niveaux",
+  "duration": "4 semaines · 30 h",
+  "format": "Ateliers en présentiel à Dakar et sessions en ligne",
+  "tagline": "Transformer le trac en énergie et faire passer un message qui reste.",
+  "audience": "Lycéens, étudiants, jeunes diplômés, entrepreneurs et managers qui doivent présenter, convaincre ou défendre un projet.",
+  "prerequisites": "Aucun. Accepter de s'entraîner devant un petit groupe bienveillant et d'être filmé.",
+  "hook": {
+    "title": "Pourquoi c'est décisif",
+    "text": "Soutenance, entretien, réunion, pitch devant un financeur : à compétences égales, c'est souvent celui qui explique le mieux qui est retenu. La bonne nouvelle : parler en public n'est pas un don, c'est une technique qui s'apprend avec une méthode et de la pratique."
+  },
+  "keyFacts": [
+    { "value": "3e", "label": "« Leadership et influence sociale » : 3e compétence clé citée par les employeurs pour 2025-2030", "source": "Forum économique mondial, Future of Jobs Report 2025" },
+    { "value": "3", "label": "leviers de persuasion identifiés dès l'Antiquité : ethos (crédibilité), pathos (émotion), logos (logique)", "source": "Aristote, Rhétorique" },
+    { "value": "90 s", "label": "durée idéale d'un pitch d'ascenseur pour présenter un projet ou un profil", "source": "Pratique des concours de pitch et des incubateurs" }
+  ],
+  "outcomes": [
+    "Gérer le trac avec des techniques de respiration et d'ancrage utilisables le jour J",
+    "Structurer n'importe quelle intervention en 3 parties claires avec une accroche et une conclusion qui marquent",
+    "Raconter une histoire courte qui rend ton message concret et mémorable",
+    "Utiliser la voix, le regard, les gestes et les silences pour capter l'attention",
+    "Concevoir des supports visuels épurés (une idée par diapositive)",
+    "Répondre aux questions difficiles et aux objections sans perdre tes moyens",
+    "Présenter ton projet ou ton profil en 90 secondes"
+  ],
+  "modules": [
+    {
+      "title": "Apprivoiser le trac et poser sa présence",
+      "duration": "Semaine 1",
+      "goal": "Passer d'un stress qui paralyse à une énergie qui porte.",
+      "lessons": [
+        {
+          "title": "Comprendre le trac",
+          "content": "Le trac est une réaction normale du corps : le cœur accélère, la bouche sèche, les mains tremblent. Ce n'est pas un signe d'incompétence, c'est de l'énergie disponible. Les orateurs expérimentés ont toujours le trac ; ils ont appris à le canaliser.",
+          "keyPoints": ["Le public remarque beaucoup moins ton stress que tu ne le crois", "La préparation réduit la peur de l'inconnu", "Les premières 30 secondes sont les plus difficiles : prépare-les mot à mot"]
+        },
+        {
+          "title": "Respiration et ancrage",
+          "content": "Avant de parler, une respiration lente et profonde (inspirer par le ventre 4 secondes, expirer 6 secondes) calme le système nerveux. L'ancrage consiste à poser les deux pieds au sol, largeur des épaules, poids réparti, pour une posture stable qui inspire confiance.",
+          "keyPoints": ["5 respirations lentes juste avant de monter", "Pieds ancrés, épaules relâchées, mains visibles", "Boire une gorgée d'eau avant de commencer"]
+        },
+        {
+          "title": "Le regard et l'espace",
+          "content": "Regarder une personne le temps d'une phrase, puis une autre, crée un lien avec toute la salle. Se déplacer avec intention (pour changer de partie, pas par nervosité) donne du rythme.",
+          "keyPoints": ["Technique du « phare » : balayer la salle par zones", "Éviter de fixer ses notes ou l'écran", "Un déplacement = une transition"]
+        }
+      ],
+      "method": { "name": "Rituel des 3 minutes avant de parler", "steps": ["Respirer 5 fois lentement (4 s / 6 s)", "Ancrer les pieds et relâcher les épaules", "Répéter mentalement ta phrase d'accroche", "Sourire et chercher un visage bienveillant dans la salle"] },
+      "exercise": { "title": "Le « je me présente » filmé", "instructions": ["Filme-toi 60 secondes en te présentant (qui tu es, ce que tu fais, ce que tu vises)", "Regarde la vidéo une fois sans le son : note ta posture et tes gestes", "Regarde-la une fois en écoutant seulement : note les « euh » et le débit", "Recommence en corrigeant un seul point"], "deliverable": "Deux vidéos (avant / après) et une liste de 3 points d'amélioration" }
+    },
+    {
+      "title": "Structurer un message qui se retient",
+      "duration": "Semaine 2",
+      "goal": "Savoir construire en 15 minutes une intervention claire, quel que soit le sujet.",
+      "lessons": [
+        {
+          "title": "Une idée centrale",
+          "content": "Avant d'écrire quoi que ce soit, résume ton message en une phrase. Si tu n'y arrives pas, ton public ne la retiendra pas. Tout le reste de l'intervention sert cette idée.",
+          "keyPoints": ["Une intervention = un message principal", "Écris ta phrase clé avant tes diapositives", "Supprime tout ce qui ne la sert pas"]
+        },
+        {
+          "title": "Le plan en 3 parties",
+          "content": "Le cerveau retient bien les listes de trois. Structure en trois idées, annonce-les au début, résume-les à la fin. Exemples de plans : problème / solution / bénéfice, hier / aujourd'hui / demain, constat / causes / propositions.",
+          "keyPoints": ["Annoncer le plan rassure le public", "Des transitions explicites : « Deuxième point… »", "Conclure en rappelant les 3 idées et un appel à l'action"]
+        },
+        {
+          "title": "Accroche et chute",
+          "content": "Commence par une question, un chiffre frappant, une courte anecdote ou une image ; jamais par « Bonjour, je vais vous parler de… ». Termine par une phrase forte qui dit au public quoi faire ou quoi retenir.",
+          "keyPoints": ["L'accroche dure 10 à 20 secondes", "La dernière phrase est celle qu'on retient", "Prépare l'accroche et la chute mot à mot"]
+        }
+      ],
+      "method": { "name": "Le plan Problème – Solution – Bénéfice", "steps": ["Problème : de quelle difficulté concrète parle-t-on ?", "Solution : que proposes-tu, simplement ?", "Bénéfice : qu'est-ce que ça change pour le public ?", "Appel à l'action : que doit faire le public maintenant ?"] },
+      "exercise": { "title": "Mon exposé en une page", "instructions": ["Choisis un sujet que tu dois présenter (cours, projet, association)", "Écris ta phrase clé", "Construis le plan en 3 parties avec une accroche et une chute", "Chronomètre : 3 minutes maximum"], "deliverable": "Un plan d'une page et un enregistrement audio de 3 minutes" }
+    },
+    {
+      "title": "Raconter des histoires",
+      "duration": "Semaine 2",
+      "goal": "Rendre un message concret et émouvant grâce au récit.",
+      "lessons": [
+        {
+          "title": "Pourquoi les histoires marchent",
+          "content": "Une histoire donne un visage aux chiffres. On oublie vite « 34 % des jeunes sont sans emploi ni formation » ; on se souvient de l'histoire d'Awa qui a trouvé sa voie grâce à un stage. Les deux ensemble sont encore plus forts : l'histoire touche, le chiffre crédibilise.",
+          "keyPoints": ["Une histoire = un personnage, un obstacle, une transformation", "Courte : 30 à 60 secondes", "Vraie et vérifiable de préférence"]
+        },
+        {
+          "title": "La structure Situation – Complication – Résolution",
+          "content": "Situation : où et quand, qui. Complication : ce qui se passe mal ou ce qui est en jeu. Résolution : ce qui a été fait et ce qu'on en retient. Cette structure simple fonctionne pour un pitch, un entretien ou une conférence.",
+          "keyPoints": ["Des détails sensoriels rendent la scène vivante", "Le public doit pouvoir s'identifier", "Relier l'histoire à ton idée centrale"]
+        }
+      ],
+      "method": { "name": "Banque d'histoires personnelles", "steps": ["Note 5 moments où tu as relevé un défi", "Pour chacun : situation, complication, résolution, leçon", "Associe chaque histoire à une compétence (persévérance, créativité…)", "Entraîne-toi à les raconter en moins d'une minute"] },
+      "exercise": { "title": "L'histoire qui illustre", "instructions": ["Reprends ton exposé de la semaine précédente", "Ajoute une histoire de 45 secondes au début ou au milieu", "Teste-la devant deux personnes et demande ce qu'elles ont retenu"], "deliverable": "Ta banque de 5 histoires rédigées" }
+    },
+    {
+      "title": "Voix, gestes et supports",
+      "duration": "Semaine 3",
+      "goal": "Donner vie au discours et utiliser des diapositives qui aident au lieu de distraire.",
+      "lessons": [
+        {
+          "title": "La voix : débit, volume, silences",
+          "content": "Le stress fait parler vite et bas. Ralentis volontairement, articule, et ose le silence : une pause de deux secondes après une idée importante lui donne du poids. Varie le ton pour éviter la monotonie.",
+          "keyPoints": ["Viser environ 130 à 150 mots par minute", "Remplacer les « euh » par un silence", "Parler pour la dernière rangée"]
+        },
+        {
+          "title": "Des gestes qui accompagnent",
+          "content": "Des gestes ouverts, au-dessus de la taille, renforcent le message. Évite de croiser les bras, de jouer avec un stylo ou de garder les mains dans les poches.",
+          "keyPoints": ["Mains visibles et ouvertes", "Un geste pour souligner un chiffre ou une énumération", "Le visage exprime l'émotion du message"]
+        },
+        {
+          "title": "Des diapositives épurées",
+          "content": "Une diapositive n'est pas un document à lire. Une idée par diapositive, peu de texte, des images ou un chiffre en grand. Si la salle lit, elle n'écoute plus.",
+          "keyPoints": ["Règle : une idée, une diapositive", "Taille de police lisible depuis le fond", "Tes notes sont pour toi, pas pour l'écran"]
+        }
+      ],
+      "method": { "name": "Check-list d'une diapositive", "steps": ["Peut-on la comprendre en 5 secondes ?", "Y a-t-il moins de 20 mots ?", "L'image ou le chiffre sert-il le message ?", "Le titre dit-il la conclusion (et non le thème) ?"] },
+      "exercise": { "title": "Refaire 3 diapositives", "instructions": ["Prends une présentation existante (cours, exposé)", "Refais 3 diapositives en appliquant la check-list", "Présente-les en 2 minutes en travaillant les silences"], "deliverable": "Les diapositives avant / après" }
+    },
+    {
+      "title": "Convaincre et répondre aux questions",
+      "duration": "Semaine 4",
+      "goal": "Défendre un projet devant un jury et garder la maîtrise face aux objections.",
+      "lessons": [
+        {
+          "title": "Le pitch de 90 secondes",
+          "content": "Qui tu es, le problème que tu résous, ta solution, ce qui te distingue, ce que tu demandes. Un bon pitch se termine par une demande claire : un rendez-vous, un stage, un financement, un partenariat.",
+          "keyPoints": ["Tester le pitch à voix haute au moins 10 fois", "Adapter à l'interlocuteur (jury, recruteur, financeur)", "Finir par une demande précise"]
+        },
+        {
+          "title": "Gérer les questions et les objections",
+          "content": "Écoute la question jusqu'au bout, remercie, reformule pour vérifier que tu as compris, réponds brièvement, puis vérifie que la réponse convient. Si tu ne sais pas, dis-le et propose de revenir vers la personne : c'est une marque de crédibilité.",
+          "keyPoints": ["Reformuler fait gagner du temps de réflexion", "Ne jamais attaquer la personne qui objecte", "Préparer à l'avance les 5 questions les plus probables"]
+        }
+      ],
+      "method": { "name": "Méthode ERRV pour répondre", "steps": ["Écouter sans interrompre", "Reformuler la question", "Répondre en 3 phrases maximum", "Vérifier : « Est-ce que cela répond à votre question ? »"] },
+      "exercise": { "title": "Grand oral devant le groupe", "instructions": ["Présente ton projet en 3 minutes", "Le groupe pose 3 questions, dont une difficile", "Débriefing filmé : points forts, un axe de progrès"], "deliverable": "Vidéo du grand oral et plan de progrès personnel" }
+    }
+  ],
+  "toolkit": [
+    { "name": "Rituel anti-trac", "use": "Juste avant une prise de parole", "how": "5 respirations 4 s / 6 s, pieds ancrés, phrase d'accroche répétée mentalement." },
+    { "name": "Plan Problème – Solution – Bénéfice", "use": "Pitch, soutenance, proposition", "how": "Trois parties, annoncées au début et résumées à la fin, avec un appel à l'action." },
+    { "name": "Situation – Complication – Résolution", "use": "Raconter une expérience", "how": "Un personnage, un obstacle, une transformation, une leçon, en moins d'une minute." },
+    { "name": "Méthode ERRV", "use": "Questions et objections", "how": "Écouter, reformuler, répondre court, vérifier." }
+  ],
+  "caseStudy": {
+    "title": "La soutenance de Moussa",
+    "context": "Moussa, étudiant en licence, doit présenter son projet de fin d'études en 10 minutes devant un jury.",
+    "challenge": "Ses 25 diapositives sont remplies de texte et il parle vite en regardant l'écran. Lors de la répétition, le jury décroche après 3 minutes.",
+    "solution": "Il écrit sa phrase clé, réduit à 10 diapositives (une idée chacune), ouvre par un chiffre marquant sur son sujet, s'entraîne cinq fois chronométré et prépare les cinq questions les plus probables.",
+    "lesson": "Moins de contenu, mieux structuré et mieux répété, vaut mieux que tout dire. Le jour J, Moussa termine dans le temps et répond calmement aux questions."
+  },
+  "pitfalls": [
+    "Commencer par s'excuser (« Je ne suis pas très bon à l'oral… »)",
+    "Lire ses diapositives ou ses notes",
+    "Vouloir tout dire : trop d'idées tuent le message",
+    "Dépasser le temps imparti",
+    "Improviser l'introduction et la conclusion",
+    "Répondre à côté d'une question plutôt que d'avouer ne pas savoir"
+  ],
+  "quiz": [
+    { "q": "Quelle est la meilleure façon de commencer une présentation ?", "options": ["« Bonjour, je vais vous parler de… »", "Une question, un chiffre frappant ou une courte anecdote", "Présenter longuement son parcours"], "answer": 1, "explanation": "L'accroche capte l'attention dans les premières secondes, quand le public décide s'il écoute." },
+    { "q": "Combien d'idées par diapositive ?", "options": ["Une", "Trois", "Autant que nécessaire"], "answer": 0, "explanation": "Une diapositive chargée fait lire le public au lieu d'écouter." },
+    { "q": "Que faire quand on ne connaît pas la réponse à une question ?", "options": ["Inventer une réponse plausible", "Changer de sujet", "Le dire honnêtement et proposer de revenir vers la personne"], "answer": 2, "explanation": "L'honnêteté renforce la crédibilité (l'ethos) ; une réponse inventée la détruit." },
+    { "q": "À quoi sert un silence de deux secondes après une idée importante ?", "options": ["À montrer qu'on a perdu le fil", "À laisser l'idée s'imprimer", "À rien, il faut l'éviter"], "answer": 1, "explanation": "Le silence donne du poids au message et remplace avantageusement les « euh »." },
+    { "q": "Par quoi doit se terminer un pitch ?", "options": ["Un remerciement", "Une demande claire (rendez-vous, stage, financement)", "Un résumé de son CV"], "answer": 1, "explanation": "Un pitch sert à obtenir quelque chose : il doit finir par une demande précise." }
+  ],
+  "actionPlan": [
+    { "period": "Jours 1 à 7", "action": "Filme ta présentation de 60 secondes et applique le rituel anti-trac chaque jour." },
+    { "period": "Jours 8 à 14", "action": "Rédige ta banque de 5 histoires et ton pitch de 90 secondes." },
+    { "period": "Jours 15 à 21", "action": "Prends la parole au moins une fois (cours, réunion, association, forum du club)." },
+    { "period": "Jours 22 à 30", "action": "Présente un sujet de 3 minutes devant un petit groupe et recueille deux retours." }
+  ],
+  "resources": [
+    { "type": "Vidéos", "title": "Conférences TED et TEDx", "org": "TED", "url": "https://www.ted.com/talks", "free": true, "note": "Observe les accroches et les conclusions des orateurs." },
+    { "type": "Livre", "title": "Talk Like TED (Parler comme TED)", "org": "Carmine Gallo", "free": false, "note": "Les techniques des meilleures conférences analysées." },
+    { "type": "Pratique", "title": "Forum et ateliers du club", "org": "Le Monde du Travail", "url": "forum.html", "free": true, "note": "Pose tes questions et entraîne-toi avec la communauté." }
+  ],
+  "sources": [
+    { "title": "The Future of Jobs Report 2025", "org": "Forum économique mondial", "year": 2025, "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/" },
+    { "title": "Rhétorique (ethos, pathos, logos)", "org": "Aristote" }
+  ],
+  "relatedJobs": ["attache-de-presse", "charge-de-communication", "journaliste", "formateur-professionnel-adultes", "directeur-de-la-communication"],
+  "certification": "Attestation WOW de prise de parole, délivrée après le grand oral final évalué par un jury du club (structure, présence, gestion des questions).",
+  "faq": [
+    { "q": "Je suis très timide, est-ce pour moi ?", "a": "Oui. La formation avance par petites étapes, en petit groupe, et le trac se travaille comme une compétence." },
+    { "q": "Faut-il un ordinateur ?", "a": "Un téléphone suffit pour te filmer et t'entraîner. Les ateliers fournissent le reste." }
+  ]
+}

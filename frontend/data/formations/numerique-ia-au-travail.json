@@ -1,0 +1,412 @@
+{
+  "slug": "numerique-ia-au-travail",
+  "title": "Outils numériques & IA au travail",
+  "icon": "🤖",
+  "image": "images/innovation.webp",
+  "category": "Numérique & Intelligence artificielle",
+  "level": "Débutant",
+  "duration": "4 semaines · 24 h",
+  "format": "Ateliers sur ordinateur ou smartphone, exercices guidés, outils gratuits",
+  "tagline": "Bureautique efficace, IA générative utilisée avec méthode et esprit critique, et bonnes pratiques de cybersécurité.",
+  "audience": "Étudiants, jeunes professionnels, entrepreneurs et associations qui veulent gagner du temps avec le numérique.",
+  "prerequisites": "Savoir utiliser un smartphone. Un accès à un ordinateur est recommandé (salle du club ou cybercafé).",
+  "hook": {
+    "title": "L'IA ne remplace pas ceux qui savent s'en servir",
+    "text": "Rédiger, résumer, traduire, analyser un tableau, préparer une présentation : les outils numériques et l'IA générative accélèrent ces tâches. Mais ils se trompent, inventent parfois des informations et posent des questions de confidentialité. Cette formation t'apprend à les utiliser efficacement et de façon responsable."
+  },
+  "keyFacts": [
+    {
+      "value": "Top 3",
+      "label": "« IA et big data », « réseaux et cybersécurité » et « culture technologique » : compétences à la plus forte croissance d'ici 2030",
+      "source": "Forum économique mondial, Future of Jobs Report 2025"
+    },
+    {
+      "value": "13 ans",
+      "label": "âge minimum recommandé pour l'usage d'outils d'IA générative en classe",
+      "source": "UNESCO, Orientations pour l'IA générative dans l'éducation et la recherche, 2023"
+    },
+    {
+      "value": "Loi 2008-12",
+      "label": "loi sénégalaise sur la protection des données à caractère personnel, contrôlée par la CDP",
+      "source": "Commission de Protection des Données Personnelles"
+    }
+  ],
+  "outcomes": [
+    "Organiser tes fichiers et travailler dans le cloud (Google Drive, OneDrive)",
+    "Produire des documents, tableaux et présentations professionnels",
+    "Rédiger des consignes efficaces (prompts) pour un assistant d'IA",
+    "Vérifier les réponses d'une IA et repérer les erreurs et inventions",
+    "Utiliser l'IA de façon éthique : transparence, plagiat, données personnelles",
+    "Sécuriser tes comptes : mots de passe, double authentification, hameçonnage",
+    "Choisir des outils gratuits adaptés à tes besoins"
+  ],
+  "modules": [
+    {
+      "title": "Les fondamentaux du travail numérique",
+      "duration": "Semaine 1",
+      "goal": "Être efficace avec les outils de base que tout employeur attend.",
+      "lessons": [
+        {
+          "title": "Organiser ses fichiers",
+          "content": "Des dossiers par projet, des noms de fichiers explicites (« 2026-10-CV-Fall-Moussa.pdf ») et une sauvegarde dans le cloud évitent de perdre des heures et des documents.",
+          "keyPoints": [
+            "Nommer : date-sujet-version",
+            "Sauvegarder dans le cloud",
+            "Envoyer en PDF ce qui ne doit pas être modifié"
+          ]
+        },
+        {
+          "title": "Traitement de texte et présentations",
+          "content": "Styles de titres, table des matières automatique, correcteur orthographique, exports PDF ; pour les présentations, peu de texte et des visuels lisibles.",
+          "keyPoints": [
+            "Utiliser les styles plutôt que le gras partout",
+            "Relire avec le correcteur",
+            "Une idée par diapositive"
+          ]
+        },
+        {
+          "title": "Le tableur",
+          "content": "Saisir proprement, utiliser les formules de base (SOMME, MOYENNE, SI), trier, filtrer et faire un graphique : c'est suffisant pour un budget, un suivi d'inscriptions ou des ventes.",
+          "keyPoints": [
+            "Une ligne par enregistrement, une colonne par information",
+            "Formules plutôt que calculs à la main",
+            "Un graphique simple vaut mieux qu'un tableau illisible"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Convention de nommage",
+        "steps": [
+          "Date au format AAAA-MM-JJ",
+          "Sujet court",
+          "Nom ou projet",
+          "Version (v1, v2) ou « final »",
+          "Format adapté (PDF pour l'envoi)"
+        ]
+      },
+      "exercise": {
+        "title": "Tableau de suivi",
+        "instructions": [
+          "Crée un tableau de suivi (budget, ventes ou inscriptions)",
+          "Ajoute 3 formules et un graphique",
+          "Partage-le en lecture seule"
+        ],
+        "deliverable": "Fichier tableur partagé"
+      }
+    },
+    {
+      "title": "L'IA générative avec méthode",
+      "duration": "Semaine 2",
+      "goal": "Obtenir des réponses utiles en formulant de bonnes consignes.",
+      "lessons": [
+        {
+          "title": "Comment fonctionne une IA générative",
+          "content": "Un modèle de langage prédit la suite la plus probable d'un texte à partir de ce qu'il a appris. Il ne « sait » pas au sens humain : il peut produire une réponse fluide mais fausse, ou inventer des sources.",
+          "keyPoints": [
+            "Fluide ne veut pas dire vrai",
+            "Les connaissances peuvent être datées",
+            "Toujours vérifier les faits importants"
+          ]
+        },
+        {
+          "title": "Écrire une bonne consigne",
+          "content": "Donne un rôle, le contexte, la tâche précise, le format attendu et les contraintes. Puis améliore par itérations : demande une version plus courte, plus simple, avec un exemple.",
+          "keyPoints": [
+            "Rôle + contexte + tâche + format + contraintes",
+            "Fournir un exemple de ce que tu attends",
+            "Itérer plutôt que tout attendre du premier essai"
+          ]
+        },
+        {
+          "title": "Usages utiles",
+          "content": "Reformuler un texte, proposer un plan, résumer un document que tu as le droit de partager, préparer des questions d'entretien, expliquer une notion difficile, traduire. L'IA est un assistant : le résultat final reste ta responsabilité.",
+          "keyPoints": [
+            "Brouillon et idées : oui",
+            "Copier sans comprendre : non",
+            "Relire et personnaliser tout résultat"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Consigne en 5 éléments",
+        "steps": [
+          "Rôle : « Tu es un conseiller en orientation… »",
+          "Contexte : ta situation et ton objectif",
+          "Tâche : ce que tu demandes précisément",
+          "Format : liste, tableau, 150 mots…",
+          "Contraintes : ton, public, ce qu'il faut éviter"
+        ]
+      },
+      "exercise": {
+        "title": "Avant / après",
+        "instructions": [
+          "Pose une question vague à un assistant d'IA",
+          "Reformule-la avec la consigne en 5 éléments",
+          "Compare et note les différences"
+        ],
+        "deliverable": "Les deux consignes, les deux réponses et ton analyse"
+      }
+    },
+    {
+      "title": "Esprit critique et éthique",
+      "duration": "Semaine 3",
+      "goal": "Utiliser l'IA sans tromper, sans plagier et sans exposer de données.",
+      "lessons": [
+        {
+          "title": "Vérifier",
+          "content": "Croise chaque fait important avec une source fiable (site officiel, publication reconnue). Vérifie que les références citées existent vraiment. Méfie-toi des chiffres précis sans source.",
+          "keyPoints": [
+            "Deux sources indépendantes pour un fait clé",
+            "Vérifier l'existence des références",
+            "Dater l'information"
+          ]
+        },
+        {
+          "title": "Transparence et plagiat",
+          "content": "Présenter comme tien un texte entièrement produit par une IA peut être considéré comme une fraude dans un cadre scolaire ou professionnel. Respecte les règles de ton établissement ou de ton employeur et indique l'usage de l'IA quand c'est demandé.",
+          "keyPoints": [
+            "Connaître les règles de son école ou entreprise",
+            "Mentionner l'usage de l'IA si nécessaire",
+            "Garder ta voix et tes idées"
+          ]
+        },
+        {
+          "title": "Données personnelles et confidentialité",
+          "content": "Ne colle pas dans un outil en ligne des données personnelles d'autrui, des documents internes confidentiels ou des informations sensibles. Au Sénégal, la loi 2008-12 encadre le traitement des données personnelles.",
+          "keyPoints": [
+            "Anonymiser avant de partager",
+            "Pas de documents confidentiels dans un outil public",
+            "Lire les conditions d'utilisation"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Les 3 vérifications",
+        "steps": [
+          "Est-ce vrai ? (sources fiables)",
+          "Ai-je le droit ? (règles, données, droits d'auteur)",
+          "Est-ce que je l'assume ? (relu, compris, personnalisé)"
+        ]
+      },
+      "exercise": {
+        "title": "Chasse aux erreurs",
+        "instructions": [
+          "Demande à une IA une biographie ou des statistiques sur un sujet sénégalais",
+          "Vérifie chaque fait et chaque référence",
+          "Classe : juste, approximatif, faux, inventé"
+        ],
+        "deliverable": "Tableau de vérification commenté"
+      }
+    },
+    {
+      "title": "Cybersécurité au quotidien",
+      "duration": "Semaine 4",
+      "goal": "Protéger tes comptes, tes appareils et tes données.",
+      "lessons": [
+        {
+          "title": "Mots de passe et double authentification",
+          "content": "Un mot de passe long (une phrase), différent pour chaque compte important, stocké dans un gestionnaire de mots de passe, et la double authentification activée sur l'e-mail, les réseaux sociaux et le mobile money.",
+          "keyPoints": [
+            "Une phrase de passe longue",
+            "Jamais le même mot de passe partout",
+            "Double authentification sur les comptes clés"
+          ]
+        },
+        {
+          "title": "Hameçonnage et arnaques",
+          "content": "Message urgent, lien raccourci, demande de code, fausse offre d'emploi payante : vérifie l'expéditeur, ne clique pas dans l'urgence, passe par le site ou l'application officiels.",
+          "keyPoints": [
+            "L'urgence est un signal d'alerte",
+            "Ne jamais communiquer un code reçu par SMS",
+            "Signaler les tentatives"
+          ]
+        },
+        {
+          "title": "Mises à jour et sauvegardes",
+          "content": "Les mises à jour corrigent des failles. Une sauvegarde régulière dans le cloud ou sur un support externe protège contre la perte ou le vol.",
+          "keyPoints": [
+            "Activer les mises à jour automatiques",
+            "Sauvegarder chaque semaine",
+            "Verrouiller son téléphone"
+          ]
+        }
+      ],
+      "method": {
+        "name": "Bilan sécurité en 10 minutes",
+        "steps": [
+          "Activer la double authentification sur l'e-mail",
+          "Changer les mots de passe réutilisés",
+          "Installer les mises à jour en attente",
+          "Vérifier la sauvegarde",
+          "Verrouiller l'écran du téléphone"
+        ]
+      },
+      "exercise": {
+        "title": "Mon kit de sécurité",
+        "instructions": [
+          "Fais ton bilan sécurité",
+          "Installe un gestionnaire de mots de passe gratuit",
+          "Explique à un proche comment repérer un hameçonnage"
+        ],
+        "deliverable": "Check-list de sécurité complétée"
+      }
+    }
+  ],
+  "toolkit": [
+    {
+      "name": "Consigne en 5 éléments",
+      "use": "IA générative",
+      "how": "Rôle, contexte, tâche, format, contraintes, puis itérer."
+    },
+    {
+      "name": "Les 3 vérifications",
+      "use": "Usage responsable",
+      "how": "Vrai ? Ai-je le droit ? Est-ce que je l'assume ?"
+    },
+    {
+      "name": "Convention de nommage",
+      "use": "Organisation",
+      "how": "AAAA-MM-JJ-sujet-nom-version."
+    },
+    {
+      "name": "Bilan sécurité",
+      "use": "Cybersécurité",
+      "how": "Double authentification, mots de passe uniques, mises à jour, sauvegarde."
+    }
+  ],
+  "caseStudy": {
+    "title": "Le rapport de stage de Cheikh",
+    "context": "Cheikh doit rendre un rapport de stage et demande à une IA de l'écrire entièrement.",
+    "challenge": "Le texte contient des chiffres faux sur l'entreprise, deux références inventées et ne correspond pas à ce qu'il a réellement fait. Son tuteur le remarque.",
+    "solution": "Il reprend : il utilise l'IA pour construire le plan et reformuler ses propres notes, vérifie chaque chiffre auprès de l'entreprise, cite des sources réelles et mentionne l'usage de l'IA comme le demande son école.",
+    "lesson": "L'IA a fait gagner du temps sur la forme ; le fond devait rester le sien, vérifié et assumé."
+  },
+  "pitfalls": [
+    "Croire qu'une réponse fluide est forcément exacte",
+    "Rendre un travail généré par IA sans le comprendre ni le signaler",
+    "Copier des données personnelles ou confidentielles dans un outil public",
+    "Utiliser le même mot de passe partout",
+    "Cliquer sur un lien reçu dans un message urgent"
+  ],
+  "quiz": [
+    {
+      "q": "Une IA cite une étude précise. Que fais-tu ?",
+      "options": [
+        "Je la cite telle quelle",
+        "Je vérifie que l'étude existe et dit bien cela",
+        "Je supprime la référence"
+      ],
+      "answer": 1,
+      "explanation": "Les IA peuvent inventer des références crédibles : la vérification est indispensable."
+    },
+    {
+      "q": "Quelle consigne est la meilleure ?",
+      "options": [
+        "Fais-moi un CV",
+        "Tu es recruteur. À partir de mes expériences ci-dessous, propose 5 lignes de CV avec verbe d'action et résultat, pour un poste d'assistant comptable.",
+        "CV svp"
+      ],
+      "answer": 1,
+      "explanation": "Elle contient rôle, contexte, tâche, format et objectif."
+    },
+    {
+      "q": "Que protège la double authentification ?",
+      "options": [
+        "Rien de plus qu'un mot de passe",
+        "Le compte même si le mot de passe est volé",
+        "Seulement le téléphone"
+      ],
+      "answer": 1,
+      "explanation": "Un second facteur est nécessaire pour se connecter."
+    },
+    {
+      "q": "Peut-on coller la liste des membres d'une association (noms, téléphones) dans un outil d'IA public ?",
+      "options": [
+        "Oui, sans problème",
+        "Non, ce sont des données personnelles à protéger",
+        "Oui si c'est pour gagner du temps"
+      ],
+      "answer": 1,
+      "explanation": "Les données personnelles d'autrui doivent être protégées (loi 2008-12 au Sénégal)."
+    }
+  ],
+  "actionPlan": [
+    {
+      "period": "Jours 1 à 7",
+      "action": "Range tes fichiers avec la convention de nommage et active une sauvegarde cloud."
+    },
+    {
+      "period": "Jours 8 à 14",
+      "action": "Utilise la consigne en 5 éléments pour 3 tâches réelles."
+    },
+    {
+      "period": "Jours 15 à 21",
+      "action": "Vérifie systématiquement 2 faits par réponse d'IA utilisée."
+    },
+    {
+      "period": "Jours 22 à 30",
+      "action": "Fais ton bilan sécurité et active la double authentification partout."
+    }
+  ],
+  "resources": [
+    {
+      "type": "Guide",
+      "title": "Orientations pour l'IA générative dans l'éducation et la recherche",
+      "org": "UNESCO",
+      "url": "https://www.unesco.org/",
+      "free": true
+    },
+    {
+      "type": "Données personnelles",
+      "title": "Commission de Protection des Données Personnelles du Sénégal",
+      "org": "CDP",
+      "free": true,
+      "note": "Autorité créée par la loi 2008-12 : elle reçoit les plaintes et contrôle les traitements de données."
+    },
+    {
+      "type": "Cours",
+      "title": "Cours gratuits en numérique et bureautique",
+      "org": "OpenClassrooms",
+      "url": "https://openclassrooms.com/",
+      "free": true
+    }
+  ],
+  "sources": [
+    {
+      "title": "The Future of Jobs Report 2025",
+      "org": "Forum économique mondial",
+      "year": 2025,
+      "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/"
+    },
+    {
+      "title": "Guidance for generative AI in education and research",
+      "org": "UNESCO",
+      "year": 2023,
+      "url": "https://www.unesco.org/"
+    },
+    {
+      "title": "Loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel",
+      "org": "République du Sénégal",
+      "year": 2008
+    }
+  ],
+  "relatedJobs": [
+    "prompt-engineer",
+    "ingenieur-ia",
+    "data-analyst",
+    "analyste-cybersecurite",
+    "developpeur-web",
+    "pentester-hacker-ethique"
+  ],
+  "certification": "Attestation WOW de compétences numériques, délivrée après les exercices pratiques et la check-list de sécurité.",
+  "faq": [
+    {
+      "q": "Faut-il un abonnement payant à une IA ?",
+      "a": "Non, les versions gratuites suffisent pour la formation."
+    },
+    {
+      "q": "Je n'ai pas d'ordinateur",
+      "a": "Une grande partie se fait sur smartphone ; les postes du club ou d'un cybercafé complètent les exercices de bureautique."
+    }
+  ]
+}

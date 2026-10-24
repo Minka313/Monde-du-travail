@@ -1,0 +1,116 @@
+{
+  "slug": "negociation-gestion-conflits",
+  "title": "Négociation & gestion des conflits",
+  "icon": "⚖️",
+  "image": "images/about_team.webp",
+  "category": "Soft Skills & Communication",
+  "level": "Intermédiaire",
+  "duration": "3 semaines · 18 h",
+  "format": "Jeux de rôle, études de cas et débriefings filmés",
+  "tagline": "Obtenir un accord juste sans abîmer la relation, et transformer les tensions en solutions.",
+  "audience": "Étudiants, responsables associatifs, commerciaux, entrepreneurs, jeunes salariés qui négocient un stage, un salaire ou un contrat.",
+  "prerequisites": "Avoir suivi « Communication efficace » est un plus, pas une obligation.",
+  "hook": {
+    "title": "Négocier n'est pas gagner contre l'autre",
+    "text": "On négocie tous les jours : un prix au marché, une date de rendu, un salaire, la répartition des tâches. La méthode de la négociation raisonnée, développée à Harvard, montre qu'on obtient souvent plus en cherchant les intérêts de chacun qu'en s'accrochant à une position."
+  },
+  "keyFacts": [
+    { "value": "4", "label": "principes de la négociation raisonnée : séparer les personnes du problème, se concentrer sur les intérêts, inventer des options, utiliser des critères objectifs", "source": "Fisher & Ury, Getting to Yes (Harvard Negotiation Project)" },
+    { "value": "5", "label": "modes de gestion des conflits : compétition, collaboration, compromis, évitement, accommodement", "source": "Thomas & Kilmann, Thomas-Kilmann Conflict Mode Instrument" },
+    { "value": "3e", "label": "« Leadership et influence sociale » : compétence clé recherchée par les employeurs", "source": "Forum économique mondial, Future of Jobs Report 2025" }
+  ],
+  "outcomes": [
+    "Préparer une négociation : objectifs, limites, alternative de repli",
+    "Distinguer les positions (ce que l'on demande) des intérêts (pourquoi on le demande)",
+    "Proposer plusieurs options et s'appuyer sur des critères objectifs",
+    "Négocier un stage, une rémunération ou un délai",
+    "Reconnaître ton style face au conflit et en changer quand il le faut",
+    "Mener une médiation simple entre deux personnes",
+    "Garder ton calme face à l'agressivité"
+  ],
+  "modules": [
+    {
+      "title": "Préparer une négociation",
+      "duration": "Semaine 1",
+      "goal": "Ne jamais arriver sans savoir ce que l'on veut et ce que l'on fera en cas d'échec.",
+      "lessons": [
+        { "title": "Positions et intérêts", "content": "La position est ce qu'on réclame (« je veux 150 000 FCFA »). L'intérêt est le besoin qui se cache derrière (payer son transport et son logement). Plusieurs solutions peuvent satisfaire un même intérêt.", "keyPoints": ["Demander « pourquoi est-ce important pour vous ? »", "Identifier tes propres intérêts", "Chercher les intérêts communs"] },
+        { "title": "Ta meilleure alternative (MESORE / BATNA)", "content": "La meilleure solution de rechange si la négociation échoue fixe ton pouvoir de négociation. Plus elle est bonne, plus tu peux être exigeant. L'améliorer avant de négocier est souvent le meilleur investissement.", "keyPoints": ["Que fais-je si on ne trouve pas d'accord ?", "Améliorer son alternative avant de négocier", "Ne jamais accepter pire que son alternative"] },
+        { "title": "Objectif, point de départ et limite", "content": "Fixe ton objectif (ce que tu vises), ton point de départ (ta première proposition, ambitieuse mais justifiable) et ta limite (en dessous, tu préfères ton alternative).", "keyPoints": ["Se renseigner sur les références du marché", "Une première proposition argumentée", "Une limite décidée à l'avance, pas dans l'émotion"] }
+      ],
+      "method": { "name": "Fiche de préparation", "steps": ["Mes intérêts et ceux de l'autre partie", "Mon alternative en cas d'échec", "Objectif, point de départ, limite", "Critères objectifs (prix du marché, grille, usage)", "Options à proposer"] },
+      "exercise": { "title": "Préparer une vraie négociation", "instructions": ["Choisis une négociation à venir (stage, prix, délai)", "Remplis la fiche de préparation", "Fais-la critiquer par ton binôme"], "deliverable": "Fiche de préparation" }
+    },
+    {
+      "title": "Négocier",
+      "duration": "Semaine 2",
+      "goal": "Conduire l'échange vers un accord satisfaisant pour les deux.",
+      "lessons": [
+        { "title": "Inventer des options", "content": "Avant de trancher, élargir : délais différents, contreparties (formation, transport, flexibilité), paiement échelonné, période d'essai. Plus il y a d'options, plus il est facile de trouver un accord.", "keyPoints": ["Proposer au moins 3 options", "Échanger ce qui coûte peu à l'un et vaut beaucoup pour l'autre", "Ne pas céder sans contrepartie"] },
+        { "title": "Les critères objectifs", "content": "Appuie tes demandes sur des références extérieures : prix pratiqués, grilles de salaires, textes réglementaires, devis. Une demande justifiée par un critère est plus facile à accepter qu'une exigence.", "keyPoints": ["Venir avec des chiffres", "Demander à l'autre ses critères", "Rester ouvert à de meilleurs arguments"] },
+        { "title": "Négocier un stage ou un salaire", "content": "Se renseigner sur les pratiques du secteur, laisser l'employeur faire la première proposition si possible, négocier aussi le non-salarial (transport, formation, horaires), et toujours remercier, même en cas de refus.", "keyPoints": ["Connaître la fourchette du marché", "Négocier l'ensemble du package", "Confirmer l'accord par écrit"] }
+      ],
+      "method": { "name": "Les 4 principes de la négociation raisonnée", "steps": ["Séparer les personnes du problème", "Se concentrer sur les intérêts, pas les positions", "Inventer des options pour un bénéfice mutuel", "Insister sur des critères objectifs"] },
+      "exercise": { "title": "Jeu de rôle filmé", "instructions": ["En binôme, négocie une proposition de stage (indemnité, durée, missions)", "Inverse les rôles", "Débriefe avec la grille des 4 principes"], "deliverable": "Vidéo et grille de débriefing" }
+    },
+    {
+      "title": "Gérer les conflits",
+      "duration": "Semaine 3",
+      "goal": "Désamorcer les tensions et aider les autres à s'accorder.",
+      "lessons": [
+        { "title": "Les 5 modes face au conflit", "content": "Compétition (je gagne, tu perds), accommodement (je cède), évitement (on n'en parle pas), compromis (chacun cède un peu), collaboration (on cherche une solution qui satisfait tout le monde). Chaque mode a sa place ; l'erreur est de n'en utiliser qu'un.", "keyPoints": ["Collaborer quand l'enjeu et la relation comptent", "Éviter quand le sujet est mineur ou l'émotion trop forte", "Être conscient de son mode par défaut"] },
+        { "title": "Faire baisser la tension", "content": "Face à la colère : rester calme, laisser l'autre s'exprimer, reformuler son émotion (« je vois que c'est très important pour toi »), puis revenir aux faits. On ne règle rien dans l'agressivité ; il vaut parfois mieux reporter.", "keyPoints": ["Parler lentement et doucement", "Reconnaître l'émotion sans l'approuver forcément", "Proposer de reprendre plus tard si nécessaire"] },
+        { "title": "La médiation entre pairs", "content": "Le médiateur ne tranche pas : il garantit le cadre (respect, temps de parole égal), fait exprimer les faits et les besoins de chacun, puis aide les parties à trouver leur propre accord.", "keyPoints": ["Neutralité et confidentialité", "Chacun parle sans être interrompu", "L'accord vient des parties, pas du médiateur"] }
+      ],
+      "method": { "name": "Médiation en 5 étapes", "steps": ["Poser le cadre : respect, confidentialité, temps de parole", "Chacun raconte les faits de son point de vue", "Chacun exprime ce dont il a besoin", "Recherche d'options ensemble", "Accord écrit et date de suivi"] },
+      "exercise": { "title": "Médiation simulée", "instructions": ["Deux participants jouent un conflit d'équipe", "Un troisième mène la médiation en 5 étapes", "Le groupe débriefe"], "deliverable": "Compte rendu de médiation et accord rédigé" }
+    }
+  ],
+  "toolkit": [
+    { "name": "Fiche de préparation", "use": "Avant toute négociation", "how": "Intérêts, alternative, objectif, point de départ, limite, critères, options." },
+    { "name": "Négociation raisonnée", "use": "Pendant l'échange", "how": "Personnes / problème, intérêts, options, critères objectifs." },
+    { "name": "5 modes de Thomas-Kilmann", "use": "Choisir sa réaction au conflit", "how": "Compétition, collaboration, compromis, évitement, accommodement." },
+    { "name": "Médiation en 5 étapes", "use": "Conflit entre deux personnes", "how": "Cadre, faits, besoins, options, accord écrit." }
+  ],
+  "caseStudy": {
+    "title": "Le conflit de la commission événements",
+    "context": "Deux responsables d'une association se disputent : l'un veut un grand concert, l'autre un atelier d'orientation, avec le même budget.",
+    "challenge": "Les réunions tournent au clash et les membres se démobilisent.",
+    "solution": "Une médiatrice fait exprimer les intérêts : le premier veut attirer de nouveaux membres, le second veut un impact concret pour les lycéens. Ensemble, ils imaginent une journée avec un atelier d'orientation le matin et un concert de clôture, financé en partie par un partenaire.",
+    "lesson": "En passant des positions aux intérêts, une option nouvelle est apparue, meilleure que les deux propositions de départ."
+  },
+  "pitfalls": [
+    "Négocier sans connaître son alternative",
+    "Faire la première concession sans contrepartie",
+    "Confondre la personne et le problème",
+    "Accepter un accord sous la pression du moment",
+    "Laisser un conflit s'envenimer en l'évitant trop longtemps"
+  ],
+  "quiz": [
+    { "q": "Quelle est la différence entre une position et un intérêt ?", "options": ["Aucune", "La position est ce qu'on demande, l'intérêt est le besoin qui la motive", "L'intérêt est le montant final"], "answer": 1, "explanation": "Travailler sur les intérêts ouvre plus de solutions." },
+    { "q": "À quoi sert ton alternative en cas d'échec (MESORE) ?", "options": ["À menacer l'autre", "À savoir quand un accord n'est pas intéressant", "À rien"], "answer": 1, "explanation": "Elle fixe la limite en dessous de laquelle mieux vaut ne pas conclure." },
+    { "q": "Face à une personne très en colère, que faire d'abord ?", "options": ["Argumenter immédiatement", "Rester calme, l'écouter et reconnaître son émotion", "Hausser le ton"], "answer": 1, "explanation": "On ne peut pas raisonner tant que l'émotion n'est pas apaisée." },
+    { "q": "Dans une médiation, qui trouve la solution ?", "options": ["Le médiateur", "Les parties elles-mêmes", "Le président de l'association"], "answer": 1, "explanation": "Le médiateur facilite ; un accord construit par les parties est mieux respecté." }
+  ],
+  "actionPlan": [
+    { "period": "Jours 1 à 7", "action": "Identifie ton mode de conflit par défaut et une situation où il t'a desservi." },
+    { "period": "Jours 8 à 14", "action": "Prépare une négociation réelle avec la fiche de préparation." },
+    { "period": "Jours 15 à 21", "action": "Mène cette négociation en appliquant les 4 principes." },
+    { "period": "Jours 22 à 30", "action": "Propose-toi comme médiateur dans un désaccord mineur, avec l'accord des parties." }
+  ],
+  "resources": [
+    { "type": "Livre", "title": "Comment réussir une négociation (Getting to Yes)", "org": "Roger Fisher, William Ury & Bruce Patton", "free": false, "note": "La référence de la négociation raisonnée." },
+    { "type": "Programme", "title": "Program on Negotiation", "org": "Harvard Law School", "url": "https://www.pon.harvard.edu/", "free": true, "note": "Articles gratuits sur la négociation et la médiation." }
+  ],
+  "sources": [
+    { "title": "Getting to Yes: Negotiating Agreement Without Giving In", "org": "Roger Fisher & William Ury", "year": 1981 },
+    { "title": "Thomas-Kilmann Conflict Mode Instrument", "org": "Kenneth W. Thomas & Ralph H. Kilmann", "year": 1974 },
+    { "title": "The Future of Jobs Report 2025", "org": "Forum économique mondial", "year": 2025, "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/" }
+  ],
+  "relatedJobs": ["juriste-entreprise", "conseiller-commercial-assurance", "ingenieur-commercial-industriel", "psychologue-du-travail", "mediateur-culturel"],
+  "certification": "Attestation WOW de négociation et de gestion des conflits, délivrée après le jeu de rôle filmé et la médiation simulée.",
+  "faq": [
+    { "q": "Est-ce utile si je ne suis pas commercial ?", "a": "Oui : on négocie et on gère des désaccords dans toutes les situations de la vie professionnelle et associative." },
+    { "q": "Apprend-on à manipuler les autres ?", "a": "Non. La méthode enseignée repose sur la transparence et la recherche d'accords justes." }
+  ]
+}

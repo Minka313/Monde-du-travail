@@ -10,7 +10,8 @@
     "start": "cd backend && npm start",
     "dev": "cd backend && npm run dev",
     "lint": "eslint .",
-    "build:job-data": "node scripts/build-job-data.js"
+    "build:job-data": "node scripts/build-job-data.js",
+    "build:formation-data": "node scripts/build-formation-data.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.600.0",

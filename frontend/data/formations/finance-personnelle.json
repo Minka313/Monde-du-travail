@@ -1,0 +1,126 @@
+{
+  "slug": "finance-personnelle",
+  "title": "Finance personnelle & budget",
+  "icon": "💰",
+  "image": "images/citoyennete.webp",
+  "category": "Compétences de vie",
+  "level": "Débutant",
+  "duration": "3 semaines · 15 h",
+  "format": "Ateliers, cas pratiques en FCFA et outils à télécharger",
+  "tagline": "Tenir un budget, épargner même avec peu, utiliser le mobile money en sécurité et éviter les pièges du crédit.",
+  "audience": "Étudiants boursiers, jeunes salariés, entrepreneurs débutants et toute personne qui veut reprendre le contrôle de son argent.",
+  "prerequisites": "Aucun. Un téléphone et la volonté de noter ses dépenses pendant un mois.",
+  "hook": {
+    "title": "Ce n'est pas ce qu'on gagne, c'est ce qu'on garde",
+    "text": "Bourse, salaire, petits revenus : sans plan, l'argent disparaît en quelques jours, souvent en dépenses dont on ne se souvient plus. Savoir où va son argent, épargner régulièrement et emprunter intelligemment sont des compétences rarement enseignées à l'école, et pourtant décisives pour l'autonomie."
+  },
+  "keyFacts": [
+    { "value": "72,3 %", "label": "taux d'inclusion financière dans l'UEMOA fin 2023, porté à 56 % par la monnaie électronique", "source": "BCEAO, rapport sur les services financiers numériques 2023" },
+    { "value": "50/30/20", "label": "règle de répartition simple d'un revenu : besoins, envies, épargne et remboursements", "source": "Elizabeth Warren & Amelia Warren Tyagi, All Your Worth (2005)" },
+    { "value": "3 à 6 mois", "label": "de dépenses essentielles : objectif courant pour un fonds d'urgence", "source": "Recommandation usuelle d'éducation financière" }
+  ],
+  "outcomes": [
+    "Suivre tes revenus et dépenses et savoir où va ton argent",
+    "Construire un budget mensuel réaliste",
+    "Constituer une épargne de précaution, même petite",
+    "Comparer les solutions : compte bancaire, mobile money, tontine, mutuelle d'épargne",
+    "Comprendre le coût réel d'un crédit et éviter le surendettement",
+    "Te protéger des arnaques au mobile money",
+    "Fixer des objectifs financiers (études, matériel, projet)"
+  ],
+  "modules": [
+    {
+      "title": "Savoir où va son argent",
+      "duration": "Semaine 1",
+      "goal": "Remplacer les impressions par des chiffres.",
+      "lessons": [
+        { "title": "Noter toutes ses dépenses", "content": "Pendant un mois, note chaque dépense, même 100 FCFA : transport, crédit téléphonique, repas, sorties, aide à la famille. Les petites sommes répétées pèsent souvent plus que les grosses dépenses.", "keyPoints": ["Tout noter, chaque jour", "Classer par catégorie", "Repérer les « fuites » (petites dépenses répétées)"] },
+        { "title": "Besoins, envies, obligations", "content": "Les besoins (logement, nourriture, transport, études), les envies (sorties, vêtements de marque), les obligations (dettes, contribution familiale). Cette distinction aide à faire des choix sans culpabilité.", "keyPoints": ["Un besoin est indispensable", "Une envie peut attendre", "La solidarité familiale se planifie aussi"] }
+      ],
+      "method": { "name": "Journal des dépenses", "steps": ["Date et montant", "Catégorie (transport, repas, téléphone, famille, loisirs…)", "Besoin ou envie ?", "Bilan chaque dimanche"] },
+      "exercise": { "title": "Mon mois en chiffres", "instructions": ["Note toutes tes dépenses pendant 30 jours", "Fais le total par catégorie", "Identifie 3 fuites à réduire"], "deliverable": "Tableau de dépenses par catégorie" }
+    },
+    {
+      "title": "Budget et épargne",
+      "duration": "Semaine 1-2",
+      "goal": "Décider à l'avance de l'usage de chaque franc.",
+      "lessons": [
+        { "title": "Le budget mensuel", "content": "Revenus prévus moins dépenses prévues : le budget doit être équilibré. La règle 50/30/20 donne un repère (50 % besoins, 30 % envies, 20 % épargne et remboursements) à adapter à ta situation.", "keyPoints": ["Partir du revenu réellement perçu", "Prévoir les dépenses irrégulières (rentrée, fêtes)", "Ajuster chaque mois"] },
+        { "title": "Se payer en premier", "content": "Dès réception du revenu, mets de côté le montant d'épargne prévu, avant toute dépense. Même 5 % au départ créent l'habitude.", "keyPoints": ["Épargne automatique ou le jour même", "Un compte ou portefeuille séparé", "Augmenter le taux progressivement"] },
+        { "title": "Le fonds d'urgence", "content": "Une réserve pour les imprévus (santé, réparation, perte de revenu) évite de s'endetter au premier problème. Objectif à terme : plusieurs mois de dépenses essentielles.", "keyPoints": ["Commencer par un premier palier (ex. 25 000 FCFA)", "Ne l'utiliser que pour de vraies urgences", "Le reconstituer après usage"] }
+      ],
+      "method": { "name": "Budget 50/30/20 adapté", "steps": ["Revenu mensuel net", "Besoins (≈ 50 %)", "Envies (≈ 30 %)", "Épargne et remboursements (≈ 20 %)", "Ajuster les pourcentages à ta réalité, l'épargne n'étant jamais à zéro"] },
+      "exercise": { "title": "Mon budget du mois prochain", "instructions": ["Construis ton budget à partir de ton journal", "Fixe un montant d'épargne", "Choisis l'outil : compte, portefeuille mobile, tontine"], "deliverable": "Budget mensuel équilibré" }
+    },
+    {
+      "title": "Outils financiers et crédit",
+      "duration": "Semaine 2",
+      "goal": "Choisir les bons outils et emprunter sans se piéger.",
+      "lessons": [
+        { "title": "Banque, mobile money, tontine, microfinance", "content": "Le mobile money est pratique pour payer et transférer. Un compte bancaire ou d'épargne permet de sécuriser et parfois de rémunérer l'épargne. La tontine apporte discipline et solidarité, avec un risque si un membre ne paie pas. Les institutions de microfinance accordent de petits crédits et collectent l'épargne.", "keyPoints": ["Comparer les frais de chaque outil", "Vérifier que l'établissement est agréé", "Ne pas laisser toute son épargne sur un seul support"] },
+        { "title": "Le vrai coût du crédit", "content": "Un crédit coûte des intérêts et des frais. Avant d'emprunter, calcule le total à rembourser et vérifie que la mensualité reste supportable dans ton budget. Emprunter pour un projet qui rapporte est différent d'emprunter pour consommer.", "keyPoints": ["Demander le coût total, pas seulement la mensualité", "Ne pas dépasser une part raisonnable de son revenu en remboursements", "Éviter les crédits pour des envies"] }
+      ],
+      "method": { "name": "Test avant d'emprunter", "steps": ["Pourquoi j'emprunte : besoin, envie, investissement ?", "Montant total à rembourser (capital + intérêts + frais)", "Mensualité comparée à mon budget", "Que se passe-t-il si mon revenu baisse ?", "Existe-t-il une alternative (épargner quelques mois) ?"] },
+      "exercise": { "title": "Comparer deux offres", "instructions": ["Prends deux offres de crédit ou de tontine réelles", "Calcule le coût total de chacune", "Rédige ta recommandation"], "deliverable": "Tableau comparatif argumenté" }
+    },
+    {
+      "title": "Sécurité et objectifs",
+      "duration": "Semaine 3",
+      "goal": "Protéger son argent et planifier ses projets.",
+      "lessons": [
+        { "title": "Les arnaques au mobile money", "content": "Faux message de transfert reçu « par erreur », faux agent qui demande ton code, promesse de gains rapides, faux recrutements payants : la règle d'or est de ne jamais communiquer ton code secret et de vérifier toute transaction dans ton historique officiel, pas dans un SMS.", "keyPoints": ["Ton code secret ne se partage jamais, même avec l'opérateur", "Vérifier le solde dans l'application officielle", "Méfiance face à l'urgence et aux gains trop beaux"] },
+        { "title": "Objectifs financiers", "content": "Ordinateur pour les études, permis de conduire, fonds de démarrage d'activité : un objectif chiffré et daté se transforme en épargne mensuelle (montant ÷ nombre de mois).", "keyPoints": ["Montant + date = épargne mensuelle", "Un objectif à la fois au début", "Suivre les progrès chaque mois"] }
+      ],
+      "method": { "name": "Plan d'objectif", "steps": ["Objectif et montant", "Date cible", "Épargne mensuelle = montant ÷ nombre de mois", "Support d'épargne choisi", "Suivi mensuel"] },
+      "exercise": { "title": "Mon plan financier 12 mois", "instructions": ["Fixe 1 à 3 objectifs chiffrés et datés", "Calcule l'épargne mensuelle nécessaire", "Intègre-la à ton budget"], "deliverable": "Plan financier sur 12 mois" }
+    }
+  ],
+  "toolkit": [
+    { "name": "Journal des dépenses", "use": "Savoir où va l'argent", "how": "Tout noter pendant 30 jours, classer, repérer les fuites." },
+    { "name": "Règle 50/30/20", "use": "Construire un budget", "how": "Besoins, envies, épargne, à adapter à sa situation." },
+    { "name": "Se payer en premier", "use": "Épargner", "how": "Mettre l'épargne de côté dès réception du revenu." },
+    { "name": "Test avant d'emprunter", "use": "Crédit", "how": "Coût total, mensualité supportable, alternative." },
+    { "name": "Règle d'or mobile money", "use": "Sécurité", "how": "Jamais de code partagé, vérifier dans l'application officielle." }
+  ],
+  "caseStudy": {
+    "title": "La bourse d'Astou",
+    "context": "Astou reçoit une bourse mensuelle et se retrouve sans argent dès le 15 du mois.",
+    "challenge": "Elle emprunte à des amies chaque mois et ne sait pas où passe son argent.",
+    "solution": "Son journal révèle que le crédit téléphonique, les taxis et les petits achats représentent un tiers de ses dépenses. Elle passe à un forfait internet mensuel, partage les trajets, construit un budget et épargne 10 % le jour du versement dans une tontine d'étudiantes.",
+    "lesson": "Après trois mois, elle n'emprunte plus et a constitué un fonds d'urgence. La maîtrise vient du suivi, pas d'un revenu plus élevé."
+  },
+  "pitfalls": [
+    "Ne rien noter et « se faire une idée »",
+    "Épargner seulement ce qui reste à la fin du mois",
+    "Emprunter pour des envies",
+    "Regarder la mensualité sans calculer le coût total",
+    "Communiquer son code secret mobile money",
+    "Confier son argent à des placements promettant des gains rapides"
+  ],
+  "quiz": [
+    { "q": "Que signifie « se payer en premier » ?", "options": ["S'offrir un cadeau à chaque paie", "Mettre son épargne de côté dès réception du revenu", "Payer ses dettes en dernier"], "answer": 1, "explanation": "L'épargne devient une priorité, pas un reste." },
+    { "q": "Un « agent » t'appelle et demande ton code pour annuler un transfert reçu par erreur. Que fais-tu ?", "options": ["Je donne le code", "Je refuse et vérifie mon solde dans l'application officielle", "Je renvoie l'argent immédiatement"], "answer": 1, "explanation": "C'est une arnaque classique : aucun opérateur ne demande ton code." },
+    { "q": "Tu veux 120 000 FCFA dans 8 mois. Combien épargner par mois ?", "options": ["10 000 FCFA", "15 000 FCFA", "20 000 FCFA"], "answer": 1, "explanation": "120 000 ÷ 8 = 15 000 FCFA par mois." },
+    { "q": "Quelle information est essentielle avant un crédit ?", "options": ["La couleur de l'agence", "Le coût total à rembourser", "Le nom du conseiller"], "answer": 1, "explanation": "Le coût total (intérêts et frais) permet de comparer les offres." }
+  ],
+  "actionPlan": [
+    { "period": "Jours 1 à 30", "action": "Tiens ton journal des dépenses chaque jour." },
+    { "period": "Jours 8 à 14", "action": "Ouvre un support d'épargne séparé et épargne dès le prochain revenu." },
+    { "period": "Jours 15 à 21", "action": "Construis ton budget du mois suivant." },
+    { "period": "Jours 22 à 30", "action": "Fixe un objectif financier chiffré et daté et calcule l'épargne mensuelle." }
+  ],
+  "resources": [
+    { "type": "Institution", "title": "Informations sur les services financiers et l'inclusion financière", "org": "BCEAO", "url": "https://www.bceao.int/", "free": true },
+    { "type": "Outil", "title": "Modèle de budget et journal des dépenses", "org": "Le Monde du Travail", "free": true, "note": "Fourni en atelier ; un tableur ou un carnet suffit." }
+  ],
+  "sources": [
+    { "title": "Rapport annuel sur les services financiers numériques dans l'UEMOA 2023", "org": "BCEAO", "year": 2024, "url": "https://www.bceao.int/" },
+    { "title": "All Your Worth: The Ultimate Lifetime Money Plan", "org": "Elizabeth Warren & Amelia Warren Tyagi", "year": 2005 }
+  ],
+  "relatedJobs": ["conseiller-bancaire", "analyste-financier", "credit-manager", "auditeur-financier", "conseiller-investissement-responsable"],
+  "certification": "Attestation WOW d'éducation financière, délivrée après la remise du plan financier sur 12 mois.",
+  "faq": [
+    { "q": "Je n'ai presque pas de revenus, est-ce utile ?", "a": "Oui : c'est quand les revenus sont faibles que chaque franc compte et que les bonnes habitudes se prennent." },
+    { "q": "Recommandez-vous une banque ou un opérateur ?", "a": "Non. La formation apprend à comparer les offres selon tes besoins." }
+  ]
+}

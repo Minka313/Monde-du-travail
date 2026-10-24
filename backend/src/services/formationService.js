@@ -69,9 +69,10 @@ class FormationService {
     };
   }
 
+  // Accepte l'identifiant ou le slug (lien depuis la fiche pédagogique formation-detail.html)
   static async getFormationById(id) {
-    const formation = await prisma.formation.findUnique({
-      where: { id },
+    const formation = await prisma.formation.findFirst({
+      where: { OR: [{ id }, { slug: id }] },
       include: {
         createdBy: { select: { id: true, firstName: true, lastName: true } },
       },
