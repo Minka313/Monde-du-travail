@@ -361,6 +361,26 @@
         body: JSON.stringify({ comment }),
       }),
     },
+    reports: {
+      list: (params = {}) => {
+        const query = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => { if (value) query.set(key, value); });
+        const qs = query.toString();
+        return apiRequestWithRefresh(`/reports${qs ? `?${qs}` : ''}`);
+      },
+      get: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}`),
+      remove: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+      review: (id, decision, comment) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/review`, {
+        method: 'POST',
+        body: JSON.stringify({ decision, comment }),
+      }),
+      templates: () => apiRequestWithRefresh('/reports/templates'),
+      summary: (year) => apiRequestWithRefresh(`/reports/summary${year ? `?year=${encodeURIComponent(year)}` : ''}`),
+      updateSettings: (positionId, data) => apiRequestWithRefresh(`/reports/positions/${encodeURIComponent(positionId)}/settings`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+    },
     opportunities: {
       get: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}`),
       getAdmin: (params = {}) => contentListQuery('/opportunities/admin/list', params),

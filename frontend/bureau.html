@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Espace Bureau — Le Monde du Travail. Rapports d'activité des postes du bureau, échéances et validation par la Présidence.">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Espace Bureau — Le Monde du Travail</title>
+    <link rel="icon" type="image/webp" href="logo.webp">
+    <link rel="stylesheet" href="css/styles.min.css?v=20261024-1">
+    <link rel="stylesheet" href="css/report-view.css?v=20261024-1">
+    <link rel="stylesheet" href="css/bureau.css?v=20261024-1">
+    <script src="js/theme-engine.js"></script>
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div id="pageTransitionProgress"></div>
+    <div id="scrollProgressBar"></div>
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.webp" alt="Logo Le Monde du Travail" class="logo-img" width="40" height="40" onerror="this.onerror=null; this.src='logo.png';">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <button type="button" class="theme-toggle-btn" id="headerThemeToggleBtn" aria-label="Changer de thème" title="Passer en Mode Sombre">
+                <span class="theme-toggle-icon">🌙</span>
+            </button>
+<div class="header-auth-slot" id="headerAuthSlot">
+                <a href="login.html" class="btn-cta" id="headerAuthBtn">Se connecter</a>
+            </div>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.webp" alt="Logo Le Monde du Travail" class="mobile-nav-logo" width="36" height="36" onerror="this.onerror=null; this.src='logo.png';">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html">À Propos</a>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="opportunites.html">Concours & Opportunités</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="mobile-nav-footer" id="mobileNavFooter">
+                <button type="button" class="theme-toggle-btn theme-toggle-btn-mobile" id="mobileThemeToggleBtn" aria-label="Changer de thème">
+                    <span class="theme-toggle-icon">🌙</span>
+                    <span class="theme-toggle-label">Mode Sombre</span>
+                </button>
+<a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main id="main-content">
+    <section class="bx-hero">
+        <div class="container">
+            <a href="profile.html" class="bx-back">&larr; Mon espace membre</a>
+            <p class="bx-kicker">🏛️ Espace Bureau</p>
+            <h1 id="bxGreeting">Chargement…</h1>
+            <p class="bx-hero-lead">Rédige les rapports de ton poste, suis tes échéances et retrouve le travail de tout le bureau.</p>
+            <div class="bx-positions" id="bxPositions"></div>
+            <div class="bx-hero-chips" id="bxHeroChips"></div>
+        </div>
+    </section>
+
+    <section class="bx-body">
+        <div class="container">
+            <nav class="bx-tabs" id="bxTabs" role="tablist" aria-label="Sections de l'espace bureau"></nav>
+            <div id="bxContent" class="bx-content rv-scope" aria-live="polite">
+                <div class="bx-loading"><span class="bx-spinner"></span> Chargement…</div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer data-layout="footer" class="site-footer">
+    <div class="footer-card footer-card-centered">
+        <!-- Tracé géométrique vectoriel filigrane aux tonalités or & bleu nuit -->
+        <svg class="footer-bg-lines" viewBox="0 0 1200 450" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 300,450 L 600,120 L 800,280 L 1200,40" fill="none" stroke="rgba(245, 166, 35, 0.08)" stroke-width="1.5" />
+            <path d="M 150,450 L 500,170 L 700,320 L 1100,140" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1.2" />
+            <path d="M 450,450 L 720,200 L 950,350 L 1200,90" fill="none" stroke="rgba(245, 166, 35, 0.05)" stroke-width="1" />
+        </svg>
+
+        <div class="footer-centered-content">
+            <!-- 1. En-tête de Marque Centré -->
+            <div class="footer-brand-header">
+                <a href="index.html" class="footer-brand-logo" aria-label="Accueil Le Monde du Travail">
+                    <img src="logo.webp" alt="Logo Le Monde du Travail" class="footer-logo-img" width="56" height="56" onerror="this.onerror=null; this.src='logo.png';">
+                    <span class="footer-site-title">Le Monde du Travail</span>
+                </a>
+                <p class="footer-mission-desc">
+                    Préparer une relève professionnelle de qualité, consciente et innovante. Accompagnement, orientation et compétences d'avenir pour bâtir demain.
+                </p>
+
+                <!-- Réseaux sociaux administrables -->
+                <div class="footer-socials footer-socials-centered" id="footerSocialsContainer" aria-label="Réseaux sociaux">
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="twitter" aria-label="X (Twitter)">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="linkedin" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="instagram" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="facebook" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                    </a>
+                    <a href="" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="youtube" aria-label="YouTube" style="display: none;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    </a>
+                    <a href="" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="tiktok" aria-label="TikTok" style="display: none;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-1.01-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.89 3.5 2.72 1.36-.07 2.59-.97 3.03-2.27.2-.55.26-1.14.25-1.73.02-4.91.01-9.83.01-14.74z"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 2. Grille de Liens Centrée -->
+            <div class="footer-links-grid">
+                <div class="footer-link-group">
+                    <h4 class="footer-group-title">Navigation</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="index.html" class="footer-link">Accueil</a></li>
+                        <li><a href="about.html" class="footer-link">À Propos</a></li>
+                        <li><a href="formations.html" class="footer-link">Formations</a></li>
+                        <li><a href="forum.html" class="footer-link">Forum & Entraide</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-link-group">
+                    <h4 class="footer-group-title">Ressources</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="job.html" class="footer-link">Métiers & Orientation</a></li>
+                        <li><a href="opportunites.html" class="footer-link">Concours & Opportunités</a></li>
+                        <li><a href="blog.html" class="footer-link">Actualités & Blog</a></li>
+                        <li><a href="login.html" class="footer-link">Espace Membre</a></li>
+                        <li><a href="about.html#contact" class="footer-link">Contact & Partenariats</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-link-group">
+                    <h4 class="footer-group-title">Légal & Éthique</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="about.html#charte" class="footer-link">Charte d'Orientation</a></li>
+                        <li><a href="about.html#confidentialite" class="footer-link">Politique de Confidentialité</a></li>
+                        <li><a href="about.html#cgu" class="footer-link">Conditions d'Utilisation</a></li>
+                        <li><a href="about.html#mentions" class="footer-link">Mentions Légales</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 3. Bouton Retour en Haut Centré -->
+            <div class="footer-back-to-top-container">
+                <button type="button" class="footer-back-to-top footer-back-to-top-centered" id="footerBackToTop" aria-label="Retourner en haut de page">
+                    <svg class="chevron-up-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    <span>RETOUR EN HAUT</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. Bandeau Inférieur Copyright Ocre / Ambré Centré -->
+        <div class="footer-bottom-bar">
+            <p>&copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </div>
+</footer>
+
+<script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script defer src="js/scrollytelling-engine.js"></script>
+<script defer src="js/config.js"></script>
+<script defer src="js/frontend-api.js"></script>
+<script defer src="js/analytics-tracker.js"></script>
+<script defer src="js/layout.js"></script>
+<script defer src="js/main.js"></script>
+<script defer src="js/report-view.js?v=20261024-1"></script>
+<script defer src="js/bureau.js?v=20261024-1"></script>
+</body>
+</html>

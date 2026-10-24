@@ -124,11 +124,23 @@ class AuthController {
   }
 
   // Me (profil de l'utilisateur connecté)
-  static async me(req, res) {
-    res.json({
-      success: true,
-      data: req.user,
-    });
+  static async me(req, res, next) {
+    try {
+      // Postes occupés au bureau : ouvrent l'accès à l'espace bureau du site
+      const assignments = await prisma.clubAssignment.findMany({
+        where: { userId: req.user.id, isActive: true },
+        select: { memberRole: true, position: { select: { id: true, title: true } } },
+      });
+      res.json({
+        success: true,
+        data: {
+          ...req.user,
+          bureauPositions: assignments.map((a) => ({ ...a.position, memberRole: a.memberRole })),
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 
   // Mise à jour de la photo de profil ou de l'avatar choisi

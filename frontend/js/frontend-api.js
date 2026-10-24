@@ -148,6 +148,8 @@ return headers;
         ...options.headers,
       },
     };
+    // Le navigateur fixe lui-même l'en-tête multipart d'un FormData
+    if (options.body instanceof FormData) delete config.headers['Content-Type'];
 
     const startTime = performance.now();
     let status = null;
@@ -203,6 +205,8 @@ return headers;
         ...options.headers,
       },
     };
+    // Le navigateur fixe lui-même l'en-tête multipart d'un FormData
+    if (options.body instanceof FormData) delete config.headers['Content-Type'];
 
     const startTime = performance.now();
     let status = null;
@@ -307,6 +311,32 @@ return headers;
       },
       getDomains: () => apiRequestWithRefresh('/jobs/domains'),
       getById: (id) => apiRequestWithRefresh(`/jobs/${id}`),
+    },
+
+    // Rapports du bureau (espace personnel des postes)
+    reports: {
+      context: () => apiRequestWithRefresh('/reports/context'),
+      list: (params = {}) => {
+        const query = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => { if (value) query.set(key, value); });
+        const qs = query.toString();
+        return apiRequestWithRefresh(`/reports${qs ? `?${qs}` : ''}`);
+      },
+      get: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}`),
+      create: (data) => apiRequestWithRefresh('/reports', { method: 'POST', body: JSON.stringify(data) }),
+      update: (id, data) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) }),
+      remove: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+      submit: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/submit`, { method: 'POST' }),
+      review: (id, decision, comment) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/review`, {
+        method: 'POST',
+        body: JSON.stringify({ decision, comment }),
+      }),
+      summary: (year) => apiRequestWithRefresh(`/reports/summary${year ? `?year=${encodeURIComponent(year)}` : ''}`),
+      uploadAttachment: (file) => {
+        const body = new FormData();
+        body.append('file', file);
+        return apiRequestWithRefresh('/reports/attachments', { method: 'POST', body });
+      },
     },
 
     // Concours & opportunités

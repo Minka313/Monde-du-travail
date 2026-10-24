@@ -7,6 +7,8 @@
     dashboard: 'dashboard.read',
     analytics: 'analytics.read',
     organization: 'organization.read',
+    // Examen des rapports : Présidence (Ultra Admin) uniquement
+    rapports: 'reports.review',
     formations: 'formation.read',
     metiers: 'metier.read',
     opportunites: 'opportunite.read',

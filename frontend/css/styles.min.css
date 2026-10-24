@@ -441,3 +441,9 @@
 [data-theme="dark"] .editorial-duo-card.duo-reponse .duo-subtitle {
   color: #93c5fd;
 }
+
+/* Espace membre : carte du poste au bureau */
+.profile-bureau-box { border-left: 4px solid var(--color-secondary); }
+.profile-bureau-positions { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.profile-bureau-pill { background: rgba(245, 166, 35, 0.14); color: #92400e; border: 1px solid rgba(245, 166, 35, 0.45); margin-top: 0; }
+[data-theme="dark"] .profile-bureau-pill { color: #fbbf24; }

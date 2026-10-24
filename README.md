@@ -22,6 +22,7 @@ Plateforme web du club **Le Monde du Travail** : orientation professionnelle, fi
 - **Formations** : catalogue, inscriptions et salles de visioconférence (Jitsi).
 - **Blog** et **forum** : publication, likes, modération, signalements.
 - **Espace membre** : adhésion soumise à validation, profil, notifications.
+- **Espace bureau** : chaque poste (secrétariat, trésorerie, pôles…) rédige ses rapports selon un modèle adapté et les soumet à la Présidence, qui les valide ou demande des corrections ; échéances, synthèse et export PDF (voir [`directives/manage_club_organization.md`](directives/manage_club_organization.md)).
 - **Administration** : rôles et permissions par module (RBAC), circuit de validation des contenus, journal d'audit, double authentification (2FA), mode maintenance, statistiques.
 
 ## Architecture

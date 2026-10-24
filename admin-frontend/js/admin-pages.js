@@ -6,6 +6,7 @@
     vitrine: { label: 'Vitrine & Éditorial', icon: '🎨' },
     analytics: { label: 'Audience & Présence', icon: '📈' },
     organization: { label: 'Organisation & Fonctionnement', icon: '🏛️' },
+    rapports: { label: 'Rapports du bureau', icon: '📑' },
     notifications: { label: 'Notifications Push', icon: '🔔' },
     formations: { label: 'Formations', icon: '📚' },
     metiers: { label: 'Métiers', icon: '💼' },
@@ -205,6 +206,7 @@
         { module: 'analytics', label: 'Audience & Présence des membres', icon: '📈', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('analytics') },
         { module: 'users', label: 'Gestion des Utilisateurs', icon: '👥', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('users') },
         { module: 'organization', label: 'Organisation & Bureau', icon: '🏛️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('organization') },
+        { module: 'rapports', label: 'Rapports du bureau (secrétariat, trésorerie…)', icon: '📑', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('rapports') },
         { module: 'notifications', label: 'Notifications Push', icon: '🔔', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('notifications') },
         { module: 'logs', label: 'Journal d\'activité (Logs)', icon: '📋', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('logs') },
         { module: 'settings', label: 'Paramètres système & 2FA', icon: '⚙️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('settings') },
@@ -552,6 +554,9 @@
           break;
         case 'opportunites':
           html = await window.AdminOpportunities.render();
+          break;
+        case 'rapports':
+          html = await window.AdminReports.render();
           break;
         case 'blog':
           html = await loadBlog();
@@ -6620,6 +6625,10 @@
   function bindPageEvents(module) {
     if (module === 'opportunites') {
       window.AdminOpportunities.bind();
+      return;
+    }
+    if (module === 'rapports') {
+      window.AdminReports.bind();
       return;
     }
     if (module === 'dashboard') {

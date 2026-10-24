@@ -61,3 +61,31 @@ cd backend
 cd backend
 /usr/bin/node ./node_modules/jest/bin/jest.js tests/organization.test.js --runInBand
 ```
+
+---
+
+## 5. Rapports d'activité des postes (Espace Bureau)
+
+Chaque membre du bureau rédige les rapports de son poste depuis **son espace personnel du site** (`/bureau.html`, lien « Espace Bureau » du menu utilisateur et carte « Mon poste au bureau » du profil). La Présidence (Ultra Admin) les examine dans l'espace bureau ou dans l'admin (module **Rapports du bureau**).
+
+### Circuit
+`Brouillon` → `Soumis` → `Validé` ou `À corriger` (commentaire obligatoire) → nouvelle soumission.
+Un rapport soumis n'est plus modifiable par son auteur. Les rapports de l'Ultra Admin sont validés dès leur soumission.
+
+### Qui lit quoi
+| Lecteur | Rapports visibles |
+| :--- | :--- |
+| Auteur | Tous ses rapports, brouillons compris |
+| Ultra Admin + postes « lit tous les rapports » (Président, Vice-Président) | Tous les rapports soumis |
+| Titulaire d'un poste | Rapports soumis de son équipe et des postes qui lui « rendent compte » (adjoints) |
+| Tout membre du bureau | Rapports validés |
+
+### Modèles, échéances et réglages
+- Modèles définis dans `backend/src/config/reportTemplates.js` : coordination, secrétariat (PV), trésorerie (recettes/dépenses en FCFA, totaux calculés), communication, logistique, pédagogie, partenariats, projets, vie associative, général.
+- Par poste (admin › Rapports du bureau › Paramétrer) : modèle, rythme (`NONE`, `MONTHLY`, `QUARTERLY`, `ANNUAL`), délai de remise en jours après la période, poste supérieur, lecture de tous les rapports.
+- Une période est « en retard » quand aucun rapport non brouillon n'existe pour elle après le délai (contrôle sur les 6 dernières périodes depuis la prise de fonction).
+- Notifications : la Présidence, les lecteurs globaux et le supérieur direct à chaque soumission ; l'auteur à chaque décision.
+- Export PDF : impression du navigateur (« Enregistrer au format PDF »), pour un rapport, une sélection ou la synthèse annuelle.
+
+### API (`/api/reports`, authentification requise)
+`GET /context`, `GET /templates`, `GET /` (`scope=mine|team|review|bureau`), `GET/PUT/DELETE /:id`, `POST /` , `POST /:id/submit`, `POST /:id/review` (Ultra Admin), `GET /summary` (Présidence), `PUT /positions/:id/settings` (Ultra Admin), `POST /attachments` (membres du bureau, 10 Mo).

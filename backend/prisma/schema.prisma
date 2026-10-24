@@ -405,20 +405,35 @@ model User {
   replyLikes             ReplyLike[]             @relation("UserReplyLikes")
   forumReports           ForumReport[]           @relation("UserForumReports")
   postLikes              PostLike[]              @relation("UserPostLikes")
+  positionReports        PositionReport[]        @relation("PositionReportAuthor")
+  reviewedReports        PositionReport[]        @relation("PositionReportReviewer")
+  positionReportEvents   PositionReportEvent[]   @relation("PositionReportActor")
 
   @@map("users")
 }
 
 model ClubPosition {
-  id          String           @id @default(cuid())
-  title       String           @unique
-  description String?
-  category    String           @default("BUREAU_EXECUTIF")
-  order       Int              @default(0)
-  isSystem    Boolean          @default(false)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  assignments ClubAssignment[]
+  id              String           @id @default(cuid())
+  title           String           @unique
+  description     String?
+  category        String           @default("BUREAU_EXECUTIF")
+  order           Int              @default(0)
+  isSystem        Boolean          @default(false)
+  // Rapports d'activité : modèle utilisé, rythme attendu et délai de remise
+  // (en jours après la fin de la période)
+  reportTemplate  String?
+  reportFrequency String           @default("MONTHLY")
+  reportDueDays   Int              @default(7)
+  // Lecture de tous les rapports soumis (Présidence, Vice-Présidence)
+  seesAllReports  Boolean          @default(false)
+  // Poste supérieur qui lit les rapports de ce poste (ex. adjoint -> titulaire)
+  reportsToId     String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  assignments     ClubAssignment[]
+  reportsTo       ClubPosition?    @relation("PositionHierarchy", fields: [reportsToId], references: [id], onDelete: SetNull)
+  subordinates    ClubPosition[]   @relation("PositionHierarchy")
+  reports         PositionReport[]
 
   @@index([order])
   @@index([category])
@@ -448,6 +463,53 @@ model ClubAssignment {
   @@index([positionId])
   @@index([isActive])
   @@map("club_assignments")
+}
+
+// Rapport d'activité rédigé par un membre du bureau au titre de son poste
+model PositionReport {
+  id            String                @id @default(cuid())
+  positionId    String
+  authorId      String
+  // Période couverte : "2026-10" (mois), "2026-T4" (trimestre), "2026" (année), ou aucune
+  periodKey     String?
+  title         String
+  // Contenu structuré selon le modèle du poste (sections texte et tableaux)
+  content       Json                  @default("{}")
+  attachments   Json                  @default("[]")
+  status        PositionReportStatus  @default(DRAFT)
+  // Totaux en FCFA calculés à partir des tableaux de trésorerie
+  incomeTotal   Int                   @default(0)
+  expenseTotal  Int                   @default(0)
+  submittedAt   DateTime?
+  reviewedAt    DateTime?
+  reviewedById  String?
+  reviewComment String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  position      ClubPosition          @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  author        User                  @relation("PositionReportAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  reviewedBy    User?                 @relation("PositionReportReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  events        PositionReportEvent[]
+
+  @@index([positionId, periodKey])
+  @@index([authorId])
+  @@index([status])
+  @@map("position_reports")
+}
+
+// Historique d'un rapport : soumissions, validations, demandes de correction
+model PositionReportEvent {
+  id        String         @id @default(cuid())
+  reportId  String
+  actorId   String?
+  action    String
+  comment   String?
+  createdAt DateTime       @default(now())
+  report    PositionReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  actor     User?          @relation("PositionReportActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([reportId])
+  @@map("position_report_events")
 }
 
 model AuditLog {
@@ -613,6 +675,13 @@ enum ApprovalStepStatus {
   APPROVED
   REJECTED
   SKIPPED
+}
+
+enum PositionReportStatus {
+  DRAFT
+  SUBMITTED
+  NEEDS_CHANGES
+  VALIDATED
 }
 
 enum NotificationType {
