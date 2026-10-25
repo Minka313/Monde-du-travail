@@ -267,4 +267,111 @@ describe('Concours & opportunités', () => {
       expect((await prisma.opportunity.findUnique({ where: { slug: 'concours-ept-thies' } })).fees).toBe('Corrigé par l\'admin');
     });
   });
+  describe('Organisation et fiche complète', () => {
+    let id, slug;
+    const auth = (req, token = oppToken) => req.set('Authorization', `Bearer ${token}`);
+
+    beforeAll(async () => {
+      const res = await create({
+        title: `${TAG} Concours École d'Ingénieurs`,
+        category: 'CONCOURS',
+        domains: ['INGENIERIE', 'NUMERIQUE'],
+        location: 'Thiès',
+        sessionLabel: 'Session 2027',
+        series: ['S1', 'S2'],
+        selectionSteps: [{ title: 'Présélection sur dossier', detail: '' }, { title: 'Écrit', detail: 'Maths et physique' }],
+        resources: [{ label: "Plateforme d'inscription", url: 'https://example.org/inscription' }],
+        faq: [{ question: 'Peut-on candidater deux fois ?', answer: 'Oui, dans la limite d\'âge.' }],
+        tips: 'Travailler les annales',
+        officialUrl: 'https://example.org/officiel',
+        markVerified: true,
+        recurring: true,
+        deadline: isoDay(-10),
+        keyDates: [{ label: 'Écrit', date: isoDay(-2) }],
+      });
+      expect(res.status).toBe(201);
+      ({ id, slug } = res.body.data);
+      await auth(request(app).post(`/api/opportunities/${id}/publish`));
+    });
+
+    it("génère un slug lisible et sert la fiche par slug comme par identifiant", async () => {
+      expect(slug).toMatch(/^opp-test-concours-ecole-d-ingenieurs/);
+      const bySlug = await request(app).get(`/api/opportunities/${slug}`);
+      expect(bySlug.status).toBe(200);
+      expect(bySlug.body.data.id).toBe(id);
+      expect(bySlug.body.data.selectionSteps).toEqual([{ title: 'Présélection sur dossier' }, { title: 'Écrit', detail: 'Maths et physique' }]);
+      expect(bySlug.body.data.faq).toHaveLength(1);
+    });
+
+    it('donne un slug distinct à un intitulé identique', async () => {
+      const twin = await create({ title: `${TAG} Concours École d'Ingénieurs` });
+      expect(twin.body.data.slug).toBe(`${slug}-2`);
+    });
+
+    it('refuse un domaine, une prise en charge ou un lien utile invalides', async () => {
+      expect((await create({ domains: ['ASTROLOGIE'] })).status).toBe(400);
+      expect((await create({ funding: 'TOTAL' })).status).toBe(400);
+      expect((await create({ resources: [{ label: 'Lien', url: 'javascript:alert(1)' }] })).status).toBe(400);
+    });
+
+    it('filtre la liste publique par domaine et par série, avec les champs utiles aux cartes', async () => {
+      const res = await request(app).get('/api/opportunities?domain=NUMERIQUE&series=s2');
+      expect(res.status).toBe(200);
+      const item = res.body.data.find((o) => o.id === id);
+      expect(item).toBeTruthy();
+      expect(item).toMatchObject({ slug, location: 'Thiès', sessionLabel: 'Session 2027', domains: ['INGENIERIE', 'NUMERIQUE'] });
+      expect(Array.isArray(item.keyDates)).toBe(true);
+      const other = await request(app).get('/api/opportunities?domain=SANTE');
+      expect(other.body.data.some((o) => o.id === id)).toBe(false);
+      expect((await request(app).get('/api/opportunities?domain=ASTRO')).status).toBe(400);
+    });
+
+    it('crée la nouvelle session en brouillon, sans dates ni vérification', async () => {
+      const res = await auth(request(app).post(`/api/opportunities/${id}/duplicate`));
+      expect(res.status).toBe(201);
+      expect(res.body.data).toMatchObject({ status: 'DRAFT', deadline: null, keyDates: null, lastVerifiedAt: null, sessionLabel: null, location: 'Thiès' });
+      expect(res.body.data.title).toMatch(/nouvelle session/);
+      expect(res.body.data.slug).not.toBe(slug);
+      expect(res.body.data.exams).toBeNull();
+      expect((await auth(request(app).post(`/api/opportunities/${id}/duplicate`), memberToken)).status).toBe(403);
+    });
+
+    describe('Signalements', () => {
+      it('accepte un signalement public sur une annonce publiée', async () => {
+        const res = await request(app).post(`/api/opportunities/${id}/reports`)
+          .send({ kind: 'DATE', message: 'La date limite a changé sur le communiqué 2027.', contact: 'eleve@example.org' });
+        expect(res.status).toBe(201);
+      });
+
+      it('refuse un signalement vide, invalide ou sur une annonce non publiée', async () => {
+        expect((await request(app).post(`/api/opportunities/${id}/reports`).send({ kind: 'DATE', message: 'court' })).status).toBe(400);
+        expect((await request(app).post(`/api/opportunities/${id}/reports`).send({ kind: 'SPAM', message: 'Un message assez long' })).status).toBe(400);
+        const draft = (await create({ title: `${TAG} Brouillon signalé` })).body.data.id;
+        expect((await request(app).post(`/api/opportunities/${draft}/reports`).send({ kind: 'AUTRE', message: 'Un message assez long' })).status).toBe(404);
+      });
+
+      it("réserve la liste et le traitement à l'équipe du module", async () => {
+        expect((await request(app).get('/api/opportunities/admin/reports')).status).toBe(401);
+        expect((await auth(request(app).get('/api/opportunities/admin/reports'), blogToken)).status).toBe(403);
+        const list = await auth(request(app).get('/api/opportunities/admin/reports'));
+        expect(list.status).toBe(200);
+        const report = list.body.data.find((r) => r.opportunity.id === id);
+        expect(report).toMatchObject({ kind: 'DATE', status: 'OPEN', contact: 'eleve@example.org' });
+
+        const admin = await auth(request(app).get('/api/opportunities/admin/list'));
+        expect(admin.body.data.find((o) => o.id === id)._count.reports).toBe(1);
+
+        const resolved = await auth(request(app).post(`/api/opportunities/admin/reports/${report.id}/resolve`));
+        expect(resolved.status).toBe(200);
+        expect(resolved.body.data.status).toBe('RESOLVED');
+        const after = await auth(request(app).get('/api/opportunities/admin/reports'));
+        expect(after.body.data.some((r) => r.id === report.id)).toBe(false);
+      });
+    });
+
+    it('référence la fiche publiée dans le sitemap', async () => {
+      const res = await request(app).get('/sitemap.xml');
+      expect(res.text).toContain(`/opportunite?slug=${slug}`);
+    });
+  });
 });

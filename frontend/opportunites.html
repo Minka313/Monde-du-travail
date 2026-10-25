@@ -19,7 +19,7 @@
     <title>Concours & Opportunités - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
-    <link rel="stylesheet" href="css/opportunites.css?v=20261025-1">
+    <link rel="stylesheet" href="css/opportunites.css?v=20261025-2">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -80,72 +80,85 @@
 
     <main id="main-content">
         <section class="opp-hero hero-scene scene" data-scene="opp-hero">
-            <div class="container reveal-up">
+            <div class="container">
                 <span class="section-label">Concours · Bourses · Admissions · Stages · Programmes</span>
                 <h1>Concours & Opportunités</h1>
-                <p>Les concours des grandes écoles et lycées d'excellence du Sénégal, les bourses pour étudier à l'étranger, les stages et programmes : conditions, dossier, épreuves, frais, calendrier et lien officiel.</p>
+                <p>Les concours des grandes écoles et lycées d'excellence du Sénégal, les bourses pour étudier à l'étranger, les stages et programmes : conditions, dossier, épreuves, frais, calendrier et lien officiel, vérifiés par le club.</p>
+                <form class="opp-hero-search" role="search" id="oppSearchForm">
+                    <label class="sr-only" for="oppSearch">Rechercher une annonce</label>
+                    <span aria-hidden="true">🔎</span>
+                    <input type="search" id="oppSearch" placeholder="École, bourse, pays, série du bac (S2, T1…)" maxlength="100" autocomplete="off">
+                </form>
+                <div class="opp-stats" id="oppStats" aria-live="polite"></div>
             </div>
         </section>
 
-        <section class="section scene" data-scene="opp-list">
+        <section class="opp-soon-section" id="oppSoonSection" hidden aria-labelledby="oppSoonTitle">
             <div class="container page-content">
-                <div class="opp-warning" role="note">
-                    <span aria-hidden="true">⚠️</span>
-                    <p style="margin:0;"><strong>Vérifie toujours sur le site officiel avant de candidater.</strong> Chaque annonce indique sa source et sa date de vérification par le club. Une vraie bourse ou un vrai concours ne te demandera jamais d'argent par message ou par Mobile Money pour « réserver » ta place.</p>
+                <div class="opp-soon-head">
+                    <h2 id="oppSoonTitle">⏰ À ne pas manquer</h2>
+                    <p>Les prochaines dates limites, ouvertures et épreuves des 60 prochains jours.</p>
                 </div>
+                <ol class="opp-soon" id="oppSoon"></ol>
+            </div>
+        </section>
 
-                <div class="opp-filters" role="search" aria-label="Filtrer les annonces">
-                    <div class="opp-pills" id="oppCategoryPills" role="group" aria-label="Catégorie">
-                        <button type="button" class="opp-pill" data-category="" aria-pressed="true">Tout</button>
-                        <button type="button" class="opp-pill" data-category="BOURSE" aria-pressed="false">🎓 Bourses</button>
-                        <button type="button" class="opp-pill" data-category="CONCOURS" aria-pressed="false">🏆 Concours</button>
-                        <button type="button" class="opp-pill" data-category="EXAMEN" aria-pressed="false">📝 Examens</button>
-                        <button type="button" class="opp-pill" data-category="ADMISSION" aria-pressed="false">🏫 Admissions</button>
-                        <button type="button" class="opp-pill" data-category="STAGE" aria-pressed="false">💼 Stages</button>
-                        <button type="button" class="opp-pill" data-category="PROGRAMME" aria-pressed="false">🌍 Programmes</button>
-                    </div>
-                    <div class="opp-selects">
-                        <label>Rechercher
-                            <input type="search" id="oppSearch" placeholder="Ex. : bourse d'excellence, ENA, Campus France…" maxlength="100" autocomplete="off">
-                        </label>
-                        <label>Niveau
-                            <select id="oppLevel">
-                                <option value="">Tous les niveaux</option>
-                                <option value="PRIMAIRE">Primaire (CM2)</option>
-                                <option value="COLLEGE">Collège (3e, BFEM)</option>
-                                <option value="LYCEE">Lycée (Terminale)</option>
-                                <option value="BACHELIER">Bachelier</option>
-                                <option value="ETUDIANT">Étudiant (licence)</option>
-                                <option value="DIPLOME">Diplômé (licence, master)</option>
-                                <option value="PROFESSIONNEL">Professionnel en poste</option>
-                            </select>
-                        </label>
-                        <label>Destination
-                            <select id="oppDestination">
-                                <option value="">Toutes</option>
-                                <option value="SENEGAL">Sénégal</option>
-                                <option value="AFRIQUE">Afrique</option>
-                                <option value="INTERNATIONAL">International</option>
-                            </select>
-                        </label>
-                        <label>Statut
-                            <select id="oppPhase">
-                                <option value="ACTIVE">Ouvertes et à venir</option>
-                                <option value="OPEN">Candidatures ouvertes</option>
-                                <option value="UPCOMING">À venir</option>
-                                <option value="CLOSED">Clôturées</option>
-                                <option value="RESULTS">Résultats publiés</option>
-                                <option value="">Toutes</option>
-                            </select>
-                        </label>
+        <section class="section opp-browse scene" data-scene="opp-list" aria-label="Annonces">
+            <div class="container page-content">
+                <div class="opp-layout">
+                    <aside class="opp-sidebar" id="oppSidebar" aria-label="Filtres">
+                        <div class="opp-sidebar-head">
+                            <h2>Filtrer</h2>
+                            <button type="button" class="opp-sidebar-close" id="oppFiltersClose" aria-label="Fermer les filtres">&times;</button>
+                        </div>
+                        <div class="opp-sidebar-body" id="oppFilterGroups"></div>
+                        <div class="opp-sidebar-foot">
+                            <button type="button" class="btn btn-ghost btn-sm" id="oppReset">Tout réinitialiser</button>
+                            <button type="button" class="btn btn-primary btn-sm opp-sidebar-apply" id="oppFiltersApply">Voir les résultats</button>
+                        </div>
+                    </aside>
+
+                    <div class="opp-results">
+                        <div class="opp-toolbar">
+                            <button type="button" class="btn btn-outline btn-sm opp-filters-toggle" id="oppFiltersOpen" aria-controls="oppSidebar" aria-expanded="false">⚙️ Filtres <span id="oppFilterCount"></span></button>
+                            <p class="opp-count" id="oppCount" aria-live="polite"></p>
+                            <div class="opp-toolbar-right">
+                                <label class="opp-sort">Trier
+                                    <select id="oppSort">
+                                        <option value="relevance">Par statut</option>
+                                        <option value="deadline">Date limite la plus proche</option>
+                                        <option value="verified">Vérifiées récemment</option>
+                                        <option value="alpha">Ordre alphabétique</option>
+                                    </select>
+                                </label>
+                                <div class="opp-view" role="group" aria-label="Affichage">
+                                    <button type="button" data-view="cards" aria-pressed="true">▦ Fiches</button>
+                                    <button type="button" data-view="calendar" aria-pressed="false">📅 Calendrier</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="opp-active" id="oppActive"></div>
+                        <div id="oppResults">
+                            <div class="opp-grid">
+                                <div class="opp-skeleton"></div>
+                                <div class="opp-skeleton"></div>
+                                <div class="opp-skeleton"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <p class="opp-count" id="oppCount" aria-live="polite"></p>
-                <div class="opp-grid" id="oppGrid">
-                    <div class="opp-skeleton"></div>
-                    <div class="opp-skeleton"></div>
-                    <div class="opp-skeleton"></div>
+        <section class="section opp-trust-section" aria-labelledby="oppTrustTitle">
+            <div class="container page-content">
+                <span class="section-label">Fiabilité</span>
+                <h2 id="oppTrustTitle" class="opp-guide-title">Des informations sur lesquelles tu peux compter</h2>
+                <div class="opp-trust-grid">
+                    <article class="opp-trust-card"><span aria-hidden="true">🔗</span><h3>Une source officielle, toujours</h3><p>Aucune annonce n'est publiée sans le lien du site ou du communiqué officiel. Chaque fiche indique d'où viennent ses informations.</p></article>
+                    <article class="opp-trust-card"><span aria-hidden="true">✅</span><h3>Une date de vérification</h3><p>L'équipe du club revérifie les annonces et affiche la date du dernier contrôle. Au-delà de quatre mois, la fiche est marquée « à revérifier ».</p></article>
+                    <article class="opp-trust-card"><span aria-hidden="true">🚩</span><h3>Tu vois une erreur ? Signale-la</h3><p>Une date a changé, un lien ne marche plus ? Le bouton « Signaler une erreur » de chaque fiche prévient directement l'équipe.</p></article>
+                    <article class="opp-trust-card opp-trust-card--warn"><span aria-hidden="true">⚠️</span><h3>Méfie-toi des arnaques</h3><p>Une vraie bourse ou un vrai concours ne te demandera jamais d'argent par message ou par Mobile Money pour « réserver » ta place. Le site officiel fait toujours foi.</p></article>
                 </div>
             </div>
         </section>
@@ -172,10 +185,6 @@
             </div>
         </section>
     </main>
-
-    <dialog class="opp-dialog" id="oppDialog" aria-labelledby="oppDialogTitle" data-lenis-prevent>
-        <div id="oppDialogContent"></div>
-    </dialog>
 
     <footer data-layout="footer" class="site-footer">
     <div class="footer-card footer-card-centered">
@@ -278,10 +287,11 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js"></script>
+    <script defer src="js/frontend-api.js?v=20261025-1"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/main.js"></script>
-    <script defer src="js/opportunites.js?v=20261025-1"></script>
+    <script defer src="js/opportunity-common.js?v=20261025-1"></script>
+    <script defer src="js/opportunites.js?v=20261025-2"></script>
 </body>
 </html>

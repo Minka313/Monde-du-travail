@@ -9,6 +9,12 @@ const DESTINATIONS = ['SENEGAL', 'AFRIQUE', 'INTERNATIONAL'];
 // UPCOMING : candidatures pas encore ouvertes ; OPEN : ouvertes ;
 // CLOSED : date limite passée ; RESULTS : résultats publiés (forçage manuel)
 const PHASES = ['UPCOMING', 'OPEN', 'CLOSED', 'RESULTS'];
+// Domaines d'études ou de métier visés : filtre « Domaine » de la page publique
+const DOMAINS = ['PLURIDISCIPLINAIRE', 'INGENIERIE', 'NUMERIQUE', 'SCIENCES', 'SANTE', 'DEFENSE', 'ENSEIGNEMENT',
+  'ADMINISTRATION', 'ECONOMIE', 'AGRICULTURE', 'COMMUNICATION', 'SPORT'];
+// Prise en charge : FULL = bourse complète, PARTIAL = partielle, NONE = aucun financement
+const FUNDING = ['FULL', 'PARTIAL', 'NONE'];
+const REPORT_KINDS = ['DATE', 'LIEN', 'CONDITIONS', 'FRAIS', 'ARNAQUE', 'AUTRE'];
 
 const PUBLIC_LIMIT = 300;
 const CREATOR_SELECT = { createdBy: { select: { id: true, firstName: true, lastName: true } } };
@@ -42,6 +48,37 @@ function normalizeExams(exams) {
     .filter((e) => e.subject);
 }
 
+// Étapes de sélection, liens utiles et FAQ : listes d'objets dont on garde les champs non vides
+function normalizeList(list, keys) {
+  if (!Array.isArray(list) || list.length === 0) return null;
+  const out = list
+    .map((entry) => Object.fromEntries(keys
+      .map((key) => [key, typeof entry[key] === 'string' ? entry[key].trim() : entry[key]])
+      .filter(([, value]) => value)))
+    .filter((entry) => entry[keys[0]]);
+  return out.length ? out : null;
+}
+
+// « Concours d'entrée — EPT (Thiès) » → « concours-d-entree-ept-thies »
+function slugify(text) {
+  return String(text)
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80)
+    .replace(/-+$/g, '') || 'annonce';
+}
+
+async function uniqueSlug(text) {
+  const base = slugify(text);
+  for (let i = 1; ; i += 1) {
+    const candidate = i === 1 ? base : `${base}-${i}`;
+    const taken = await prisma.opportunity.findUnique({ where: { slug: candidate }, select: { id: true } });
+    if (!taken) return candidate;
+  }
+}
+
 function computePhase(opportunity, now = new Date()) {
   if (opportunity.phaseOverride) return opportunity.phaseOverride;
   if (isNextSession(opportunity, now)) return 'UPCOMING';
@@ -73,7 +110,7 @@ function buildData(data) {
   const out = {};
   const text = ['title', 'organization', 'category', 'summary'];
   const optionalText = ['details', 'eligibility', 'destination', 'country', 'benefits', 'officialUrl', 'phaseOverride', 'image',
-    'fees', 'ageLimit', 'applyMode', 'contact', 'sourceNote', 'usualPeriod'];
+    'fees', 'ageLimit', 'applyMode', 'contact', 'sourceNote', 'usualPeriod', 'location', 'sessionLabel', 'funding', 'tips'];
   for (const key of text) if (data[key] !== undefined) out[key] = data[key].trim();
   for (const key of optionalText) {
     if (data[key] !== undefined) out[key] = typeof data[key] === 'string' && data[key].trim() ? data[key].trim() : null;
@@ -87,6 +124,10 @@ function buildData(data) {
   if (data.exams !== undefined) out.exams = normalizeExams(data.exams);
   if (data.places !== undefined) out.places = data.places || null;
   if (data.recurring !== undefined) out.recurring = Boolean(data.recurring);
+  if (data.domains !== undefined) out.domains = [...new Set(data.domains)];
+  if (data.selectionSteps !== undefined) out.selectionSteps = normalizeList(data.selectionSteps, ['title', 'detail']);
+  if (data.resources !== undefined) out.resources = normalizeList(data.resources, ['label', 'url']);
+  if (data.faq !== undefined) out.faq = normalizeList(data.faq, ['question', 'answer']);
   return out;
 }
 
@@ -97,11 +138,13 @@ function assertDateOrder(openingDate, deadline) {
 }
 
 class OpportunityService {
-  static async getPublished({ category, level, destination, phase, search } = {}, now = new Date()) {
+  static async getPublished({ category, level, destination, phase, search, domain, series } = {}, now = new Date()) {
     const where = { status: 'PUBLISHED' };
     if (category) where.category = category;
     if (level) where.levels = { has: level };
     if (destination) where.destination = destination;
+    if (domain) where.domains = { has: domain };
+    if (series) where.series = { has: series.toUpperCase() };
     if (search) {
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
@@ -121,6 +164,7 @@ class OpportunityService {
         levels: true, destination: true, country: true, openingDate: true, deadline: true,
         officialUrl: true, lastVerifiedAt: true, phaseOverride: true, image: true, updatedAt: true,
         fees: true, series: true, places: true, recurring: true, usualPeriod: true, ageLimit: true,
+        slug: true, domains: true, location: true, sessionLabel: true, funding: true, keyDates: true,
       },
     });
 
@@ -141,7 +185,11 @@ class OpportunityService {
         { organization: { contains: search, mode: 'insensitive' } },
       ];
     }
-    const rows = await prisma.opportunity.findMany({ where, orderBy: { updatedAt: 'desc' }, include: CREATOR_SELECT });
+    const rows = await prisma.opportunity.findMany({
+      where,
+      orderBy: { updatedAt: 'desc' },
+      include: { ...CREATOR_SELECT, _count: { select: { reports: { where: { status: 'OPEN' } } } } },
+    });
     const now = new Date();
     return rows.map((row) => withPhase(row, now));
   }
@@ -152,12 +200,19 @@ class OpportunityService {
     return withPhase(opportunity);
   }
 
+  // Fiche publique : par slug (liens partagés, sitemap) ou par identifiant
+  static async getBySlugOrId(key) {
+    const bySlug = await prisma.opportunity.findUnique({ where: { slug: key }, include: CREATOR_SELECT });
+    return bySlug ? withPhase(bySlug) : this.getById(key);
+  }
+
   static async create(data, userId) {
     const fields = buildData(data);
     assertDateOrder(fields.openingDate, fields.deadline);
     const created = await prisma.opportunity.create({
       data: {
         ...fields,
+        slug: await uniqueSlug(fields.title),
         lastVerifiedAt: data.markVerified ? new Date() : null,
         status: 'DRAFT',
         createdById: userId,
@@ -215,6 +270,48 @@ class OpportunityService {
     return withPhase(updated);
   }
 
+  // « Nouvelle session » : copie en brouillon, sans les dates ni la vérification de l'ancienne session
+  static async duplicate(id, userId) {
+    const source = await this.getById(id);
+    const omit = ['id', 'slug', 'status', 'createdAt', 'updatedAt', 'createdById', 'createdBy', 'phase', 'nextSession',
+      'openingDate', 'deadline', 'keyDates', 'lastVerifiedAt', 'phaseOverride', 'sessionLabel'];
+    const data = Object.fromEntries(Object.entries(source).filter(([key]) => !omit.includes(key)));
+    ['exams', 'selectionSteps', 'resources', 'faq'].forEach((key) => {
+      if (data[key] === null) delete data[key];
+    });
+    const title = `${source.title} (nouvelle session)`;
+    const created = await prisma.opportunity.create({
+      data: { ...data, title, slug: await uniqueSlug(title), status: 'DRAFT', createdById: userId },
+      include: CREATOR_SELECT,
+    });
+    return withPhase(created);
+  }
+
+  // Signalement public : seulement sur une annonce publiée
+  static async createReport(id, { kind, message, contact }) {
+    const opportunity = await prisma.opportunity.findUnique({ where: { id }, select: { id: true, status: true } });
+    if (!opportunity || opportunity.status !== 'PUBLISHED') throw new NotFoundError('Annonce non trouvée');
+    return prisma.opportunityReport.create({
+      data: { opportunityId: id, kind, message: message.trim(), contact: contact?.trim() || null },
+      select: { id: true, createdAt: true },
+    });
+  }
+
+  static async listReports({ status = 'OPEN' } = {}) {
+    return prisma.opportunityReport.findMany({
+      where: status ? { status } : {},
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+      include: { opportunity: { select: { id: true, title: true, slug: true } } },
+    });
+  }
+
+  static async resolveReport(reportId) {
+    const report = await prisma.opportunityReport.findUnique({ where: { id: reportId } });
+    if (!report) throw new NotFoundError('Signalement non trouvé');
+    return prisma.opportunityReport.update({ where: { id: reportId }, data: { status: 'RESOLVED', resolvedAt: new Date() } });
+  }
+
   static async remove(id) {
     await this.getById(id);
     await prisma.opportunity.delete({ where: { id } });
@@ -226,6 +323,10 @@ module.exports.CATEGORIES = CATEGORIES;
 module.exports.LEVELS = LEVELS;
 module.exports.DESTINATIONS = DESTINATIONS;
 module.exports.PHASES = PHASES;
+module.exports.DOMAINS = DOMAINS;
+module.exports.FUNDING = FUNDING;
+module.exports.REPORT_KINDS = REPORT_KINDS;
+module.exports.slugify = slugify;
 module.exports.computePhase = computePhase;
 module.exports.isNextSession = isNextSession;
 module.exports.buildData = buildData;

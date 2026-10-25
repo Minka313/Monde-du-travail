@@ -33,7 +33,11 @@
       "usualPeriod": "Campagne d'octobre à début janvier · résultats vers mars",
       "officialUrl": "https://www.campusfrance.org/fr/le-programme-de-bourses-d-excellence-eiffel",
       "sourceNote": "Dates relevées sur les pages d'universités partenaires (Paris Cité, Dauphine, Assas, Poitiers) : chaque établissement fixe une date limite interne plus précoce.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "sessionLabel": "Campagne 2027"
     },
     {
       "slug": "campus-france-etudes-en-france-2027",
@@ -62,7 +66,11 @@
       "usualPeriod": "Ouverture début octobre · dépôts jusqu'en décembre-janvier selon les formations · fin de procédure en été",
       "officialUrl": "https://senegal.campusfrance.org",
       "sourceNote": "Les dates limites par type de formation (L1, master, écoles) sont publiées sur senegal.campusfrance.org : à consulter avant de déposer.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "sessionLabel": "Campagne 2027"
     },
     {
       "slug": "bourse-chevening",
@@ -88,7 +96,12 @@
       "recurring": true,
       "usualPeriod": "Candidatures en ligne d'août à début octobre",
       "officialUrl": "https://www.chevening.org/scholarship/senegal/",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "funding": "FULL",
+      "sessionLabel": "Session 2027-2028"
     },
     {
       "slug": "bourse-stipendium-hungaricum",
@@ -115,7 +128,10 @@
       "recurring": true,
       "usualPeriod": "Appel publié vers novembre · clôture mi-janvier (15 janvier lors de la dernière session)",
       "officialUrl": "https://stipendiumhungaricum.hu",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ]
     },
     {
       "slug": "bourse-turkiye-burslari",
@@ -137,7 +153,11 @@
       "usualPeriod": "Candidatures en ligne de mi-janvier à fin février (habituellement du 10 janvier au 20 février)",
       "officialUrl": "https://turkiyeburslari.gov.tr",
       "sourceNote": "Calendrier 2027 non encore publié : fenêtre indiquée d'après les sessions précédentes.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "funding": "FULL"
     },
     {
       "slug": "bourse-daad-epos",
@@ -158,7 +178,13 @@
       "usualPeriod": "Dates limites entre août et octobre selon le programme, pour une rentrée l'année suivante",
       "officialUrl": "https://www.daad.de/en/studying-in-germany/scholarships/",
       "sourceNote": "Plusieurs programmes 2027/2028 ont fermé le 15 octobre 2026 ; vérifiez la date de chaque cours.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "AGRICULTURE",
+        "SANTE",
+        "ECONOMIE",
+        "INGENIERIE"
+      ]
     },
     {
       "slug": "bourse-mext-japon",
@@ -180,7 +206,10 @@
       "usualPeriod": "Appel en avril · dossiers jusqu'à fin mai ou début juin · écrits et entretiens fin juin-juillet",
       "officialUrl": "https://www.studyinjapan.go.jp/en/",
       "sourceNote": "Session 2027 clôturée début juin 2026. Consultez aussi le site de l'Ambassade du Japon au Sénégal (sn.emb-japan.go.jp).",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ]
     },
     {
       "slug": "bourse-mastercard-foundation-scholars",
@@ -200,7 +229,11 @@
       "recurring": true,
       "usualPeriod": "Selon l'université, souvent entre septembre et novembre pour la rentrée suivante",
       "officialUrl": "https://www.mastercardfdn.org/en/what-we-do/our-programs/mastercard-foundation-scholars-program/",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "funding": "FULL"
     },
     {
       "slug": "programme-mandela-washington-fellowship",
@@ -227,7 +260,12 @@
       "recurring": true,
       "usualPeriod": "Candidatures de fin septembre à mi-octobre · entretiens à l'ambassade de novembre à janvier",
       "officialUrl": "https://www.mandelawashingtonfellowship.org",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "funding": "FULL",
+      "sessionLabel": "Promotion 2027"
     },
     {
       "slug": "bourses-amci-maroc",
@@ -255,7 +293,11 @@
       "recurring": true,
       "usualPeriod": "Appel en juin · dépôt jusqu'à mi-juillet",
       "officialUrl": "https://www.amci.ma",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "bourses-erasmus-mundus",
@@ -274,7 +316,11 @@
       "recurring": true,
       "usualPeriod": "Dates limites le plus souvent entre octobre et février pour la rentrée suivante",
       "officialUrl": "https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "funding": "FULL"
     },
     {
       "slug": "admission-aims-senegal",
@@ -293,7 +339,12 @@
       "usualPeriod": "Appel annuel commun au réseau AIMS (généralement entre la fin de l'année et le printemps)",
       "officialUrl": "https://aims-senegal.org",
       "sourceNote": "L'appel de la promotion 2027 n'est pas encore publié : surveillez le site d'AIMS Sénégal.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "SCIENCES"
+      ],
+      "location": "Mbour",
+      "funding": "FULL"
     },
     {
       "slug": "stage-nations-unies",
@@ -311,7 +362,10 @@
       "recurring": true,
       "usualPeriod": "Offres publiées toute l'année",
       "officialUrl": "https://careers.un.org",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ]
     },
     {
       "slug": "stage-banque-mondiale",
@@ -329,7 +383,10 @@
       "usualPeriod": "Deux sessions par an (stages d'été et d'hiver), candidatures publiées sur le site officiel",
       "officialUrl": "https://www.worldbank.org/en/about/careers/programs-and-internships",
       "linkChecked": true,
-      "sourceNote": "Calendrier indicatif : les fenêtres de candidature exactes sont annoncées sur la page officielle."
+      "sourceNote": "Calendrier indicatif : les fenêtres de candidature exactes sont annoncées sur la page officielle.",
+      "domains": [
+        "ECONOMIE"
+      ]
     },
     {
       "slug": "bourse-gks-coree",
@@ -350,7 +407,11 @@
       "usualPeriod": "Programme graduate vers février-mars · programme undergraduate vers septembre-octobre",
       "officialUrl": "https://www.studyinkorea.go.kr",
       "linkChecked": true,
-      "sourceNote": "Calendrier indicatif d'après les sessions précédentes : vérifiez l'appel en cours sur studyinkorea.go.kr."
+      "sourceNote": "Calendrier indicatif d'après les sessions précédentes : vérifiez l'appel en cours sur studyinkorea.go.kr.",
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "funding": "FULL"
     }
   ]
 }

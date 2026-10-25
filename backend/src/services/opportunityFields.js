@@ -1,5 +1,5 @@
 const { z } = require('zod');
-const { CATEGORIES, LEVELS, DESTINATIONS } = require('./opportunityService');
+const { CATEGORIES, LEVELS, DESTINATIONS, DOMAINS, FUNDING } = require('./opportunityService');
 
 // Règles de saisie d'une annonce : partagées par l'API d'administration et l'import
 // des fichiers scripts/data/opportunites (même validation des deux côtés).
@@ -50,6 +50,23 @@ const fields = {
   sourceNote: optionalText(300),
   recurring: z.boolean().optional(),
   usualPeriod: optionalText(200),
+  domains: z.array(z.enum(DOMAINS)).max(DOMAINS.length).optional(),
+  location: optionalText(150),
+  sessionLabel: optionalText(60),
+  funding: z.enum(FUNDING).optional().nullable(),
+  selectionSteps: z.array(z.object({
+    title: z.string().trim().min(2).max(150),
+    detail: z.string().trim().max(600).optional().nullable(),
+  })).max(15).optional().nullable(),
+  resources: z.array(z.object({
+    label: z.string().trim().min(2).max(150),
+    url: webUrl.refine((value) => Boolean(value), 'Lien requis'),
+  })).max(15).optional().nullable(),
+  faq: z.array(z.object({
+    question: z.string().trim().min(5).max(250),
+    answer: z.string().trim().min(2).max(1500),
+  })).max(15).optional().nullable(),
+  tips: optionalText(3000),
   // Coché par l'admin : « j'ai vérifié cette annonce sur la source officielle aujourd'hui »
   markVerified: z.boolean().optional(),
 };

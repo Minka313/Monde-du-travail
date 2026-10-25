@@ -148,6 +148,18 @@ model Opportunity {
   // Concours ou bourse annuels : une fois la session passée, on annonce la prochaine (usualPeriod)
   recurring      Boolean       @default(false)
   usualPeriod    String?
+  // Organisation de la rubrique : domaines (filtres), lieu, session, prise en charge
+  domains        String[]      @default([])
+  location       String?
+  sessionLabel   String?
+  funding        String?
+  // Contenu enrichi : étapes de sélection [{ title, detail? }], liens utiles [{ label, url }],
+  // questions fréquentes [{ question, answer }] et conseils de préparation du club
+  selectionSteps Json?
+  resources      Json?
+  faq            Json?
+  tips           String?
+  reports        OpportunityReport[]
   status         ContentStatus @default(DRAFT)
   createdById    String?
   createdBy      User?         @relation("OpportunityCreator", fields: [createdById], references: [id])
@@ -157,6 +169,23 @@ model Opportunity {
   @@index([status, deadline])
   @@index([category])
   @@map("opportunities")
+}
+
+// Erreur signalée par un visiteur sur une annonce (date, lien, information) : traitée dans l'admin
+model OpportunityReport {
+  id            String      @id @default(cuid())
+  opportunityId String
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  kind          String
+  message       String
+  contact       String?
+  status        String      @default("OPEN")
+  createdAt     DateTime    @default(now())
+  resolvedAt    DateTime?
+
+  @@index([status, createdAt])
+  @@index([opportunityId])
+  @@map("opportunity_reports")
 }
 
 model FormationRegistration {

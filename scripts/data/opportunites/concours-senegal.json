@@ -61,7 +61,14 @@
       "recurring": true,
       "usualPeriod": "Dépôt des dossiers de janvier à mi-avril · concours écrit mi-juin",
       "officialUrl": "https://www.ept.edu.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "INGENIERIE",
+        "NUMERIQUE"
+      ],
+      "location": "Thiès",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-esp-dakar-dut",
@@ -128,7 +135,15 @@
       "recurring": true,
       "usualPeriod": "Dépôt jusqu'à fin avril · concours début juin",
       "officialUrl": "https://concours.esp.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "INGENIERIE",
+        "SCIENCES",
+        "NUMERIQUE"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-ipsl-ugb",
@@ -185,7 +200,14 @@
       "recurring": true,
       "usualPeriod": "Candidatures en ligne jusqu'à mi-juin · concours fin juin",
       "officialUrl": "https://ipsl-concours.ugb.sn/",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "INGENIERIE",
+        "NUMERIQUE"
+      ],
+      "location": "Saint-Louis",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-ensa-thies",
@@ -227,7 +249,13 @@
       "recurring": true,
       "usualPeriod": "Candidatures en ligne jusqu'à mi-mai · concours fin mai",
       "officialUrl": "https://www.ensath.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "AGRICULTURE"
+      ],
+      "location": "Thiès",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-ensmg-ucad",
@@ -288,7 +316,14 @@
       "recurring": true,
       "usualPeriod": "Candidatures de fin mai à mi-juillet · concours fin juillet",
       "officialUrl": "https://concours.ucad.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "INGENIERIE",
+        "SCIENCES"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-cesti",
@@ -340,7 +375,13 @@
       "recurring": true,
       "usualPeriod": "Inscriptions de mi-février à fin mai · présélection en juin · concours fin juillet",
       "officialUrl": "https://cesti.ucad.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "COMMUNICATION"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-ecole-militaire-sante",
@@ -402,7 +443,14 @@
       "usualPeriod": "Dépôt jusqu'en février · épreuves écrites début juin",
       "officialUrl": "https://www.forcesarmees.gouv.sn",
       "sourceNote": "Le communiqué 2026 cite à la fois le 6 et le 20 février comme clôture : vérifiez la date de la nouvelle session auprès des bureaux de garnison.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "SANTE",
+        "DEFENSE"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-polytech-diamniadio-uam",
@@ -457,7 +505,15 @@
       "recurring": true,
       "usualPeriod": "Après les résultats du bac (dates annoncées à chaque session)",
       "officialUrl": "https://depot.uam.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "INGENIERIE",
+        "AGRICULTURE",
+        "SCIENCES",
+        "ECONOMIE"
+      ],
+      "location": "Diamniadio",
+      "destination": "SENEGAL"
     },
     {
       "slug": "concours-ensae-niveau-bac",
@@ -527,7 +583,14 @@
       "recurring": true,
       "usualPeriod": "Inscriptions de fin novembre à fin janvier · présélection mi-février · épreuves début avril",
       "officialUrl": "https://www.ensae.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "ECONOMIE",
+        "SCIENCES"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-ensae-niveau-licence",
@@ -600,7 +663,14 @@
       "recurring": true,
       "usualPeriod": "Inscriptions de fin novembre à fin janvier · épreuves en avril",
       "officialUrl": "https://www.ensae.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "ECONOMIE",
+        "SCIENCES"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-cugem",
@@ -681,7 +751,12 @@
       "recurring": true,
       "usualPeriod": "Dépôts de fin novembre à mi-février · épreuves physiques en avril · écrits début mai",
       "officialUrl": "https://www.forcesarmees.gouv.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "DEFENSE"
+      ],
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-isfar-bambey",
@@ -737,7 +812,12 @@
       "usualPeriod": "Après le bac : dépôt jusqu'à mi-septembre · concours début octobre (dernière session publiée : 2024)",
       "officialUrl": "https://www.uadb.edu.sn",
       "sourceNote": "Dernier communiqué connu : session 2024 (dépôt avant le 16 septembre, concours le 2 octobre). Les dates de la session suivante sont à confirmer.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "AGRICULTURE"
+      ],
+      "location": "Bambey",
+      "destination": "SENEGAL"
     },
     {
       "slug": "concours-fastef-eleves-professeurs",
@@ -780,7 +860,13 @@
       "recurring": true,
       "usualPeriod": "Inscriptions de fin février à début avril",
       "officialUrl": "https://concours.ucad.sn/fastef/",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "ENSEIGNEMENT"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-ufr-sefs-ugb",
@@ -817,7 +903,14 @@
       "recurring": true,
       "usualPeriod": "Inscriptions de fin mai à fin juillet · concours début août",
       "officialUrl": "https://www.ugb.sn",
-      "linkChecked": false
+      "linkChecked": false,
+      "domains": [
+        "ENSEIGNEMENT",
+        "SPORT"
+      ],
+      "location": "Saint-Louis",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-ecole-des-douanes",
@@ -858,7 +951,12 @@
       "usualPeriod": "Session ouverte par communiqué du ministère des Finances (pas de calendrier fixe)",
       "officialUrl": "https://www.douanes.sn",
       "sourceNote": "Le programme des épreuves est stable, mais le communiqué repris dans le manuel date des sessions 2017-2018 : âges et dates à vérifier sur douanes.sn à l'ouverture de la prochaine session.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "ADMINISTRATION",
+        "DEFENSE"
+      ],
+      "destination": "SENEGAL"
     },
     {
       "slug": "concours-ena-senegal",
@@ -898,7 +996,12 @@
       "recurring": true,
       "usualPeriod": "Session annuelle ouverte par arrêté (dates publiées par l'ENA)",
       "officialUrl": "https://www.ena.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "ADMINISTRATION"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL"
     },
     {
       "slug": "admission-eismv",
@@ -913,7 +1016,13 @@
       "recurring": true,
       "usualPeriod": "Selon le communiqué annuel de l'école",
       "officialUrl": "https://www.eismv.org",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "SANTE",
+        "AGRICULTURE"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL"
     },
     {
       "slug": "concours-iut-thies-dut",
@@ -954,7 +1063,13 @@
       "recurring": true,
       "usualPeriod": "Candidatures jusqu'à début mai · test mi-mai",
       "officialUrl": "https://iut.uidt.sn/admissions",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "INGENIERIE"
+      ],
+      "location": "Thiès",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "admission-igt-ucad",
@@ -985,7 +1100,12 @@
       "usualPeriod": "Dépôt de septembre à mi-octobre · rentrée en novembre (dernière session publiée : 2024)",
       "officialUrl": "https://www.ucad.sn",
       "sourceNote": "Dernier appel connu : session 2024 (dépôts du 1er septembre au 12 octobre). Vérifiez l'appel en cours auprès de l'IGT.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "ADMINISTRATION"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL"
     },
     {
       "slug": "admission-iupa-ucad",
@@ -1020,7 +1140,13 @@
       "recurring": true,
       "usualPeriod": "Appel à candidatures annuel de l'IUPA",
       "officialUrl": "https://iupa.ucad.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "AGRICULTURE",
+        "SCIENCES"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL"
     },
     {
       "slug": "concours-esea-ucad",
@@ -1081,7 +1207,14 @@
       "recurring": true,
       "usualPeriod": "Dépôts de fin juillet à début septembre · écrits mi-septembre",
       "officialUrl": "https://esea.ucad.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "ECONOMIE",
+        "ADMINISTRATION"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2025"
     },
     {
       "slug": "concours-ecole-armee-de-l-air",
@@ -1151,7 +1284,12 @@
       "recurring": true,
       "usualPeriod": "Inscriptions jusqu'à fin février · physique en mars · écrits mi-mai · psychotechniques fin juin",
       "officialUrl": "https://concours.eaa.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "DEFENSE"
+      ],
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-ensetp-ucad",
@@ -1185,7 +1323,13 @@
       "recurring": true,
       "usualPeriod": "Session annuelle (dates publiées par l'ENSETP)",
       "officialUrl": "https://ensetp.ucad.sn/",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "ENSEIGNEMENT",
+        "INGENIERIE"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL"
     },
     {
       "slug": "concours-inseps-ucad",
@@ -1233,7 +1377,13 @@
       "usualPeriod": "Tests en octobre (dernière session publiée : 2025)",
       "officialUrl": "https://inseps.ucad.sn",
       "sourceNote": "Dernière session publiée : 2025 (tests du 7 au 30 octobre). Dates de la session suivante à confirmer.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "SPORT",
+        "ENSEIGNEMENT"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL"
     },
     {
       "slug": "concours-endss-infirmier",
@@ -1292,7 +1442,13 @@
       "recurring": true,
       "usualPeriod": "Dépôts de fin août à fin septembre · concours mi-octobre",
       "officialUrl": "https://endss.ucad.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "SANTE"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2025"
     },
     {
       "slug": "concours-ebad-ucad",
@@ -1319,7 +1475,12 @@
       "usualPeriod": "Inscriptions d'avril à mi-juin · présélection fin juin (dernière session publiée : 2024)",
       "officialUrl": "https://ebad.ucad.sn/",
       "sourceNote": "Dernier communiqué connu : session 2024 (inscriptions du 23 avril au 15 juin, test le 22 juin). À confirmer pour la prochaine session.",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "COMMUNICATION"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL"
     },
     {
       "slug": "concours-ensoa",
@@ -1409,7 +1570,13 @@
       "recurring": true,
       "usualPeriod": "Dépôt jusqu'à fin février · physique en avril · écrits en mai · entretiens fin juin",
       "officialUrl": "https://www.forcesarmees.gouv.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "DEFENSE"
+      ],
+      "location": "Kaolack",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-cfj-2026",
@@ -1472,7 +1639,13 @@
       "recurring": true,
       "usualPeriod": "Inscriptions en ligne en été · admissibilité septembre-octobre · admission octobre à décembre",
       "officialUrl": "https://www.cfj.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "ADMINISTRATION"
+      ],
+      "location": "Dakar",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2026"
     },
     {
       "slug": "concours-lycee-scientifique-diourbel",
@@ -1511,7 +1684,13 @@
       "recurring": true,
       "usualPeriod": "Dépôts de fin juillet à fin août, après le BFEM",
       "officialUrl": "https://www.education.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "SCIENCES"
+      ],
+      "location": "Diourbel",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2025"
     },
     {
       "slug": "concours-lynaqe",
@@ -1552,7 +1731,13 @@
       "recurring": true,
       "usualPeriod": "Mi-août, juste après les résultats du BFEM",
       "officialUrl": "https://www.education.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "location": "Sédhiou et Kaffrine",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2025"
     },
     {
       "slug": "concours-prytanee-militaire",
@@ -1618,7 +1803,14 @@
       "recurring": true,
       "usualPeriod": "Dépôts jusqu'à mi-mars · concours fin mai",
       "officialUrl": "https://prytanee.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE",
+        "DEFENSE"
+      ],
+      "location": "Saint-Louis",
+      "destination": "SENEGAL",
+      "sessionLabel": "Session 2025"
     },
     {
       "slug": "admission-lycee-mariama-ba",
@@ -1641,7 +1833,12 @@
       "recurring": true,
       "usualPeriod": "Après les résultats du concours national d'entrée en Sixième",
       "officialUrl": "https://www.education.sn",
-      "linkChecked": true
+      "linkChecked": true,
+      "domains": [
+        "PLURIDISCIPLINAIRE"
+      ],
+      "location": "Gorée",
+      "destination": "SENEGAL"
     }
   ]
 }

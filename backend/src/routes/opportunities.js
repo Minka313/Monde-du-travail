@@ -5,7 +5,8 @@ const { authenticate, authorize, optionalAuth } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
 const validate = require('../middleware/validate');
-const { CATEGORIES, LEVELS, DESTINATIONS, PHASES } = require('../services/opportunityService');
+const rateLimit = require('express-rate-limit');
+const { CATEGORIES, LEVELS, DESTINATIONS, PHASES, DOMAINS, REPORT_KINDS } = require('../services/opportunityService');
 const { fields } = require('../services/opportunityFields');
 const { z } = require('zod');
 
@@ -21,7 +22,26 @@ const publicQuerySchema = z.object({
     destination: z.enum(DESTINATIONS).optional(),
     phase: z.enum(PHASES).optional(),
     search: z.string().max(100).optional(),
+    domain: z.enum(DOMAINS).optional(),
+    series: z.string().max(30).optional(),
   }),
+});
+
+const reportSchema = z.object({
+  body: z.object({
+    kind: z.enum(REPORT_KINDS),
+    message: z.string().trim().min(10, 'Décrivez le problème en quelques mots (10 caractères minimum)').max(1500),
+    contact: z.string().trim().max(200).optional().nullable(),
+  }).strict(),
+});
+
+// Signalements publics : quelques envois par heure et par adresse IP
+const reportLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Trop de signalements envoyés. Réessayez dans une heure.' },
 });
 
 const adminGate = [authenticate, AdminApprovalMiddleware.middleware, requireModulePermission('opportunite')];
@@ -31,6 +51,8 @@ router.get('/', validate(publicQuerySchema), OpportunityController.getPublished)
 
 // Espace admin (avant /:id)
 router.get('/admin/list', ...adminGate, authorize('opportunite.read'), OpportunityController.getForAdmin);
+router.get('/admin/reports', ...adminGate, authorize('opportunite.read'), OpportunityController.listReports);
+router.post('/admin/reports/:reportId/resolve', ...adminGate, authorize('opportunite.update'), OpportunityController.resolveReport);
 
 router.get('/:id', optionalAuth, OpportunityController.getById);
 
@@ -38,6 +60,8 @@ router.post('/', ...adminGate, authorize('opportunite.create'), validate(createS
 router.put('/:id', ...adminGate, authorize('opportunite.update'), validate(updateSchema), OpportunityController.update);
 router.delete('/:id', ...adminGate, authorize('opportunite.delete'), OpportunityController.remove);
 
+router.post('/:id/reports', reportLimiter, validate(reportSchema), OpportunityController.createReport);
+router.post('/:id/duplicate', ...adminGate, authorize('opportunite.create'), OpportunityController.duplicate);
 router.post('/:id/publish', ...adminGate, authorize('opportunite.publish'), OpportunityController.publish);
 router.post('/:id/unpublish', ...adminGate, authorize('opportunite.publish'), OpportunityController.unpublish);
 router.post('/:id/archive', ...adminGate, authorize('opportunite.archive'), OpportunityController.archive);

@@ -350,13 +350,14 @@ return headers;
     opportunities: {
       getAll: (params = {}) => {
         const query = new URLSearchParams();
-        ['category', 'level', 'destination', 'phase', 'search'].forEach((key) => {
+        ['category', 'level', 'destination', 'phase', 'search', 'domain', 'series'].forEach((key) => {
           if (params[key]) query.set(key, params[key]);
         });
         const qs = query.toString();
         return apiRequestWithRefresh(`/opportunities${qs ? `?${qs}` : ''}`);
       },
       getById: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}`),
+      report: (id, data) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/reports`, { method: 'POST', body: JSON.stringify(data) }),
     },
 
     // Formations

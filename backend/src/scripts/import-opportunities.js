@@ -4,6 +4,8 @@
  *
  *   node src/scripts/import-opportunities.js            crée les annonces absentes (par slug)
  *   node src/scripts/import-opportunities.js --update   met aussi à jour le contenu des annonces existantes
+ *   node src/scripts/import-opportunities.js --update --fields=domains,location
+ *                                                       ne met à jour que ces champs (le reste est conservé)
  *   node src/scripts/import-opportunities.js --dry      vérifie les fichiers sans rien écrire
  *
  * Par défaut, une annonce déjà présente n'est jamais modifiée : les corrections faites
@@ -48,7 +50,7 @@ function loadItems() {
   return { items, errors };
 }
 
-async function run({ update = false, dry = false } = {}) {
+async function run({ update = false, dry = false, only = null } = {}) {
   const { items, errors } = loadItems();
   if (errors.length) {
     errors.forEach((e) => console.error(`✖ ${e}`));
@@ -75,7 +77,11 @@ async function run({ update = false, dry = false } = {}) {
       continue;
     }
     const verified = Boolean(linkChecked && data.officialUrl);
-    if (existing) {
+    if (existing && only) {
+      const picked = Object.fromEntries(Object.entries(data).filter(([key]) => only.includes(key)));
+      if (Object.keys(picked).length) await prisma.opportunity.update({ where: { slug }, data: picked });
+      stats.updated += 1;
+    } else if (existing) {
       await prisma.opportunity.update({ where: { slug }, data: { ...data, ...(verified ? { lastVerifiedAt: now } : {}) } });
       stats.updated += 1;
     } else {
@@ -96,7 +102,9 @@ async function run({ update = false, dry = false } = {}) {
 }
 
 if (require.main === module) {
-  run({ update: process.argv.includes('--update'), dry: process.argv.includes('--dry') })
+  const fieldsArg = process.argv.find((arg) => arg.startsWith('--fields='));
+  const only = fieldsArg ? fieldsArg.slice('--fields='.length).split(',').map((f) => f.trim()).filter(Boolean) : null;
+  run({ update: process.argv.includes('--update'), dry: process.argv.includes('--dry'), only })
     .catch((error) => { console.error(error.message); process.exitCode = 1; })
     .finally(() => prisma.$disconnect());
 }

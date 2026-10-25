@@ -39,7 +39,7 @@ class OpportunityController {
 
   static async getById(req, res, next) {
     try {
-      const opportunity = await OpportunityService.getById(req.params.id);
+      const opportunity = await OpportunityService.getBySlugOrId(req.params.id);
 
       // Une annonce non publiée n'est visible que des administrateurs du module
       if (opportunity.status !== 'PUBLISHED') {
@@ -104,6 +104,54 @@ class OpportunityController {
       const opportunity = await OpportunityService.archive(req.params.id);
       await audit(req, 'archive', opportunity, 'ARCHIVED');
       res.json({ success: true, message: 'Annonce archivée', data: opportunity });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async duplicate(req, res, next) {
+    try {
+      const opportunity = await OpportunityService.duplicate(req.params.id, req.user.id);
+      await audit(req, 'create', opportunity);
+      res.status(201).json({ success: true, message: 'Nouvelle session créée en brouillon', data: opportunity });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async createReport(req, res, next) {
+    try {
+      await OpportunityService.createReport(req.params.id, req.body);
+      res.status(201).json({ success: true, message: "Merci ! Le signalement a été transmis à l'équipe du club." });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async listReports(req, res, next) {
+    try {
+      const status = req.query.status === 'ALL' ? null : (req.query.status === 'RESOLVED' ? 'RESOLVED' : 'OPEN');
+      const data = await OpportunityService.listReports({ status });
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async resolveReport(req, res, next) {
+    try {
+      const report = await OpportunityService.resolveReport(req.params.reportId);
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'opportunite.report.resolve',
+        module: 'opportunite',
+        resource: 'OpportunityReport',
+        resourceId: report.id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'RESOLVED',
+      });
+      res.json({ success: true, message: 'Signalement traité', data: report });
     } catch (error) {
       next(error);
     }

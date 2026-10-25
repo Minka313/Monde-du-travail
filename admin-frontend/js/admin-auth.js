@@ -392,6 +392,9 @@
       publish: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/publish`, { method: 'POST' }),
       unpublish: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/unpublish`, { method: 'POST' }),
       archive: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/archive`, { method: 'POST' }),
+      duplicate: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/duplicate`, { method: 'POST' }),
+      reports: (status = 'OPEN') => apiRequestWithRefresh(`/opportunities/admin/reports?status=${encodeURIComponent(status)}`),
+      resolveReport: (reportId) => apiRequestWithRefresh(`/opportunities/admin/reports/${encodeURIComponent(reportId)}/resolve`, { method: 'POST' }),
     },
     formations: {
       get: (id) => apiRequestWithRefresh(`/formations/${id}`),

@@ -44,7 +44,7 @@ class SitemapService {
    * @param {string} baseUrl origine publique, sans slash final (ex. https://exemple.com)
    */
   static async build(baseUrl) {
-    const [posts, jobs, formations] = await Promise.all([
+    const [posts, jobs, formations, opportunities] = await Promise.all([
       prisma.post.findMany({
         where: { status: 'PUBLISHED' },
         select: { slug: true, updatedAt: true },
@@ -56,6 +56,11 @@ class SitemapService {
         orderBy: { updatedAt: 'desc' },
       }),
       prisma.formation.findMany({
+        where: { status: 'PUBLISHED', slug: { not: null } },
+        select: { slug: true, updatedAt: true },
+        orderBy: { updatedAt: 'desc' },
+      }),
+      prisma.opportunity.findMany({
         where: { status: 'PUBLISHED', slug: { not: null } },
         select: { slug: true, updatedAt: true },
         orderBy: { updatedAt: 'desc' },
@@ -79,6 +84,12 @@ class SitemapService {
         .map((formation) => urlEntry(
           `${baseUrl}/formation-detail?slug=${encodeURIComponent(formation.slug)}`,
           { lastmod: formation.updatedAt, changefreq: 'monthly', priority: '0.7' }
+        )),
+      ...opportunities
+        .filter((opportunity) => SLUG_PATTERN.test(opportunity.slug))
+        .map((opportunity) => urlEntry(
+          `${baseUrl}/opportunite?slug=${encodeURIComponent(opportunity.slug)}`,
+          { lastmod: opportunity.updatedAt, changefreq: 'weekly', priority: '0.7' }
         )),
     ];
 
