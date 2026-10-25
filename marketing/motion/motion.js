@@ -234,7 +234,7 @@
       <div class="logo-wrap"><div class="ring"></div><div class="ring"></div><div class="logo-halo"></div><img class="logo-img" src="${A}img/logo.png"></div>
       <div class="brand-title">LE MONDE DU TRAVAIL</div>
       <div class="brand-sub">WOW · World Of Work</div>
-      <div class="brand-sub" style="margin-top:10px;letter-spacing:0.22em;color:#cbd5e1">Club fondé à Dakar · 2024</div></div>`);
+      <div class="brand-sub" style="margin-top:10px;letter-spacing:0.22em;color:#cbd5e1">Club fondé en 2025 · LYNAQE de Sédhiou</div></div>`);
     const halo = $(box, '.logo-halo');
     const logo = $(box, '.logo-img');
     set(halo, { o: 0, s: 0.4 });
