@@ -96,8 +96,30 @@
     }
   }
 
+  // Photo de profil : lien http(s) (photo importée) ou image intégrée (avatars prédéfinis)
+  function avatarSrc(value) {
+    if (!value || typeof value !== 'string') return '';
+    if (/^data:image\/(svg\+xml|png|jpe?g|webp|gif)[;,]/i.test(value)) return value;
+    return safeUrl(value);
+  }
+
+  // Avatar d'une personne : sa photo si elle en a une, sinon ses initiales.
+  // `person` : { firstName, lastName, avatarUrl } ou { name, photo } ; `size` en pixels.
+  function avatarHtml(person, { size = 40, className = '' } = {}) {
+    const p = person || {};
+    const name = p.name || `${p.firstName || ''} ${p.lastName || ''}`.trim();
+    const initials = name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase() || '?';
+    const src = avatarSrc(p.avatarUrl || p.photo);
+    const style = `width:${size}px;height:${size}px;font-size:${Math.round(size * 0.38)}px;`;
+    return src
+      ? `<img class="user-avatar ${escapeHtml(className)}" src="${escapeHtml(src)}" alt="${escapeHtml(name)}" width="${size}" height="${size}" loading="lazy" style="${style}border-radius:50%;object-fit:cover;flex-shrink:0;">`
+      : `<span class="user-avatar user-avatar--initials ${escapeHtml(className)}" aria-hidden="true" style="${style}border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700;color:#fff;background:linear-gradient(135deg,#0f2b46,#1a3f5f);">${escapeHtml(initials)}</span>`;
+  }
+
   window.escapeHtml = escapeHtml;
   window.safeUrl = safeUrl;
+  window.avatarSrc = avatarSrc;
+  window.avatarHtml = avatarHtml;
 
   async function refreshToken() {
     if (isRefreshing) return;

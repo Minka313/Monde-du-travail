@@ -46,6 +46,7 @@ class OrganizationService {
                 id: true,
                 firstName: true,
                 lastName: true,
+                avatarUrl: true,
                 email: true,
                 role: true,
                 isActive: true,
@@ -69,6 +70,7 @@ class OrganizationService {
         fullName: `${a.user.firstName} ${a.user.lastName}`.trim(),
         firstName: a.user.firstName,
         lastName: a.user.lastName,
+        avatarUrl: a.user.avatarUrl || null,
         email: a.user.email,
         role: a.user.role,
         mandateYear: a.mandateYear,
@@ -149,6 +151,7 @@ class OrganizationService {
                 id: true,
                 firstName: true,
                 lastName: true,
+                avatarUrl: true,
                 email: true,
                 role: true,
               },
@@ -333,7 +336,7 @@ class OrganizationService {
           select: { id: true, title: true, category: true, order: true },
         },
         user: {
-          select: { id: true, firstName: true, lastName: true, email: true, role: true },
+          select: { id: true, firstName: true, lastName: true, email: true, role: true, avatarUrl: true },
         },
         assignedBy: {
           select: { id: true, firstName: true, lastName: true },
@@ -405,7 +408,7 @@ class OrganizationService {
         },
         include: {
           position: true,
-          user: { select: { id: true, firstName: true, lastName: true, email: true } },
+          user: { select: { id: true, firstName: true, lastName: true, email: true, avatarUrl: true } },
         },
       });
       return updated;
@@ -439,7 +442,7 @@ class OrganizationService {
       },
       include: {
         position: true,
-        user: { select: { id: true, firstName: true, lastName: true, email: true, role: true } },
+        user: { select: { id: true, firstName: true, lastName: true, email: true, avatarUrl: true, role: true } },
         assignedBy: { select: { id: true, firstName: true, lastName: true } },
       },
     });
@@ -509,7 +512,7 @@ class OrganizationService {
       data: updateData,
       include: {
         position: true,
-        user: { select: { id: true, firstName: true, lastName: true, email: true } },
+        user: { select: { id: true, firstName: true, lastName: true, email: true, avatarUrl: true } },
       },
     });
 

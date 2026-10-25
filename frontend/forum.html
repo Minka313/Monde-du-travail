@@ -282,10 +282,10 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js"></script>
+    <script defer src="js/frontend-api.js?v=20261025-2"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/layout.js"></script>
-    <script defer src="js/main.js?v=20261025-2"></script>
+    <script defer src="js/main.js?v=20261025-3"></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const categoriesContainer = document.getElementById('categoriesContainer');
@@ -410,7 +410,8 @@
                   ${hasSolution ? '<span style="color:var(--forum-emerald); margin-right:4px;" title="Solution certifiée">✓</span>' : ''}
                   ${escapeHtml(topic.title)}
                 </div>
-                <div class="forum-topic-meta">
+                <div class="forum-topic-meta" style="align-items:center;">
+                  ${(window.avatarHtml || (() => ""))(topic.author, { size: 24 })}
                   <span class="author">${authorName}</span>
                   ${authorBadge}
                   <span>·</span>

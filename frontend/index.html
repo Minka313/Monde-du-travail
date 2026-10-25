@@ -64,6 +64,7 @@
       },
       "slogan": "Demain se prépare aujourd'hui",
       "foundingDate": "2025",
+      "email": "lemondedutravailsen@gmail.com",
       "foundingLocation": {
         "@type": "Place",
         "name": "Lycée Nation-Armée pour la Qualité et l'Équité (LYNAQE) de Sédhiou",
@@ -413,104 +414,22 @@
                     <p>Pose tes questions, échange des astuces et partage tes retours d'expérience.</p>
                     <a href="forum.html" class="btn btn-secondary">Explorer le forum <span class="btn-arrow">&rarr;</span></a>
                 </div>
-                <div class="home-topics-grid stagger-group" id="homeForumContainer">
-                    <a href="forum.html" class="home-topic-card reveal-scale">
-                        <div class="home-topic-top">
-                            <span class="home-topic-badge">💼 Premier Emploi</span>
-                            <h4 class="home-topic-title">Comment négocier son premier salaire en sortie d'école ?</h4>
-                            <p class="home-topic-snippet">Des conseils pratiques sur les grilles salariales, les primes et la posture à adopter lors des discussions d'embauche.</p>
-                        </div>
-                        <div class="home-topic-footer">
-                            <span class="home-topic-author">👤 Aïssatou D.</span>
-                            <span class="home-topic-replies">💬 14 réponses</span>
-                        </div>
-                    </a>
-                    <a href="forum.html" class="home-topic-card reveal-scale">
-                        <div class="home-topic-top">
-                            <span class="home-topic-badge">🎯 Orientation</span>
-                            <h4 class="home-topic-title">Data Analyst vs Business Analyst : quelle voie choisir ?</h4>
-                            <p class="home-topic-snippet">Comparatif concret sur les compétences requises, les outils (SQL/PowerBI) et les débouchés réels sur le marché.</p>
-                        </div>
-                        <div class="home-topic-footer">
-                            <span class="home-topic-author">👤 Mamadou S.</span>
-                            <span class="home-topic-replies">💬 9 réponses</span>
-                        </div>
-                    </a>
-                    <a href="forum.html" class="home-topic-card reveal-scale">
-                        <div class="home-topic-top">
-                            <span class="home-topic-badge">🤝 Réseau & Mentorat</span>
-                            <h4 class="home-topic-title">Les 5 règles d'or pour relancer un contact LinkedIn avec succès</h4>
-                            <p class="home-topic-snippet">Modèles de messages d'approche personnalisés ayant suscité de réelles opportunités professionnelles.</p>
-                        </div>
-                        <div class="home-topic-footer">
-                            <span class="home-topic-author">👤 Cheikh T.</span>
-                            <span class="home-topic-replies">💬 18 réponses</span>
-                        </div>
-                    </a>
-                </div>
+                <div class="home-topics-grid" id="homeForumContainer" aria-live="polite"></div>
             </div>
         </section>
 
-        <!-- Témoignages des Membres -->
-        <section class="section section-testimonials section-alt scene" id="scene-testimonials">
+        <!-- Témoignages des Membres : renseignés dans l'admin (Vitrine & Éditorial), masqués tant qu'il n'y en a pas -->
+        <section class="section section-testimonials section-alt scene" id="scene-testimonials" style="display:none;">
             <div class="container">
                 <div class="section-header reveal-up">
                     <span class="section-label">Impact Réel</span>
                     <h2>Ce que disent nos membres</h2>
-                    <p>Découvrez comment le club a propulsé leur entrée dans le monde professionnel</p>
+                    <p>Ils racontent ce que le club leur a apporté.</p>
                 </div>
-                <div class="testimonials-grid stagger-group">
-                    <div class="testimonial-card reveal-scale">
-                        <div class="testimonial-quote-icon">“</div>
-                        <p class="testimonial-text">L'atelier simulation d'entretien m'a permis de comprendre pourquoi je bloquais au dernier tour. Trois semaines plus tard, je signais mon CDI en cabinet de conseil.</p>
-                        <div class="testimonial-author-box">
-                            <div class="testimonial-avatar">FK</div>
-                            <div class="testimonial-meta">
-                                <span class="testimonial-name">Fatou Kiné S.</span>
-                                <span class="testimonial-role">Consultante Junior — Promotion 2025</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-card reveal-scale">
-                        <div class="testimonial-quote-icon">“</div>
-                        <p class="testimonial-text">Le club n'est pas une simple formation théorique : c'est un réseau bienveillant où des professionnels aguerris prennent le temps de te challenger sans filtre.</p>
-                        <div class="testimonial-author-box">
-                            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">AB</div>
-                            <div class="testimonial-meta">
-                                <span class="testimonial-name">Abdoulaye B.</span>
-                                <span class="testimonial-role">Ingénieur Logiciel — Membre actif</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-card reveal-scale">
-                        <div class="testimonial-quote-icon">“</div>
-                        <p class="testimonial-text">J'ai découvert ma vocation de chef de projet digital grâce aux fiches métiers et aux discussions avec les mentors sur le forum. Une expérience inestimable.</p>
-                        <div class="testimonial-author-box">
-                            <div class="testimonial-avatar" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%);">MN</div>
-                            <div class="testimonial-meta">
-                                <span class="testimonial-name">Mariama N.</span>
-                                <span class="testimonial-role">Chef de Projet — Membre du club</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="testimonials-grid" id="homeTestimonialsGrid"></div>
             </div>
         </section>
 
-        <!-- Newsletter & Veille Hebdomadaire -->
-        <section class="section section-newsletter scene" id="scene-newsletter">
-            <div class="container">
-                <div class="newsletter-card reveal-scale">
-                    <h3>Reçois notre veille carrière & opportunités</h3>
-                    <p>Une sélection hebdomadaire des meilleures offres de stage, conseils d'experts et invitations exclusives aux masterclasses du club.</p>
-                    <form class="newsletter-form" id="homeNewsletterForm">
-                        <input type="email" class="newsletter-input" placeholder="Entre ton adresse email..." required aria-label="Adresse email pour la newsletter">
-                        <button type="submit" class="newsletter-btn">S'inscrire gratuitement</button>
-                    </form>
-                    <div id="newsletterFeedback" style="display:none; margin-top: 14px; font-weight: 600; color: #86efac;"></div>
-                </div>
-            </div>
-        </section>
     </main>
 
     <footer data-layout="footer" class="site-footer">
@@ -614,10 +533,10 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js"></script>
+    <script defer src="js/frontend-api.js?v=20261025-2"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/layout.js"></script>
-    <script defer src="js/main.js?v=20261025-2"></script>
+    <script defer src="js/main.js?v=20261025-3"></script>
     <script defer src="js/notifications.js?v=2.2.0"></script>
 </body>
 </html>

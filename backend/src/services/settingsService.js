@@ -1,9 +1,10 @@
 const prisma = require('../config/database');
 const { NotFoundError, BadRequestError } = require('../utils/errors');
 const logger = require('../utils/logger');
+const { z } = require('zod');
 
 const DEFAULT_SETTINGS = [
-  { key: 'site.contactEmail', value: 'contact@mondedutravail.com', category: 'general', label: 'Email de contact (affiché sur la page de maintenance)' },
+  { key: 'site.contactEmail', value: 'lemondedutravailsen@gmail.com', category: 'general', label: "Email de contact de l'organisation (affiché sur le site, adresse de réponse des emails)" },
   { key: 'platform.maintenanceMode', value: 'false', category: 'plateforme', label: 'Mode maintenance (Bloque l\'accès public)', isSensitive: true },
   { key: 'platform.maintenanceMessage', value: 'Notre équipe effectue actuellement une mise à niveau technique programmée pour optimiser la plateforme. Nous serons de retour très rapidement !', category: 'plateforme', label: 'Message public de maintenance', isSensitive: false },
   { key: 'platform.maintenanceEstimatedReturn', value: 'Bientôt de retour', category: 'plateforme', label: 'Heure de retour estimée (ex: Aujourd\'hui à 15h00 GMT)', isSensitive: false },
@@ -17,7 +18,7 @@ const DEFAULT_SETTINGS = [
       perks: [
         "📅 Samedi 28 Mars 2026",
         "📍 Présentiel & Streaming",
-        "🎓 Attestation certifiée",
+        "🛠️ Ateliers pratiques",
         "👥 Limité à 30 places"
       ],
       primaryButtonText: "Réserver ma place",
@@ -36,14 +37,14 @@ const DEFAULT_SETTINGS = [
     key: 'about.timeline_steps',
     value: JSON.stringify([
       {
-        year: '2024',
-        title: 'Fondation du Club & Première Cohorte',
-        description: "Naissance de l'initiative à Dakar pour pallier le manque de préparation pratique des diplômés. Lancement des premiers ateliers de simulation d'entretiens et décryptage des codes pro."
+        year: '2025',
+        title: 'Fondation du Club au LYNAQE de Sédhiou',
+        description: "Naissance de l'initiative au Lycée Nation-Armée pour la Qualité et l'Équité (LYNAQE) de Sédhiou, pour préparer concrètement les jeunes au monde professionnel. Lancement des premiers ateliers : simulation d'entretiens, prise de parole et décryptage des codes pro."
       },
       {
-        year: '2025',
+        year: '2025 – 2026',
         title: 'Masterclasses Soft Skills & Réseau Mentorat',
-        description: "Structuration d'un catalogue de 12 formations certifiantes et ralliement de plus de 10 professionnels et cadres partenaires pour guider les jeunes en individuel."
+        description: "Structuration d'un catalogue de formations et ralliement de professionnels et cadres partenaires pour guider les jeunes en individuel."
       },
       {
         year: '2026',
@@ -55,6 +56,9 @@ const DEFAULT_SETTINGS = [
     label: 'Grandes étapes du Club (Page À Propos)',
     isSensitive: false
   },
+  // Contenus éditoriaux : vides tant que l'équipe ne les a pas renseignés (aucune donnée fictive)
+  { key: 'home.testimonials', value: '[]', category: 'vitrine', label: 'Témoignages des membres (Page d\'accueil)', isSensitive: false },
+  { key: 'about.mentors', value: '[]', category: 'vitrine', label: 'Mentors et leur mot (Page À Propos)', isSensitive: false },
   // Réseaux Sociaux (Administrables depuis l'espace admin)
   { key: 'social.twitter', value: 'https://x.com', category: 'reseaux', label: 'Lien X (Twitter)', isSensitive: false },
   { key: 'social.linkedin', value: 'https://linkedin.com', category: 'reseaux', label: 'Lien LinkedIn', isSensitive: false },
@@ -72,6 +76,62 @@ const PUBLIC_SETTINGS_CACHE_TTL_MS = 60 * 1000; // 60s cache mémoire
 // Anciens paramètres sans effet sur le site : conservés en base mais masqués de l'admin
 const DEPRECATED_KEYS = ['site.name', 'site.description', 'memberships.allowRegistrations'];
 
+// Valeurs par défaut d'origine devenues fausses (histoire du club inventée, ancienne adresse).
+// Tant qu'elles n'ont pas été modifiées dans l'admin, la nouvelle valeur par défaut s'applique.
+const LEGACY_DEFAULTS = {
+  'site.contactEmail': ['contact@mondedutravail.com'],
+  'about.timeline_steps': [JSON.stringify([
+    { year: '2024', title: 'Fondation du Club & Première Cohorte', description: "Naissance de l'initiative à Dakar pour pallier le manque de préparation pratique des diplômés. Lancement des premiers ateliers de simulation d'entretiens et décryptage des codes pro." },
+    { year: '2025', title: 'Masterclasses Soft Skills & Réseau Mentorat', description: "Structuration d'un catalogue de 12 formations certifiantes et ralliement de plus de 10 professionnels et cadres partenaires pour guider les jeunes en individuel." },
+    { year: '2026', title: 'Plateforme Numérique & Communauté Ouverte', description: "Déploiement de l'espace membre interactif, du forum d'entraide et du référentiel des 21 familles de métiers d'avenir pour impacter des milliers de jeunes." },
+  ])],
+};
+// Les formations du club ne sont pas certifiantes : aucun avantage de ce type n'est annoncé
+const CERTIFICATION_CLAIM = /attestation certifi|certifiant|certificat/i;
+
+// Contenus éditoriaux saisis dans l'admin : structure vérifiée avant enregistrement
+const photoUrl = z.string().trim().max(500)
+  .refine((v) => !v || /^https:\/\//i.test(v), 'La photo doit être un lien https (photo importée)')
+  .optional().nullable();
+const memberRef = z.string().trim().max(40).optional().nullable();
+const EDITORIAL_SCHEMAS = {
+  'home.testimonials': z.array(z.object({
+    quote: z.string().trim().min(10, 'Témoignage trop court').max(600),
+    name: z.string().trim().max(80).optional().nullable(),
+    role: z.string().trim().max(120).optional().nullable(),
+    photo: photoUrl,
+    userId: memberRef,
+  }).refine((t) => t.name || t.userId, 'Indiquez le nom ou reliez un membre')).max(12),
+  'about.mentors': z.array(z.object({
+    name: z.string().trim().max(80).optional().nullable(),
+    role: z.string().trim().min(2, 'Fonction requise').max(120),
+    bio: z.string().trim().max(400).optional().nullable(),
+    quote: z.string().trim().max(600).optional().nullable(),
+    photo: photoUrl,
+    linkedin: z.string().trim().max(300).refine((v) => !v || /^https:\/\/([a-z]+\.)?linkedin\.com\//i.test(v), 'Lien LinkedIn invalide').optional().nullable(),
+    userId: memberRef,
+  }).refine((m) => m.name || m.userId, 'Indiquez le nom ou reliez un membre')).max(24),
+};
+
+const sameJson = (a, b) => {
+  try { return JSON.stringify(JSON.parse(a)) === JSON.stringify(JSON.parse(b)); } catch (_) { return a === b; }
+};
+
+function currentValue(key, value) {
+  const legacy = LEGACY_DEFAULTS[key];
+  if (legacy && legacy.some((old) => sameJson(old, value))) {
+    return DEFAULT_SETTINGS.find((d) => d.key === key).value;
+  }
+  if (key === 'home.featured_monthly') {
+    try {
+      const featured = JSON.parse(value);
+      if (Array.isArray(featured.perks)) featured.perks = featured.perks.filter((p) => !CERTIFICATION_CLAIM.test(p));
+      return JSON.stringify(featured);
+    } catch (_) { return value; }
+  }
+  return value;
+}
+
 class SettingsService {
   static invalidatePublicCache() {
     cachedPublicSettings = null;
@@ -82,12 +142,10 @@ class SettingsService {
   static async ensureDefaults(force = false) {
     if (defaultsEnsured && !force) return;
     try {
-      const count = await prisma.setting.count();
-      if (count >= DEFAULT_SETTINGS.length && !force) {
-        defaultsEnsured = true;
-        return;
-      }
-      for (const setting of DEFAULT_SETTINGS) {
+      // Seuls les paramètres absents sont créés (les anciens paramètres en base ne comptent pas)
+      const existing = new Set((await prisma.setting.findMany({ select: { key: true } })).map((s) => s.key));
+      const missing = DEFAULT_SETTINGS.filter((setting) => force || !existing.has(setting.key));
+      for (const setting of missing) {
         await prisma.setting.upsert({
           where: { key: setting.key },
           update: {},
@@ -109,7 +167,8 @@ class SettingsService {
     // Libellé et rubrique à jour depuis le code (les lignes existantes gardent leur valeur)
     return settings.map((setting) => {
       const defaults = DEFAULT_SETTINGS.find((d) => d.key === setting.key);
-      return defaults ? { ...setting, label: defaults.label, category: defaults.category } : setting;
+      const value = currentValue(setting.key, setting.value);
+      return defaults ? { ...setting, value, label: defaults.label, category: defaults.category } : { ...setting, value };
     });
   }
 
@@ -140,12 +199,14 @@ class SettingsService {
 
     const result = {};
     for (const s of settings) {
+      const value = currentValue(s.key, s.value);
       try {
-        result[s.key] = JSON.parse(s.value);
+        result[s.key] = JSON.parse(value);
       } catch (_) {
-        result[s.key] = s.value;
+        result[s.key] = value;
       }
     }
+    await this.attachMemberPhotos(result);
 
     // Exposer explicitement l'état public de la maintenance pour le frontend
     const maintSetting = await prisma.setting.findUnique({
@@ -167,6 +228,29 @@ class SettingsService {
     return result;
   }
 
+  // Témoignage ou mentor relié à un compte membre : sa photo de profil et son nom suivent le compte
+  static async attachMemberPhotos(result) {
+    const lists = ['home.testimonials', 'about.mentors'].filter((key) => Array.isArray(result[key]));
+    const ids = [...new Set(lists.flatMap((key) => result[key].map((item) => item && item.userId).filter(Boolean)))];
+    if (!ids.length) return;
+    const users = await prisma.user.findMany({
+      where: { id: { in: ids }, isActive: true },
+      select: { id: true, firstName: true, lastName: true, avatarUrl: true },
+    });
+    const byId = new Map(users.map((u) => [u.id, u]));
+    for (const key of lists) {
+      result[key] = result[key].map((item) => {
+        const user = item && byId.get(item.userId);
+        if (!user) return item;
+        return {
+          ...item,
+          name: item.name || `${user.firstName} ${user.lastName}`.trim(),
+          photo: user.avatarUrl || item.photo || null,
+        };
+      });
+    }
+  }
+
   static async getPublicSetting(key) {
     if (key === 'platform.maintenanceMode') {
       const setting = await prisma.setting.findUnique({
@@ -183,10 +267,11 @@ class SettingsService {
     if (!setting || setting.isSensitive) {
       throw new NotFoundError('Paramètre non trouvé ou confidentiel');
     }
+    const value = currentValue(setting.key, setting.value);
     try {
-      return JSON.parse(setting.value);
+      return JSON.parse(value);
     } catch (_) {
-      return setting.value;
+      return value;
     }
   }
 
@@ -203,9 +288,17 @@ class SettingsService {
       throw new BadRequestError('La valeur du paramètre doit être une chaîne');
     }
 
+    await this.ensureDefaults();
     const existing = await prisma.setting.findUnique({ where: { key } });
     if (!existing) {
       throw new NotFoundError('Paramètre non trouvé');
+    }
+    if (EDITORIAL_SCHEMAS[key]) {
+      let parsed;
+      try { parsed = JSON.parse(value); } catch (_) { throw new BadRequestError('Contenu illisible (JSON attendu)'); }
+      const check = EDITORIAL_SCHEMAS[key].safeParse(parsed);
+      if (!check.success) throw new BadRequestError(check.error.errors[0].message);
+      value = JSON.stringify(check.data);
     }
 
     const updated = await prisma.setting.update({

@@ -240,10 +240,10 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js"></script>
+    <script defer src="js/frontend-api.js?v=20261025-2"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/analytics-tracker.js"></script>
-    <script defer src="js/main.js?v=20261025-2"></script>
+    <script defer src="js/main.js?v=20261025-3"></script>
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('topicContainer');
@@ -374,6 +374,7 @@
                 <div class="forum-reply-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                   <div>
                     <div style="display: flex; align-items: center; gap: 0.4rem;">
+                      ${(window.avatarHtml || (() => ""))(reply.author, { size: 36 })}
                       <span class="forum-reply-author" style="font-weight: 700;">${authorName}</span>
                       ${authorBadge}
                       ${isReplyAuthor ? '<span class="role-badge role-badge--author">Vous</span>' : ''}
@@ -486,7 +487,8 @@
                   <h1 style="margin-top: var(--space-4); margin-bottom: var(--space-3); font-size: 1.85rem;">
                     ${escapeHtml(topic.title)}
                   </h1>
-                  <div class="forum-topic-meta" style="margin-bottom: 1rem;">
+                  <div class="forum-topic-meta" style="margin-bottom: 1rem; align-items: center;">
+                    ${(window.avatarHtml || (() => ""))(topic.author, { size: 32 })}
                     <span class="author">Par <strong>${authorName}</strong></span>
                     ${authorBadge}
                     <span>·</span>

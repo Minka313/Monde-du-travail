@@ -1007,7 +1007,7 @@
                         </td>
                         <td>
                           <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div class="presence-avatar">${escapeHtml(u.initials || '??')}</div>
+                            <div class="presence-avatar" style="overflow:hidden;">${avatarInner(u, u.initials || '??')}</div>
                             <div>
                               <div style="font-weight: 700; color: var(--color-text); font-size: 0.95rem;">
                                 ${escapeHtml(u.fullName || u.email || 'Membre')}
@@ -1166,7 +1166,7 @@
                   <div class="mentor-card">
                     <div class="mentor-card-header">
                       <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <div class="mentor-avatar">${initials}</div>
+                        <div class="mentor-avatar" style="overflow:hidden;">${avatarInner(u, initials)}</div>
                         <div>
                           <div style="font-weight: 700; color: var(--color-text); font-size: 1rem;">
                             ${escapeHtml(u.firstName || '')} ${escapeHtml(u.lastName || '')}
@@ -1241,7 +1241,7 @@
           </td>
           <td>
             <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <div class="presence-avatar">${escapeHtml(u.initials || '??')}</div>
+              <div class="presence-avatar" style="overflow:hidden;">${avatarInner(u, u.initials || '??')}</div>
               <div>
                 <div style="font-weight: 700; color: var(--color-text); font-size: 0.95rem;">
                   ${escapeHtml(u.fullName)}
@@ -3776,7 +3776,7 @@
         <div class="dossier-modal-body">
           <!-- Hero Profil & Identité -->
           <div class="dossier-profile-hero">
-            <div class="dossier-avatar">${initials}</div>
+            <div class="dossier-avatar" style="overflow:hidden;">${avatarInner(u, initials)}</div>
             <div class="dossier-profile-info">
               <div class="dossier-profile-name">
                 <span>${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</span>
@@ -5387,8 +5387,8 @@
           ${isOccupied && holder ? `
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem 0.75rem;margin-bottom:0.85rem;">
               <div style="display:flex;align-items:center;gap:0.75rem;min-width:0;flex:1 1 180px;">
-                <div style="flex-shrink:0;width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg, ${meta.color} 0%, #0f172a 100%);color:#ffffff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95rem;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
-                  ${initials}
+                <div style="flex-shrink:0;width:42px;height:42px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg, ${meta.color} 0%, #0f172a 100%);color:#ffffff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95rem;box-shadow:0 2px 6px rgba(0,0,0,0.15);">
+                  ${avatarInner(holder, initials)}
                 </div>
                 <div style="min-width:0;">
                   <div style="font-weight:700;color:#0f172a;font-size:0.95rem;overflow-wrap:anywhere;">
@@ -6355,14 +6355,14 @@
 
     let timelineSteps = [
       {
-        year: '2024',
-        title: 'Idéation & Naissance',
-        description: 'Constat du fossé entre formation académique et marché du travail. Création du noyau fondateur de mentors et experts.'
+        year: '2025',
+        title: 'Fondation du Club au LYNAQE de Sédhiou',
+        description: 'Naissance de l\'initiative au Lycée Nation-Armée pour la Qualité et l\'Équité (LYNAQE) de Sédhiou, pour préparer concrètement les jeunes au monde professionnel.'
       },
       {
-        year: '2025',
-        title: 'Structuration & Plateforme',
-        description: 'Lancement de la plateforme Le Monde du Travail, des fiches métiers immersives et des premiers cohortes d\'accompagnement.'
+        year: '2025 – 2026',
+        title: 'Masterclasses Soft Skills & Réseau Mentorat',
+        description: 'Structuration d\'un catalogue de formations et ralliement de professionnels et cadres partenaires pour guider les jeunes en individuel.'
       },
       {
         year: '2026',
@@ -6409,6 +6409,7 @@
           <button class="vitrine-tab-btn" data-vitrine-tab="about">
             🏛️ Les Grandes Étapes du Club (À Propos)
           </button>
+          ${window.AdminVitrineContent ? window.AdminVitrineContent.TABS.map(([key, label]) => `<button class="vitrine-tab-btn" data-vitrine-tab="${key}">${escapeHtml(label)}</button>`).join('') : ''}
         </div>
 
         <!-- TAB 1 : ACCUEIL (À LA UNE CE MOIS-CI) -->
@@ -6628,6 +6629,7 @@
           </div>
         </div>
 
+        ${window.AdminVitrineContent ? window.AdminVitrineContent.renderPanes(settings) : ''}
       </div>
     `;
   }
@@ -7843,23 +7845,18 @@
   function bindVitrineEvents() {
     // Gestion des onglets Vitrine
     const tabBtns = document.querySelectorAll('.vitrine-tab-btn');
-    const paneHome = document.getElementById('vitrine-tab-home-pane');
-    const paneAbout = document.getElementById('vitrine-tab-about-pane');
 
     tabBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         tabBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const target = btn.getAttribute('data-vitrine-tab');
-        if (target === 'home') {
-          if (paneHome) paneHome.style.display = 'block';
-          if (paneAbout) paneAbout.style.display = 'none';
-        } else {
-          if (paneHome) paneHome.style.display = 'none';
-          if (paneAbout) paneAbout.style.display = 'block';
-        }
+        document.querySelectorAll('.vitrine-tab-pane').forEach((pane) => {
+          pane.style.display = pane.id === `vitrine-tab-${target}-pane` ? 'block' : 'none';
+        });
       });
     });
+    if (window.AdminVitrineContent) window.AdminVitrineContent.bind();
 
     // Synchronisation en direct pour "À la Une ce mois-ci"
     const featTag = document.getElementById('feat-tag');
@@ -8081,6 +8078,15 @@
   // Image hébergée sur le stockage du site (Supabase Storage ou Cloudflare R2) ou lien externe
   function isHostedMedia(url) {
     return /supabase\.co\/storage\/v1\/object\/public\/|media\.lemondedutravail|r2\.dev|r2\.cloudflarestorage/.test(String(url || ''));
+  }
+
+  // Contenu d'une pastille d'avatar : la photo de profil si elle existe, sinon les initiales
+  function avatarInner(person, fallback) {
+    const value = person && person.avatarUrl;
+    const ok = typeof value === 'string' && (/^https?:\/\//i.test(value) || /^data:image\/(svg\+xml|png|jpe?g|webp|gif)[;,]/i.test(value));
+    if (!ok) return escapeHtml(fallback);
+    const name = `${person.firstName || ''} ${person.lastName || ''}`.trim();
+    return `<img src="${escapeHtml(value)}" alt="${escapeHtml(name)}" loading="lazy" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;">`;
   }
 
   function escapeHtml(text) {

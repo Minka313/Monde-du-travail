@@ -7,6 +7,8 @@ class EmailService {
     return {
       resendApiKey: process.env.RESEND_API_KEY || null,
       from: process.env.EMAIL_FROM || 'Le Monde du Travail <onboarding@resend.dev>',
+      // Les réponses des destinataires arrivent dans la boîte de l'organisation
+      replyTo: process.env.EMAIL_REPLY_TO || 'lemondedutravailsen@gmail.com',
       adminEmail: process.env.ULTRA_ADMIN_EMAIL || process.env.DEFAULT_ADMIN_EMAIL || 'admin@mondedutravail.com',
     };
   }
@@ -33,6 +35,7 @@ class EmailService {
           body: JSON.stringify({
             from: config.from,
             to: recipients,
+            reply_to: config.replyTo,
             subject,
             html,
             text: cleanText,

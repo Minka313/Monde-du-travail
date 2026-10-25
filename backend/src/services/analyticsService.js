@@ -324,6 +324,7 @@ class AnalyticsService {
           id: true,
           firstName: true,
           lastName: true,
+          avatarUrl: true,
           email: true,
           role: true,
           createdAt: true,
@@ -422,6 +423,7 @@ class AnalyticsService {
           totalContributions,
           presenceScore,
           initials: `${(user.firstName?.[0] || '').toUpperCase()}${(user.lastName?.[0] || '').toUpperCase()}` || 'U',
+          avatarUrl: user.avatarUrl || null,
         };
       });
 

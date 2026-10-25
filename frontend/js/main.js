@@ -997,35 +997,84 @@
     }
   }
 
-  // ===== Dynamic Sections on Homepage (Discussions récentes du Forum & Newsletter) =====
+  function personAvatar(person, size) {
+    return window.avatarHtml ? window.avatarHtml(person, { size }) : '';
+  }
+
+  function renderTestimonials(list) {
+    const section = document.getElementById('scene-testimonials');
+    const grid = document.getElementById('homeTestimonialsGrid');
+    if (!section || !grid || !Array.isArray(list) || !list.length) return;
+    grid.innerHTML = list.map((t) => `
+      <div class="testimonial-card">
+        <div class="testimonial-quote-icon">“</div>
+        <p class="testimonial-text">${escapeHtml(t.quote)}</p>
+        <div class="testimonial-author-box">
+          ${personAvatar({ name: t.name, photo: t.photo }, 48)}
+          <div class="testimonial-meta">
+            <span class="testimonial-name">${escapeHtml(t.name || '')}</span>
+            ${t.role ? `<span class="testimonial-role">${escapeHtml(t.role)}</span>` : ''}
+          </div>
+        </div>
+      </div>`).join('');
+    section.style.display = '';
+  }
+
+  function renderMentors(list) {
+    const section = document.getElementById('aboutMentorsSection');
+    const grid = document.getElementById('aboutMentorsGrid');
+    if (!section || !grid || !Array.isArray(list) || !list.length) return;
+    grid.innerHTML = list.map((m) => {
+      const linkedin = m.linkedin && window.safeUrl ? window.safeUrl(m.linkedin) : '';
+      return `
+      <div class="mentor-card">
+        <div class="mentor-photo">${personAvatar({ name: m.name, photo: m.photo }, 84)}</div>
+        <h3 class="mentor-name">${escapeHtml(m.name || '')}</h3>
+        <div class="mentor-role">${escapeHtml(m.role || '')}</div>
+        ${m.bio ? `<p class="mentor-bio">${escapeHtml(m.bio)}</p>` : ''}
+        ${m.quote ? `<blockquote class="mentor-quote"><span>Le mot du mentor</span>« ${escapeHtml(m.quote)} »</blockquote>` : ''}
+        ${linkedin ? `<a class="mentor-linkedin" href="${escapeHtml(linkedin)}" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>` : ''}
+      </div>`;
+    }).join('');
+    section.style.display = '';
+  }
+
+  // ===== Sections dynamiques : discussions du forum (épinglées d'abord), témoignages, mentors =====
   async function initHomeDynamicSections() {
     const forumContainer = document.getElementById('homeForumContainer');
     if (forumContainer && window.Api?.forum) {
+      let topics = [];
       try {
-        const res = await window.Api.forum.getTopics({ limit: 3 });
-        const topics = res?.data?.topics || res?.data || [];
-        if (Array.isArray(topics) && topics.length > 0) {
-          forumContainer.innerHTML = topics.slice(0, 3).map(t => {
-            const cat = t.category?.name || 'Général';
-            const replies = t._count?.replies ?? t.repliesCount ?? 0;
-            const author = t.author ? `${t.author.firstName || ''} ${t.author.lastName ? t.author.lastName[0] + '.' : ''}`.trim() : 'Membre';
-            const snippet = t.content ? escapeHtml(t.content.substring(0, 110)) + '...' : 'Rejoins la discussion pour échanger avec la communauté.';
-            return `
-              <a href="forum-topic.html?id=${t.id}" class="home-topic-card">
+        // Les sujets épinglés par l'équipe passent en premier, puis les plus récents
+        const res = await window.Api.forum.getAll({ limit: 3 });
+        topics = res?.data?.topics || res?.data || [];
+      } catch (_) { /* forum indisponible : invitation à participer */ }
+      forumContainer.innerHTML = Array.isArray(topics) && topics.length
+        ? topics.slice(0, 3).map((t) => {
+          const replies = t.replyCount ?? t._count?.replies ?? 0;
+          const author = t.author ? `${t.author.firstName || ''} ${t.author.lastName ? t.author.lastName[0] + '.' : ''}`.trim() : 'Membre';
+          const snippet = t.content ? `${escapeHtml(t.content.substring(0, 110))}${t.content.length > 110 ? '…' : ''}` : 'Rejoins la discussion pour échanger avec la communauté.';
+          return `
+              <a href="forum-topic.html?id=${encodeURIComponent(t.id)}" class="home-topic-card">
                 <div class="home-topic-top">
-                  <span class="home-topic-badge">${escapeHtml(cat)}</span>
+                  <span class="home-topic-badge">${t.isPinned ? '📌 ' : ''}${escapeHtml(t.category?.name || t.category || 'Général')}</span>
                   <h4 class="home-topic-title">${escapeHtml(t.title)}</h4>
                   <p class="home-topic-snippet">${snippet}</p>
                 </div>
                 <div class="home-topic-footer">
-                  <span class="home-topic-author">👤 ${escapeHtml(author)}</span>
+                  <span class="home-topic-author" style="display:inline-flex;align-items:center;gap:0.4rem;">${window.avatarHtml ? window.avatarHtml(t.author, { size: 24 }) : '👤'} ${escapeHtml(author)}</span>
                   <span class="home-topic-replies">💬 ${replies} réponse${replies > 1 ? 's' : ''}</span>
                 </div>
-              </a>
-            `;
-          }).join('');
-        }
-      } catch (_) {}
+              </a>`;
+        }).join('')
+        : `
+              <div class="home-topic-card" style="grid-column:1/-1;text-align:center;align-items:center;">
+                <div class="home-topic-top">
+                  <h4 class="home-topic-title">Le forum t'attend</h4>
+                  <p class="home-topic-snippet">Pose la première question ou partage ton expérience : orientation, concours, premier emploi…</p>
+                </div>
+                <a href="forum-create.html" class="btn btn-primary">Lancer une discussion</a>
+              </div>`;
     }
 
     // Hydratation dynamique de la vitrine ("À la Une ce mois-ci" et "Les Grandes Étapes du Club")
@@ -1038,7 +1087,7 @@
         } catch (_) {}
       }
       if (!settings) {
-        const res = await fetch((window.Api?.API_BASE || '/api') + '/settings/public');
+        const res = await fetch(`${apiBaseUrl()}/settings/public`);
         if (res.ok) {
           const json = await res.json();
           settings = json.data || {};
@@ -1082,6 +1131,16 @@
           }
         }
 
+        // Témoignages (Accueil) et mentors (À Propos) : saisis dans l'admin, aucun contenu fictif
+        renderTestimonials(settings['home.testimonials']);
+        renderMentors(settings['about.mentors']);
+        const contactLink = document.getElementById('aboutContactEmail');
+        const contactEmail = settings['site.contactEmail'];
+        if (contactLink && typeof contactEmail === 'string' && /^[^\s@<>"]+@[^\s@<>"]+\.[a-z]{2,}$/i.test(contactEmail)) {
+          contactLink.href = `mailto:${contactEmail}`;
+          contactLink.textContent = `✉️ ${contactEmail}`;
+        }
+
         // 2. "Les Grandes Étapes du Club" (À Propos)
         const timelineEl = document.querySelector('.about-timeline');
         if (timelineEl && Array.isArray(settings['about.timeline_steps']) && settings['about.timeline_steps'].length > 0) {
@@ -1095,22 +1154,6 @@
         }
     } catch (_) {}
 
-    const newsletterForm = document.getElementById('homeNewsletterForm');
-    if (newsletterForm) {
-      newsletterForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = newsletterForm.querySelector('input[type="email"]');
-        const feedback = document.getElementById('newsletterFeedback');
-        if (input && input.value.trim()) {
-          input.value = '';
-          if (feedback) {
-            feedback.style.display = 'block';
-            feedback.textContent = '🎉 Merci ! Vous êtes désormais inscrit à notre veille hebdomadaire.';
-            setTimeout(() => { feedback.style.display = 'none'; }, 6000);
-          }
-        }
-      });
-    }
   }
 
   let initialized = false;
