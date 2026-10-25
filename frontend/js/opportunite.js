@@ -263,12 +263,15 @@
 
   // ---------- Référencement ----------
   function setMeta(o) {
-    const url = `${window.location.origin}/${O.detailUrl(o).replace('.html', '')}`;
     document.title = `${o.title} — Concours & Opportunités | Le Monde du Travail`;
     const description = `${o.summary}`.slice(0, 300);
     document.getElementById('metaDescription')?.setAttribute('content', description);
     document.getElementById('ogTitle')?.setAttribute('content', o.title);
-    if (o.slug) document.getElementById('canonicalLink')?.setAttribute('href', url);
+    if (o.slug) {
+      const canonical = `https://lemondedutravail.org/opportunite?slug=${encodeURIComponent(o.slug)}`;
+      document.getElementById('canonicalLink')?.setAttribute('href', canonical);
+      document.getElementById('ogUrl')?.setAttribute('content', canonical);
+    }
     document.getElementById('oppCrumb').textContent = (O.CATEGORY[o.category] || {}).label || 'Fiche';
   }
 
