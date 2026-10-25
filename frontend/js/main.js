@@ -1188,10 +1188,26 @@
   /**
    * PROFIL VISITEUR (FACULTATIF, ANONYME)
    * Questionnaire en 3 étapes (situation, niveau, centres d'intérêt) proposé après
-   * 2 pages vues ou 45 s, rappel 7 jours plus tard en cas de fermeture.
+   * 2 pages vues ou 45 s. Une fois affiché, il ne revient pas avant 30 jours, même
+   * s'il est ignoré ; une fois la situation donnée, il ne revient plus (réponses
+   * gardées sur l'appareil, et sur le compte pour un membre connecté).
    * Réouvrable depuis l'espace membre : window.VisitorSurvey.open().
    */
   const SURVEY_DONE_KEY = 'lmt_visitor_profile';
+  const SURVEY_SNOOZE_KEY = 'lmt_profile_dismissed_until';
+  const SURVEY_REASK_DAYS = 30;
+
+  function snoozeSurvey() {
+    try { localStorage.setItem(SURVEY_SNOOZE_KEY, Date.now() + SURVEY_REASK_DAYS * 24 * 3600 * 1000); } catch (_) { /* stockage indisponible */ }
+  }
+
+  function rememberSurvey(answers) {
+    try {
+      localStorage.setItem(SURVEY_DONE_KEY, JSON.stringify({ ...answers, savedAt: Date.now() }));
+      if (answers.status) localStorage.setItem('lmt_user_profile', answers.status);
+    } catch (_) { /* stockage indisponible */ }
+    if (answers.status && window.AnalyticsTracker) window.AnalyticsTracker.userProfile = answers.status;
+  }
   const SURVEY_OPTIONS = {
     statuses: [
       ['Collégien', '🧒'], ['Lycéen', '🎒'], ['Étudiant', '🎓'], ['Jeune diplômé', '📜'],
@@ -1226,6 +1242,21 @@
       interests: Array.isArray(previous.interests) ? previous.interests.slice() : [],
     };
     const skipLevel = () => ['Parent', 'Enseignant ou conseiller'].includes(answers.status);
+    // Proposé une fois : ignoré ou non, il ne réapparaît pas avant 30 jours
+    if (!manual) snoozeSurvey();
+
+    // Enregistre ce qui a déjà été répondu (dès la situation choisie)
+    function persist() {
+      rememberSurvey(answers);
+      const sessionId = window.AnalyticsTracker?.getSessionId?.();
+      if (!sessionId) return Promise.resolve();
+      return fetch(`${apiBaseUrl()}/analytics/visitor-profile`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(window.Api?.getToken?.() ? { Authorization: `Bearer ${window.Api.getToken()}` } : {}) },
+        body: JSON.stringify({ sessionId, ...answers }),
+        keepalive: true,
+      }).catch(() => { /* le site reste utilisable même si l'envoi échoue */ });
+    }
 
     const banner = document.createElement('div');
     banner.className = 'progressive-profile-banner vp-survey';
@@ -1263,24 +1294,9 @@
     }
 
     async function finish() {
-      const sessionId = window.AnalyticsTracker?.getSessionId?.();
       const btn = banner.querySelector('[data-vp="finish"]');
       if (btn) btn.disabled = true;
-      try {
-        if (sessionId) {
-          await fetch(`${apiBaseUrl()}/analytics/visitor-profile`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', ...(window.Api?.getToken?.() ? { Authorization: `Bearer ${window.Api.getToken()}` } : {}) },
-            body: JSON.stringify({ sessionId, ...answers }),
-            keepalive: true,
-          });
-        }
-        localStorage.setItem(SURVEY_DONE_KEY, JSON.stringify({ ...answers, savedAt: Date.now() }));
-        if (answers.status) {
-          localStorage.setItem('lmt_user_profile', answers.status);
-          if (window.AnalyticsTracker) window.AnalyticsTracker.userProfile = answers.status;
-        }
-      } catch (_) { /* le site reste utilisable même si l'envoi échoue */ }
+      await persist();
       banner.innerHTML = '<div class="prog-profile-success" style="display:flex;"><span>✨</span><span>Merci ! Le site s\'adapte désormais à ton profil.</span></div>';
       document.dispatchEvent(new CustomEvent('visitor-profile:saved', { detail: answers }));
       setTimeout(() => { banner.classList.remove('visible'); setTimeout(() => banner.remove(), 350); }, 1800);
@@ -1288,9 +1304,9 @@
 
     banner.addEventListener('click', (e) => {
       const statusBtn = e.target.closest('[data-status]');
-      if (statusBtn) { answers.status = statusBtn.dataset.status; step(skipLevel() ? 3 : 2); return; }
+      if (statusBtn) { answers.status = statusBtn.dataset.status; persist(); step(skipLevel() ? 3 : 2); return; }
       const levelBtn = e.target.closest('[data-level]');
-      if (levelBtn) { answers.educationLevel = levelBtn.dataset.level; step(3); return; }
+      if (levelBtn) { answers.educationLevel = levelBtn.dataset.level; persist(); step(3); return; }
       const interestBtn = e.target.closest('[data-interest]');
       if (interestBtn) {
         const v = interestBtn.dataset.interest;
@@ -1306,9 +1322,7 @@
       if (action === 'skip2') { answers.educationLevel = null; step(3); }
       if (action === 'finish') finish();
       if (action === 'close') {
-        if (!manual) {
-          try { localStorage.setItem('lmt_profile_dismissed_until', Date.now() + 7 * 24 * 3600 * 1000); } catch (_) { /* stockage indisponible */ }
-        }
+        if (answers.status) persist();
         banner.classList.remove('visible');
         setTimeout(() => banner.remove(), 350);
       }
@@ -1320,11 +1334,21 @@
 
   window.VisitorSurvey = { open: () => openVisitorSurvey({ manual: true }), read: readSurvey };
 
-  function initProgressiveProfiling() {
+  async function initProgressiveProfiling() {
     try {
       if (readSurvey()) return;
-      const dismissedUntil = localStorage.getItem('lmt_profile_dismissed_until');
+      const dismissedUntil = localStorage.getItem(SURVEY_SNOOZE_KEY);
       if (dismissedUntil && Date.now() < Number(dismissedUntil)) return;
+
+      // Membre connecté qui a déjà répondu sur un autre appareil : on ne redemande pas
+      const token = window.Api?.getToken?.();
+      if (token) {
+        try {
+          const res = await fetch(`${apiBaseUrl()}/analytics/visitor-profile/me`, { headers: { Authorization: `Bearer ${token}` } });
+          const body = res.ok ? await res.json() : null;
+          if (body && body.data) { rememberSurvey(body.data); return; }
+        } catch (_) { /* hors ligne : on garde le comportement par défaut */ }
+      }
 
       let sessionViews = 1;
       try {

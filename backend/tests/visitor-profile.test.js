@@ -7,20 +7,21 @@ const { createTestUser, cleanupTestUsers, prisma } = require('./helpers/fixtures
 // profil déclaré facultatif et tableau de bord réservé à l'administration.
 const SESSION = 'vp-test-session-0001';
 const SESSION_2 = 'vp-test-session-0002';
+const SESSION_3 = 'vp-test-session-0003';
 const EMAILS = ['ultra@vp.test.com', 'member@vp.test.com'];
 
 describe('Profils visiteurs', () => {
   let ultraToken, memberToken;
 
   beforeAll(async () => {
-    await prisma.visitorProfile.deleteMany({ where: { sessionId: { in: [SESSION, SESSION_2] } } });
+    await prisma.visitorProfile.deleteMany({ where: { sessionId: { in: [SESSION, SESSION_2, SESSION_3] } } });
     ultraToken = signAccessToken(await createTestUser({ email: EMAILS[0], role: 'ULTRA_ADMIN' }));
     memberToken = signAccessToken(await createTestUser({ email: EMAILS[1] }));
   });
 
   afterAll(async () => {
-    await prisma.visitorProfile.deleteMany({ where: { sessionId: { in: [SESSION, SESSION_2] } } });
-    await prisma.analyticsEvent.deleteMany({ where: { sessionId: { in: [SESSION, SESSION_2] } } });
+    await prisma.visitorProfile.deleteMany({ where: { sessionId: { in: [SESSION, SESSION_2, SESSION_3] } } });
+    await prisma.analyticsEvent.deleteMany({ where: { sessionId: { in: [SESSION, SESSION_2, SESSION_3] } } });
     await cleanupTestUsers(EMAILS);
     await prisma.$disconnect();
   });
@@ -73,6 +74,19 @@ describe('Profils visiteurs', () => {
     expect(ok.status).toBe(200);
     expect(ok.body.data.interests).toEqual(['Numérique & IA', 'Santé', 'Arts & culture']);
     expect((await request(app).post('/api/analytics/visitor-profile').send({ sessionId: SESSION, status: 'Astronaute' })).status).toBe(400);
+  });
+
+  it("rend au membre connecté le profil déjà déclaré, pour ne pas le redemander sur un autre appareil", async () => {
+    expect((await request(app).get('/api/analytics/visitor-profile/me')).status).toBe(401);
+    const before = await request(app).get('/api/analytics/visitor-profile/me').set('Authorization', `Bearer ${memberToken}`);
+    expect(before.status).toBe(200);
+    expect(before.body.data).toBeNull();
+
+    await request(app).post('/api/analytics/visitor-profile').set('Authorization', `Bearer ${memberToken}`)
+      .send({ sessionId: SESSION_3, status: 'Lycéen', educationLevel: 'Terminale / Bac', interests: ['Santé'] })
+      .expect(200);
+    const after = await request(app).get('/api/analytics/visitor-profile/me').set('Authorization', `Bearer ${memberToken}`);
+    expect(after.body.data).toMatchObject({ status: 'Lycéen', educationLevel: 'Terminale / Bac', interests: ['Santé'] });
   });
 
   it('publie la liste des choix proposés', async () => {

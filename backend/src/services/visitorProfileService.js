@@ -109,6 +109,16 @@ class VisitorProfileService {
     return { status: profile.status, educationLevel: profile.educationLevel, interests: profile.interests };
   }
 
+  // Dernier profil déclaré par un membre connecté (sur n'importe quel appareil)
+  static async getForUser(userId) {
+    const profile = await prisma.visitorProfile.findFirst({
+      where: { userId, profiledAt: { not: null } },
+      orderBy: { profiledAt: 'desc' },
+      select: { status: true, educationLevel: true, interests: true, profiledAt: true },
+    });
+    return profile || null;
+  }
+
   static options() {
     return { statuses: STATUSES, levels: LEVELS, interests: INTERESTS };
   }

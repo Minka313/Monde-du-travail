@@ -141,6 +141,14 @@ AnalyticsController.saveVisitorProfile = async (req, res, next) => {
   }
 };
 
+AnalyticsController.getMyVisitorProfile = async (req, res, next) => {
+  try {
+    res.json({ success: true, data: await VisitorProfileService.getForUser(req.user.id) });
+  } catch (error) {
+    next(error);
+  }
+};
+
 AnalyticsController.recordEngagement = async (req, res) => {
   try {
     // Envoyé par navigator.sendBeacon : corps JSON parfois transmis en texte brut

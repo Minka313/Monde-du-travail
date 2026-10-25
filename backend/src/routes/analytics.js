@@ -18,6 +18,7 @@ router.post('/profile', optionalAuth, AnalyticsController.setProfile);
 // Profil visiteur détaillé (facultatif, anonyme) et temps passé sur les pages
 router.get('/visitor-options', AnalyticsController.getVisitorOptions);
 router.post('/visitor-profile', optionalAuth, AnalyticsController.saveVisitorProfile);
+router.get('/visitor-profile/me', authenticate, AnalyticsController.getMyVisitorProfile);
 router.post('/engagement', express.text({ type: ['text/plain', 'application/json'], limit: '2kb' }), AnalyticsController.recordEngagement);
 
 // Endpoints sécurisés réservés aux administrateurs autorisés (Ultra Admin / analytics.read)
