@@ -124,8 +124,8 @@
                     </div>
                     <div class="feature-card reveal-scale">
                         <div class="feature-icon-badge">📜</div>
-                        <h3>Certificats de Réussite</h3>
-                        <p>Valide chaque module avec une attestation reconnue à mettre en avant sur ton CV et ton profil LinkedIn.</p>
+                        <h3>Compétences concrètes</h3>
+                        <p>Chaque module se termine par une mise en pratique (jeu de rôle, pitch, projet) pour repartir avec des compétences utilisables tout de suite. Les formations ne sont pas certifiantes pour le moment.</p>
                     </div>
                 </div>
             </div>
@@ -256,7 +256,7 @@
                 <div class="section-header reveal-up">
                     <span class="section-label">Catalogue des formations</span>
                     <h2>Développe tes compétences clés</h2>
-                    <p>Des formations pratiques et certifiantes animées par des professionnels chevronnés.</p>
+                    <p>Des formations pratiques animées par des professionnels chevronnés.</p>
                 </div>
 
                 <!-- Barre de Recherche Instantanée & Compteur Dynamique -->
@@ -638,15 +638,7 @@
                     </div>
                   ` : ''}
 
-                  ${f.certification ? `
-                    <div class="dossier-section" style="background:#fefce8;border:1px solid #fef08a;padding:1.2rem;border-radius:10px;">
-                      <h4 style="color:#854d0e;margin-bottom:0.4rem;font-size:0.98rem;display:flex;align-items:center;gap:0.4rem;">
-                        <span>🏆</span>
-                        <span>Certification & Reconnaissance</span>
-                      </h4>
-                      <p style="color:#713f12;font-size:0.92rem;line-height:1.6;margin:0;">${escapeHtml(f.certification)}</p>
-                    </div>
-                  ` : ''}
+                  <!-- Pas de certification affichée : les formations ne sont pas certifiantes pour le moment -->
 
                   ${f.content ? `
                     <div class="dossier-section">
@@ -1238,7 +1230,6 @@
             objectives: 'Maîtriser la gestion du stress, structurer un pitch percutant, captiver son auditoire par la voix et remporter l\'adhésion.',
             prerequisites: 'Aucun prérequis technique. Volonté d\'expérimenter et de progresser en groupe bienveillant.',
             targetAudience: 'Étudiants, jeunes diplômés, managers et entrepreneurs souhaitant développer leur impact oratoire.',
-            certification: 'Certificat d\'Aptitude à l\'Éloquence et à la Prise de Parole (Club Le Monde du Travail).',
             videoUrl: 'https://www.youtube.com/watch?v=i0a61wFaQD8',
             syllabus: [
               { module: 'Module 1 : Vaincre le trac et maîtriser son non-verbal', duration: '1 semaine', lessons: ['Respiration ventrale et ancrage', 'Regard et gestion de l\'espace scénique', 'Poser sa voix et moduler le rythme'] },
@@ -1258,7 +1249,6 @@
             objectives: 'Développer un leadership inclusif, animer des réunions productives, déléguer avec confiance et piloter la performance collective.',
             prerequisites: 'Avoir une première expérience de projet en équipe ou un rôle de coordination.',
             targetAudience: 'Chefs de projet, managers de proximité, directeurs de pôles, entrepreneurs.',
-            certification: 'Certification Professionnelle en Management Collaboratif & Leadership Éthique.',
             videoUrl: 'https://www.youtube.com/watch?v=ReRcHdeUG9Y',
             syllabus: [
               { module: 'Module 1 : De l\'expert au leader inspirant', duration: '1 semaine', lessons: ['Styles de leadership', 'Intelligence émotionnelle appliquée', 'Bâtir une vision d\'équipe motivante'] },
@@ -1278,7 +1268,6 @@
             objectives: 'Transformer une idée brute en modèle économique rentable, valider son marché par le Lean Startup et lever des fonds d\'amorçage.',
             prerequisites: 'Porteur d\'idée de projet ou volonté forte d\'entreprendre en Afrique de l\'Ouest.',
             targetAudience: 'Porteurs de projets innovants, diplômés souhaitant créer leur entreprise.',
-            certification: 'Attestation Supérieure d\'Incubation & Création d\'Entreprise.',
             videoUrl: 'https://www.youtube.com/watch?v=b4Z6p2qWp5c',
             syllabus: [
               { module: 'Module 1 : Idéation & Empathie client locale', duration: '2 semaines', lessons: ['Design Thinking appliqué', 'Interviews clients au Sénégal', 'Value Proposition Canvas'] },
@@ -1298,7 +1287,6 @@
             objectives: 'Comprendre les principes du photovoltaïque, dimensionner une installation solaire autonome et maîtriser les normes de sécurité.',
             prerequisites: 'Notions de base en sciences physiques ou électricité.',
             targetAudience: 'Techniciens en reconversion, ingénieurs juniors, chefs de projets énergétiques.',
-            certification: 'Habilitation Pratique Technicien Photovoltaïque Autonome.',
             videoUrl: 'https://www.youtube.com/watch?v=1kUE0BZtTRc',
             syllabus: [
               { module: 'Module 1 : Gisement solaire et composants clés', duration: '1 semaine', lessons: ['Rayonnement et inclinaisons', 'Panneaux monocristallins et polycristallins', 'Batteries et régulateurs'] },
@@ -1317,7 +1305,6 @@
             objectives: 'Cultiver un esprit de croissance (Growth Mindset), vaincre la procrastination et clarifier sa trajectoire professionnelle.',
             prerequisites: 'Aucun prérequis. Engagement personnel actif.',
             targetAudience: 'Toute personne en quête de clarté professionnelle ou de confiance en soi.',
-            certification: 'Certificat de Compétences Personnelles & Mindset Professionnel.',
             videoUrl: 'https://www.youtube.com/watch?v=mgmVOuLgFB0',
             syllabus: [
               { module: 'Module 1 : Alignement personnel et clarté de vision', duration: '1 semaine', lessons: ['Méthode Ikigai : passions, talents et opportunités', 'Déconstruire ses croyances limitantes'] },
@@ -1336,7 +1323,6 @@
             objectives: 'Adopter une écoute active bienveillante, formuler des critiques constructives et négocier des accords gagnant-gagnant.',
             prerequisites: 'Ouvert à tous les profils professionnels.',
             targetAudience: 'Collaborateurs en entreprise, consultants, chargés de clientèle.',
-            certification: 'Attestation d\'Excellence Relationnelle & Communication Interpersonnelle.',
             videoUrl: 'https://www.youtube.com/watch?v=F6Q_o_v3oZ0',
             syllabus: [
               { module: 'Module 1 : Les bases de la communication interpersonnelle', duration: '1 semaine', lessons: ['Filtres de perception et écoute active', 'L\'art de poser les questions puissantes'] },

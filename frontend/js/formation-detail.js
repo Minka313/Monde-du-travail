@@ -68,7 +68,6 @@
     $('fdBadges').innerHTML = [
       `<span class="job-tag-pill pill-family"><span>📁</span> <span>${esc(f.category)}</span></span>`,
       '<span class="job-tag-pill pill-subdomain fd-badge-wow"><span>✦</span> <span>Fiche WOW</span></span>',
-      '<span class="job-tag-pill pill-domain"><span>🏅</span> <span>Attestation</span></span>',
     ].join('');
 
     const lessons = f.modules.reduce((n, m) => n + m.lessons.length, 0);
@@ -130,7 +129,7 @@
 
       <div class="job-info-card fd-certif">
         <img src="images/wow-mark.svg" alt="" width="44" height="44">
-        <div><h3>Attestation WOW</h3><p>${esc(f.certification)}</p></div>
+        <div><h3>Formation non certifiante</h3><p>Pour le moment, les formations du club ne délivrent ni certificat ni diplôme : l'objectif est de repartir avec des compétences pratiques, mises en œuvre pendant la formation et utiles tout de suite pour tes études, tes candidatures et ton premier emploi.</p></div>
       </div>`;
   }
 

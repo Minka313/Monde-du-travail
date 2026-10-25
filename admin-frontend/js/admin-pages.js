@@ -2201,8 +2201,8 @@
           <textarea name="syllabus" rows="5" placeholder="Module 1 : Vaincre le trac\n- Respiration et ancrage\n- Posture scénique\n\nModule 2 : Storytelling\n- Structure narrative\n- Pitch d'impact">${escapeHtml(syllabusText)}</textarea>
         </label>
 
-        <label style="margin-top:0.5rem;">Certification / Attestation délivrée
-          <input type="text" name="certification" value="${escapeHtml(item?.certification || '')}" placeholder="Ex. Certificat d'Aptitude à l'Éloquence Professionnelle">
+        <label style="margin-top:0.5rem;">Certification / Attestation délivrée <span style="font-size:0.78rem;color:#64748b;">(non affichée sur le site : les formations ne sont pas certifiantes pour le moment)</span>
+          <input type="text" name="certification" value="${escapeHtml(item?.certification || '')}" placeholder="Aucune pour le moment">
         </label>
 
         <label style="margin-top:0.5rem;">Modalités d'apprentissage & Méthodologie
@@ -6367,7 +6367,7 @@
       {
         year: '2026',
         title: 'Réseau National & Impact',
-        description: 'Ouverture aux entreprises partenaires, certifications reconnues et mentorat one-to-one pour des milliers de jeunes talents.'
+        description: 'Ouverture aux entreprises partenaires et mentorat one-to-one pour des milliers de jeunes talents.'
       }
     ];
 

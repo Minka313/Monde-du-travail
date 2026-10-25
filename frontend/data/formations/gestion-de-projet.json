@@ -120,7 +120,6 @@
     { "title": "The Future of Jobs Report 2025", "org": "Forum économique mondial", "year": 2025, "url": "https://www.weforum.org/publications/the-future-of-jobs-report-2025/" }
   ],
   "relatedJobs": ["chef-de-projet-digital", "product-owner", "chef-projet-developpement-durable", "chef-projet-hospitality", "business-analyst"],
-  "certification": "Attestation WOW de gestion de projet, délivrée après la présentation du dossier de projet (cadrage, planning, risques, sprint et rétrospective).",
   "faq": [
     { "q": "Faut-il un logiciel payant ?", "a": "Non. Un tableur, du papier ou des outils gratuits comme Trello suffisent." },
     { "q": "La formation prépare-t-elle à une certification internationale ?", "a": "Elle donne les bases utiles pour aller ensuite vers des certifications reconnues, sans les remplacer." }
