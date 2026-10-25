@@ -177,7 +177,7 @@ class EmailService {
     const dateStr = createdAt ? new Date(createdAt).toLocaleString('fr-FR', {
       day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
     }) : new Date().toLocaleString('fr-FR');
-    const baseUrl = (process.env.FRONTEND_URL || 'https://monde-du-travail.vercel.app').replace(/\/$/, '');
+    const baseUrl = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
     const targetUrl = adminUrl || `${baseUrl}/admin-frontend/index.html#approvals`;
 
     const motivationText = motivation && motivation.trim().length > 0
@@ -282,7 +282,7 @@ class EmailService {
   // 3. Email d'acceptation avec Mot de Bienvenue officiel de l'administrateur
   static async notifyCandidateMembershipApproved({ to, candidateName, welcomeMessage, loginUrl }) {
     const subject = `🎉 Félicitations ! Votre adhésion au club Le Monde du Travail est validée`;
-    const baseUrl = (process.env.FRONTEND_URL || 'https://monde-du-travail.vercel.app').replace(/\/$/, '');
+    const baseUrl = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
     const targetUrl = loginUrl || `${baseUrl}/frontend/login.html`;
     const defaultWelcome = "C'est un réel plaisir de vous accueillir parmi nous ! Vos motivations et votre dynamisme correspondent parfaitement aux valeurs d'excellence, de partage d'expérience et d'entraide de notre club. Nous avons hâte de découvrir vos contributions et de vous accompagner dans votre parcours professionnel. Bienvenue dans la grande famille du Monde du Travail !";
     const welcomeText = (welcomeMessage && welcomeMessage.trim().length > 0 ? welcomeMessage : defaultWelcome)
@@ -390,7 +390,7 @@ class EmailService {
   // 5. Email de réinitialisation de mot de passe (Forgot Password)
   static async notifyPasswordReset({ to, recipientName, resetUrl }) {
     const subject = `Réinitialisation de votre mot de passe 🔒 — Le Monde du Travail`;
-    const baseUrl = (process.env.FRONTEND_URL || 'https://monde-du-travail.vercel.app').replace(/\/$/, '');
+    const baseUrl = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
     const targetUrl = resetUrl || `${baseUrl}/frontend/login.html`;
 
     const html = `
@@ -491,7 +491,7 @@ class EmailService {
             </div>
 
             <div style="text-align:center;margin:28px 0 10px;">
-              <a href="https://monde-du-travail.vercel.app/formations.html" style="background:#0284c7;color:#ffffff;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-block;box-shadow:0 3px 8px rgba(2,132,199,0.3);">
+              <a href="https://lemondedutravail.org/formations.html" style="background:#0284c7;color:#ffffff;padding:12px 28px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-block;box-shadow:0 3px 8px rgba(2,132,199,0.3);">
                 Accéder au programme &rarr;
               </a>
             </div>
@@ -513,7 +513,7 @@ class EmailService {
     const adminEmail = process.env.ULTRA_ADMIN_EMAIL || process.env.DEFAULT_ADMIN_EMAIL || 'admin@mondedutravail.com';
     const subject = `[Nouvelle Inscription Formation] ${candidateName} s'est inscrit à ${formationTitle}`;
     const dateStr = createdAt ? new Date(createdAt).toLocaleString('fr-FR') : new Date().toLocaleString('fr-FR');
-    const baseUrl = (process.env.FRONTEND_URL || 'https://monde-du-travail.vercel.app').replace(/\/$/, '');
+    const baseUrl = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
 
     const html = `
       <div style="margin:0;padding:20px;background:#f1f5f9;font-family:'Segoe UI',Roboto,Helvetica,sans-serif;">

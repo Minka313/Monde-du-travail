@@ -318,7 +318,7 @@ class AuthService {
       { expiresIn: '15m' }
     );
 
-    const baseUrl = process.env.FRONTEND_URL || 'https://monde-du-travail.vercel.app';
+    const baseUrl = process.env.FRONTEND_URL || 'https://lemondedutravail.org';
     const resetUrl = `${baseUrl.replace(/\/$/, '')}/frontend/reset-password.html?token=${encodeURIComponent(resetToken)}`;
 
     // Envoi de l'email via Resend

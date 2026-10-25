@@ -528,7 +528,7 @@
           const relatedJobs = formationRelatedJobs[f.title] || [];
 
           // Liens de partage WhatsApp & Calendrier
-          const shareText = `Salam ! Découvre la formation « ${f.title} » au club Le Monde du Travail : atelier pratique pour booster ses compétences ! 🚀 https://monde-du-travail.vercel.app/formations.html?search=${encodeURIComponent(f.title)}`;
+          const shareText = `Salam ! Découvre la formation « ${f.title} » au club Le Monde du Travail : atelier pratique pour booster ses compétences ! 🚀 https://lemondedutravail.org/formations.html?search=${encodeURIComponent(f.title)}`;
           const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
 
           const calTitle = encodeURIComponent(`Formation Le Monde du Travail : ${f.title}`);

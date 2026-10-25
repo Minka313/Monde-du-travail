@@ -2918,7 +2918,7 @@
 
       const appBaseUrl = window.location.origin.includes('localhost') 
         ? window.location.origin 
-        : 'https://monde-du-travail.vercel.app';
+        : 'https://lemondedutravail.org';
       const learnerUrl = `${appBaseUrl}/frontend/visio.html?formation=${encodeURIComponent(formationId)}`;
       const trainerUrl = `../frontend/visio.html?formation=${encodeURIComponent(formationId)}&role=moderator`;
 

@@ -474,7 +474,7 @@
       <img class="seal" src="${A}img/wow-seal.svg">
       <div class="display m cta-line">${words('Demain se prépare *aujourd\'hui.*')}</div>
       <div class="kicker" style="margin-top:46px">Rejoins le club</div>
-      <div class="url">monde-du-travail.vercel.app</div>
+      <div class="url">lemondedutravail.org</div>
       <div class="sig">WOW · World Of Work · Le Monde du Travail</div></div>`);
     const seal = $(box, '.seal');
     set(seal, { o: 0, s: 0.5, r: -40, blur: 14 });

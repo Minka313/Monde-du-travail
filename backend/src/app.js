@@ -44,7 +44,7 @@ app.use(helmet());
 // CORS
 const isProduction = process.env.NODE_ENV === 'production';
 const allowedOrigins = isProduction
-  ? [process.env.FRONTEND_URL || 'http://localhost:3000']
+  ? [process.env.FRONTEND_URL || 'http://localhost:3000', 'https://lemondedutravail.org', 'https://www.lemondedutravail.org']
   : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:5500', 'http://localhost:5501', 'http://127.0.0.1:3000', 'http://127.0.0.1:5500', 'null'];
 
 const corsOptions = {

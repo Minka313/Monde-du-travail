@@ -13,4 +13,4 @@ Disallow: /reset-password
 Disallow: /visio.html
 Disallow: /maintenance.html
 
-Sitemap: https://monde-du-travail.vercel.app/sitemap.xml
+Sitemap: https://lemondedutravail.org/sitemap.xml

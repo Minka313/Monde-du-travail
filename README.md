@@ -2,7 +2,7 @@
 
 Plateforme web du club **Le Monde du Travail** : orientation professionnelle, fiches métiers, formations, blog et forum communautaire, avec un espace d'administration complet.
 
-🌐 Site en ligne : <https://monde-du-travail.vercel.app>
+🌐 Site en ligne : <https://lemondedutravail.org>
 
 ![CI](https://github.com/Minka313/Monde-du-travail/actions/workflows/ci.yml/badge.svg)
 
