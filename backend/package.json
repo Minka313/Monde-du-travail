@@ -12,7 +12,8 @@
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "prisma:seed": "node prisma/seed.js",
-    "import:opportunites": "node src/scripts/import-opportunities.js"
+    "import:opportunites": "node src/scripts/import-opportunities.js",
+    "storage:migrate": "node src/scripts/migrate-media-storage.js"
   },
   "keywords": [
     "express",
