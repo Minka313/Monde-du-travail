@@ -46,7 +46,8 @@ function createToken({ room, user = {}, name, moderator = false }) {
       user: {
         id: user.id || `invite-${now.toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
         name: (name || 'Participant').slice(0, 60),
-        avatar: user.avatarUrl || '',
+        // Photo importée uniquement (les avatars dessinés sont intégrés à la page, trop lourds pour le jeton)
+        avatar: /^https:\/\//i.test(user.avatarUrl || '') ? user.avatarUrl : '',
         email: '',
         moderator: moderator ? 'true' : 'false',
       },
