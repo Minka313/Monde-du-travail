@@ -41,7 +41,6 @@ async function listAll(src) {
   const objects = [];
   let token;
   do {
-    // eslint-disable-next-line no-await-in-loop
     const page = await src.client.send(new ListObjectsV2Command({ Bucket: src.bucket, ContinuationToken: token }));
     objects.push(...(page.Contents || []));
     token = page.NextContinuationToken;
@@ -62,14 +61,10 @@ async function copyObjects(src, dest, objects, dry) {
   let copied = 0;
   let skipped = 0;
   for (const object of objects) {
-    // eslint-disable-next-line no-await-in-loop
     if (await alreadyCopied(dest, object.Key, object.Size)) { skipped += 1; continue; }
     if (dry) { copied += 1; continue; }
-    // eslint-disable-next-line no-await-in-loop
     const source = await src.client.send(new GetObjectCommand({ Bucket: src.bucket, Key: object.Key }));
-    // eslint-disable-next-line no-await-in-loop
     const body = Buffer.from(await source.Body.transformToByteArray());
-    // eslint-disable-next-line no-await-in-loop
     await dest.client.send(new PutObjectCommand({
       Bucket: dest.bucket,
       Key: object.Key,
@@ -92,7 +87,6 @@ async function columnsWithUrl(oldBase) {
   const hits = [];
   for (const col of columns) {
     const expr = col.data_type === 'text' || col.data_type === 'character varying' ? `"${col.column_name}"` : `"${col.column_name}"::text`;
-    // eslint-disable-next-line no-await-in-loop
     const [{ count }] = await prisma.$queryRawUnsafe(
       `SELECT COUNT(*)::int AS count FROM "${col.table_name}" WHERE ${expr} LIKE '%' || $1 || '%'`, oldBase,
     );
