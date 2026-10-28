@@ -1,6 +1,7 @@
 const OpportunityService = require('../services/opportunityService');
 const AuditService = require('../services/auditService');
 const RbacService = require('../services/rbacService');
+const OpportunityAlertService = require('../services/opportunityAlertService');
 
 function audit(req, action, opportunity, result) {
   return AuditService.log({
@@ -119,6 +120,36 @@ class OpportunityController {
     }
   }
 
+  static async subscribeAlert(req, res, next) {
+    try {
+      const { status } = await OpportunityAlertService.subscribe(req.params.id, req.body.email);
+      const message = status === 'ALREADY'
+        ? 'Cette adresse suit déjà cette annonce.'
+        : 'Presque fini ! Ouvre l\'e-mail que nous venons d\'envoyer et clique sur le lien pour confirmer ton alerte.';
+      res.status(status === 'ALREADY' ? 200 : 201).json({ success: true, message, data: { status } });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async confirmAlert(req, res, next) {
+    try {
+      const data = await OpportunityAlertService.confirm(req.body.token);
+      res.json({ success: true, message: 'Alerte confirmée : tu seras prévenu(e) par e-mail.', data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async unsubscribeAlert(req, res, next) {
+    try {
+      const data = await OpportunityAlertService.unsubscribe(req.body.token);
+      res.json({ success: true, message: 'C\'est noté : tu ne recevras plus d\'alertes pour cette annonce.', data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async createReport(req, res, next) {
     try {
       await OpportunityService.createReport(req.params.id, req.body);
@@ -131,8 +162,9 @@ class OpportunityController {
   // Déclenché chaque heure par la veille du site (GitHub Actions) ; sans effet si rien n'est dû
   static async runSessionReminders(req, res, next) {
     try {
-      const data = await OpportunityService.sendSessionReminders();
-      res.json({ success: true, data });
+      const sessions = await OpportunityService.sendSessionReminders();
+      const alerts = await OpportunityAlertService.sendDueAlerts();
+      res.json({ success: true, data: { sessions, alerts } });
     } catch (error) {
       next(error);
     }

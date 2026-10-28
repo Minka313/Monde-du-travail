@@ -150,7 +150,8 @@
         <div class="opp-aside-actions">
           ${officialUrl ? `<a class="btn btn-primary" href="${esc(officialUrl)}" target="_blank" rel="noopener noreferrer nofollow">Site officiel ↗</a>` : ''}
           ${hasEvents ? '<button type="button" class="btn btn-outline" data-action="ics">📅 Ajouter à mon agenda</button>' : ''}
-          <button type="button" class="btn btn-outline" data-action="fav" aria-pressed="${fav}">${fav ? '★ Dans mes favoris' : '☆ Suivre cette annonce'}</button>
+          <button type="button" class="btn btn-outline" data-action="alert">🔔 M'alerter par e-mail</button>
+          <button type="button" class="btn btn-outline" data-action="fav" aria-pressed="${fav}">${fav ? '★ Dans mes favoris' : '☆ Ajouter à mes favoris'}</button>
           <div class="opp-share">
             <a class="btn btn-ghost btn-sm" data-action="whatsapp" target="_blank" rel="noopener noreferrer" href="#">WhatsApp</a>
             <button type="button" class="btn btn-ghost btn-sm" data-action="share">🔗 Partager</button>
@@ -295,7 +296,7 @@
       if (action === 'fav') {
         const on = O.favorites.toggle(o.id);
         button.setAttribute('aria-pressed', String(on));
-        button.textContent = on ? '★ Dans mes favoris' : '☆ Suivre cette annonce';
+        button.textContent = on ? '★ Dans mes favoris' : '☆ Ajouter à mes favoris';
       }
       if (action === 'share') {
         const url = shareUrl(o);
@@ -309,6 +310,7 @@
         } catch (_) { /* partage annulé */ }
       }
       if (action === 'report') openReport();
+      if (action === 'alert') openAlert('subscribe');
     });
     document.getElementById('oppMain').addEventListener('change', (event) => {
       if (event.target.matches('[data-doc]')) saveDocs(o);
@@ -355,6 +357,78 @@
     });
   }
 
+  // ===== Alertes e-mail : inscription, confirmation (lien reçu) et désinscription =====
+  const alertState = { mode: 'subscribe', token: null };
+
+  function openAlert(mode, token) {
+    alertState.mode = mode;
+    alertState.token = token || null;
+    const dialog = document.getElementById('oppAlertDialog');
+    const status = document.getElementById('oppAlertStatus');
+    const submit = document.getElementById('oppAlertSubmit');
+    const field = document.getElementById('oppAlertEmailField');
+    status.className = 'opp-report-status';
+    status.textContent = '';
+    submit.disabled = false;
+    submit.hidden = false;
+    field.hidden = mode !== 'subscribe';
+    field.querySelector('input').required = mode === 'subscribe';
+    const texts = {
+      subscribe: ['🔔 M\'alerter par e-mail', 'Reçois un e-mail à l\'ouverture des candidatures, 7 jours puis 2 jours avant la date limite, et quand la nouvelle session est publiée. Sans compte, sans publicité.', 'M\'alerter'],
+      confirm: ['🔔 Confirmation de ton alerte', 'Un instant, nous confirmons ton adresse…', ''],
+      stop: ['🔕 Arrêter les alertes', 'Tu ne recevras plus d\'e-mails pour cette annonce.', 'Arrêter les alertes'],
+    }[mode];
+    document.getElementById('oppAlertTitle').textContent = texts[0];
+    document.getElementById('oppAlertLead').textContent = texts[1];
+    submit.textContent = texts[2];
+    submit.hidden = !texts[2];
+    if (!dialog.open) dialog.showModal();
+    if (mode === 'confirm') sendAlert();
+  }
+
+  async function sendAlert() {
+    const form = document.getElementById('oppAlertForm');
+    const status = document.getElementById('oppAlertStatus');
+    const submit = document.getElementById('oppAlertSubmit');
+    submit.disabled = true;
+    status.className = 'opp-report-status';
+    status.textContent = 'Envoi…';
+    try {
+      let res;
+      if (alertState.mode === 'subscribe') res = await window.Api.opportunities.alert(state.o.id, String(new FormData(form).get('email') || '').trim());
+      else if (alertState.mode === 'confirm') res = await window.Api.opportunities.confirmAlert(alertState.token);
+      else res = await window.Api.opportunities.stopAlert(alertState.token);
+      status.classList.add('is-ok');
+      status.textContent = (res && res.message) || 'C\'est fait.';
+      submit.hidden = true;
+      if (alertState.mode !== 'subscribe') {
+        // Le jeton ne doit pas rester dans l'adresse (partage, favoris du navigateur)
+        const url = new URL(window.location.href);
+        url.searchParams.delete('alerte_confirmer');
+        url.searchParams.delete('alerte_arreter');
+        window.history.replaceState(null, '', url);
+      }
+    } catch (error) {
+      status.classList.add('is-error');
+      status.textContent = error.message || 'Impossible pour le moment. Réessaie plus tard.';
+      submit.disabled = false;
+    }
+  }
+
+  function bindAlert() {
+    const dialog = document.getElementById('oppAlertDialog');
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog || event.target.closest('[data-close]')) dialog.close();
+    });
+    document.getElementById('oppAlertForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      sendAlert();
+    });
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('alerte_confirmer')) openAlert('confirm', params.get('alerte_confirmer'));
+    else if (params.get('alerte_arreter')) openAlert('stop', params.get('alerte_arreter'));
+  }
+
   function notFound(message) {
     document.getElementById('oppHead').innerHTML = '<h1>Annonce introuvable</h1>';
     document.getElementById('oppAside').innerHTML = '';
@@ -391,6 +465,7 @@
     document.getElementById('oppMain').innerHTML = renderMain(o);
     bind(o);
     bindReport(o);
+    bindAlert();
 
     try {
       const res = await window.Api.opportunities.getAll();

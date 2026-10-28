@@ -546,6 +546,61 @@ class EmailService {
 
     return this.sendMail({ to: adminEmail, subject, html });
   }
+
+  // Cadre commun des e-mails « Concours & opportunités »
+  static opportunityMail({ heading, body, ctaLabel, ctaUrl, footer }) {
+    return `
+      <div style="margin:0;padding:20px;background:#f1f5f9;font-family:'Segoe UI',Roboto,Helvetica,sans-serif;">
+        <div style="max-width:600px;margin:auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">
+          <div style="background:linear-gradient(135deg, #0f2b46 0%, #1a3f5f 100%);padding:24px 20px;text-align:center;">
+            <h1 style="color:#ffffff;margin:0;font-size:1.25rem;letter-spacing:0.5px;">LE MONDE DU TRAVAIL</h1>
+            <p style="color:#f5a623;margin:5px 0 0;font-size:0.85rem;">Concours & opportunités</p>
+          </div>
+          <div style="padding:26px 24px;">
+            <h2 style="color:#0f172a;margin:0 0 12px;font-size:1.2rem;">${heading}</h2>
+            ${body}
+            <div style="text-align:center;margin:26px 0 18px;">
+              <a href="${ctaUrl}" style="background:#0f2b46;color:#ffffff;padding:13px 28px;border-radius:8px;font-weight:700;text-decoration:none;display:inline-block;">${ctaLabel}</a>
+            </div>
+          </div>
+          <div style="background:#f8fafc;padding:14px 16px;text-align:center;border-top:1px solid #e2e8f0;font-size:0.78rem;color:#64748b;line-height:1.5;">${footer}</div>
+        </div>
+      </div>`;
+  }
+
+  static async notifyOpportunityAlertConfirm({ to, title, confirmUrl }) {
+    const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const html = this.opportunityMail({
+      heading: 'Confirme ton alerte 🔔',
+      body: `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0;">Tu as demandé à être prévenu(e) pour <strong>${esc(title)}</strong> : ouverture des candidatures, rappels avant la date limite et nouvelle session. Clique sur le bouton pour confirmer ton adresse.</p>`,
+      ctaLabel: 'Confirmer mon alerte',
+      ctaUrl: confirmUrl,
+      footer: "Tu n'as rien demandé ? Ignore simplement cet e-mail : aucune alerte ne sera envoyée.",
+    });
+    return this.sendMail({ to, subject: `Confirme ton alerte : ${title}`, html });
+  }
+
+  static async notifyOpportunityAlert({ to, kind, opportunity, url, unsubscribeUrl }) {
+    const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const fr = (d) => new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+    const daysLeft = opportunity.deadline ? Math.max(1, Math.ceil((new Date(opportunity.deadline) - Date.now()) / 86400000)) : null;
+    const texts = {
+      D2: [`⏰ Dernier rappel : ${opportunity.title}`, `Plus que <strong>${daysLeft} jour(s)</strong> : la date limite est le <strong>${opportunity.deadline ? fr(opportunity.deadline) : ''}</strong>. Termine ton dossier dès aujourd'hui.`],
+      D7: [`📅 J-${daysLeft} : ${opportunity.title}`, `La date limite approche : <strong>${opportunity.deadline ? fr(opportunity.deadline) : ''}</strong>. Vérifie les pièces demandées et prépare ton dossier.`],
+      OPEN: [`🟢 Les candidatures sont ouvertes : ${opportunity.title}`, `Les candidatures ont ouvert${opportunity.openingDate ? ` le <strong>${fr(opportunity.openingDate)}</strong>` : ''}${opportunity.deadline ? `, jusqu'au <strong>${fr(opportunity.deadline)}</strong>` : ''}.`],
+      SESSION: [`🔁 Nouvelle session : ${opportunity.title}`, "La nouvelle session de l'annonce que tu suivais est publiée. Découvre les dates et les conditions."],
+    };
+    const [subject, line] = texts[kind] || texts.SESSION;
+    const html = this.opportunityMail({
+      heading: esc(subject),
+      body: `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0 0 10px;">${esc(opportunity.organization)}</p><p style="color:#334155;font-size:0.95rem;line-height:1.6;margin:0;">${line}</p>
+        <p style="color:#64748b;font-size:0.85rem;line-height:1.5;margin:14px 0 0;">Vérifie toujours les informations sur le site officiel avant de candidater.</p>`,
+      ctaLabel: "Voir l'annonce",
+      ctaUrl: url,
+      footer: `Tu reçois cet e-mail car tu suis cette annonce sur lemondedutravail.org.<br><a href="${unsubscribeUrl}" style="color:#64748b;">Ne plus recevoir d'alertes pour cette annonce</a>`,
+    });
+    return this.sendMail({ to, subject, html });
+  }
 }
 
 module.exports = EmailService;

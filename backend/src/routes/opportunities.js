@@ -53,12 +53,26 @@ const reminderLimiter = rateLimit({
   message: { success: false, message: 'Trop de demandes. Réessayez plus tard.' },
 });
 
+const alertSchema = z.object({ body: z.object({ email: z.string().trim().email('Adresse e-mail invalide').max(200) }).strict() });
+const tokenSchema = z.object({ body: z.object({ token: z.string().regex(/^[a-f0-9]{48}$/, 'Lien invalide') }).strict() });
+
+// Alertes e-mail : quelques demandes par heure et par adresse IP
+const alertLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Trop de demandes d\'alerte. Réessayez dans une heure.' },
+});
+
 const adminGate = [authenticate, AdminApprovalMiddleware.middleware, requireModulePermission('opportunite')];
 
 // Public : uniquement les annonces publiées
 router.get('/', validate(publicQuerySchema), OpportunityController.getPublished);
 
 router.post('/reminders/run', reminderLimiter, OpportunityController.runSessionReminders);
+router.post('/alerts/confirm', alertLimiter, validate(tokenSchema), OpportunityController.confirmAlert);
+router.post('/alerts/unsubscribe', alertLimiter, validate(tokenSchema), OpportunityController.unsubscribeAlert);
 
 // Espace admin (avant /:id)
 router.get('/admin/list', ...adminGate, authorize('opportunite.read'), OpportunityController.getForAdmin);
@@ -71,6 +85,7 @@ router.post('/', ...adminGate, authorize('opportunite.create'), validate(createS
 router.put('/:id', ...adminGate, authorize('opportunite.update'), validate(updateSchema), OpportunityController.update);
 router.delete('/:id', ...adminGate, authorize('opportunite.delete'), OpportunityController.remove);
 
+router.post('/:id/alerts', alertLimiter, validate(alertSchema), OpportunityController.subscribeAlert);
 router.post('/:id/reports', reportLimiter, validate(reportSchema), OpportunityController.createReport);
 router.post('/:id/duplicate', ...adminGate, authorize('opportunite.create'), OpportunityController.duplicate);
 router.post('/:id/publish', ...adminGate, authorize('opportunite.publish'), OpportunityController.publish);

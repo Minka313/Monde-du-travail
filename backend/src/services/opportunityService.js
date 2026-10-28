@@ -351,6 +351,8 @@ class OpportunityService {
       data: { ...data, title, slug: await uniqueSlug(title), status: 'DRAFT', createdById: userId },
       include: CREATOR_SELECT,
     });
+    // Les jeunes qui suivaient la session précédente seront prévenus à la publication
+    await require('./opportunityAlertService').carryOver(source.id, created.id);
     return withPhase(created);
   }
 

@@ -23,7 +23,7 @@
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
     <link rel="stylesheet" href="css/opportunites.css?v=20261025-2">
-    <link rel="stylesheet" href="css/opportunite-detail.css?v=20261025-1">
+    <link rel="stylesheet" href="css/opportunite-detail.css?v=20261028-1">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -109,6 +109,29 @@
             </div>
         </section>
     </main>
+
+    <dialog class="opp-dialog" id="oppAlertDialog" aria-labelledby="oppAlertTitle" data-lenis-prevent>
+        <form id="oppAlertForm" method="dialog">
+            <div class="opp-dialog-head">
+                <div>
+                    <h2 id="oppAlertTitle">🔔 M'alerter par e-mail</h2>
+                    <p id="oppAlertLead">Reçois un e-mail à l'ouverture des candidatures, 7 jours puis 2 jours avant la date limite, et quand la nouvelle session est publiée. Sans compte, sans publicité.</p>
+                </div>
+                <button type="button" class="opp-dialog-close" data-close aria-label="Fermer">&times;</button>
+            </div>
+            <div class="opp-dialog-body opp-report-body">
+                <label id="oppAlertEmailField">Ton adresse e-mail
+                    <input name="email" type="email" required maxlength="200" autocomplete="email" placeholder="prenom.nom@gmail.com">
+                </label>
+                <p class="opp-report-status" id="oppAlertStatus" role="status"></p>
+                <div class="opp-report-actions">
+                    <button type="button" class="btn btn-ghost" data-close>Fermer</button>
+                    <button type="submit" class="btn btn-primary" id="oppAlertSubmit">M'alerter</button>
+                </div>
+                <p class="opp-alert-legal">Ton adresse sert uniquement à ces alertes. Un lien de désinscription figure dans chaque e-mail. <a href="legal.html#confidentialite">Confidentialité</a></p>
+            </div>
+        </form>
+    </dialog>
 
     <dialog class="opp-dialog" id="oppReportDialog" aria-labelledby="oppReportTitle" data-lenis-prevent>
         <form id="oppReportForm" method="dialog">
@@ -247,11 +270,11 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-2"></script>
+    <script defer src="js/frontend-api.js?v=20261028-3"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
     <script defer src="js/opportunity-common.js?v=20261025-1"></script>
-    <script defer src="js/opportunite.js?v=20261025-1"></script>
+    <script defer src="js/opportunite.js?v=20261028-1"></script>
 </body>
 </html>

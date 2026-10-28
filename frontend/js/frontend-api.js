@@ -384,6 +384,9 @@ return headers;
       },
       getById: (id) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}`),
       report: (id, data) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/reports`, { method: 'POST', body: JSON.stringify(data) }),
+      alert: (id, email) => apiRequestWithRefresh(`/opportunities/${encodeURIComponent(id)}/alerts`, { method: 'POST', body: JSON.stringify({ email }) }),
+      confirmAlert: (token) => apiRequestWithRefresh('/opportunities/alerts/confirm', { method: 'POST', body: JSON.stringify({ token }) }),
+      stopAlert: (token) => apiRequestWithRefresh('/opportunities/alerts/unsubscribe', { method: 'POST', body: JSON.stringify({ token }) }),
     },
 
     // Formations

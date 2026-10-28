@@ -152,3 +152,8 @@
 }
 [data-theme="dark"] .opp-aside-actions .btn-outline,
 [data-theme="dark"] .opp-share .btn { background: transparent; color: var(--text-primary); border-color: var(--border-subtle); }
+
+/* Alerte e-mail */
+.opp-alert-legal { margin: 0.25rem 0 0; font-size: 0.78rem; color: var(--text-muted, #64748b); line-height: 1.5; }
+.opp-alert-legal a { color: inherit; }
+.opp-dialog [hidden] { display: none !important; }

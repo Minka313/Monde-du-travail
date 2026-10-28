@@ -48,7 +48,7 @@ describe('Rappels de nouvelle session', () => {
 
     const first = await request(app).post('/api/opportunities/reminders/run');
     expect(first.status).toBe(200);
-    expect(first.body.data.sent).toBeGreaterThanOrEqual(2);
+    expect(first.body.data.sessions.sent).toBeGreaterThanOrEqual(2);
 
     for (const user of [ultra, oppAdmin]) {
       const list = await remindersFor(user.id);
@@ -58,7 +58,7 @@ describe('Rappels de nouvelle session', () => {
     expect(await remindersFor(blogAdmin.id)).toHaveLength(0);
 
     const again = await request(app).post('/api/opportunities/reminders/run');
-    expect(again.body.data.sent).toBe(0);
+    expect(again.body.data.sessions.sent).toBe(0);
     expect((await remindersFor(ultra.id)).filter((n) => n.dedupeKey.includes(dueOpp.id))).toHaveLength(1);
   });
 });

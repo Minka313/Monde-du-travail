@@ -113,20 +113,20 @@ model Formation {
 // Une annonce ne peut être publiée qu'avec un lien officiel et une date de
 // vérification (pas d'opportunité non sourcée présentée comme confirmée).
 model Opportunity {
-  id             String        @id @default(cuid())
+  id             String              @id @default(cuid())
   title          String
   organization   String
   category       String
   summary        String
   details        String?
   eligibility    String?
-  levels         String[]      @default([])
+  levels         String[]            @default([])
   destination    String?
   country        String?
   openingDate    DateTime?
   deadline       DateTime?
   keyDates       Json?
-  documents      String[]      @default([])
+  documents      String[]            @default([])
   benefits       String?
   officialUrl    String?
   lastVerifiedAt DateTime?
@@ -134,11 +134,11 @@ model Opportunity {
   phaseOverride  String?
   image          String?
   // Identifiant stable des annonces importées (scripts/data/opportunites) : réimport sans doublon
-  slug           String?       @unique
+  slug           String?             @unique
   // Fiche concours : frais, épreuves [{ subject, duration?, coefficient? }], séries du bac, âge, places
   fees           String?
   exams          Json?
-  series         String[]      @default([])
+  series         String[]            @default([])
   ageLimit       String?
   places         Int?
   applyMode      String?
@@ -146,10 +146,10 @@ model Opportunity {
   // Origine de l'information quand elle n'a pas encore été revérifiée sur le site officiel
   sourceNote     String?
   // Concours ou bourse annuels : une fois la session passée, on annonce la prochaine (usualPeriod)
-  recurring      Boolean       @default(false)
+  recurring      Boolean             @default(false)
   usualPeriod    String?
   // Organisation de la rubrique : domaines (filtres), lieu, session, prise en charge
-  domains        String[]      @default([])
+  domains        String[]            @default([])
   location       String?
   sessionLabel   String?
   funding        String?
@@ -160,11 +160,12 @@ model Opportunity {
   faq            Json?
   tips           String?
   reports        OpportunityReport[]
-  status         ContentStatus @default(DRAFT)
+  alerts         OpportunityAlert[]
+  status         ContentStatus       @default(DRAFT)
   createdById    String?
-  createdBy      User?         @relation("OpportunityCreator", fields: [createdById], references: [id])
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdBy      User?               @relation("OpportunityCreator", fields: [createdById], references: [id])
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
 
   @@index([status, deadline])
   @@index([category])
@@ -172,6 +173,27 @@ model Opportunity {
 }
 
 // Erreur signalée par un visiteur sur une annonce (date, lien, information) : traitée dans l'admin
+// Alertes e-mail des jeunes qui suivent une annonce : sans compte, adresse confirmée par lien
+model OpportunityAlert {
+  id              String      @id @default(cuid())
+  opportunityId   String
+  opportunity     Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  email           String
+  // Jeton secret des liens de confirmation et de désinscription
+  token           String      @unique
+  confirmedAt     DateTime?
+  confirmSentAt   DateTime?
+  // Événements déjà envoyés (ex. OPEN:2026-11-15, D7:2026-12-31) : jamais deux fois le même
+  sentKeys        String[]    @default([])
+  // Suivi repris d'une session précédente : annoncer la nouvelle session dès sa publication
+  announceSession Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+
+  @@unique([opportunityId, email])
+  @@index([confirmedAt])
+  @@map("opportunity_alerts")
+}
+
 model OpportunityReport {
   id            String      @id @default(cuid())
   opportunityId String
