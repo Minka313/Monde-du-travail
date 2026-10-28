@@ -8,7 +8,7 @@ const { createTestUser, cleanupTestUsers, prisma } = require('./helpers/fixtures
 const SESSION = 'vp-test-session-0001';
 const SESSION_2 = 'vp-test-session-0002';
 const SESSION_3 = 'vp-test-session-0003';
-const EMAILS = ['ultra@vp.test.com', 'member@vp.test.com'];
+const EMAILS = ['ultra@vp.test.com', 'member@vp.test.com', 'riasec-then-member@vp.test.com'];
 
 describe('Profils visiteurs', () => {
   let ultraToken, memberToken;
@@ -22,6 +22,7 @@ describe('Profils visiteurs', () => {
   afterAll(async () => {
     await prisma.visitorProfile.deleteMany({ where: { sessionId: { in: [SESSION, SESSION_2, SESSION_3] } } });
     await prisma.analyticsEvent.deleteMany({ where: { sessionId: { in: [SESSION, SESSION_2, SESSION_3] } } });
+    await prisma.opportunity.deleteMany({ where: { title: '[VP-TEST] Concours' } });
     await cleanupTestUsers(EMAILS);
     await prisma.$disconnect();
   });
@@ -131,5 +132,30 @@ describe('Profils visiteurs', () => {
     expect(d.riasec.byType.find((x) => x.label === 'I').count).toBeGreaterThanOrEqual(2);
     expect(d.riasec.topCodes.map((x) => x.label)).toEqual(expect.arrayContaining(['IRC', 'ISA']));
     expect(d.riasec.topCodes.map((x) => x.label)).not.toContain('<x>');
+  });
+
+  it('calcule les indicateurs clés et tient le journal des e-mails', async () => {
+    const EmailService = require('../src/services/emailService');
+    const o = await prisma.opportunity.create({ data: { title: '[VP-TEST] Concours', organization: 'Ministère', category: 'CONCOURS', summary: 'Test.', status: 'PUBLISHED' } });
+    const earlier = new Date(Date.now() - 3600000);
+    await prisma.analyticsEvent.createMany({ data: [
+      { sessionId: SESSION_3, eventType: 'riasec_start', entityType: 'riasec', createdAt: earlier },
+      { sessionId: SESSION_3, eventType: 'riasec_result', entityType: 'riasec', entityId: 'SEC', createdAt: earlier },
+      { sessionId: SESSION_3, eventType: 'opportunity_view', entityType: 'opportunity', entityId: o.id },
+      { sessionId: SESSION_3, eventType: 'opportunity_view', entityType: 'opportunity', entityId: o.id },
+      { sessionId: SESSION_3, eventType: 'pwa_installed', entityType: 'pwa' },
+    ] });
+    const member = await createTestUser({ email: EMAILS[2] });
+    await prisma.visitorProfile.upsert({ where: { sessionId: SESSION_3 }, update: { userId: member.id }, create: { sessionId: SESSION_3, userId: member.id } });
+    await EmailService.sendMail({ to: 'destinataire@example.com', subject: 'Test du journal', html: '<p>Bonjour</p>' });
+
+    const { key } = (await request(app).get('/api/analytics/profiles?days=7').set('Authorization', `Bearer ${ultraToken}`)).body.data;
+    expect(key.riasec.completed).toBeGreaterThanOrEqual(1);
+    expect(key.riasec.thenMembers).toBeGreaterThanOrEqual(1);
+    expect(key.opportunities.top.find((x) => x.id === o.id)).toMatchObject({ label: '[VP-TEST] Concours', count: 2 });
+    expect(key.app.installed).toBeGreaterThanOrEqual(1);
+    const mail = key.emails.recent.find((e) => e.subject === 'Test du journal');
+    expect(mail).toMatchObject({ ok: true, to: `de${'•'.repeat(10)}@example.com` });
+    expect(JSON.stringify(key.emails.recent)).not.toContain('destinataire@');
   });
 });

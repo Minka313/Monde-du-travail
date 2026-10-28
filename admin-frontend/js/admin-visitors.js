@@ -79,6 +79,51 @@
       </div>`;
   }
 
+  // Indicateurs clés : parcours d'orientation, concours, alertes, application et e-mails
+  function keyIndicators(key) {
+    if (!key) return '';
+    const r = key.riasec;
+    const a = key.app;
+    return `
+      <div class="card">
+        <div class="card-header"><h3 style="margin:0;">🎯 Indicateurs clés</h3></div>
+        <div class="vz-tiles" style="grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));">
+          ${tile('Tests RIASEC terminés', nf.format(r.completed), `${nf.format(r.started)} commencés · ${pct(r.completionRate)} vont au bout`)}
+          ${tile('Test puis adhésion', nf.format(r.thenMembers), `sur ${nf.format(r.newMembers)} inscriptions de la période`)}
+          ${tile('Fiches concours vues', nf.format(key.opportunities.views), `${nf.format(key.opportunities.calendar)} ajouts à l'agenda`)}
+          ${tile('Alertes e-mail actives', nf.format(key.alerts.active), `${nf.format(key.alerts.confirmed)} confirmées sur ${nf.format(key.alerts.requested)} demandes`)}
+          ${tile('Application installée', nf.format(Math.max(a.installed, a.accepted)), `${nf.format(a.prompts)} invitations · ${nf.format(a.dismissed)} refus`)}
+          ${tile('E-mails envoyés', nf.format(key.emails.sent), key.emails.failed ? `⚠️ ${nf.format(key.emails.failed)} en échec` : 'aucun échec')}
+        </div>
+      </div>
+      <div class="vz-grid vz-grid-wide" style="grid-template-columns:1fr;">
+        ${bars('Concours & opportunités les plus consultés', key.opportunities.top, { empty: 'Aucune fiche consultée sur la période.' })}
+      </div>`;
+  }
+
+  function emailJournal(emails) {
+    if (!emails) return '';
+    const fmt = (d) => new Date(d).toLocaleString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return `
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3 style="margin:0 0 0.25rem;">📧 Derniers e-mails envoyés par la plateforme</h3>
+            <p style="margin:0;font-size:0.85rem;color:#64748b;">Les 25 derniers envois (adresses masquées). Le contenu complet reste consultable sur Resend.</p>
+          </div>
+        </div>
+        ${emails.recent.length ? `<div class="table-wrapper"><table>
+          <thead><tr><th>Date</th><th>Destinataire</th><th>Sujet</th><th>Résultat</th></tr></thead>
+          <tbody>${emails.recent.map((e) => `<tr>
+            <td style="white-space:nowrap;">${esc(fmt(e.at))}</td>
+            <td>${esc(e.to)}</td>
+            <td>${esc(e.subject)}</td>
+            <td>${e.ok ? (e.mode === 'sandbox' ? '<span class="badge badge-warning">Simulé (clé Resend absente)</span>' : '<span class="badge badge-success">Envoyé</span>') : `<span class="badge badge-danger" title="${esc(e.error || '')}">Échec</span>`}</td>
+          </tr>`).join('')}</tbody>
+        </table></div>` : '<p class="vz-empty">Aucun e-mail envoyé depuis la mise en place du journal.</p>'}
+      </div>`;
+  }
+
   async function render() {
     const res = await window.AdminApi.request(`/analytics/profiles?days=${state.days}`);
     const d = res.data;
@@ -105,6 +150,8 @@
           ${tile('PDF téléchargés', nf.format(k.pdfDownloads), `${nf.format(d.pdf.job_pdf || 0)} métiers · ${nf.format(d.pdf.formation_pdf || 0)} formations`)}
         </div>
 
+        ${keyIndicators(d.key)}
+
         <div class="vz-grid">
           ${newVsReturning(k)}
           ${bars('Situation déclarée', d.byStatus, { total: k.profiled, empty: 'Aucun visiteur n\'a encore rempli le questionnaire.' })}
@@ -121,6 +168,7 @@
           <div class="card-header"><h3 style="margin:0;">📚 Ce que consulte chaque profil</h3></div>
           ${contentTable(d.contentByProfile)}
         </div>
+        ${emailJournal(d.key?.emails)}
         <div class="vz-tooltip" role="tooltip" hidden></div>
       </div>`;
   }

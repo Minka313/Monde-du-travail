@@ -8,6 +8,7 @@
 
   const O = window.Opp;
   const esc = (value) => O.esc(value);
+  const track = (type, id, meta) => { try { window.AnalyticsTracker?.track?.(type, 'opportunity', id, meta || {}); } catch (_) { /* suivi facultatif */ } };
 
   // Conseils de préparation par défaut, quand l'équipe n'en a pas rédigé pour l'annonce
   const DEFAULT_TIPS = {
@@ -291,7 +292,7 @@
       const button = event.target.closest('[data-action]');
       if (!button) return;
       const action = button.dataset.action;
-      if (action === 'ics') O.downloadIcs(o);
+      if (action === 'ics') { O.downloadIcs(o); track('opportunity_ics', o.id); }
       if (action === 'print') window.print();
       if (action === 'fav') {
         const on = O.favorites.toggle(o.id);
@@ -400,6 +401,7 @@
       else res = await window.Api.opportunities.stopAlert(alertState.token);
       status.classList.add('is-ok');
       status.textContent = (res && res.message) || 'C\'est fait.';
+      if (alertState.mode === 'subscribe') track('opportunity_alert', state.o.id);
       submit.hidden = true;
       if (alertState.mode !== 'subscribe') {
         // Le jeton ne doit pas rester dans l'adresse (partage, favoris du navigateur)
@@ -466,6 +468,7 @@
     bind(o);
     bindReport(o);
     bindAlert();
+    track('opportunity_view', o.id, { category: o.category });
 
     try {
       const res = await window.Api.opportunities.getAll();

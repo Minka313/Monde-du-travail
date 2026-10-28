@@ -74,15 +74,15 @@ class AnalyticsController {
       const userId = req.user?.id || null;
 
       if (Array.isArray(payload.events)) {
-        // Enregistrement par lot sans bloquer
-        AnalyticsService.trackImpactEvents(payload.events, userId).catch(() => {});
+        // Attendu avant de répondre : sur Vercel, le travail lancé après la réponse peut être interrompu
+        await AnalyticsService.trackImpactEvents(payload.events, userId).catch(() => {});
       } else {
         // Enregistrement individuel
         const eventData = {
           ...payload,
           userId: payload.userId || userId,
         };
-        AnalyticsService.trackImpactEvent(eventData).catch(() => {});
+        await AnalyticsService.trackImpactEvent(eventData).catch(() => {});
       }
 
       return res.status(200).json({ success: true });

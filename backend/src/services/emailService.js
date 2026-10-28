@@ -2,6 +2,11 @@ const fs = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');
 
+function maskEmail(email) {
+  const [name = '', domain = ''] = String(email).split('@');
+  return `${name.slice(0, 2)}${'•'.repeat(Math.max(1, name.length - 2))}@${domain}`;
+}
+
 class EmailService {
   static getEmailConfig() {
     return {
@@ -13,7 +18,25 @@ class EmailService {
     };
   }
 
-  static async sendMail({ to, subject, html, text }) {
+  // Chaque envoi est noté (destinataire masqué, sujet, résultat) : visible dans l'admin,
+  // onglet « Profils visiteurs », sans passer par la plateforme Resend
+  static async sendMail(message) {
+    const result = await this.deliver(message);
+    try {
+      const recipients = (Array.isArray(message.to) ? message.to : String(message.to || '').split(','))
+        .map((e) => e.trim()).filter(Boolean);
+      await require('./auditService').log({
+        action: result.success ? 'email.sent' : 'email.failed',
+        module: 'Email',
+        resource: 'Email',
+        metadata: { to: recipients.map(maskEmail), subject: String(message.subject || '').slice(0, 200), mode: result.mode || null, error: result.error || null },
+        result: result.success ? 'SUCCESS' : 'FAILURE',
+      });
+    } catch (_) { /* le journal ne doit jamais bloquer un envoi */ }
+    return result;
+  }
+
+  static async deliver({ to, subject, html, text }) {
     const config = this.getEmailConfig();
     const timestamp = new Date().toISOString();
     const messageId = `msg_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;

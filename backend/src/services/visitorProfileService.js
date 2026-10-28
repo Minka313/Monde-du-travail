@@ -184,6 +184,7 @@ class VisitorProfileService {
 
     return {
       days: period,
+      key: await require('./keyIndicatorsService').get(since),
       kpis: {
         visitors,
         newVisitors,
