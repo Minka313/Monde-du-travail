@@ -5,6 +5,62 @@ const SuperDashboardController = require('./superDashboardController');
 const logger = require('../utils/logger');
 const prisma = require('../config/database');
 
+/**
+ * Approuve une demande d'adhésion : compte activé, journal, e-mail de bienvenue et notification.
+ * Retourne la demande mise à jour, ou null si elle n'existe pas.
+ */
+async function approveMembershipRequest(id, reviewerId, welcomeMessage) {
+  const membership = await prisma.membershipRequest.findUnique({ where: { id }, include: { user: true } });
+  if (!membership) return null;
+
+  const [updated] = await Promise.all([
+    prisma.membershipRequest.update({
+      where: { id },
+      data: { status: 'APPROVED', reviewedBy: reviewerId, reviewedAt: new Date() },
+      include: { user: { select: { id: true, email: true, firstName: true, lastName: true } } },
+    }),
+    prisma.user.update({ where: { id: membership.userId }, data: { isActive: true, isVerified: true } }),
+  ]);
+
+  // Invalidation immédiate du cache mémoire des statistiques
+  SuperDashboardController.invalidateStatsCache?.();
+
+  AuditService.log({
+    userId: reviewerId,
+    action: 'membership.approve',
+    module: 'Admin',
+    resource: 'MembershipRequest',
+    resourceId: id,
+    result: 'APPROVED',
+    metadata: { userId: membership.userId, accountActivated: true },
+  }).catch((err) => logger.warn('Erreur log audit approbation adhésion', { error: err.message }));
+
+  try {
+    await EmailService.notifyCandidateMembershipApproved({
+      to: membership.user.email,
+      candidateName: membership.user.firstName,
+      welcomeMessage,
+    });
+  } catch (err) {
+    logger.warn('Erreur envoi email approbation adhésion', { error: err.message });
+  }
+
+  try {
+    const notificationService = require('../services/notificationService');
+    await notificationService.createNotification({
+      userId: membership.userId,
+      type: 'MEMBERSHIP',
+      title: '🎉 Félicitations ! Votre adhésion a été approuvée',
+      message: 'Bienvenue au sein du club Le Monde du Travail ! Votre compte est maintenant pleinement actif.',
+      url: '/frontend/index.html',
+      dedupeKey: `MEMBERSHIP:${membership.id}:APPROVED`,
+    });
+  } catch (err) {
+    logger.warn('Notification approbation adhésion non créée', { membershipId: membership.id, error: err.message });
+  }
+  return updated;
+}
+
 class AdminController {
   static async getAllAdmins(req, res, next) {
     try {
@@ -194,86 +250,37 @@ class AdminController {
 
   static async approveMembership(req, res, next) {
     try {
-      const membership = await prisma.membershipRequest.findUnique({
-        where: { id: req.params.id },
-        include: { user: true },
-      });
-
-      if (!membership) {
+      const updated = await approveMembershipRequest(req.params.id, req.user.id, req.body?.welcomeMessage);
+      if (!updated) {
         return res.status(404).json({
           success: false,
           message: 'Demande d\'adhésion non trouvée',
         });
       }
-
-      // Parallélisation de la mise à jour de l'adhésion et de l'activation du compte
-      const [updated] = await Promise.all([
-        prisma.membershipRequest.update({
-          where: { id: req.params.id },
-          data: {
-            status: 'APPROVED',
-            reviewedBy: req.user.id,
-            reviewedAt: new Date(),
-          },
-          include: {
-            user: {
-              select: { id: true, email: true, firstName: true, lastName: true },
-            },
-          },
-        }),
-        prisma.user.update({
-          where: { id: membership.userId },
-          data: { isActive: true, isVerified: true },
-        }),
-      ]);
-
-      // Invalidation immédiate du cache mémoire des statistiques
-      SuperDashboardController.invalidateStatsCache?.();
-
-      // Log d'audit asynchrone non-bloquant
-      AuditService.log({
-        userId: req.user.id,
-        action: 'membership.approve',
-        module: 'Admin',
-        resource: 'MembershipRequest',
-        resourceId: req.params.id,
-        result: 'APPROVED',
-        metadata: { userId: membership.userId, accountActivated: true },
-      }).catch(err => {
-        logger.warn('Erreur log audit approbation adhésion', { error: err.message });
-      });
-
-      // Notification par email du candidat avec le mot de bienvenue de l'administrateur
-      const welcomeMessage = req.body?.welcomeMessage;
-      try {
-        await EmailService.notifyCandidateMembershipApproved({
-          to: membership.user.email,
-          candidateName: membership.user.firstName,
-          welcomeMessage,
-        });
-      } catch (err) {
-        logger.warn('Erreur envoi email approbation adhésion', { error: err.message });
-      }
-
-      // Notification Push & In-App instantanée au membre
-      try {
-        const notificationService = require('../services/notificationService');
-        await notificationService.createNotification({
-          userId: membership.userId,
-          type: 'MEMBERSHIP',
-          title: '🎉 Félicitations ! Votre adhésion a été approuvée',
-          message: 'Bienvenue au sein du club Le Monde du Travail ! Votre compte est maintenant pleinement actif.',
-          url: '/frontend/index.html',
-          dedupeKey: `MEMBERSHIP:${membership.id}:APPROVED`,
-        });
-      } catch (err) {
-        logger.warn('Notification approbation adhésion non créée', { membershipId: membership.id, error: err.message });
-      }
-
       res.json({
         success: true,
         message: 'Demande d\'adhésion approuvée — compte activé et email de bienvenue envoyé',
         data: updated,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Validation groupée des demandes en attente (même traitement que la validation une par une)
+  static async approveMembershipsBulk(req, res, next) {
+    try {
+      const ids = [...new Set((req.body?.ids || []).filter((id) => typeof id === 'string'))].slice(0, 100);
+      if (!ids.length) return res.status(400).json({ success: false, message: 'Aucune demande sélectionnée' });
+      const pending = await prisma.membershipRequest.findMany({ where: { id: { in: ids }, status: 'PENDING' }, select: { id: true } });
+      let approved = 0;
+      for (const { id } of pending) {
+        if (await approveMembershipRequest(id, req.user.id, req.body?.welcomeMessage)) approved += 1;
+      }
+      res.json({
+        success: true,
+        message: `${approved} adhésion${approved > 1 ? 's' : ''} approuvée${approved > 1 ? 's' : ''}${ids.length > approved ? ` (${ids.length - approved} déjà traitée${ids.length - approved > 1 ? 's' : ''})` : ''}`,
+        data: { approved, skipped: ids.length - approved },
       });
     } catch (error) {
       next(error);

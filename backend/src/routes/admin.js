@@ -26,6 +26,7 @@ router.get('/stats', adminController.getStats);
 
 // Adhésions
 router.get('/memberships/pending', authorize('membership.read'), adminController.getPendingMemberships);
+router.post('/memberships/approve-bulk', authorize('membership.approve'), adminController.approveMembershipsBulk);
 router.post('/memberships/:id/approve', authorize('membership.approve'), adminController.approveMembership);
 router.post('/memberships/:id/reject', authorize('membership.approve'), adminController.rejectMembership);
 

@@ -278,6 +278,10 @@
         const qs = query.toString();
         return apiRequestWithRefresh(`/admin/blog/posts${qs ? `?${qs}` : ''}`);
       },
+      approveMembershipsBulk: (ids, welcomeMessage) => apiRequestWithRefresh('/admin/memberships/approve-bulk', {
+        method: 'POST',
+        body: JSON.stringify({ ids, welcomeMessage }),
+      }),
       approveMembership: (id, welcomeMessage) => apiRequestWithRefresh(`/admin/memberships/${id}/approve`, {
         method: 'POST',
         body: JSON.stringify({ welcomeMessage }),

@@ -76,6 +76,31 @@ class AuthService {
       logger.warn('Erreur lors de l\'envoi des emails de notification d\'adhésion', { error: err.message });
     }
 
+    // Alerte dans l'admin pour toutes les personnes qui valident les adhésions
+    try {
+      const notificationService = require('./notificationService');
+      const approvers = await prisma.user.findMany({
+        where: {
+          isActive: true,
+          OR: [
+            { role: 'ULTRA_ADMIN' },
+            { adminRoles: { some: { isActive: true, status: 'APPROVED', role: { permissions: { some: { permission: { code: 'membership.approve' } } } } } } },
+          ],
+        },
+        select: { id: true },
+      });
+      await Promise.allSettled(approvers.map((a) => notificationService.createNotification({
+        userId: a.id,
+        type: 'MEMBERSHIP',
+        title: '📋 Nouvelle demande d\'adhésion',
+        message: `${user.firstName} ${user.lastName} souhaite rejoindre le club.`,
+        url: '/admin-frontend/index.html#approvals',
+        dedupeKey: `MEMBERSHIP:${user.id}:SUBMITTED:${a.id}`,
+      })));
+    } catch (err) {
+      logger.warn('Alerte des validateurs non envoyée', { error: err.message });
+    }
+
     return user;
   }
 

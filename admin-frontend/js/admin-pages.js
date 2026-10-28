@@ -4638,12 +4638,14 @@
               <span>📥</span> <span>Export CSV</span>
             </button>
             <span class="badge ${memberships.length > 0 ? 'badge-warning' : 'badge-muted'}">${memberships.length} en attente</span>
+            ${canApproveMemberships && memberships.length > 1 ? '<button type="button" class="btn btn-success btn-sm" id="btnBulkApproveMemberships" disabled style="height:34px;">✅ Approuver la sélection (<span id="bulkMembershipCount">0</span>)</button>' : ''}
           </div>
         </div>
         <div class="table-wrapper">
           <table>
             <thead>
               <tr>
+                ${canApproveMemberships && memberships.length > 1 ? '<th style="width:36px;"><input type="checkbox" id="membershipSelectAll" aria-label="Tout sélectionner" title="Tout sélectionner"></th>' : ''}
                 <th>Candidat</th>
                 <th>Email</th>
                 <th>Motivation</th>
@@ -4664,6 +4666,7 @@
                 </tr>
               ` : memberships.map(m => `
                 <tr class="membership-row">
+                  ${canApproveMemberships && memberships.length > 1 ? `<td><input type="checkbox" class="membership-select" value="${escapeHtml(m.id)}" aria-label="Sélectionner ${escapeHtml(((m.user?.firstName || '') + ' ' + (m.user?.lastName || '')).trim())}"></td>` : ''}
                   <td><strong>${escapeHtml(m.user?.firstName || '')} ${escapeHtml(m.user?.lastName || '')}</strong></td>
                   <td><a href="mailto:${escapeHtml(m.user?.email || '')}" style="color: var(--color-primary); text-decoration: none;">${escapeHtml(m.user?.email || '')}</a></td>
                   <td style="max-width: 320px; line-height: 1.45;">
@@ -7512,6 +7515,37 @@
       }
 
       // Approbation d'adhésion depuis l'onglet Approbations
+      // Sélection multiple et approbation groupée des adhésions
+      const bulkBtn = document.getElementById('btnBulkApproveMemberships');
+      if (bulkBtn) {
+        const selected = () => [...document.querySelectorAll('.membership-select:checked')].map((c) => c.value);
+        const sync = () => {
+          const n = selected().length;
+          document.getElementById('bulkMembershipCount').textContent = n;
+          bulkBtn.disabled = n === 0;
+        };
+        document.getElementById('membershipSelectAll')?.addEventListener('change', (e) => {
+          document.querySelectorAll('.membership-select').forEach((c) => {
+            if (c.closest('tr').style.display !== 'none') c.checked = e.target.checked;
+          });
+          sync();
+        });
+        document.querySelectorAll('.membership-select').forEach((c) => c.addEventListener('change', sync));
+        bulkBtn.addEventListener('click', async () => {
+          const ids = selected();
+          if (!ids.length || !confirm(`Approuver ${ids.length} demande(s) d'adhésion ? Les comptes seront activés et chaque membre recevra l'e-mail de bienvenue.`)) return;
+          bulkBtn.disabled = true;
+          try {
+            const res = await window.AdminApi.admin.approveMembershipsBulk(ids);
+            showToast(res.message || 'Adhésions approuvées', 'success');
+            loadPage('approvals', true);
+          } catch (error) {
+            showToast(error.message, 'error');
+            bulkBtn.disabled = false;
+          }
+        });
+      }
+
       document.querySelectorAll('[data-approve-membership-approval]').forEach(btn => {
         btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-approve-membership-approval');
