@@ -1098,7 +1098,12 @@
 
       // 1. "À la Une ce mois-ci" (Accueil)
       const featCard = document.querySelector('#scene-featured .home-featured-card');
-        if (featCard && settings['home.featured_monthly']) {
+        // Affichée seulement si l'équipe ne l'a pas masquée dans l'admin
+        const featSection = document.getElementById('scene-featured');
+        if (featSection && settings['home.featured_monthly'] && settings['home.featured_monthly'].visible !== false) {
+          featSection.style.display = '';
+        }
+        if (featCard && settings['home.featured_monthly'] && settings['home.featured_monthly'].visible !== false) {
           const feat = settings['home.featured_monthly'];
           const tagEl = featCard.querySelector('.featured-tag');
           const titleEl = featCard.querySelector('.home-featured-content h3');

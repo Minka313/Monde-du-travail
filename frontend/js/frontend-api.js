@@ -355,6 +355,8 @@ return headers;
       create: (data) => apiRequestWithRefresh('/reports', { method: 'POST', body: JSON.stringify(data) }),
       update: (id, data) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) }),
       remove: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+      archive: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/archive`, { method: 'POST' }),
+      unarchive: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/unarchive`, { method: 'POST' }),
       submit: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/submit`, { method: 'POST' }),
       review: (id, decision, comment) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/review`, {
         method: 'POST',

@@ -632,7 +632,7 @@
     const publishedFormations = superData.publishedFormations ?? 0;
     const draftFormations = superData.draftFormations ?? 0;
     const publishedJobs = superData.publishedJobs ?? 0;
-    const totalJobsCatalog = superData.totalJobsCatalog ?? (535 + publishedJobs);
+    const totalJobsCatalog = superData.totalJobsCatalog ?? publishedJobs;
     const draftJobs = superData.draftJobs ?? 0;
     const publishedPosts = superData.publishedPosts ?? 0;
     const draftPosts = superData.draftPosts ?? 0;
@@ -6417,7 +6417,12 @@
           <div class="vitrine-grid">
             <!-- Formulaire d'édition -->
             <form id="form-vitrine-featured" style="display:flex;flex-direction:column;gap:1.25rem;">
-              
+
+              <label style="display:flex;align-items:center;gap:0.75rem;padding:0.9rem 1.1rem;border-radius:10px;border:1px solid ${featured.visible === false ? '#fecaca' : '#bbf7d0'};background:${featured.visible === false ? '#fef2f2' : '#f0fdf4'};cursor:pointer;">
+                <input type="checkbox" id="feat-visible" ${featured.visible === false ? '' : 'checked'} style="width:20px;height:20px;">
+                <span><strong>Afficher « À la Une » sur la page d'accueil</strong><br><span style="font-size:0.82rem;color:#64748b;">Décochez pour masquer la section (par exemple quand il n'y a pas d'événement ce mois-ci), puis enregistrez.</span></span>
+              </label>
+
               <fieldset style="border:1px solid var(--color-border);border-radius:10px;padding:1.2rem;background:var(--color-bg-card);">
                 <legend style="font-weight:700;padding:0 0.5rem;color:var(--color-primary);">🏷️ Accroche & Titre Principal</legend>
                 
@@ -7924,12 +7929,14 @@
       const sideboxButtonText = document.getElementById('feat-side-btn-text')?.value.trim() || 'Explorer le dossier';
       const sideboxButtonLink = document.getElementById('feat-side-btn-link')?.value.trim() || '#contact';
 
-      if (!title || !description) {
+      const visible = document.getElementById('feat-visible')?.checked !== false;
+      if (visible && (!title || !description)) {
         showToast('Veuillez remplir au moins le titre et la description du dossier.', 'warning');
         return;
       }
 
       const payload = {
+        visible,
         tag,
         title,
         description,
@@ -7947,7 +7954,7 @@
         btn.disabled = true;
         btn.textContent = 'Enregistrement en cours...';
         await window.AdminApi.settings.update('home.featured_monthly', JSON.stringify(payload, null, 2));
-        showToast('Section "À la Une ce mois-ci" enregistrée et déployée avec succès !', 'success');
+        showToast(visible ? 'Section "À la Une ce mois-ci" enregistrée et affichée sur l\'accueil' : 'Section "À la Une ce mois-ci" masquée sur l\'accueil', 'success');
       } catch (err) {
         showToast(err.message || 'Échec de l\'enregistrement', 'error');
       } finally {

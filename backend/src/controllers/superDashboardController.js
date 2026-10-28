@@ -169,8 +169,8 @@ class SuperDashboardController {
         draftFormations,
         publishedJobs,
         draftJobs,
-        catalogJobsCount: 535,
-        totalJobsCatalog: 535 + publishedJobs,
+        // Même définition que le site public : les fiches du catalogue sont en base (pas de double comptage)
+        totalJobsCatalog: publishedJobs,
         pendingAdmins,
         pendingApprovals,
         isMaintenance,

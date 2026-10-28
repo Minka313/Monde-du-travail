@@ -372,6 +372,8 @@
       },
       get: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}`),
       remove: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+      archive: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/archive`, { method: 'POST' }),
+      unarchive: (id) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/unarchive`, { method: 'POST' }),
       review: (id, decision, comment) => apiRequestWithRefresh(`/reports/${encodeURIComponent(id)}/review`, {
         method: 'POST',
         body: JSON.stringify({ decision, comment }),

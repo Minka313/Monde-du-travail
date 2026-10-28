@@ -118,123 +118,78 @@ class AnalyticsService {
     }
 
     try {
+      // Fenêtres glissantes communes à tout le tableau de bord ; « aujourd'hui » = journée UTC (heure de Dakar)
       const now = new Date();
-      const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const startOfToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
       const sevenDaysAgo = new Date(nowMs - 7 * 24 * 60 * 60 * 1000);
       const thirtyDaysAgo = new Date(nowMs - 30 * 24 * 60 * 60 * 1000);
+      // Un visiteur = un navigateur (identifiant anonyme gardé sur l'appareil), à défaut le compte ou l'adresse
+      const VISITOR = `COALESCE(metadata->>'visitorId', "userId", "ipAddress", 'anon')`;
+      const VISITS = `FROM audit_logs WHERE module = 'analytics' AND action = 'site.visit'`;
 
-      // Récupération des visites récentes bornées (max 1000 entrées sur 30 jours) et des totaux réels
-      const [recentLogs, totalVisitLogs, totalLoginLogsCount] = await Promise.all([
-        prisma.auditLog.findMany({
-          where: {
-            module: 'analytics',
-            action: 'site.visit',
-            createdAt: { gte: thirtyDaysAgo },
-          },
-          take: 1000,
-          select: {
-            createdAt: true,
-            resource: true,
-            metadata: true,
-            userId: true,
-            ipAddress: true,
-          },
-          orderBy: { createdAt: 'desc' },
-        }),
-        prisma.auditLog.count({
-          where: {
-            module: 'analytics',
-            action: 'site.visit',
-          },
-        }),
-        prisma.auditLog.count({
-          where: {
-            action: 'auth.login',
-          },
-        }),
+      // Comptages faits par la base, sur toutes les visites (aucun échantillon)
+      const [[totals], pageRows, deviceRows, dayRows, totalLoginLogsCount] = await Promise.all([
+        prisma.$queryRawUnsafe(`
+          SELECT
+            COUNT(*) FILTER (WHERE "createdAt" >= $1)::int AS visits_today,
+            COUNT(DISTINCT ${VISITOR}) FILTER (WHERE "createdAt" >= $1)::int AS unique_today,
+            COUNT(*) FILTER (WHERE "createdAt" >= $2)::int AS visits_week,
+            COUNT(DISTINCT ${VISITOR}) FILTER (WHERE "createdAt" >= $2)::int AS unique_week,
+            COUNT(*) FILTER (WHERE "createdAt" >= $3)::int AS visits_month,
+            COUNT(DISTINCT ${VISITOR}) FILTER (WHERE "createdAt" >= $3)::int AS unique_month,
+            COUNT(*)::int AS visits_all,
+            COUNT(DISTINCT ${VISITOR})::int AS unique_all
+          ${VISITS}`, startOfToday, sevenDaysAgo, thirtyDaysAgo),
+        prisma.$queryRawUnsafe(`
+          SELECT COALESCE(resource, metadata->>'path', '/') AS page, COUNT(*)::int AS views
+          ${VISITS} AND "createdAt" >= $1 GROUP BY 1 ORDER BY 2 DESC LIMIT 60`, thirtyDaysAgo),
+        prisma.$queryRawUnsafe(`
+          SELECT lower(COALESCE(metadata->>'device', 'desktop')) AS device, COUNT(*)::int AS views
+          ${VISITS} AND "createdAt" >= $1 GROUP BY 1`, thirtyDaysAgo),
+        prisma.$queryRawUnsafe(`
+          SELECT to_char("createdAt" AT TIME ZONE 'UTC', 'YYYY-MM-DD') AS day, COUNT(*)::int AS visits,
+            COUNT(DISTINCT ${VISITOR})::int AS visitors
+          ${VISITS} AND "createdAt" >= $1 GROUP BY 1`, sevenDaysAgo),
+        prisma.auditLog.count({ where: { action: 'auth.login' } }),
       ]);
 
-      // Calcul des visites et visiteurs uniques par période
-      let visitsToday = 0;
-      let visitsWeek = 0;
-      let visitsMonth = 0;
-
-      const uniqueTodaySet = new Set();
-      const uniqueWeekSet = new Set();
-      const uniqueMonthSet = new Set();
-
+      // Une même page sous deux adresses (« /about » et « /about.html ») est comptée une seule fois
       const pageCounts = {};
+      pageRows.forEach(({ page, views }) => {
+        const path = String(page).split('?')[0].replace(/\.html$/, '').replace(/^\/index$/, '/') || '/';
+        pageCounts[path] = (pageCounts[path] || 0) + views;
+      });
       const deviceCounts = { desktop: 0, mobile: 0, tablet: 0 };
-      const dailyBuckets = {};
+      deviceRows.forEach(({ device, views }) => {
+        deviceCounts[deviceCounts[device] !== undefined ? device : 'desktop'] += views;
+      });
+      const visitsMonth = totals.visits_month;
 
-      // Initialiser les 7 derniers jours dans le bucket quotidien
+      const dailyBuckets = {};
       for (let i = 6; i >= 0; i--) {
         const d = new Date(nowMs - i * 24 * 60 * 60 * 1000);
         const dateKey = d.toISOString().split('T')[0];
-        const dayLabel = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+        const row = dayRows.find((r) => r.day === dateKey);
         dailyBuckets[dateKey] = {
           date: dateKey,
-          label: dayLabel,
-          visits: 0,
-          uniqueVisitors: new Set(),
+          label: d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }),
+          visits: row ? row.visits : 0,
+          uniqueVisitors: row ? row.visitors : 0,
         };
       }
-
-      recentLogs.forEach(log => {
-        const created = new Date(log.createdAt);
-        const meta = log.metadata || {};
-        const vid = meta.visitorId || log.userId || log.ipAddress || 'anon';
-        const page = log.resource || meta.path || '/';
-        const dev = (meta.device || 'desktop').toLowerCase();
-
-        if (created >= thirtyDaysAgo) {
-          visitsMonth++;
-          pageCounts[page] = (pageCounts[page] || 0) + 1;
-
-          if (deviceCounts[dev] !== undefined) {
-            deviceCounts[dev]++;
-          } else {
-            deviceCounts.desktop++;
-          }
-
-          uniqueMonthSet.add(vid);
-        }
-
-        // Aujourd'hui
-        if (created >= startOfToday) {
-          visitsToday++;
-          uniqueTodaySet.add(vid);
-        }
-
-        // 7 derniers jours
-        if (created >= sevenDaysAgo) {
-          visitsWeek++;
-          uniqueWeekSet.add(vid);
-
-          const dateKey = created.toISOString().split('T')[0];
-          if (dailyBuckets[dateKey]) {
-            dailyBuckets[dateKey].visits++;
-            dailyBuckets[dateKey].uniqueVisitors.add(vid);
-          }
-        }
-
-      });
 
       // Formatage du Top Pages
       const pageNames = {
         '/': 'Accueil',
         '/formations': 'Catalogue Formations',
-        '/formations.html': 'Catalogue Formations',
         '/job': 'Fiches Métiers & Orientation',
-        '/job.html': 'Fiches Métiers & Orientation',
+        '/metiers': 'Fiches Métiers & Orientation',
         '/blog': 'Blog & Dossiers',
-        '/blog.html': 'Blog & Dossiers',
         '/about': 'À Propos du Club',
-        '/about.html': 'À Propos du Club',
         '/forum': 'Forum & Entraide',
-        '/forum.html': 'Forum & Entraide',
         '/login': 'Connexion & Adhésion',
-        '/login.html': 'Connexion & Adhésion',
+        '/opportunites': 'Concours & Opportunités',
+        '/test-riasec': 'Test d\'orientation RIASEC',
       };
 
       const topPages = Object.entries(pageCounts)
@@ -247,37 +202,25 @@ class AnalyticsService {
           percentage: visitsMonth > 0 ? Math.round((count / visitsMonth) * 100) : 0,
         }));
 
-      // Formatage de l'historique sur 7 jours
-      const dailyTrend = Object.values(dailyBuckets).map(bucket => ({
-        date: bucket.date,
-        label: bucket.label,
-        visits: bucket.visits,
-        uniqueVisitors: bucket.uniqueVisitors.size,
-      }));
-
-      const totalVisits = totalVisitLogs;
-      const totalUniqueVisitors = new Set(recentLogs.map(log => {
-        const meta = log.metadata || {};
-        return meta.visitorId || log.userId || log.ipAddress || 'anon';
-      })).size;
+      const dailyTrend = Object.values(dailyBuckets);
 
       const stats = {
         summary: {
           today: {
-            visits: visitsToday,
-            uniqueVisitors: uniqueTodaySet.size,
+            visits: totals.visits_today,
+            uniqueVisitors: totals.unique_today,
           },
           week: {
-            visits: visitsWeek,
-            uniqueVisitors: uniqueWeekSet.size,
+            visits: totals.visits_week,
+            uniqueVisitors: totals.unique_week,
           },
           month: {
             visits: visitsMonth,
-            uniqueVisitors: uniqueMonthSet.size,
+            uniqueVisitors: totals.unique_month,
           },
           allTime: {
-            totalVisits,
-            totalUniqueVisitors,
+            totalVisits: totals.visits_all,
+            totalUniqueVisitors: totals.unique_all,
             totalLoginSessions: totalLoginLogsCount,
           },
         },
