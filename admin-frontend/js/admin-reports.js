@@ -11,7 +11,7 @@
   const toast = (message, type) => window.AdminPages.showToast(message, type);
   const reload = () => window.AdminPages.loadPage('rapports', true);
 
-  const filters = { status: '', positionId: '', periodKey: '' };
+  const filters = { status: '', positionId: '', periodKey: '', archived: '' };
   let state = { year: new Date().getUTCFullYear(), summary: null, templates: {}, reports: [] };
 
   function kpi(label, value, tone, hint) {
@@ -164,6 +164,12 @@
                 ${s.positions.map((p) => `<option value="${esc(p.id)}" ${filters.positionId === p.id ? 'selected' : ''}>${esc(p.title)}</option>`).join('')}
               </select>
             </label>
+            <label>Classement
+              <select id="ar-filter-archived">
+                <option value="">Rapports en cours</option>
+                <option value="only" ${filters.archived === 'only' ? 'selected' : ''}>🗄️ Archives</option>
+              </select>
+            </label>
             <label>Période
               <select id="ar-filter-period">
                 <option value="">Toutes</option>
@@ -214,6 +220,8 @@
       <div class="ar-modal-foot">
         <button class="btn btn-ghost" data-ar-pdf>⬇️ PDF</button>
         ${report.permissions.delete ? '<button class="btn btn-danger" data-ar-delete>Supprimer</button>' : ''}
+        ${report.permissions.archive ? '<button class="btn btn-ghost" data-ar-archive="1">🗄️ Archiver</button>' : ''}
+        ${report.permissions.unarchive ? '<button class="btn btn-ghost" data-ar-archive="0">↩️ Restaurer</button>' : ''}
         <span style="flex:1;"></span>
         ${canReview ? `
           <button class="btn btn-secondary" data-ar-review="NEEDS_CHANGES">↩️ Demander des corrections</button>
@@ -232,6 +240,20 @@
         } catch (error) {
           toast(error.message, 'error');
         }
+      }
+      const archiveBtn = e.target.closest('[data-ar-archive]');
+      if (archiveBtn) {
+        const archive = archiveBtn.dataset.arArchive === '1';
+        if (archive && !confirm('Archiver ce rapport ? Il quittera les listes courantes et restera consultable dans « Archives ».')) return;
+        try {
+          const res = archive ? await window.AdminApi.reports.archive(report.id) : await window.AdminApi.reports.unarchive(report.id);
+          toast(res.message, 'success');
+          el.remove();
+          reload();
+        } catch (error) {
+          toast(error.message, 'error');
+        }
+        return;
       }
       const btn = e.target.closest('[data-ar-review]');
       if (!btn) return;
@@ -351,6 +373,7 @@
     document.getElementById('ar-filter-status')?.addEventListener('change', (e) => { filters.status = e.target.value; reload(); });
     document.getElementById('ar-filter-position')?.addEventListener('change', (e) => { filters.positionId = e.target.value; reload(); });
     document.getElementById('ar-filter-period')?.addEventListener('change', (e) => { filters.periodKey = e.target.value; reload(); });
+    document.getElementById('ar-filter-archived')?.addEventListener('change', (e) => { filters.archived = e.target.value; reload(); });
     document.getElementById('ar-export-summary')?.addEventListener('click', exportSummary);
     document.getElementById('ar-export-list')?.addEventListener('click', exportValidated);
 

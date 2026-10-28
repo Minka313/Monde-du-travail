@@ -540,6 +540,9 @@ model PositionReport {
   reviewedAt    DateTime?
   reviewedById  String?
   reviewComment String?
+  // Archivé par la Présidence : retiré des listes courantes, consultable dans « Archives »
+  archivedAt    DateTime?
+  archivedById  String?
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
   position      ClubPosition          @relation(fields: [positionId], references: [id], onDelete: Cascade)
@@ -550,6 +553,7 @@ model PositionReport {
   @@index([positionId, periodKey])
   @@index([authorId])
   @@index([status])
+  @@index([archivedAt])
   @@map("position_reports")
 }
 

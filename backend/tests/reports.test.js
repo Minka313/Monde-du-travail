@@ -290,4 +290,39 @@ describe('Rapports du bureau', () => {
       expect(res.status).toBe(403);
     });
   });
+  describe('Archivage', () => {
+    let validated, pending;
+    const ids = (res) => res.body.data.map((r) => r.id);
+
+    beforeAll(async () => {
+      const base = { positionId: positions.comm.id, authorId: comm.id, content: {} };
+      validated = await prisma.positionReport.create({ data: { ...base, title: `${TAG} Bilan validé`, status: 'VALIDATED', submittedAt: new Date() } });
+      pending = await prisma.positionReport.create({ data: { ...base, title: `${TAG} Bilan en attente`, status: 'SUBMITTED', submittedAt: new Date() } });
+    });
+
+    it("réserve l'archivage à la Présidence et aux rapports traités", async () => {
+      expect((await api('post', `/${validated.id}/archive`, 'comm')).status).toBe(403);
+      expect((await api('post', `/${pending.id}/archive`, 'president')).status).toBe(403);
+      const res = await api('post', `/${validated.id}/archive`, 'vp');
+      expect(res.status).toBe(200);
+      expect(res.body.data.archivedAt).toBeTruthy();
+      expect(res.body.data.permissions).toMatchObject({ archive: false, unarchive: true });
+      expect((await api('post', `/${validated.id}/archive`, 'vp')).status).toBe(400);
+    });
+
+    it('retire le rapport archivé des listes et le montre dans « Archives »', async () => {
+      expect(ids(await api('get', '/?scope=bureau', 'president'))).not.toContain(validated.id);
+      expect(ids(await api('get', '/', 'president'))).not.toContain(validated.id);
+      expect(ids(await api('get', '/?archived=only', 'president'))).toContain(validated.id);
+      expect(ids(await api('get', '/?archived=only', 'president'))).not.toContain(pending.id);
+      const detail = await api('get', `/${validated.id}`, 'president');
+      expect(detail.body.data.events.map((e) => e.action)).toContain('ARCHIVED');
+    });
+
+    it('restaure un rapport archivé', async () => {
+      const res = await api('post', `/${validated.id}/unarchive`, 'president');
+      expect(res.status).toBe(200);
+      expect(ids(await api('get', '/?scope=bureau', 'president'))).toContain(validated.id);
+    });
+  });
 });

@@ -100,5 +100,7 @@ router.put('/:id', validate(updateSchema), ReportController.update);
 router.delete('/:id', ReportController.remove);
 router.post('/:id/submit', ReportController.submit);
 router.post('/:id/review', validate(reviewSchema), ReportController.review);
+router.post('/:id/archive', ReportController.archive);
+router.post('/:id/unarchive', ReportController.unarchive);
 
 module.exports = router;

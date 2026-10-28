@@ -256,6 +256,11 @@ function canRead(scope, report) {
   return scope.isBureauMember && report.status === 'VALIDATED';
 }
 
+// Archivage : décision de la Présidence, pour un rapport traité (ni brouillon, ni en attente d'examen)
+function canArchive(scope, report) {
+  return (scope.isUltra || scope.seesAll) && !['DRAFT', 'SUBMITTED'].includes(report.status);
+}
+
 // ===== Présentation =====
 
 function toDto(report, scope) {
@@ -276,6 +281,7 @@ function toDto(report, scope) {
     reviewedAt: report.reviewedAt,
     reviewComment: report.reviewComment,
     reviewedBy: fullName(report.reviewedBy),
+    archivedAt: report.archivedAt || null,
     createdAt: report.createdAt,
     updatedAt: report.updatedAt,
     position: { id: report.position.id, title: report.position.title, category: report.position.category },
@@ -284,10 +290,12 @@ function toDto(report, scope) {
       action: e.action, comment: e.comment, createdAt: e.createdAt, actor: fullName(e.actor),
     })),
     permissions: {
-      edit: isAuthor && EDITABLE_STATUSES.includes(report.status),
-      submit: isAuthor && EDITABLE_STATUSES.includes(report.status),
+      edit: isAuthor && EDITABLE_STATUSES.includes(report.status) && !report.archivedAt,
+      submit: isAuthor && EDITABLE_STATUSES.includes(report.status) && !report.archivedAt,
       delete: (isAuthor && report.status === 'DRAFT') || scope.isUltra,
       review: scope.canReview && report.status === 'SUBMITTED',
+      archive: canArchive(scope, report) && !report.archivedAt,
+      unarchive: canArchive(scope, report) && Boolean(report.archivedAt),
     },
   };
 }
@@ -406,6 +414,8 @@ class ReportService {
     if (filters.status) and.push({ status: filters.status });
     if (filters.positionId) and.push({ positionId: filters.positionId });
     if (filters.periodKey) and.push({ periodKey: filters.periodKey });
+    // Les rapports archivés ne figurent que dans « Archives »
+    and.push({ archivedAt: filters.archived === 'only' ? { not: null } : null });
 
     const reports = await prisma.positionReport.findMany({
       where: { AND: and },
@@ -455,6 +465,7 @@ class ReportService {
     if (!EDITABLE_STATUSES.includes(existing.status)) {
       throw new BadRequestError('Un rapport soumis ou validé ne peut plus être modifié');
     }
+    if (existing.archivedAt) throw new BadRequestError('Ce rapport est archivé');
 
     const template = REPORT_TEMPLATES[templateKeyFor(existing.position)];
     const update = {};
@@ -505,6 +516,7 @@ class ReportService {
     const existing = await prisma.positionReport.findUnique({ where: { id }, include: { position: true } });
     if (!existing || existing.authorId !== user.id) throw new NotFoundError('Rapport introuvable');
     if (!EDITABLE_STATUSES.includes(existing.status)) throw new BadRequestError('Ce rapport a déjà été soumis');
+    if (existing.archivedAt) throw new BadRequestError('Ce rapport est archivé');
 
     const template = REPORT_TEMPLATES[templateKeyFor(existing.position)];
     const missing = missingRequired(template, existing.content || {});
@@ -573,6 +585,35 @@ class ReportService {
       ? { title: '✅ Rapport validé', message: `« ${report.title} » a été validé par la Présidence.`, url: `/bureau.html?report=${id}` }
       : { title: '✏️ Corrections demandées', message: `« ${report.title} » : ${note.slice(0, 180)}`, url: `/bureau.html?report=${id}` });
 
+    return toDto(report, scope);
+  }
+
+  static async setArchived(user, id, archived, meta = {}) {
+    const scope = await getViewerScope(user);
+    const existing = await prisma.positionReport.findUnique({ where: { id } });
+    if (!existing || !canRead(scope, existing)) throw new NotFoundError('Rapport introuvable');
+    if (!canArchive(scope, existing)) {
+      throw new ForbiddenError(['DRAFT', 'SUBMITTED'].includes(existing.status)
+        ? 'Un brouillon ou un rapport en attente d\'examen ne peut pas être archivé'
+        : 'Seule la Présidence peut archiver les rapports');
+    }
+    if (Boolean(existing.archivedAt) === archived) {
+      throw new BadRequestError(archived ? 'Ce rapport est déjà archivé' : 'Ce rapport n\'est pas archivé');
+    }
+
+    const report = await prisma.positionReport.update({
+      where: { id },
+      data: {
+        archivedAt: archived ? new Date() : null,
+        archivedById: archived ? user.id : null,
+        events: { create: { actorId: user.id, action: archived ? 'ARCHIVED' : 'UNARCHIVED' } },
+      },
+      include: DETAIL_INCLUDE,
+    });
+    await AuditService.log({
+      userId: user.id, action: archived ? 'report.archive' : 'report.unarchive', module: 'organization',
+      resource: 'PositionReport', resourceId: id, metadata: { title: report.title, position: report.position.title }, ...meta,
+    });
     return toDto(report, scope);
   }
 

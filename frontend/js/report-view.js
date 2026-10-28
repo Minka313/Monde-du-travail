@@ -16,6 +16,8 @@
   const EVENT_LABELS = {
     SUBMITTED: 'Soumis à la Présidence',
     NEEDS_CHANGES: 'Corrections demandées',
+    ARCHIVED: 'Archivé par la Présidence',
+    UNARCHIVED: 'Restauré des archives',
     VALIDATED: 'Validé',
   };
 

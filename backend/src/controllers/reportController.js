@@ -81,6 +81,24 @@ class ReportController {
     }
   }
 
+  static async archive(req, res, next) {
+    try {
+      const data = await ReportService.setArchived(req.user, req.params.id, true, meta(req));
+      res.json({ success: true, message: 'Rapport archivé', data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async unarchive(req, res, next) {
+    try {
+      const data = await ReportService.setArchived(req.user, req.params.id, false, meta(req));
+      res.json({ success: true, message: 'Rapport restauré', data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async getSummary(req, res, next) {
     try {
       res.json({ success: true, data: await ReportService.getSummary(req.user, req.query) });

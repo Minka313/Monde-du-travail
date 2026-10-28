@@ -87,7 +87,7 @@
   async function loadList(tab, force = false) {
     if (state.cache[tab] && !force) return state.cache[tab];
     const scope = { mine: 'mine', team: 'team', review: 'review', bureau: 'bureau' }[tab];
-    const res = await window.Api.reports.list({ scope });
+    const res = await window.Api.reports.list(tab === 'archives' ? { archived: 'only' } : { scope });
     state.cache[tab] = res.data || [];
     return state.cache[tab];
   }
@@ -134,6 +134,7 @@
     if (ctx.supervises) tabs.push({ key: 'team', label: 'Mon équipe', icon: '👥' });
     tabs.push({ key: 'bureau', label: 'Rapports du bureau', icon: '🏛️' });
     if (ctx.seesAll) tabs.push({ key: 'summary', label: 'Synthèse', icon: '📊' });
+    if (ctx.seesAll || ctx.canReview) tabs.push({ key: 'archives', label: 'Archives', icon: '🗄️' });
     return tabs;
   }
 
@@ -157,6 +158,8 @@
     if (p.review) actions.push(`<button type="button" class="bx-btn bx-btn-primary" data-action="view" data-id="${esc(report.id)}">Examiner</button>`);
     if (report.status !== 'DRAFT') actions.push(`<button type="button" class="bx-btn bx-btn-ghost" data-action="pdf" data-id="${esc(report.id)}" title="Exporter en PDF">PDF</button>`);
     if (p.delete && report.status === 'DRAFT') actions.push(`<button type="button" class="bx-btn bx-btn-danger" data-action="delete" data-id="${esc(report.id)}">Supprimer</button>`);
+    if (p.archive) actions.push(`<button type="button" class="bx-btn bx-btn-ghost" data-action="archive" data-id="${esc(report.id)}" title="Retirer des listes courantes">🗄️ Archiver</button>`);
+    if (p.unarchive) actions.push(`<button type="button" class="bx-btn bx-btn-ghost" data-action="unarchive" data-id="${esc(report.id)}">↩️ Restaurer</button>`);
 
     const money = tpl.totals && report.status !== 'DRAFT'
       ? `<span class="bx-card-money">+${esc(RV.amount(report.incomeTotal))} · −${esc(RV.amount(report.expenseTotal))}</span>` : '';
@@ -337,6 +340,7 @@
       if (state.tab === 'review') html = await renderSimpleList('review', ['📥', 'Rien à examiner', 'Les rapports soumis par le bureau arriveront ici.']);
       if (state.tab === 'team') html = await renderSimpleList('team', ['👥', 'Aucun rapport d\'équipe', 'Les rapports soumis par ton équipe ou ton adjoint apparaîtront ici.']);
       if (state.tab === 'bureau') html = await renderBureau();
+      if (state.tab === 'archives') html = `<p class="bx-muted">Rapports archivés par la Présidence : retirés des listes courantes, toujours consultables et exportables. « Restaurer » les remet dans les listes.</p>${await renderSimpleList('archives', ['🗄️', 'Aucun rapport archivé', 'Archive les rapports traités (validés ou en correction) pour garder des listes claires.'])}`;
       if (state.tab === 'summary') html = await renderSummary();
       root.innerHTML = html;
     } catch (error) {
@@ -373,6 +377,8 @@
         ${report.status !== 'DRAFT' ? '<button type="button" class="bx-btn bx-btn-ghost" data-v="pdf">⬇️ Exporter en PDF</button>' : ''}
         ${p.edit ? '<button type="button" class="bx-btn bx-btn-ghost" data-v="edit">Modifier</button>' : ''}
         ${p.submit ? '<button type="button" class="bx-btn bx-btn-primary" data-v="submit">Soumettre à la Présidence</button>' : ''}
+        ${p.archive ? '<button type="button" class="bx-btn bx-btn-ghost" data-v="archive">🗄️ Archiver</button>' : ''}
+        ${p.unarchive ? '<button type="button" class="bx-btn bx-btn-ghost" data-v="unarchive">↩️ Restaurer</button>' : ''}
         <button type="button" class="bx-btn bx-btn-ghost" data-close>Fermer</button>
       </footer>`, { wide: true, label: report.title });
 
@@ -381,6 +387,7 @@
       if (v === 'pdf') RV.print([report], templates(), { title: report.title, subtitle: `${report.position.title}${report.periodLabel ? ` · ${report.periodLabel}` : ''}` });
       if (v === 'edit') openEditor({ report });
       if (v === 'submit') submitReport(report.id);
+      if (v === 'archive' || v === 'unarchive') { closeModal(); setArchived(report.id, v === 'archive'); }
 
       const decision = e.target.closest('[data-review]')?.dataset.review;
       if (decision) {
@@ -698,6 +705,17 @@
     RV.print([], templates(), { title: `Synthèse des rapports du bureau — ${s.year}`, intro });
   }
 
+  async function setArchived(id, archived) {
+    if (archived && !window.confirm('Archiver ce rapport ? Il quittera les listes courantes et restera consultable dans « Archives ».')) return;
+    try {
+      const res = archived ? await window.Api.reports.archive(id) : await window.Api.reports.unarchive(id);
+      toast(res.message);
+      await refresh();
+    } catch (error) {
+      toast(error.message, 'error');
+    }
+  }
+
   // ===== Événements =====
 
   function bind() {
@@ -734,6 +752,7 @@
         }
       }
       if (action === 'submit') submitReport(id);
+      if (action === 'archive' || action === 'unarchive') setArchived(id, action === 'archive');
       if (action === 'pdf') exportReports([id], {});
       if (action === 'pdf-summary') exportSummary();
       if (action === 'pdf-selection') {
