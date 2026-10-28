@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const { authenticate, authorize, authorizeAdmin } = require('../middleware/auth');
+const { authenticate, authorize, authorizeAdmin, authorizeUltraAdmin } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const requireReauth = require('../middleware/reauth');
 const validate = require('../middleware/validate');
@@ -31,6 +31,7 @@ router.post('/:id/deactivate', authorize('users.suspend'), userController.deacti
 router.post('/:id/verify', authorize('users.verify'), userController.verifyUser);
 
 // Suppression définitive : action critique (double confirmation par mot de passe)
+router.post('/:id/2fa/reset', authorizeUltraAdmin, requireReauth, userController.resetTwoFactor);
 router.delete('/:id', authorize('users.delete'), requireReauth, userController.deleteUser);
 
 module.exports = router;

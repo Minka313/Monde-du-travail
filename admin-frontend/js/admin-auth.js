@@ -470,6 +470,7 @@
       deactivate: (id) => apiRequestWithRefresh(`/users/${id}/deactivate`, { method: 'POST' }),
       verify: (id) => apiRequestWithRefresh(`/users/${id}/verify`, { method: 'POST' }),
       remove: (id) => apiRequestWithRefresh(`/users/${id}`, { method: 'DELETE' }),
+      resetTwoFactor: (id) => apiRequestWithRefresh(`/users/${encodeURIComponent(id)}/2fa/reset`, { method: 'POST' }),
     },
     settings: {
       getAll: () => apiRequestWithRefresh('/settings'),

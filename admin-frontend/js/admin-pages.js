@@ -3797,6 +3797,7 @@
                   ${u.isVerified ? '✓ Email Vérifié' : '⚠️ Non vérifié'}
                 </span>
                 ${u.twoFactorEnabled ? '<span class="badge badge-primary">🔐 2FA Activé</span>' : ''}
+                ${u.twoFactorEnabled && currentUser?.role === 'ULTRA_ADMIN' && u.id !== currentUser.id ? '<button type="button" class="btn btn-sm btn-ghost" id="dossier-act-reset-2fa" title="Téléphone perdu ou changé : la double authentification sera redemandée à sa prochaine visite de l\'admin">🔓 Réinitialiser la 2FA</button>' : ''}
                 ${adminRoles.filter(r => r !== 'MENTOR_EXPERT').map(r => `<span class="badge badge-muted">🛡️ ${escapeHtml(r)}</span>`).join('')}
               </div>
             </div>
@@ -3943,6 +3944,20 @@
       // Écouteurs de fermeture
       overlay.querySelectorAll('#dossier-modal-close, #dossier-modal-close-footer').forEach(btn => {
         btn.addEventListener('click', close);
+      });
+
+      // Téléphone perdu : réinitialisation de la double authentification (Ultra Admin)
+      overlay.querySelector('#dossier-act-reset-2fa')?.addEventListener('click', async (e) => {
+        if (!confirm(`Réinitialiser la double authentification de ${u.firstName} ${u.lastName} ? Elle lui sera redemandée à sa prochaine visite de l'administration.`)) return;
+        e.target.disabled = true;
+        try {
+          const res = await window.AdminApi.users.resetTwoFactor(u.id);
+          showToast(res.message || 'Double authentification réinitialisée', 'success');
+          e.target.remove();
+        } catch (error) {
+          showToast(error.message, 'error');
+          e.target.disabled = false;
+        }
       });
 
       // Actions rapides depuis le dossier :

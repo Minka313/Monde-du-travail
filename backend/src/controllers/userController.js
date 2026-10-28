@@ -140,6 +140,31 @@ class UserController {
     }
   }
 
+  // Téléphone perdu : l'Ultra Admin désactive la double authentification d'un compte ;
+  // la personne la réactive à sa prochaine visite de l'administration
+  static async resetTwoFactor(req, res, next) {
+    try {
+      const prisma = require('../config/database');
+      const target = await prisma.user.findUnique({ where: { id: req.params.id }, select: { id: true, email: true, twoFactorEnabled: true } });
+      if (!target) return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
+      await prisma.user.update({ where: { id: target.id }, data: { twoFactorEnabled: false, twoFactorSecret: null } });
+      await AuditService.log({
+        userId: req.user.id,
+        action: 'users.2fa_reset',
+        module: 'users',
+        resource: 'User',
+        resourceId: target.id,
+        ipAddress: req.ip,
+        userAgent: req.get('user-agent'),
+        result: 'SUCCESS',
+        metadata: { email: target.email, wasEnabled: target.twoFactorEnabled },
+      });
+      res.json({ success: true, message: 'Double authentification réinitialisée : elle sera redemandée à la prochaine connexion à l\'administration' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async deleteUser(req, res, next) {
     try {
       const user = await userService.deleteUser(req.params.id, req.user.id);
