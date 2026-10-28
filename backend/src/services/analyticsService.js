@@ -62,6 +62,16 @@ class AnalyticsService {
         if (parts.length === 4) {
           anonymizedIp = `${parts[0]}.${parts[1]}.${parts[2]}.0`;
         }
+      } else if (ipAddress && ipAddress.includes(':')) {
+        // IPv6 : seul le préfixe de réseau (3 premiers groupes) est gardé
+        anonymizedIp = `${ipAddress.split(':').slice(0, 3).join(':')}::`;
+      }
+
+      // Journaux de visite conservés 13 mois (politique de confidentialité) : purge occasionnelle
+      if (Math.random() < 0.01) {
+        const limit = new Date(Date.now() - 395 * 24 * 60 * 60 * 1000);
+        prisma.auditLog.deleteMany({ where: { module: 'analytics', action: 'site.visit', createdAt: { lt: limit } } })
+          .catch(() => { /* purge reportée au prochain passage */ });
       }
 
       // Enregistrement asynchrone dans audit_logs

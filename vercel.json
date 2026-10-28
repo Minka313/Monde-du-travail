@@ -106,11 +106,11 @@
       "dest": "/frontend/logo.$1"
     },
     {
-      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor|test-riasec|opportunite|guide)$",
+      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor|test-riasec|opportunite|guide|legal)$",
       "dest": "/frontend/$1.html"
     },
     {
-      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor|test-riasec|opportunite|guide)\\.html$",
+      "src": "^/(about|formations|opportunites|job|job-detail|blog|blog-post|forum|forum-topic|forum-create|login|reset-password|bureau|formation-detail|mentor|test-riasec|opportunite|guide|legal)\\.html$",
       "dest": "/frontend/$1.html"
     },
     {
