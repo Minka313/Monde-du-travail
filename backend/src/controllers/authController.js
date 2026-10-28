@@ -63,6 +63,15 @@ class AuthController {
   }
 
   // Connexion étape 2 : validation du code 2FA
+  static async resendLogin2FA(req, res, next) {
+    try {
+      const data = await authService.resendLogin2FACode(req.body?.tempToken);
+      res.json({ success: true, message: `Nouveau code envoyé à ${data.sentTo}`, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async login2FA(req, res, next) {
     try {
       const { tempToken, code } = req.body;

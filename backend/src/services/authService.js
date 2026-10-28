@@ -137,15 +137,24 @@ class AuthService {
     }
 
     // Si le 2FA est activé sur le compte, émettre un jeton temporaire scoped
-    if (user.twoFactorEnabled && user.twoFactorSecret) {
+    const emailMethod = user.twoFactorEnabled && user.twoFactorMethod === 'EMAIL';
+    if (emailMethod || (user.twoFactorEnabled && user.twoFactorSecret)) {
       const tempToken = jwt.sign(
         { id: user.id, email: user.email, scope: '2fa_verification' },
         process.env.JWT_SECRET,
-        { expiresIn: '5m' }
+        { expiresIn: emailMethod ? '15m' : '5m' }
       );
+      // Méthode « code par e-mail » : le code part automatiquement
+      let sentTo = null;
+      if (emailMethod) {
+        const TwoFactorService = require('./twoFactorService');
+        sentTo = (await TwoFactorService.sendEmailCode(user.id).catch(() => ({ sentTo: TwoFactorService.maskEmail(user.email) }))).sentTo;
+      }
 
       return {
         require2FA: true,
+        method: emailMethod ? 'EMAIL' : 'TOTP',
+        ...(sentTo ? { sentTo } : {}),
         tempToken,
         user: {
           id: user.id,
@@ -201,6 +210,21 @@ class AuthService {
   }
 
   // Connexion étape 2 : validation du code 2FA
+  // Nouveau code par e-mail pendant la connexion (code non reçu ou expiré)
+  static async resendLogin2FACode(tempToken) {
+    let payload;
+    try {
+      payload = jwt.verify(tempToken, process.env.JWT_SECRET);
+    } catch (err) {
+      throw new UnauthorizedError('Session expirée : reconnecte-toi avec ton mot de passe');
+    }
+    if (payload.scope !== '2fa_verification') throw new UnauthorizedError('Jeton invalide');
+    const user = await prisma.user.findUnique({ where: { id: payload.id }, select: { id: true, isActive: true, twoFactorMethod: true } });
+    if (!user || !user.isActive || user.twoFactorMethod !== 'EMAIL') throw new BadRequestError('Renvoi impossible pour ce compte');
+    const TwoFactorService = require('./twoFactorService');
+    return TwoFactorService.sendEmailCode(user.id);
+  }
+
   static async login2FA(tempToken, code, ipAddress, userAgent) {
     if (!tempToken || !code) {
       throw new BadRequestError('Jeton temporaire et code à 6 chiffres requis');
@@ -225,8 +249,11 @@ class AuthService {
       throw new UnauthorizedError('Utilisateur introuvable ou compte inactif');
     }
 
-    const isValid = totp.verifyTOTP(code, user.twoFactorSecret);
-    if (!isValid) {
+    if (user.twoFactorMethod === 'EMAIL') {
+      const TwoFactorService = require('./twoFactorService');
+      const check = await TwoFactorService.checkEmailCode(user.id, code);
+      if (!check.ok) throw new UnauthorizedError(check.reason);
+    } else if (!totp.verifyTOTP(code, user.twoFactorSecret)) {
       throw new UnauthorizedError('Code 2FA incorrect ou expiré');
     }
 

@@ -236,6 +236,7 @@
         method: 'POST',
         body: JSON.stringify({ email, password }),
       }),
+      resend2FA: (tempToken) => apiRequestWithRefresh('/auth/login-2fa/resend', { method: 'POST', body: JSON.stringify({ tempToken }) }),
       login2FA: (tempToken, code) => apiRequestWithRefresh('/auth/login-2fa', {
         method: 'POST',
         body: JSON.stringify({ tempToken, code }),
@@ -246,6 +247,8 @@
     twoFactor: {
       getStatus: () => apiRequestWithRefresh('/admin/2fa/status'),
       setup: () => apiRequestWithRefresh('/admin/2fa/setup', { method: 'POST' }),
+      setupEmail: () => apiRequestWithRefresh('/admin/2fa/setup-email', { method: 'POST' }),
+      verifyEmail: (code) => apiRequestWithRefresh('/admin/2fa/verify-email', { method: 'POST', body: JSON.stringify({ code }) }),
       verify: (code) => apiRequestWithRefresh('/admin/2fa/verify', {
         method: 'POST',
         body: JSON.stringify({ code }),

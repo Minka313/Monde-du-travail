@@ -43,7 +43,7 @@
      * fermée derrière une fenêtre d'activation (application d'authentification + code).
      */
     ensureTwoFactor: async function() {
-      let enabled = true;
+      let enabled;
       try {
         const res = await window.AdminApi.twoFactor.getStatus();
         enabled = Boolean(res?.data?.enabled);
@@ -61,43 +61,40 @@
           <div role="dialog" aria-modal="true" aria-labelledby="f2fa-title" style="background:#fff;color:#0f172a;max-width:520px;width:100%;border-radius:16px;padding:1.75rem;box-shadow:0 25px 60px rgba(0,0,0,0.4);">
             <h2 id="f2fa-title" style="margin:0 0 0.5rem;font-size:1.3rem;">🔐 Sécurise ton accès à l'administration</h2>
             <p style="margin:0 0 1rem;color:#475569;line-height:1.55;font-size:0.95rem;">Pour protéger les données des membres, la <strong>double authentification</strong> est obligatoire pour toute l'équipe. À chaque connexion, un code à 6 chiffres te sera demandé en plus du mot de passe.</p>
-            <ol style="margin:0 0 1rem;padding-left:1.2rem;color:#334155;line-height:1.6;font-size:0.92rem;">
-              <li>Installe une application d'authentification gratuite sur ton téléphone : <strong>Google Authenticator</strong> ou <strong>Microsoft Authenticator</strong>.</li>
-              <li>Clique sur « Commencer », puis scanne le QR code avec l'application.</li>
-              <li>Saisis le code à 6 chiffres affiché dans l'application.</li>
-            </ol>
-            <div id="f2fa-step" style="text-align:center;"><button type="button" class="btn btn-primary" id="f2fa-start">Commencer</button></div>
+            <p style="margin:0 0 0.75rem;font-weight:700;font-size:0.95rem;">Choisis comment recevoir ton code :</p>
+            <div id="f2fa-step" style="display:grid;gap:0.6rem;">
+              <button type="button" class="btn btn-secondary" id="f2fa-start" style="justify-content:flex-start;text-align:left;padding:0.85rem 1rem;line-height:1.4;"><span>📱 <strong>Application sur mon téléphone</strong><br><small style="font-weight:400;">Google Authenticator ou Microsoft Authenticator, fonctionne même sans connexion</small></span></button>
+              <button type="button" class="btn btn-secondary" id="f2fa-email" style="justify-content:flex-start;text-align:left;padding:0.85rem 1rem;line-height:1.4;"><span>✉️ <strong>Code par e-mail</strong> (sans téléphone)<br><small style="font-weight:400;">Un code arrive dans ta boîte e-mail à chaque connexion</small></span></button>
+            </div>
             <p id="f2fa-error" role="alert" style="color:#b91c1c;font-size:0.88rem;min-height:1.2em;margin:0.75rem 0 0;"></p>
-            <p style="margin:0.75rem 0 0;font-size:0.8rem;color:#64748b;text-align:center;">Tu n'as pas ton téléphone ? <button type="button" id="f2fa-logout" style="border:0;background:none;color:#0369a1;text-decoration:underline;cursor:pointer;font:inherit;">Se déconnecter</button></p>
+            <p style="margin:0.75rem 0 0;font-size:0.8rem;color:#64748b;text-align:center;">Pas maintenant ? <button type="button" id="f2fa-logout" style="border:0;background:none;color:#0369a1;text-decoration:underline;cursor:pointer;font:inherit;">Se déconnecter</button></p>
           </div>`;
         document.body.appendChild(overlay);
         const step = overlay.querySelector('#f2fa-step');
         const error = overlay.querySelector('#f2fa-error');
         overlay.querySelector('#f2fa-logout').addEventListener('click', () => this.logout());
 
-        const showCodeStep = (data) => {
-          const secret = String(data.secret || '').match(/.{1,4}/g)?.join(' ') || '';
-          step.innerHTML = `
-            <img src="${esc(data.qrCodeUrl)}" alt="QR code de configuration" width="200" height="200" style="display:block;margin:0 auto 0.75rem;border:1px solid #e2e8f0;border-radius:8px;">
-            <p style="margin:0 0 0.75rem;font-size:0.82rem;color:#64748b;">Pas de lecteur de QR code ? Saisis cette clé dans l'application :<br><code style="font-size:0.95rem;font-weight:700;letter-spacing:0.08em;user-select:all;">${esc(secret)}</code></p>
+        // Saisie d'un code, commune aux deux méthodes
+        const codeForm = () => `
             <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;">
               <input type="text" id="f2fa-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" aria-label="Code à 6 chiffres" style="width:150px;text-align:center;font-size:1.25rem;font-weight:700;letter-spacing:0.2em;padding:0.5rem;border:1.5px solid #cbd5e1;border-radius:8px;">
               <button type="button" class="btn btn-primary" id="f2fa-verify">Activer</button>
             </div>`;
+        const bindCode = (verifyFn) => {
           const input = step.querySelector('#f2fa-code');
           const verify = step.querySelector('#f2fa-verify');
           input.focus();
           const submit = async () => {
             const code = input.value.replace(/\s/g, '');
-            if (!/^\d{6}$/.test(code)) { error.textContent = 'Saisis le code à 6 chiffres affiché dans l\'application.'; return; }
+            if (!/^\d{6}$/.test(code)) { error.textContent = 'Saisis le code à 6 chiffres.'; return; }
             verify.disabled = true;
             error.textContent = '';
             try {
-              await window.AdminApi.twoFactor.verify(code);
+              await verifyFn(code);
               overlay.remove();
               resolve();
             } catch (e) {
-              error.textContent = e.message || 'Code incorrect : vérifie l\'heure de ton téléphone et réessaie.';
+              error.textContent = e.message || 'Code incorrect.';
               verify.disabled = false;
               input.select();
             }
@@ -106,15 +103,61 @@
           input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
         };
 
+        const showEmailStep = (data) => {
+          step.style.display = 'block';
+          step.style.textAlign = 'center';
+          step.innerHTML = `
+            <p style="margin:0 0 0.75rem;font-size:0.92rem;color:#334155;">✉️ Un code à 6 chiffres vient d'être envoyé à <strong>${esc(data.sentTo || 'ton adresse e-mail')}</strong>. Il est valable ${esc(data.expiresInMinutes || 10)} minutes (pense à regarder dans les courriers indésirables).</p>
+            ${codeForm()}
+            <p style="margin:0.75rem 0 0;font-size:0.82rem;"><button type="button" id="f2fa-resend" style="border:0;background:none;color:#0369a1;text-decoration:underline;cursor:pointer;font:inherit;">Renvoyer un code</button></p>`;
+          bindCode((code) => window.AdminApi.twoFactor.verifyEmail(code));
+          step.querySelector('#f2fa-resend').addEventListener('click', async (e) => {
+            e.target.disabled = true;
+            try {
+              const res = await window.AdminApi.twoFactor.setupEmail();
+              error.style.color = '#047857';
+              error.textContent = res.message || 'Nouveau code envoyé';
+            } catch (err) {
+              error.style.color = '#b91c1c';
+              error.textContent = err.message;
+            } finally {
+              setTimeout(() => { e.target.disabled = false; error.style.color = '#b91c1c'; }, 30000);
+            }
+          });
+        };
+
+        const showCodeStep = (data) => {
+          step.style.display = 'block';
+          step.style.textAlign = 'center';
+          const secret = String(data.secret || '').match(/.{1,4}/g)?.join(' ') || '';
+          step.innerHTML = `
+            <img src="${esc(data.qrCodeUrl)}" alt="QR code de configuration" width="200" height="200" style="display:block;margin:0 auto 0.75rem;border:1px solid #e2e8f0;border-radius:8px;">
+            <p style="margin:0 0 0.75rem;font-size:0.82rem;color:#64748b;">Pas de lecteur de QR code ? Saisis cette clé dans l'application :<br><code style="font-size:0.95rem;font-weight:700;letter-spacing:0.08em;user-select:all;">${esc(secret)}</code></p>
+            ${codeForm()}`;
+          bindCode((code) => window.AdminApi.twoFactor.verify(code));
+        };
+
+        overlay.querySelector('#f2fa-email').addEventListener('click', async (e) => {
+          e.target.closest('button').disabled = true;
+          error.textContent = '';
+          try {
+            const res = await window.AdminApi.twoFactor.setupEmail();
+            showEmailStep(res.data || {});
+          } catch (err) {
+            error.textContent = err.message || 'Envoi du code impossible. Réessaie.';
+            e.target.closest('button').disabled = false;
+          }
+        });
+
         overlay.querySelector('#f2fa-start').addEventListener('click', async (e) => {
-          e.target.disabled = true;
+          e.target.closest('button').disabled = true;
           error.textContent = '';
           try {
             const res = await window.AdminApi.twoFactor.setup();
             showCodeStep(res.data || {});
           } catch (err) {
             error.textContent = err.message || 'Impossible de préparer la double authentification. Réessaie.';
-            e.target.disabled = false;
+            e.target.closest('button').disabled = false;
           }
         });
       });

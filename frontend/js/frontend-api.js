@@ -290,6 +290,8 @@ return headers;
         method: 'POST',
         body: JSON.stringify(userData),
       }),
+      login2FA: (tempToken, code) => apiRequestWithRefresh('/auth/login-2fa', { method: 'POST', body: JSON.stringify({ tempToken, code }) }),
+      resend2FA: (tempToken) => apiRequestWithRefresh('/auth/login-2fa/resend', { method: 'POST', body: JSON.stringify({ tempToken }) }),
       login: (email, password) => apiRequestWithRefresh('/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),

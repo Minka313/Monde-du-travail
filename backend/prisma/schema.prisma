@@ -423,6 +423,12 @@ model User {
   isVerified             Boolean                 @default(false)
   twoFactorEnabled       Boolean                 @default(false)
   twoFactorSecret        String?
+  // Méthode de double authentification : TOTP (application) ou EMAIL (code par e-mail, sans téléphone)
+  twoFactorMethod        String                  @default("TOTP")
+  // Dernier code envoyé par e-mail : empreinte chiffrée, expiration et essais
+  twoFactorEmailCode     String?
+  twoFactorEmailExpires  DateTime?
+  twoFactorEmailAttempts Int                     @default(0)
   avatarUrl              String?                 @map("avatar_url")
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt

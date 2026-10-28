@@ -185,7 +185,7 @@
                 <div style="margin-bottom:1.25rem;">
                   <span style="font-size:2.2rem;display:block;margin-bottom:0.5rem;">🛡️</span>
                   <h3 style="margin:0 0 0.5rem 0;font-size:1.15rem;">Authentification à 2 facteurs</h3>
-                  <p style="color:var(--color-gray-600);font-size:0.9rem;line-height:1.4;">Entrez le code à 6 chiffres
+                  <p id="admin2faHint" style="color:var(--color-gray-600);font-size:0.9rem;line-height:1.4;">Entrez le code à 6 chiffres
                     généré par votre application d'authentification (Google Authenticator, Authy, etc.).</p>
                 </div>
                 <div class="form-group" style="display:flex;justify-content:center;">
@@ -195,6 +195,8 @@
                 </div>
                 <button type="button" id="admin2faSubmitBtn" class="btn btn-primary btn-full"
                   style="margin-top:0.75rem;">Valider la connexion</button>
+                <button type="button" id="admin2faResendBtn" class="btn btn-ghost btn-full"
+                  style="margin-top:0.5rem;display:none;">✉️ Renvoyer un code par e-mail</button>
                 <button type="button" id="admin2faCancelBtn" class="btn btn-ghost btn-full"
                   style="margin-top:0.5rem;">Retour aux identifiants</button>
               </div>
@@ -237,8 +239,8 @@
 
   <script src="../frontend/js/config.js?v=2.1.2"></script>
   <script src="../frontend/js/frontend-api.js?v=2.1.2"></script>
-  <script src="js/admin-auth.js?v=2.1.2"></script>
-  <script src="js/admin-app.js?v=2.1.2"></script>
+  <script src="js/admin-auth.js?v=2.4.5"></script>
+  <script src="js/admin-app.js?v=2.4.1"></script>
   <script src="../frontend/js/main.js?v=2.1.2"></script>
   <!-- Toggle mot de passe admin -->
   <script>
@@ -304,6 +306,13 @@
           // Si le compte exige la validation 2FA
           if (response.require2FA || (response.data && response.data.require2FA)) {
             activeTempToken = response.data?.tempToken || response.data?.data?.tempToken;
+            // Code par e-mail (sans téléphone) ou application d'authentification
+            const challenge = response.data?.data || response.data || {};
+            const byEmail = challenge.method === 'EMAIL';
+            document.getElementById('admin2faHint').textContent = byEmail
+              ? `Un code à 6 chiffres vient d'être envoyé à ${challenge.sentTo || 'ton adresse e-mail'}. Il est valable 10 minutes (pense à regarder dans les courriers indésirables).`
+              : 'Entrez le code à 6 chiffres généré par votre application d\'authentification (Google Authenticator, Microsoft Authenticator…).';
+            document.getElementById('admin2faResendBtn').style.display = byEmail ? 'block' : 'none';
             document.getElementById('stepCredentials').style.display = 'none';
             document.getElementById('step2FA').style.display = 'block';
             const codeInput = document.getElementById('admin2faCode');
@@ -452,6 +461,21 @@
         const cancel2FABtn = document.getElementById('admin2faCancelBtn');
 
         if (!form) return;
+
+        // Code par e-mail non reçu ou expiré : nouvel envoi (30 s minimum entre deux)
+        const resend2FABtn = document.getElementById('admin2faResendBtn');
+        resend2FABtn?.addEventListener('click', async () => {
+          const errorEl = document.getElementById('adminLoginError');
+          resend2FABtn.disabled = true;
+          try {
+            const res = await window.AdminApi.auth.resend2FA(activeTempToken);
+            if (errorEl) { errorEl.style.color = '#047857'; errorEl.textContent = res.message || 'Nouveau code envoyé'; }
+          } catch (error) {
+            if (errorEl) { errorEl.style.color = ''; errorEl.textContent = error.message; }
+          } finally {
+            setTimeout(() => { resend2FABtn.disabled = false; if (errorEl) errorEl.style.color = ''; }, 30000);
+          }
+        });
 
         let isSubmitting = false;
 

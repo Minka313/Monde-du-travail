@@ -315,7 +315,7 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-1"></script>
+    <script defer src="js/frontend-api.js?v=20261028-2"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
@@ -482,6 +482,63 @@
         }
 
         /* ─── Connexion ─── */
+        // Étape de double authentification : renvoie la réponse de connexion, ou null si annulée
+        function askSecondFactor(challenge) {
+          return new Promise((resolve) => {
+            const form = document.getElementById('loginForm');
+            const byEmail = challenge.method === 'EMAIL';
+            const box = document.createElement('div');
+            box.id = 'login2faStep';
+            box.style.cssText = 'text-align:center;';
+            box.innerHTML = `
+              <div style="font-size:2rem;margin-bottom:0.4rem;">🛡️</div>
+              <h3 style="margin:0 0 0.5rem;font-size:1.1rem;">Vérification en deux étapes</h3>
+              <p style="margin:0 0 1rem;font-size:0.9rem;line-height:1.5;color:var(--text-secondary);">${byEmail
+                ? `Un code à 6 chiffres vient d'être envoyé à <strong>${escapeHtml(challenge.sentTo || 'ton adresse e-mail')}</strong>. Il est valable 10 minutes (regarde aussi les courriers indésirables).`
+                : "Saisis le code à 6 chiffres affiché dans ton application d'authentification."}</p>
+              <input type="text" id="login2faCode" class="form-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" aria-label="Code à 6 chiffres" style="text-align:center;letter-spacing:0.3em;font-size:1.35rem;font-weight:700;max-width:220px;margin:0 auto;">
+              <p id="login2faError" role="alert" style="min-height:1.2em;margin:0.6rem 0 0;font-size:0.86rem;color:#b91c1c;"></p>
+              <button type="button" class="btn btn-primary btn-full" id="login2faSubmit" style="margin-top:0.5rem;">Valider</button>
+              ${byEmail ? '<button type="button" class="btn btn-ghost btn-full" id="login2faResend" style="margin-top:0.4rem;">✉️ Renvoyer un code</button>' : ''}
+              <button type="button" class="btn btn-ghost btn-full" id="login2faCancel" style="margin-top:0.4rem;">Retour</button>`;
+            form.style.display = 'none';
+            form.insertAdjacentElement('afterend', box);
+            const input = box.querySelector('#login2faCode');
+            const err = box.querySelector('#login2faError');
+            const done = (value) => { box.remove(); form.style.display = ''; resolve(value); };
+            input.focus();
+            const submit = async () => {
+              const code = input.value.replace(/\s/g, '');
+              if (!/^\d{6}$/.test(code)) { err.textContent = 'Saisis le code à 6 chiffres.'; return; }
+              const btn = box.querySelector('#login2faSubmit');
+              btn.disabled = true;
+              err.textContent = '';
+              try {
+                done(await window.Api.auth.login2FA(challenge.tempToken, code));
+              } catch (e) {
+                err.textContent = e.message || 'Code incorrect.';
+                btn.disabled = false;
+                input.select();
+              }
+            };
+            box.querySelector('#login2faSubmit').addEventListener('click', submit);
+            input.addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+            box.querySelector('#login2faCancel').addEventListener('click', () => done(null));
+            box.querySelector('#login2faResend')?.addEventListener('click', async (e) => {
+              e.target.disabled = true;
+              try {
+                const res = await window.Api.auth.resend2FA(challenge.tempToken);
+                err.style.color = '#047857';
+                err.textContent = res.message || 'Nouveau code envoyé';
+              } catch (error) {
+                err.style.color = '#b91c1c';
+                err.textContent = error.message;
+              }
+              setTimeout(() => { e.target.disabled = false; err.style.color = '#b91c1c'; }, 30000);
+            });
+          });
+        }
+
         async function handleLogin(email, password) {
           if (!window.Api || !window.Api.auth || typeof window.Api.auth.login !== 'function') {
             showLoginError('Le service est temporairement indisponible. Vérifie ta connexion et réessaie.');
@@ -497,7 +554,14 @@
           const cleanEmail = (email || '').trim().toLowerCase();
 
           try {
-            const response = await window.Api.auth.login(cleanEmail, password);
+            let response = await window.Api.auth.login(cleanEmail, password);
+            // Compte protégé par la double authentification : code de l'application ou reçu par e-mail
+            if (response.data?.require2FA) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = originalText;
+              response = await askSecondFactor(response.data);
+              if (!response) return;
+            }
             window.Api.setToken(response.data.accessToken);
 
             const user = response.data?.user;
