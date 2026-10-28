@@ -40,6 +40,21 @@ function isNextSession(opportunity, now = new Date()) {
   return !opportunity.openingDate;
 }
 
+// Concours annuel passé : la session suivante est attendue un an après la précédente
+// (date d'ouverture, sinon date limite). L'équipe est prévenue 30 jours avant.
+const SESSION_REMINDER_DAYS = 30;
+function expectedSessionAt(opportunity, now = new Date()) {
+  if (!opportunity.deadline || !isNextSession(opportunity, now)) return null;
+  const expected = new Date(opportunity.openingDate || opportunity.deadline);
+  expected.setUTCFullYear(expected.getUTCFullYear() + 1);
+  return expected;
+}
+
+function isSessionReminderDue(opportunity, now = new Date()) {
+  const expected = expectedSessionAt(opportunity, now);
+  return Boolean(expected) && now >= new Date(expected.getTime() - SESSION_REMINDER_DAYS * 86400000);
+}
+
 // Épreuves : matière obligatoire, durée et coefficient facultatifs
 function normalizeExams(exams) {
   if (!Array.isArray(exams) || exams.length === 0) return null;
@@ -191,7 +206,59 @@ class OpportunityService {
       include: { ...CREATOR_SELECT, _count: { select: { reports: { where: { status: 'OPEN' } } } } },
     });
     const now = new Date();
-    return rows.map((row) => withPhase(row, now));
+    return rows.map((row) => ({
+      ...withPhase(row, now),
+      expectedSessionAt: expectedSessionAt(row, now),
+      sessionReminderDue: row.status === 'PUBLISHED' && isSessionReminderDue(row, now),
+    }));
+  }
+
+  /**
+   * Prévient (notification dans l'admin + push) les personnes qui gèrent la rubrique
+   * quand la session suivante d'un concours annuel approche. Rejouable sans doublon :
+   * chaque rappel n'est envoyé qu'une fois par session et par personne.
+   */
+  static async sendSessionReminders(now = new Date()) {
+    const candidates = await prisma.opportunity.findMany({
+      where: { status: 'PUBLISHED', recurring: true, phaseOverride: null, deadline: { lt: now } },
+      select: { id: true, title: true, organization: true, openingDate: true, deadline: true, recurring: true, phaseOverride: true, usualPeriod: true },
+    });
+    const due = candidates.filter((o) => isSessionReminderDue(o, now));
+    if (!due.length) return { due: 0, sent: 0 };
+
+    const team = await prisma.user.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { role: 'ULTRA_ADMIN' },
+          { adminRoles: { some: { isActive: true, status: 'APPROVED', role: { permissions: { some: { permission: { code: 'opportunite.update' } } } } } } },
+        ],
+      },
+      select: { id: true },
+    });
+
+    const pending = due.flatMap((o) => {
+      const expected = expectedSessionAt(o, now);
+      return team.map((u) => ({ o, expected, userId: u.id, dedupeKey: `OPPORTUNITY:SESSION:${o.id}:${expected.toISOString().slice(0, 10)}:${u.id}` }));
+    });
+    // Le push part à chaque création : on écarte d'abord les rappels déjà envoyés
+    const already = await prisma.notification.findMany({
+      where: { dedupeKey: { in: pending.map((p) => p.dedupeKey) } },
+      select: { dedupeKey: true },
+    });
+    const sentKeys = new Set(already.map((n) => n.dedupeKey));
+    const toSend = pending.filter((p) => !sentKeys.has(p.dedupeKey));
+
+    const notificationService = require('./notificationService');
+    const results = await Promise.allSettled(toSend.map(({ o, expected, userId, dedupeKey }) => notificationService.createNotification({
+      userId,
+      type: 'SYSTEM',
+      title: '📅 Nouvelle session à préparer',
+      message: `${o.title} (${o.organization}) : la prochaine session est attendue vers le ${expected.toLocaleDateString('fr-FR', { timeZone: 'UTC' })}${o.usualPeriod ? ` (${o.usualPeriod})` : ''}. Vérifiez le site officiel et créez la fiche de la nouvelle session.`,
+      url: '/admin-frontend/index.html#opportunites',
+      dedupeKey,
+    })));
+    return { due: due.length, sent: results.filter((r) => r.status === 'fulfilled').length };
   }
 
   static async getById(id) {
@@ -329,4 +396,6 @@ module.exports.REPORT_KINDS = REPORT_KINDS;
 module.exports.slugify = slugify;
 module.exports.computePhase = computePhase;
 module.exports.isNextSession = isNextSession;
+module.exports.expectedSessionAt = expectedSessionAt;
+module.exports.isSessionReminderDue = isSessionReminderDue;
 module.exports.buildData = buildData;

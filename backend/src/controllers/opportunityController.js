@@ -128,6 +128,16 @@ class OpportunityController {
     }
   }
 
+  // Déclenché chaque heure par la veille du site (GitHub Actions) ; sans effet si rien n'est dû
+  static async runSessionReminders(req, res, next) {
+    try {
+      const data = await OpportunityService.sendSessionReminders();
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async listReports(req, res, next) {
     try {
       const status = req.query.status === 'ALL' ? null : (req.query.status === 'RESOLVED' ? 'RESOLVED' : 'OPEN');

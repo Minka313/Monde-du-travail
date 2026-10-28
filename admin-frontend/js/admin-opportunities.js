@@ -136,6 +136,29 @@
       </div>`;
   }
 
+  // Concours annuels dont la session suivante approche (30 jours avant) : créer la nouvelle fiche
+  function sessionsPanel() {
+    const due = items.filter((i) => i.sessionReminderDue);
+    if (!due.length) return '';
+    return `
+      <div style="margin-bottom:1rem;padding:0.85rem 1rem;border-radius:10px;border:1px solid #bfdbfe;background:#eff6ff;">
+        <h3 style="margin:0 0 0.6rem;font-size:0.98rem;color:#1e3a8a;">📅 ${due.length} nouvelle(s) session(s) à préparer</h3>
+        <div style="display:flex;flex-direction:column;gap:0.5rem;">
+          ${due.map((i) => `
+            <div style="display:flex;gap:0.75rem;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:0.6rem 0.75rem;border-radius:8px;background:#fff;border:1px solid #dbeafe;">
+              <div style="flex:1;min-width:240px;font-size:0.9rem;">
+                <strong>${esc(i.title)}</strong> · ${esc(i.organization)}
+                <div style="font-size:0.8rem;color:#475569;margin-top:0.2rem;">Session attendue vers le ${esc(frDate(i.expectedSessionAt))}${i.usualPeriod ? ` · ${esc(i.usualPeriod)}` : ''}. Vérifiez le site officiel puis créez la fiche.</div>
+              </div>
+              <div style="display:flex;gap:0.3rem;flex-wrap:wrap;">
+                ${i.officialUrl ? `<a class="btn btn-sm btn-ghost" href="${esc(i.officialUrl)}" target="_blank" rel="noopener">Site officiel ↗</a>` : ''}
+                ${can('create') ? `<button class="btn btn-sm btn-primary" data-opp-action="duplicate" data-id="${esc(i.id)}">🔁 Nouvelle session</button>` : ''}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }
+
   async function render() {
     const [res, rep] = await Promise.all([
       window.AdminApi.opportunities.getAdmin(filters),
@@ -159,6 +182,7 @@
         </div>
 
         ${reportsPanel()}
+        ${sessionsPanel()}
 
         ${(toArchive || toReverify || incomplete) ? `
           <div style="display:flex;flex-direction:column;gap:0.35rem;margin-bottom:1rem;padding:0.75rem 1rem;border-radius:8px;background:#fffbeb;border:1px solid #fde68a;color:#78350f;font-size:0.88rem;">

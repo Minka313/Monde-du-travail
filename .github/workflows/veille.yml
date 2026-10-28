@@ -4,6 +4,8 @@ name: Veille du site
 # - En cas de panne, la tâche échoue et GitHub envoie un e-mail d'alerte.
 # - Chaque passage interroge la base : l'offre gratuite de Supabase ne se met
 #   jamais en pause faute d'activité.
+# - Chaque passage déclenche aussi les rappels « nouvelle session à préparer »
+#   des concours annuels (sans effet si rien n'est dû).
 on:
   schedule:
     - cron: '17 * * * *'
@@ -35,3 +37,8 @@ jobs:
           verifier "API et base de données" "https://lemondedutravail.org/api/stats" '"success":true'
           verifier "Concours & opportunités" "https://lemondedutravail.org/api/opportunities" '"success":true'
           exit $echec
+
+      - name: Rappels de nouvelle session des concours annuels
+        if: always()
+        run: |
+          curl -s --max-time 30 -X POST https://lemondedutravail.org/api/opportunities/reminders/run || echo "Rappels non déclenchés"

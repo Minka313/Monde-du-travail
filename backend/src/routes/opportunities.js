@@ -44,10 +44,21 @@ const reportLimiter = rateLimit({
   message: { success: false, message: 'Trop de signalements envoyés. Réessayez dans une heure.' },
 });
 
+// Rappels de session : appel public mais idempotent, limité pour éviter les abus
+const reminderLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 6,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Trop de demandes. Réessayez plus tard.' },
+});
+
 const adminGate = [authenticate, AdminApprovalMiddleware.middleware, requireModulePermission('opportunite')];
 
 // Public : uniquement les annonces publiées
 router.get('/', validate(publicQuerySchema), OpportunityController.getPublished);
+
+router.post('/reminders/run', reminderLimiter, OpportunityController.runSessionReminders);
 
 // Espace admin (avant /:id)
 router.get('/admin/list', ...adminGate, authorize('opportunite.read'), OpportunityController.getForAdmin);
