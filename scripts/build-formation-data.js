@@ -19,7 +19,8 @@ const JOBS_DIR = path.join(FRONTEND, 'data', 'jobs');
 
 const REQUIRED = ['slug', 'title', 'icon', 'image', 'category', 'level', 'duration', 'format', 'tagline',
   'audience', 'prerequisites', 'hook', 'keyFacts', 'outcomes', 'modules', 'toolkit', 'caseStudy',
-  'pitfalls', 'quiz', 'actionPlan', 'resources', 'sources', 'relatedJobs', 'certification'];
+  'pitfalls', 'quiz', 'actionPlan', 'resources', 'sources', 'relatedJobs'];
+// « certification » n'est plus obligatoire : les formations ne sont pas certifiantes pour le moment
 const INDEX_FIELDS = ['slug', 'title', 'icon', 'image', 'category', 'level', 'duration', 'format', 'tagline'];
 
 function validate(file, data) {

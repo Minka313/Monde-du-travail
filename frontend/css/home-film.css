@@ -27,3 +27,8 @@
 @media (prefers-reduced-motion: reduce) { .home-film-play-icon { transition: none; } }
 .home-film-play-label { align-self: flex-end; margin-bottom: 14px; }
 @media (max-width: 640px) { .home-film-play { padding-bottom: 7%; } }
+
+/* Lien vers le guide sous les boutons de la bannière d'accueil */
+.hero-guide-link { margin: 1.1rem 0 0; font-size: 0.98rem; }
+.hero-guide-link a { color: #fde68a; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+.hero-guide-link a:hover, .hero-guide-link a:focus-visible { color: #ffffff; }
