@@ -54,7 +54,9 @@ const reportSchema = z.object({
 
 const forumProfileSchema = z.object({
   body: z.object({
-    forumDisplayName: z.string().trim().min(2).max(32).nullable(),
+    forumDisplayName: z.string().trim().min(2).max(32).nullable().optional(),
+    forumDigestOptIn: z.boolean().optional(),
+    forumSpotlightOptIn: z.boolean().optional(),
   }).strict(),
 });
 
@@ -84,6 +86,7 @@ router.get('/tags/popular', forumController.getPopularTags);
 router.get('/linked', validate(z.object({ query: z.object({ type: z.enum(CONTEXT_TYPES), id: z.string().regex(/^[A-Za-z0-9_-]{1,120}$/) }) })), forumController.getLinkedTopics);
 router.get('/profile', authenticate, authorizeMember, forumController.getForumProfile);
 router.put('/profile', authenticate, authorizeMember, validate(forumProfileSchema), forumController.updateForumProfile);
+router.get('/community/spotlight', forumController.getCommunitySpotlight);
 router.get('/unanswered', authenticate, authorizeMember, forumController.getUnansweredTopics);
 router.get('/:id', optionalAuth, forumController.getTopicById);
 router.get('/:id/similar', forumController.getSimilarTopics);

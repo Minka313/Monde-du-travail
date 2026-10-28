@@ -100,6 +100,17 @@
                             </div>
                             <p>Ce pseudonyme remplace ton nom et ta photo sur toutes tes publications du forum. Tu peux le modifier ou l’effacer ici. Ton compte reste lié à tes messages pour la sécurité et la modération ; les mentors vérifiés et l’équipe du club peuvent faire le lien.</p>
                             <p id="forumPseudonymStatus" class="forum-pseudonym-status" role="status" aria-live="polite"></p>
+                            <div class="forum-pseudonym-row" style="margin-top: 0.75rem; flex-wrap: wrap;">
+                                <label style="display:flex; align-items:center; gap:0.5rem; font-weight:500;">
+                                    <input type="checkbox" id="forumDigestOptIn">
+                                    Recevoir un résumé hebdomadaire par e-mail (optionnel)
+                                </label>
+                                <label style="display:flex; align-items:center; gap:0.5rem; font-weight:500;">
+                                    <input type="checkbox" id="forumSpotlightOptIn">
+                                    Autoriser l’affichage d’un membre de la semaine sur la page d’accueil
+                                </label>
+                            </div>
+                            <p class="forum-pseudonym-status" id="forumConsentStatus" role="status" aria-live="polite"></p>
                         </section>
 
                         <div class="forum-form-group">
@@ -287,6 +298,9 @@
         const tagsInput = document.getElementById('topicTags');
         const pseudonymInput = document.getElementById('forumPseudonym');
         const pseudonymStatus = document.getElementById('forumPseudonymStatus');
+        const digestCheckbox = document.getElementById('forumDigestOptIn');
+        const spotlightCheckbox = document.getElementById('forumSpotlightOptIn');
+        const consentStatus = document.getElementById('forumConsentStatus');
         const savePseudonymButton = document.getElementById('saveForumPseudonym');
         let savedPseudonym = null;
         const params = new URLSearchParams(window.location.search);
@@ -302,12 +316,15 @@
           const profile = await window.Api.forum.getProfile();
           savedPseudonym = profile.data.forumDisplayName || null;
           pseudonymInput.value = savedPseudonym || '';
+          digestCheckbox.checked = Boolean(profile.data.forumDigestOptIn);
+          spotlightCheckbox.checked = Boolean(profile.data.forumSpotlightOptIn);
           pseudonymStatus.textContent = savedPseudonym
             ? `Ton nom public actuel est « ${savedPseudonym} ».`
             : 'Aucun pseudonyme enregistré : ton prénom et ton nom seront affichés.';
+          consentStatus.textContent = 'Tu peux choisir le résumé hebdomadaire et la mise en avant publique séparément : le consentement public n’est demandé que si tu l’acceptes.';
         } catch (error) {
-          console.error('Impossible de charger le pseudonyme du forum :', error);
-          pseudonymStatus.textContent = 'Impossible de vérifier ton pseudonyme. Recharge la page avant de le modifier.';
+          console.error('Impossible de charger le profil du forum :', error);
+          pseudonymStatus.textContent = 'Impossible de vérifier ton profil. Recharge la page avant de le modifier.';
           pseudonymStatus.classList.add('is-error');
           savePseudonymButton.disabled = true;
         }
@@ -321,13 +338,15 @@
           }
           savePseudonymButton.disabled = true;
           try {
-            const profile = await window.Api.forum.updateProfile(value || null);
+            const profile = await window.Api.forum.updateProfile({ forumDisplayName: value || null });
             savedPseudonym = profile.data.forumDisplayName || null;
             pseudonymInput.value = savedPseudonym || '';
             pseudonymStatus.textContent = savedPseudonym
               ? `C’est enregistré : « ${savedPseudonym} » sera affiché sur tes publications.`
               : 'Pseudonyme retiré : ton prénom et ton nom seront affichés.';
             pseudonymStatus.classList.remove('is-error');
+            consentStatus.classList.remove('is-error');
+            consentStatus.textContent = 'Préférences enregistrées — tu peux modifier le digest ou la mise en avant à tout moment.';
           } catch (error) {
             console.error('Impossible d’enregistrer le pseudonyme du forum :', error);
             pseudonymStatus.textContent = error.message || 'Impossible d’enregistrer le pseudonyme.';
@@ -336,6 +355,28 @@
             savePseudonymButton.disabled = false;
           }
         });
+
+        const saveConsentPreferences = async () => {
+          try {
+            const profile = await window.Api.forum.updateProfile({
+              forumDigestOptIn: digestCheckbox.checked,
+              forumSpotlightOptIn: spotlightCheckbox.checked,
+            });
+            digestCheckbox.checked = Boolean(profile.data.forumDigestOptIn);
+            spotlightCheckbox.checked = Boolean(profile.data.forumSpotlightOptIn);
+            consentStatus.classList.remove('is-error');
+            consentStatus.textContent = profile.data.forumSpotlightOptIn
+              ? 'Tu as donné ton accord pour la mise en avant publique. Tu peux choisir de le retirer à tout moment.'
+              : 'La mise en avant publique est actuellement désactivée. Aucune identité publique ne sera affichée sans ton accord.';
+          } catch (error) {
+            console.error('Impossible de mettre à jour les préférences du forum :', error);
+            consentStatus.textContent = error.message || 'Impossible de mettre à jour les préférences du forum.';
+            consentStatus.classList.add('is-error');
+          }
+        };
+
+        digestCheckbox.addEventListener('change', saveConsentPreferences);
+        spotlightCheckbox.addEventListener('change', saveConsentPreferences);
 
         if (categoryParam) {
           categorySelect.value = categoryParam;

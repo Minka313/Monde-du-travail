@@ -1046,7 +1046,6 @@
     if (forumContainer && window.Api?.forum) {
       let topics = [];
       try {
-        // Les sujets épinglés par l'équipe passent en premier, puis les plus récents
         const res = await window.Api.forum.getAll({ limit: 3 });
         topics = res?.data?.topics || res?.data || [];
       } catch (_) { /* forum indisponible : invitation à participer */ }
@@ -1076,6 +1075,26 @@
                 </div>
                 <a href="forum-create.html" class="btn btn-primary">Lancer une discussion</a>
               </div>`;
+    }
+
+    try {
+      const spotlightRes = await window.Api.forum.getCommunitySpotlight();
+      const spotlight = spotlightRes?.data || null;
+      if (spotlight && forumContainer) {
+        const spotlightCard = document.createElement('div');
+        spotlightCard.className = 'home-topic-card';
+        spotlightCard.style.gridColumn = '1 / -1';
+        spotlightCard.innerHTML = `
+          <div class="home-topic-top">
+            <span class="home-topic-badge">⭐ Membre de la semaine</span>
+            <h4 class="home-topic-title">${escapeHtml(spotlight.displayName || 'Membre actif')}</h4>
+            <p class="home-topic-snippet">${escapeHtml(spotlight.displayName || 'Membre actif')} a reçu ${spotlight.endorsementsCount ?? 0} réponse${(spotlight.endorsementsCount ?? 0) > 1 ? 's' : ''} validée${(spotlight.endorsementsCount ?? 0) > 1 ? 's' : ''} cette semaine. Merci pour ton aide précieuse à la communauté !</p>
+          </div>
+        `;
+        forumContainer.appendChild(spotlightCard);
+      }
+    } catch (_) {
+      // Aucune mise en avant publique active sans consentement explicite ; pas de bruit côté interface.
     }
 
     // Hydratation dynamique de la vitrine ("À la Une ce mois-ci" et "Les Grandes Étapes du Club")

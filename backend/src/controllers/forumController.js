@@ -199,6 +199,21 @@ class ForumController {
     }
   }
 
+  static async getCommunitySpotlight(req, res, next) {
+    try {
+      const result = await forumService.getCommunitySpotlight();
+      res.json({
+        success: true,
+        data: result.member,
+        periodStart: result.periodStart,
+        periodEnd: result.periodEnd,
+        totalEligible: result.totalEligible,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async createReport(req, res, next) {
     try {
       const report = await forumService.createReport(req.body, req.user.id);

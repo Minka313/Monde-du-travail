@@ -430,10 +430,11 @@ return headers;
       getPopularTags: () => apiRequestWithRefresh('/forum/tags/popular'),
       getUnanswered: () => apiRequestWithRefresh('/forum/unanswered'),
       getProfile: () => apiRequestWithRefresh('/forum/profile'),
-      updateProfile: (forumDisplayName) => apiRequestWithRefresh('/forum/profile', {
+      updateProfile: (fields = {}) => apiRequestWithRefresh('/forum/profile', {
         method: 'PUT',
-        body: JSON.stringify({ forumDisplayName }),
+        body: JSON.stringify(fields),
       }),
+      getCommunitySpotlight: () => apiRequestWithRefresh('/forum/community/spotlight'),
       getById: (id) => apiRequestWithRefresh(`/forum/${id}`),
       getSimilar: (id) => apiRequestWithRefresh(`/forum/${id}/similar`),
       getLinked: (type, id) => apiRequestWithRefresh(`/forum/linked?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`),

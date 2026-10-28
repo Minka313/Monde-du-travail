@@ -465,6 +465,8 @@ model User {
   firstName              String
   lastName               String
   forumDisplayName       String?
+  forumDigestOptIn       Boolean                 @default(false)
+  forumSpotlightOptIn     Boolean                 @default(false)
   role                   Role                    @default(MEMBER)
   isActive               Boolean                 @default(false)
   isVerified             Boolean                 @default(false)

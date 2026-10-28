@@ -28,9 +28,12 @@ class ForumService {
         logs.push('topics columns verified');
 
         await prisma.$executeRawUnsafe(`
-          ALTER TABLE users ADD COLUMN IF NOT EXISTS "forumDisplayName" TEXT;
+          ALTER TABLE users
+            ADD COLUMN IF NOT EXISTS "forumDisplayName" TEXT,
+            ADD COLUMN IF NOT EXISTS "forumDigestOptIn" BOOLEAN NOT NULL DEFAULT false,
+            ADD COLUMN IF NOT EXISTS "forumSpotlightOptIn" BOOLEAN NOT NULL DEFAULT false;
         `);
-        logs.push('forum display name column verified');
+        logs.push('forum display name and opt-in columns verified');
 
         // 2. Colonnes sur replies
         await prisma.$executeRawUnsafe(`
@@ -421,19 +424,102 @@ class ForumService {
   static async getForumProfile(userId) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { forumDisplayName: true },
+      select: {
+        forumDisplayName: true,
+        forumDigestOptIn: true,
+        forumSpotlightOptIn: true,
+      },
     });
     if (!user) throw new NotFoundError('Compte introuvable');
     return user;
   }
 
-  static async updateForumProfile(userId, forumDisplayName) {
+  static async updateForumProfile(userId, profileInput) {
+    const raw = typeof profileInput === 'string' ? { forumDisplayName: profileInput } : (profileInput || {});
+    const forumDisplayName = raw.forumDisplayName;
+    const forumDigestOptIn = raw.forumDigestOptIn;
+    const forumSpotlightOptIn = raw.forumSpotlightOptIn;
+
     const user = await prisma.user.update({
       where: { id: userId },
-      data: { forumDisplayName: forumDisplayName?.trim() || null },
-      select: { forumDisplayName: true },
+      data: {
+        forumDisplayName: typeof forumDisplayName === 'string' ? forumDisplayName.trim() || null : null,
+        forumDigestOptIn: typeof forumDigestOptIn === 'boolean' ? forumDigestOptIn : undefined,
+        forumSpotlightOptIn: typeof forumSpotlightOptIn === 'boolean' ? forumSpotlightOptIn : undefined,
+      },
+      select: {
+        forumDisplayName: true,
+        forumDigestOptIn: true,
+        forumSpotlightOptIn: true,
+      },
     });
     return user;
+  }
+
+  static async getCommunitySpotlight() {
+    await ForumService.ensureSchema();
+    const now = new Date();
+    const start = new Date(now);
+    start.setDate(start.getDate() - 7);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(now);
+    end.setHours(23, 59, 59, 999);
+
+    const eligibleUsers = await prisma.user.findMany({
+      where: {
+        forumSpotlightOptIn: true,
+        forumDisplayName: { not: null, not: '' },
+      },
+      select: { id: true, forumDisplayName: true, avatarUrl: true },
+    });
+
+    if (!eligibleUsers.length) {
+      return { member: null, periodStart: start, periodEnd: end, totalEligible: 0 };
+    }
+
+    const userIds = eligibleUsers.map((user) => user.id);
+    const rows = await prisma.reply.groupBy({
+      by: ['authorId'],
+      where: {
+        authorId: { in: userIds },
+        endorsedAt: { gte: start, lte: end },
+      },
+      _count: { id: true },
+      orderBy: [{ _count: { id: 'desc' } }, { authorId: 'asc' }],
+    });
+
+    const winner = rows[0];
+    if (!winner) {
+      return { member: null, periodStart: start, periodEnd: end, totalEligible: eligibleUsers.length };
+    }
+
+    const profile = eligibleUsers.find((user) => user.id === winner.authorId) || null;
+    if (!profile) {
+      return { member: null, periodStart: start, periodEnd: end, totalEligible: eligibleUsers.length };
+    }
+
+    return {
+      member: {
+        id: profile.id,
+        displayName: profile.forumDisplayName,
+        avatarUrl: profile.avatarUrl,
+        endorsementsCount: winner._count.id,
+      },
+      periodStart: start,
+      periodEnd: end,
+      totalEligible: eligibleUsers.length,
+    };
+  }
+
+  static async getCommunityDigestRecipients() {
+    const users = await prisma.user.findMany({
+      where: {
+        forumDigestOptIn: true,
+        isActive: true,
+      },
+      select: { id: true, email: true, firstName: true, lastName: true, forumDisplayName: true },
+    });
+    return users;
   }
 
   static async getUnansweredTopics(user) {
