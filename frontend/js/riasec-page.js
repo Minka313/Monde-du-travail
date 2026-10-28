@@ -144,8 +144,73 @@
     store.set(STORE, saved);
     store.del(PROGRESS);
     track('riasec_result', result.code, { mode: state.mode, scores: result.scores, reliable: result.indicators.reliable });
-    showResults(saved);
+    reveal(saved);
   }
+
+  // ===================== Révélation par la roue =====================
+
+  // La roue s'arrête successivement sur les 3 lettres du code : la 1re avec suspense, puis plus vite
+  const SPINS = [{ duration: 4200, turns: 5 }, { duration: 2600, turns: 3 }, { duration: 2600, turns: 3 }];
+  const RANKS = ['Ton intérêt n°1', 'En 2e position', 'En 3e position'];
+  let wheel = null;
+  let revealRun = 0;
+
+  function reveal(result) {
+    if (!window.OrientationWheel) { showResults(result); return; }
+    state.result = result;
+    const run = ++revealRun;
+    $('rxQuiz').hidden = true;
+    $('rxIntro').hidden = true;
+    $('rxResults').hidden = true;
+    $('rxReveal').hidden = false;
+    $('rxRevealGo').hidden = true;
+    $('rxRevealSkip').hidden = false;
+    $('rxRevealTitle').textContent = 'La roue révèle ton profil…';
+    $('rxRevealText').textContent = '';
+    const letters = result.code.split('');
+    $('rxRevealCode').innerHTML = letters.map(() => '<li class="rx-slot"><span>?</span></li>').join('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (!wheel) {
+      const sectors = ['R', 'I', 'A', 'S', 'E', 'C'].map((code) => ({ code, label: E.TYPES[code].name, icon: E.TYPES[code].icon, color: E.TYPES[code].color, textColor: '#ffffff' }));
+      wheel = new window.OrientationWheel($('rxWheel'), { sectors });
+    }
+    wheel.initCanvasSize();
+    wheel.draw();
+
+    const step = (i) => {
+      if (run !== revealRun) return;
+      if (i >= letters.length) {
+        $('rxRevealTitle').textContent = `Ton code : ${result.code}`;
+        $('rxRevealText').textContent = `${E.TYPES[letters[0]].tagline} : c'est ce qui t'attire le plus aujourd'hui.`;
+        $('rxRevealSkip').hidden = true;
+        $('rxRevealGo').hidden = false;
+        $('rxRevealGo').focus({ preventScroll: true });
+        return;
+      }
+      $('rxRevealText').textContent = i === 0 ? 'La roue tourne…' : 'Et ensuite…';
+      wheel.spinTo(letters[i], () => {
+        if (run !== revealRun) return;
+        const t = E.TYPES[letters[i]];
+        const slot = $('rxRevealCode').children[i];
+        slot.classList.add('is-on');
+        slot.style.setProperty('--slot', t.color);
+        slot.innerHTML = `<span>${letters[i]}</span><small>${esc(t.icon)} ${esc(t.name)}</small>`;
+        $('rxRevealText').textContent = `${RANKS[i]} : ${t.icon} ${t.name}`;
+        setTimeout(() => step(i + 1), 1100);
+      }, SPINS[i]);
+    };
+    setTimeout(() => step(0), 400);
+  }
+
+  function endReveal() {
+    revealRun++;
+    wheel?.destroy();
+    $('rxReveal').hidden = true;
+    showResults(state.result || store.get(STORE));
+  }
+  $('rxRevealGo')?.addEventListener('click', endReveal);
+  $('rxRevealSkip')?.addEventListener('click', endReveal);
 
   // ===================== Résultats =====================
 
@@ -154,6 +219,7 @@
     state.shown = 12;
     $('rxIntro').hidden = true;
     $('rxQuiz').hidden = true;
+    $('rxReveal').hidden = true;
     const root = $('rxResults');
     root.hidden = false;
     root.innerHTML = `<div class="container">${heroHtml(result)}${chartHtml(result)}${indicatorsHtml(result)}${typesHtml(result)}
@@ -170,6 +236,7 @@
         <button type="button" class="rx-btn rx-btn-primary" id="rxPdf">⬇️ Télécharger mon profil (PDF signé WOW)</button>
         <button type="button" class="rx-btn rx-btn-navy" id="rxShare">🔗 Partager mon code</button>
         <a class="rx-btn rx-btn-ghost" href="forum.html">💬 En parler sur le forum</a>
+        <button type="button" class="rx-btn rx-btn-ghost" id="rxReplay">🎡 Revoir la roue</button>
         <button type="button" class="rx-btn rx-btn-ghost" id="rxRestart">↺ Refaire le test</button>
       </div>
       <div class="print-only" id="rxPrintSignature" style="display:none;"></div></div>`;
@@ -193,6 +260,7 @@
       window.print();
     });
     $('rxShare').addEventListener('click', share);
+    $('rxReplay').addEventListener('click', () => reveal(result));
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     renderJobs();

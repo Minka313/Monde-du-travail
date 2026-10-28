@@ -193,3 +193,22 @@
 /* Le site masque les span vides (styles.css : span:empty) : barres et pastilles sont vides par nature */
 .riasec-page .rx-bar-fill, .riasec-page .rx-aff-fill, .riasec-page .rx-aff-track, .riasec-page .rx-bar-track { display: block !important; }
 .riasec-page .rx-dot { display: inline-block !important; flex: none; }
+
+/* ---------- Révélation par la roue ---------- */
+.rx-reveal { background: radial-gradient(120% 90% at 50% 0%, #1a3f5f 0%, #0f2b46 45%, #081a2c 100%); color: #f8fafc; padding: 2.25rem 0 3rem; }
+.rx-reveal-inner { max-width: 640px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.rx-reveal-title { margin: 0; font-family: var(--font-display, 'Playfair Display', serif); font-size: clamp(1.6rem, 4.5vw, 2.4rem); color: #fff; }
+.rx-reveal-wheel { width: 100%; max-width: 400px; display: flex; justify-content: center; }
+.rx-reveal-wheel canvas { display: block; max-width: 100%; }
+.rx-reveal-code { list-style: none; margin: 0; padding: 0; display: flex; gap: 0.7rem; justify-content: center; }
+.rx-slot { --slot: rgba(255, 255, 255, 0.08); min-width: 92px; padding: 0.4rem 0.55rem; min-height: 92px; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; background: rgba(255, 255, 255, 0.06); border: 2px dashed rgba(255, 255, 255, 0.25); color: #94a3b8; }
+.rx-slot span { font-size: 2.2rem; font-weight: 800; line-height: 1; }
+.rx-slot small { font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+.rx-slot.is-on { background: var(--slot); border: 2px solid rgba(255, 255, 255, 0.5); color: #fff; animation: rx-slot-pop 0.45s cubic-bezier(.2, 1.6, .4, 1); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35); }
+@keyframes rx-slot-pop { from { transform: scale(0.6); opacity: 0.3; } to { transform: scale(1); opacity: 1; } }
+.rx-reveal-text { margin: 0; min-height: 1.6em; font-size: 1.05rem; color: #e2e8f0; }
+.rx-reveal-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
+.rx-reveal .rx-reveal-skip { color: #cbd5e1; border-color: rgba(255, 255, 255, 0.3); background: transparent; }
+@media (max-width: 420px) { .rx-reveal-code { gap: 0.4rem; } .rx-slot { min-width: 0; flex: 1 1 0; max-width: 112px; padding: 0.4rem 0.3rem; min-height: 80px; } .rx-slot span { font-size: 1.8rem; } }
+@media (prefers-reduced-motion: reduce) { .rx-slot.is-on { animation: none; } }
+@media print { .rx-reveal { display: none !important; } }

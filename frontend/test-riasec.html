@@ -20,7 +20,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
-    <link rel="stylesheet" href="css/riasec.css?v=20261024-1">
+    <link rel="stylesheet" href="css/riasec.css?v=20261028-1">
     <link rel="stylesheet" href="css/print-dossier.css?v=20261024-1" media="print">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-2"></script>
@@ -137,6 +137,21 @@
     </section>
 
     <!-- 3. Résultats (remplis par riasec-page.js) -->
+    <!-- Révélation du résultat : la roue s'arrête sur chacune des 3 lettres du code -->
+    <section class="rx-reveal" id="rxReveal" hidden>
+      <div class="container rx-reveal-inner">
+        <span class="rx-kicker">Test terminé</span>
+        <h2 class="rx-reveal-title" id="rxRevealTitle">La roue révèle ton profil…</h2>
+        <div class="rx-reveal-wheel"><canvas id="rxWheel" width="380" height="380" role="img" aria-label="Roue des six types RIASEC"></canvas></div>
+        <ol class="rx-reveal-code" id="rxRevealCode" aria-label="Ton code de Holland"></ol>
+        <p class="rx-reveal-text" id="rxRevealText" aria-live="polite"></p>
+        <div class="rx-reveal-actions">
+          <button type="button" class="rx-btn rx-btn-primary" id="rxRevealGo" hidden>Voir mes résultats détaillés →</button>
+          <button type="button" class="rx-btn rx-btn-ghost rx-reveal-skip" id="rxRevealSkip">Passer l'animation</button>
+        </div>
+      </div>
+    </section>
+
     <section class="rx-results" id="rxResults" hidden></section>
 </main>
 
@@ -230,7 +245,8 @@
 <script defer src="js/frontend-api.js?v=20261028-2"></script>
 <script defer src="js/analytics-tracker.js"></script>
 <script defer src="js/riasec-engine.js?v=20261024-1"></script>
-<script defer src="js/riasec-page.js?v=20261024-1"></script>
+<script defer src="js/orientation-wheel.js?v=20261028-1"></script>
+<script defer src="js/riasec-page.js?v=20261028-1"></script>
 <script defer src="js/notifications.js?v=2.3.1"></script>
 <script defer src="js/layout.js?v=2.3.1"></script>
 <script defer src="js/main.js?v=20261028-3"></script>

@@ -2,6 +2,7 @@
  * orientation-wheel.js
  * Moteur de Roue Interactive (Spinning Wheel of Orientation) en HTML5 Canvas 60 FPS
  * Supporte la physique d'accélération/décélération, l'aiguille oscillante et l'arrêt déterministe.
+ * Utilisée par le test RIASEC (riasec-page.js) pour révéler le code de Holland lettre par lettre.
  */
 
 (function () {
@@ -13,7 +14,7 @@
       if (!this.canvas) return;
       this.ctx = this.canvas.getContext('2d');
 
-      this.sectors = [
+      this.sectors = options.sectors || [
         { code: 'R', label: 'Réaliste', icon: '🛠️', color: '#0284c7', textColor: '#ffffff' },
         { code: 'I', label: 'Investigateur', icon: '🔬', color: '#4f46e5', textColor: '#ffffff' },
         { code: 'A', label: 'Artistique', icon: '🎨', color: '#9333ea', textColor: '#ffffff' },
@@ -126,7 +127,14 @@
         ctx.fillText(sec.icon, radius - 24, 0);
 
         // Nom du profil
-        ctx.font = 'bold 14px "Inter", sans-serif';
+        // Les noms longs sont réduits pour ne pas passer sous le moyeu central
+        const labelRoom = radius - 56 - 44;
+        let fontSize = 14;
+        ctx.font = `bold ${fontSize}px "Inter", sans-serif`;
+        while (fontSize > 9 && ctx.measureText(sec.label).width > labelRoom) {
+          fontSize -= 1;
+          ctx.font = `bold ${fontSize}px "Inter", sans-serif`;
+        }
         ctx.fillStyle = '#ffffff';
         ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
         ctx.shadowBlur = 4;
@@ -231,9 +239,10 @@
     }
 
     /**
-     * Fait tourner la roue jusqu'à un secteur cible déterministe (code RIASEC : 'R', 'I', 'A', 'S', 'E', 'C')
+     * Fait tourner la roue jusqu'à un secteur cible déterministe (code RIASEC : 'R', 'I', 'A', 'S', 'E', 'C').
+     * spin.duration (ms) et spin.turns (tours complets) règlent le suspense.
      */
-    spinTo(targetCode, onComplete) {
+    spinTo(targetCode, onComplete, spin = {}) {
       if (this.isSpinning) return;
       this.isSpinning = true;
 
@@ -251,13 +260,13 @@
       const pointerAngle = (3 * Math.PI) / 2; // Haut du cercle
 
       // Nombre de tours complets pour l'effet de suspense
-      const fullRotations = prefersReduced ? 1 : (5 + Math.floor(Math.random() * 2));
+      const fullRotations = prefersReduced ? 1 : (spin.turns || (5 + Math.floor(Math.random() * 2)));
       const endAngle = pointerAngle - targetSectorCenter + (fullRotations * 2 * Math.PI);
 
       const startAngle = this.currentAngle % (2 * Math.PI);
       const totalDelta = endAngle - startAngle;
 
-      const duration = prefersReduced ? 1000 : 4800; // 4.8 secondes de suspense progressif
+      const duration = prefersReduced ? 1000 : (spin.duration || 4800); // 4.8 secondes de suspense par défaut
       const startTime = performance.now();
 
       this.options.onSpinStart();
@@ -302,17 +311,9 @@
       this.animId = requestAnimationFrame(animate);
     }
 
-    /**
-     * Mode Découverte libre / Tirage au sort aléatoire
-     */
-    spinFree(onComplete) {
-      const randomIndex = Math.floor(Math.random() * this.sectors.length);
-      const chosen = this.sectors[randomIndex];
-      this.spinTo(chosen.code, onComplete);
-    }
-
     destroy() {
       if (this.animId) cancelAnimationFrame(this.animId);
+      this.isSpinning = false;
     }
   }
 

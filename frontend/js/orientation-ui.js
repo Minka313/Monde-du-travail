@@ -1283,7 +1283,6 @@
   function initBoussoleModule() {
     initBoussoleTabs();
     initQuizEngine();
-    initWheelEngine();
     initAffinityExplorer();
   }
 
@@ -1291,7 +1290,6 @@
   function initBoussoleTabs() {
     const tabs = [
       { btn: dom.tabModeQuiz, panel: dom.boussoleQuizView },
-      { btn: dom.tabModeWheel, panel: dom.boussoleWheelView },
       { btn: dom.tabModeChips, panel: dom.boussoleChipsView }
     ];
 
@@ -1485,53 +1483,6 @@
           }, 1400);
         });
       }, 500);
-    }
-  }
-
-  // Moteur de la Roue Interactive
-  function initWheelEngine() {
-    if (!dom.orientationWheelCanvas || !window.OrientationWheel) return;
-
-    wheelInstance = new window.OrientationWheel(dom.orientationWheelCanvas, {
-      onSectorTick: (sec) => {
-        if (dom.wheelStatusNotice && wheelInstance.isSpinning) {
-          dom.wheelStatusNotice.textContent = `🎯 ${sec.label}...`;
-        }
-      }
-    });
-
-    if (dom.btnSpinWheelFree) {
-      dom.btnSpinWheelFree.addEventListener('click', () => {
-        if (!wheelInstance || wheelInstance.isSpinning) return;
-        dom.btnSpinWheelFree.setAttribute('disabled', 'true');
-
-        if (dom.wheelStatusNotice) {
-          dom.wheelStatusNotice.textContent = '🎡 La roue tourne... suspense !';
-        }
-
-        wheelInstance.spinFree(async (winningSector) => {
-          dom.btnSpinWheelFree.removeAttribute('disabled');
-          if (dom.wheelStatusNotice) {
-            dom.wheelStatusNotice.innerHTML = `✨ <strong>Tu es tombé sur le profil : ${winningSector.label} ${winningSector.icon} !</strong>`;
-          }
-
-          // Créer un résultat simulé basé sur ce profil
-          const profile = window.OrientationQuizData.PROFILES[winningSector.code];
-          const simulatedResult = {
-            rawScores: {},
-            percentages: { [winningSector.code]: 85 },
-            dominantCode: winningSector.code,
-            secondaryCode: winningSector.code === 'I' ? 'E' : 'I',
-            dominantProfile: profile,
-            secondaryProfile: window.OrientationQuizData.PROFILES[winningSector.code === 'I' ? 'E' : 'I'],
-            hollandCode: `${winningSector.code}`
-          };
-
-          setTimeout(() => {
-            renderQuizResults(simulatedResult);
-          }, 1200);
-        });
-      });
     }
   }
 

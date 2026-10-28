@@ -175,10 +175,6 @@
                             <span>Test RIASEC complet</span>
                             <span class="boussole-mode-badge">Recommandé</span>
                         </button>
-                        <button type="button" id="tabModeWheel" class="boussole-mode-btn" role="tab" aria-selected="false" aria-controls="boussoleWheelView">
-                            <span>🎡</span>
-                            <span>La Roue de l'Orientation</span>
-                        </button>
                         <button type="button" id="tabModeChips" class="boussole-mode-btn" role="tab" aria-selected="false" aria-controls="boussoleChipsView">
                             <span>🎯</span>
                             <span>Par centres d'intérêt directs</span>
@@ -191,30 +187,9 @@
                             <div class="riasec-cta-letters" aria-hidden="true"><span>R</span><span>I</span><span>A</span><span>S</span><span>E</span><span>C</span></div>
                             <div class="riasec-cta-body">
                                 <h4>Le test d'orientation RIASEC du club</h4>
-                                <p>48 activités (ou 24 en version express) pour mesurer tes six types d'intérêts, ton code de Holland, des indicateurs de fiabilité, et les métiers du catalogue classés par affinité. Gratuit, sans inscription, PDF signé WOW.</p>
+                                <p>48 activités (ou 24 en version express) pour mesurer tes six types d'intérêts, ton code de Holland, des indicateurs de fiabilité, et les métiers du catalogue classés par affinité. À la fin, la roue de l’orientation révèle ton code lettre par lettre. Gratuit, sans inscription, PDF signé WOW.</p>
                                 <p class="riasec-cta-last" id="riasecLastResult" hidden></p>
                                 <a href="test-riasec.html" class="btn btn-primary" id="riasecCtaBtn"><span>Commencer le test</span> <span>&rarr;</span></a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- VUE 2 : LA ROUE INTERACTIVE (CANVAS ENGINE) -->
-                    <div id="boussoleWheelView" class="boussole-view-panel" style="display:none;" role="tabpanel" aria-labelledby="tabModeWheel">
-                        <div class="wheel-panel-content">
-                            <p class="wheel-intro-text">
-                                Fais tourner la roue interactive pour explorer les 6 grands univers RIASEC ou laisse le hasard t'inspirer vers un domaine d'excellence !
-                            </p>
-                            
-                            <div class="wheel-canvas-container">
-                                <canvas id="orientationWheelCanvas" width="380" height="380"></canvas>
-                            </div>
-
-                            <div class="wheel-controls">
-                                <button type="button" id="btnSpinWheelFree" class="btn btn-primary btn-lg wheel-spin-btn">
-                                    <span>🎡</span>
-                                    <span>Faire tourner la roue !</span>
-                                </button>
-                                <p id="wheelStatusNotice" class="wheel-status-notice">Clique pour lancer la rotation</p>
                             </div>
                         </div>
                     </div>
@@ -607,8 +582,7 @@
 <script defer src="js/job-merge.js"></script>
 <script defer src="js/orientation-data.js?v=20261024-1"></script>
 <script defer src="js/orientation-quiz-data.js"></script>
-<script defer src="js/orientation-wheel.js"></script>
-<script defer src="js/orientation-ui.js?v=20261024-1"></script>
+<script defer src="js/orientation-ui.js?v=20261028-1"></script>
 <script defer src="js/notifications.js?v=2.3.1"></script>
 <script defer src="js/layout.js?v=2.3.1"></script>
 <script defer src="js/main.js?v=20261028-3"></script>
