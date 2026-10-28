@@ -4,7 +4,7 @@ const AuditService = require('../services/auditService');
 class ForumController {
   static async getAllTopics(req, res, next) {
     try {
-      const { category, search, status, tag, page, limit, sort } = req.query;
+      const { category, search, status, tag, page, limit, sort, match } = req.query;
       const userId = req.user?.id || null;
 
       const result = await forumService.getAllTopics({
@@ -15,6 +15,7 @@ class ForumController {
         page: page || 1,
         limit: limit || 20,
         sort: sort || 'latest',
+        match: match === 'any' ? 'any' : 'all',
         userId,
       });
 
@@ -32,6 +33,8 @@ class ForumController {
     try {
       const userId = req.user?.id || null;
       const topic = await forumService.getTopicById(req.params.id, userId);
+      // Bouton « Valider cette réponse » : mentors vérifiés et Présidence
+      topic.canEndorse = Boolean(req.user) && (req.user.role === 'ULTRA_ADMIN' || await forumService.isVerifiedMentor(req.user.id));
       res.json({
         success: true,
         data: topic,
@@ -314,6 +317,33 @@ class ForumController {
         message: topic.isLocked ? 'Sujet verrouillé' : 'Sujet déverrouillé',
         data: topic,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getLinkedTopics(req, res, next) {
+    try {
+      const data = await forumService.getLinkedTopics(req.query.type, req.query.id);
+      res.json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async toggleFollow(req, res, next) {
+    try {
+      const data = await forumService.toggleFollow(req.params.id, req.user.id);
+      res.json({ success: true, message: data.following ? 'Tu suis cette discussion' : 'Tu ne suis plus cette discussion', data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async toggleEndorsement(req, res, next) {
+    try {
+      const data = await forumService.toggleEndorsement(req.params.replyId, req.user);
+      res.json({ success: true, message: data.endorsed ? 'Réponse validée' : 'Validation retirée', data });
     } catch (error) {
       next(error);
     }

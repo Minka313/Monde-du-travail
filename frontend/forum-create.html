@@ -17,7 +17,7 @@
     <title>Nouvelle discussion - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
-    <link rel="stylesheet" href="css/forum-advanced.css">
+    <link rel="stylesheet" href="css/forum-advanced.css?v=20261028-1">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -80,22 +80,24 @@
             <div class="container" style="max-width: 800px;">
                 <div class="forum-form">
                     <h2>Nouvelle discussion</h2>
+                    <p class="forum-context-note" id="topicContextNote" hidden></p>
                     <form id="topicForm">
                         <div class="forum-form-group">
                             <label for="topicTitle">Titre</label>
                             <input type="text" id="topicTitle" required minlength="3" placeholder="Ex : Comment préparer sa candidature en alternance ?">
+                            <div class="forum-suggest" id="topicSuggest" hidden aria-live="polite"></div>
                         </div>
 
                         <div class="forum-form-group">
                             <label for="topicCategory">Catégorie</label>
                             <select id="topicCategory" required>
                                 <option value="">Choisir une catégorie</option>
-                                <option value="Orientation & Métiers">Orientation & Métiers</option>
-                                <option value="Formations">Formations</option>
-                                <option value="Entrepreneuriat">Entrepreneuriat</option>
-                                <option value="Opportunités">Opportunités</option>
-                                <option value="Vie professionnelle">Vie professionnelle</option>
-                                <option value="Vie du Club & Contributions">Vie du Club & Contributions</option>
+                                <option value="Orientation & métiers">🧭 Orientation & métiers</option>
+                                <option value="Concours & bourses">🎯 Concours & bourses</option>
+                                <option value="Études & lycée">📚 Études & lycée</option>
+                                <option value="Stages & premier emploi">💼 Stages & premier emploi</option>
+                                <option value="Formations du club">🎓 Formations du club</option>
+                                <option value="Vie du club">🤝 Vie du club</option>
                             </select>
                         </div>
 
@@ -253,7 +255,7 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-2"></script>
+    <script defer src="js/frontend-api.js?v=20261028-4"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
@@ -267,13 +269,53 @@
         const categoryParam = params.get('category');
 
         if (!window.Api.getToken()) {
-          window.location.href = 'login.html';
+          // Après la connexion, retour ici avec la question préparée
+          window.location.href = `login.html?redirect=${encodeURIComponent(`forum-create.html${window.location.search}`)}`;
           return;
         }
 
         if (categoryParam) {
           categorySelect.value = categoryParam;
         }
+
+        // Question posée depuis une fiche (concours, métier, formation) : titre et catégorie pré-remplis
+        const CONTEXT_LABELS = { opportunity: ['ce concours', 'Concours & bourses'], job: ['ce métier', 'Orientation & métiers'], formation: ['cette formation', 'Formations du club'] };
+        const contextType = params.get('contextType');
+        const contextId = params.get('contextId') || '';
+        const contextTitle = (params.get('contextTitle') || '').slice(0, 200);
+        const context = CONTEXT_LABELS[contextType] && /^[A-Za-z0-9_-]{1,120}$/.test(contextId) && contextTitle.length >= 2
+          ? { type: contextType, id: contextId, title: contextTitle } : null;
+        if (context) {
+          const note = document.getElementById('topicContextNote');
+          note.textContent = `💬 Ta question sera affichée sur la fiche de ${CONTEXT_LABELS[context.type][0]} : « ${context.title} ».`;
+          note.hidden = false;
+          if (!categoryParam) categorySelect.value = CONTEXT_LABELS[context.type][1];
+          const titleInput = document.getElementById('topicTitle');
+          if (!titleInput.value) titleInput.value = `${context.title} : `;
+        }
+
+        // Pendant la saisie du titre : discussions qui répondent peut-être déjà à la question
+        const titleInput = document.getElementById('topicTitle');
+        const suggestBox = document.getElementById('topicSuggest');
+        let suggestTimer = null;
+        let suggestRun = 0;
+        titleInput.addEventListener('input', () => {
+          clearTimeout(suggestTimer);
+          suggestTimer = setTimeout(async () => {
+            const words = titleInput.value.replace(/[^\p{L}\p{N}' -]/gu, ' ').split(/\s+/).filter((w) => w.length > 3);
+            const query = words.slice(-4).join(' ');
+            const run = ++suggestRun;
+            if (query.length < 4) { suggestBox.hidden = true; return; }
+            try {
+              const res = await window.Api.forum.getAll({ search: query, limit: 5, match: 'any', sort: 'popular' });
+              if (run !== suggestRun) return;
+              const topics = (res.data && (res.data.topics || res.data)) || [];
+              if (!topics.length) { suggestBox.hidden = true; return; }
+              suggestBox.innerHTML = `<strong>Ces discussions répondent peut-être déjà à ta question :</strong><ul>${topics.map((t) => `<li><a href="forum-topic.html?id=${encodeURIComponent(t.id)}" target="_blank" rel="noopener">${escapeHtml(t.title)}</a> <small>${t.replyCount || 0} réponse${(t.replyCount || 0) > 1 ? 's' : ''}${t.isResolved || t.bestReplyId ? ' · ✓ résolue' : ''}</small></li>`).join('')}</ul>`;
+              suggestBox.hidden = false;
+            } catch (_) { suggestBox.hidden = true; }
+          }, 450);
+        });
 
         // Suggestions de tags
         document.querySelectorAll('.btn-tag-suggest').forEach(btn => {
@@ -373,7 +415,7 @@
           submitBtn.textContent = 'Publication en cours...';
 
           try {
-            const res = await window.Api.forum.createTopic({ title, category, content, tags });
+            const res = await window.Api.forum.createTopic({ title, category, content, tags, ...(context ? { context } : {}) });
             if (res.data && res.data.id) {
               window.location.href = `forum-topic.html?id=${res.data.id}`;
             } else {

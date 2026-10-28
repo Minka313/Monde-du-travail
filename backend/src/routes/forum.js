@@ -7,13 +7,24 @@ const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
 const validate = require('../middleware/validate');
 const { z } = require('zod');
+const Categories = require('../services/forumCategories');
+
+// Nouvelles catégories ; les anciennes restent acceptées (rattachées automatiquement)
+const categoryField = z.string().refine((value) => Categories.NAMES.includes(value) || Boolean(Categories.LEGACY[value]), 'Catégorie inconnue');
+const CONTEXT_TYPES = ['opportunity', 'job', 'formation'];
+const contextField = z.object({
+  type: z.enum(CONTEXT_TYPES),
+  id: z.string().regex(/^[A-Za-z0-9_-]{1,120}$/, 'Fiche invalide'),
+  title: z.string().trim().min(2).max(200),
+}).strict();
 
 const topicSchema = z.object({
   body: z.object({
     title: z.string().min(3, 'Titre requis (min 3 caractères)'),
     content: z.string().min(10, 'Contenu requis (min 10 caractères)'),
-    category: z.string().min(2, 'Catégorie requise'),
+    category: categoryField,
     tags: z.array(z.string()).optional(),
+    context: contextField.optional(),
   }),
 });
 
@@ -21,7 +32,7 @@ const topicUpdateSchema = z.object({
   body: z.object({
     title: z.string().min(3, 'Titre trop court').optional(),
     content: z.string().min(10, 'Contenu trop court').optional(),
-    category: z.string().min(2, 'Catégorie invalide').optional(),
+    category: categoryField.optional(),
     tags: z.array(z.string()).optional(),
   }),
 });
@@ -64,6 +75,7 @@ router.post('/sync-schema', authenticate, authorizeUltraAdmin, async (req, res, 
 router.get('/', optionalAuth, forumController.getAllTopics);
 router.get('/categories', forumController.getCategories);
 router.get('/tags/popular', forumController.getPopularTags);
+router.get('/linked', validate(z.object({ query: z.object({ type: z.enum(CONTEXT_TYPES), id: z.string().regex(/^[A-Za-z0-9_-]{1,120}$/) }) })), forumController.getLinkedTopics);
 router.get('/:id', optionalAuth, forumController.getTopicById);
 router.get('/:id/similar', forumController.getSimilarTopics);
 
@@ -82,6 +94,8 @@ router.delete('/replies/:replyId', forumController.deleteReply);
 router.post('/:id/like', forumController.toggleTopicLike);
 router.post('/replies/:replyId/like', forumController.toggleReplyLike);
 router.put('/:id/solution/:replyId', forumController.toggleSolution);
+router.post('/:id/follow', forumController.toggleFollow);
+router.put('/replies/:replyId/endorse', forumController.toggleEndorsement);
 
 // Signalements
 router.post('/reports', validate(reportSchema), forumController.createReport);

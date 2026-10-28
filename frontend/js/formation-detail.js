@@ -457,6 +457,9 @@
     }
 
     renderHero(f);
+    if (/^[A-Za-z0-9_-]{1,120}$/.test(f.slug || '')) {
+      window.ForumLinked?.mount(document.getElementById('fdForumLinked'), { type: 'formation', id: f.slug, title: f.title });
+    }
     renderTabs(f);
     bindProgram();
     bindQuiz(f);

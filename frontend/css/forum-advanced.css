@@ -385,3 +385,24 @@
   font-style: italic;
   margin-left: 0.4rem;
 }
+
+/* Question posée depuis une fiche du site */
+.forum-context-note { margin: 0 0 1rem; padding: 0.7rem 0.9rem; border-radius: 10px; background: var(--forum-accent-light); color: var(--forum-text); font-size: 0.9rem; border: 1px solid rgba(2, 132, 199, 0.2); }
+.forum-context-link { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.5rem; font-size: 0.85rem; color: var(--forum-accent); text-decoration: none; font-weight: 600; }
+.forum-context-link:hover { text-decoration: underline; }
+
+/* Suggestions pendant la saisie du titre */
+.forum-suggest { margin-top: 0.5rem; padding: 0.7rem 0.9rem; border-radius: 10px; border: 1px solid rgba(217, 119, 6, 0.3); background: var(--forum-amber-light); font-size: 0.88rem; color: var(--forum-text); }
+.forum-suggest ul { margin: 0.4rem 0 0; padding-left: 1.1rem; }
+.forum-suggest li { margin: 0.2rem 0; }
+.forum-suggest a { color: var(--forum-accent); font-weight: 600; }
+.forum-suggest small { color: var(--forum-muted); }
+
+/* Mentor vérifié et réponse validée */
+.role-badge--verified { background: var(--forum-amber-light); color: var(--forum-amber); border: 1px solid rgba(217, 119, 6, 0.35); font-weight: 700; }
+.forum-reply.is-endorsed { border-left: 4px solid var(--forum-amber); }
+.forum-endorsed-banner { display: flex; align-items: center; gap: 0.4rem; padding: 0.45rem 1.25rem; font-size: 0.82rem; font-weight: 700; color: var(--forum-amber); background: var(--forum-amber-light); border-bottom: 1px solid rgba(217, 119, 6, 0.2); }
+.btn-endorse { font: inherit; font-size: 0.8rem; font-weight: 600; padding: 0.35rem 0.7rem; border-radius: 8px; border: 1px solid rgba(217, 119, 6, 0.4); background: transparent; color: var(--forum-amber); cursor: pointer; }
+.btn-endorse.is-on { background: var(--forum-amber); color: #fff; }
+.btn-follow { font: inherit; font-size: 0.88rem; font-weight: 600; padding: 0.45rem 0.9rem; border-radius: 999px; border: 1px solid var(--forum-border); background: var(--forum-card-bg); color: var(--forum-text); cursor: pointer; }
+.btn-follow.is-on { border-color: var(--forum-accent); color: var(--forum-accent); background: var(--forum-accent-light); }

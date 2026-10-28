@@ -141,7 +141,7 @@ describe('Forum Integration', () => {
         .send({
           title: 'Unauthorized Topic',
           content: 'This should fail.',
-          category: 'Test',
+          category: 'Vie du club',
         });
 
       expect(response.status).toBe(401);
@@ -154,7 +154,7 @@ describe('Forum Integration', () => {
         .send({
           title: 'AB',
           content: 'This title is too short.',
-          category: 'Test',
+          category: 'Vie du club',
         });
 
       expect(response.status).toBe(400);
@@ -168,7 +168,7 @@ describe('Forum Integration', () => {
         .send({
           title: 'Valid Title',
           content: 'Short',
-          category: 'Test',
+          category: 'Vie du club',
         });
 
       expect(response.status).toBe(400);

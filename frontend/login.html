@@ -571,8 +571,14 @@
             const isUltraAdmin = user?.role === 'ULTRA_ADMIN';
             const adminRoles = user?.adminRoles || [];
             const isAdmin = isUltraAdmin || user?.role === 'ADMIN' || adminRoles.length > 0;
+            // Retour à la page d'origine (ex. « Poser une question » depuis une fiche) : page du site uniquement
+            const redirect = new URLSearchParams(window.location.search).get('redirect') || '';
+            const safeRedirect = /^[a-z0-9-]+\.html(\?[^#]*)?$/i.test(redirect) ? redirect : null;
 
-            if (isAdmin) {
+            if (safeRedirect) {
+              if (isAdmin) localStorage.setItem('adminAccessToken', response.data.accessToken);
+              window.location.href = safeRedirect;
+            } else if (isAdmin) {
               // Stocker également pour le panel admin
               localStorage.setItem('adminAccessToken', response.data.accessToken);
               let targetHash = 'dashboard';

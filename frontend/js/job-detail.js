@@ -180,6 +180,9 @@
   // Rendu complet des composants et sections de la page
   async function renderJobPage(job) {
     const jobKey = job.slug || job.id;
+    if (/^[A-Za-z0-9_-]{1,120}$/.test(String(jobKey))) {
+      window.ForumLinked?.mount(document.getElementById('jobForumLinked'), { type: 'job', id: String(jobKey), title: job.title });
+    }
 
     // 1. Balises SEO dynamiques
     document.title = `${job.title} — Fiche Métier & Orientation | Le Monde du Travail`;

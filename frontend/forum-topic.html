@@ -17,7 +17,7 @@
     <title>Sujet - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
-    <link rel="stylesheet" href="css/forum-advanced.css">
+    <link rel="stylesheet" href="css/forum-advanced.css?v=20261028-1">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -244,7 +244,7 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-2"></script>
+    <script defer src="js/frontend-api.js?v=20261028-4"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
@@ -332,6 +332,10 @@
 
         function renderAuthorBadge(author) {
           if (!author) return '';
+          // Mentor vérifié : rôle MENTOR_EXPERT approuvé par la Présidence
+          if ((author.adminRoles || []).some((r) => r.role && r.role.name === 'MENTOR_EXPERT')) {
+            return '<span class="role-badge role-badge--verified" title="Mentor du club, identité vérifiée par le bureau">🌟 Mentor vérifié</span>';
+          }
           if (author.adminRoles && author.adminRoles.length > 0) {
             return '<span class="role-badge role-badge--admin">🛡️ Équipe</span>';
           }
@@ -366,14 +370,17 @@
           const isStaff = currentUser && ['ADMIN', 'ULTRA_ADMIN'].includes(currentUser.role);
           const isSolution = reply.isSolution || (currentTopicData && currentTopicData.bestReplyId === reply.id);
           const editedNotice = reply.isEdited ? '<span class="edited-notice">(modifié)</span>' : '';
+          const endorser = reply.endorsedBy ? `${escapeHtml(reply.endorsedBy.firstName)} ${escapeHtml(reply.endorsedBy.lastName)}` : '';
+          const canEndorse = Boolean(currentTopicData && currentTopicData.canEndorse);
 
           return `
-            <div class="forum-reply ${isSolution ? 'forum-solution-card' : ''}" id="reply-${reply.id}">
+            <div class="forum-reply ${isSolution ? 'forum-solution-card' : ''} ${reply.endorsedBy ? 'is-endorsed' : ''}" id="reply-${reply.id}">
               ${isSolution ? `
                 <div class="forum-solution-header">
                   <span>✓ SOLUTION VALIDÉE PAR L'AUTEUR</span>
                 </div>
               ` : ''}
+              ${reply.endorsedBy ? `<div class="forum-endorsed-banner">🌟 Réponse validée par un mentor · ${endorser}</div>` : ''}
               <div style="padding: 1.25rem;">
                 <div class="forum-reply-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                   <div>
@@ -394,6 +401,11 @@
                       <span class="upvote-count">${reply.likeCount || 0}</span>
                     </button>
 
+                    ${canEndorse ? `
+                      <button type="button" class="btn-endorse ${reply.endorsedBy ? 'is-on' : ''}" data-reply-id="${reply.id}" title="Confirmer que cette réponse est juste">
+                        ${reply.endorsedBy ? '🌟 Validée' : '🌟 Valider'}
+                      </button>
+                    ` : ''}
                     ${(isTopicAuthor || isStaff) ? `
                       <button type="button" class="btn-mark-solution ${isSolution ? 'is-solution' : ''}" data-reply-id="${reply.id}">
                         ${isSolution ? '✓ Solution active' : 'Marquer comme solution'}
@@ -464,6 +476,18 @@
           }
         }
 
+        // Lien vers la fiche du site à l'origine de la question
+        function contextLink(topic) {
+          if (!topic.contextType || !topic.contextId || !topic.contextTitle) return '';
+          const id = encodeURIComponent(topic.contextId);
+          const target = {
+            opportunity: [`opportunite.html?id=${id}`, '🎯 Concours'],
+            job: [`job-detail.html?slug=${id}`, '🧭 Métier'],
+            formation: [`formation-detail.html?slug=${id}`, '🎓 Formation'],
+          }[topic.contextType];
+          return target ? `<a class="forum-context-link" href="${target[0]}">${target[1]} : ${escapeHtml(topic.contextTitle)} →</a>` : '';
+        }
+
         async function loadTopic() {
           try {
             const response = await window.Api.forum.getById(topicId);
@@ -491,6 +515,7 @@
                   <h1 style="margin-top: var(--space-4); margin-bottom: var(--space-3); font-size: 1.85rem;">
                     ${escapeHtml(topic.title)}
                   </h1>
+                  ${contextLink(topic)}
                   <div class="forum-topic-meta" style="margin-bottom: 1rem; align-items: center;">
                     ${(window.avatarHtml || (() => ""))(topic.author, { size: 32 })}
                     <span class="author">Par <strong>${authorName}</strong></span>
@@ -515,6 +540,12 @@
                       <button type="button" class="forum-action-link" id="btnShareTopic">
                         🔗 Partager
                       </button>
+
+                      ${token ? `
+                        <button type="button" class="btn-follow ${topic.isFollowing ? 'is-on' : ''}" id="btnFollowTopic" aria-pressed="${topic.isFollowing ? 'true' : 'false'}" title="Recevoir une notification à chaque nouvelle réponse">
+                          ${topic.isFollowing ? '🔔 Suivie' : '🔕 Suivre'}
+                        </button>
+                      ` : ''}
 
                       ${currentUser && !isTopicAuthor ? `
                         <button type="button" class="forum-action-link btn-report-msg" data-type="topic" data-id="${topic.id}">
@@ -679,6 +710,35 @@
           });
 
           // Valider comme Solution
+          const btnFollow = document.getElementById('btnFollowTopic');
+          if (btnFollow) {
+            btnFollow.addEventListener('click', async () => {
+              btnFollow.disabled = true;
+              try {
+                const res = await window.Api.forum.toggleFollow(topic.id);
+                const on = Boolean(res.data && res.data.following);
+                btnFollow.classList.toggle('is-on', on);
+                btnFollow.setAttribute('aria-pressed', String(on));
+                btnFollow.textContent = on ? '🔔 Suivie' : '🔕 Suivre';
+              } catch (e) {
+                alert(e.message || 'Action impossible pour le moment');
+              } finally {
+                btnFollow.disabled = false;
+              }
+            });
+          }
+
+          document.querySelectorAll('.btn-endorse').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              try {
+                await window.Api.forum.toggleEndorse(btn.getAttribute('data-reply-id'));
+                loadTopic();
+              } catch (e) {
+                alert(e.message || 'Validation impossible pour le moment');
+              }
+            });
+          });
+
           document.querySelectorAll('.btn-mark-solution').forEach(btn => {
             btn.addEventListener('click', async () => {
               const replyId = btn.getAttribute('data-reply-id');

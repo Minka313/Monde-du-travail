@@ -291,6 +291,10 @@ model Topic {
   editedAt       DateTime?     @db.Timestamptz(6)
   lastActivityAt DateTime      @default(now())
   tags           String[]      @default([])
+  // Fiche du site à l'origine de la question : opportunity (id), job (slug) ou formation (slug)
+  contextType    String?
+  contextId      String?
+  contextTitle   String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   authorId       String
@@ -298,8 +302,10 @@ model Topic {
   replies        Reply[]
   likes          TopicLike[]
   reports        ForumReport[]
+  follows        TopicFollow[]
 
   @@index([category])
+  @@index([contextType, contextId])
   @@index([isPinned])
   @@index([lastActivityAt])
   @@map("topics")
@@ -314,6 +320,10 @@ model Reply {
   isEdited   Boolean       @default(false)
   editedAt   DateTime?     @db.Timestamptz(6)
   likeCount  Int           @default(0)
+  // Réponse validée par un mentor vérifié (rôle MENTOR_EXPERT) ou la Présidence
+  endorsedById String?
+  endorsedAt   DateTime?
+  endorsedBy   User?       @relation("ReplyEndorser", fields: [endorsedById], references: [id], onDelete: SetNull)
   topicId    String
   authorId   String
   author     User          @relation(fields: [authorId], references: [id])
@@ -324,6 +334,20 @@ model Reply {
   @@index([topicId])
   @@index([isSolution], map: "replies_is_solution_idx")
   @@map("replies")
+}
+
+// Discussions suivies : notification à chaque nouvelle réponse
+model TopicFollow {
+  id        String   @id @default(cuid())
+  topicId   String
+  userId    String
+  createdAt DateTime @default(now())
+  topic     Topic    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserTopicFollows", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([topicId, userId])
+  @@index([userId])
+  @@map("topic_follows")
 }
 
 model TopicLike {
@@ -463,6 +487,8 @@ model User {
   memberships            MembershipRequest[]
   posts                  Post[]
   replies                Reply[]
+  endorsedReplies        Reply[]                 @relation("ReplyEndorser")
+  topicFollows           TopicFollow[]           @relation("UserTopicFollows")
   topics                 Topic[]
   assignedRoles          UserAdminRole[]         @relation("AdminRoleAssignment")
   reviewedAdminRoles     UserAdminRole[]         @relation("AdminRoleReviewer")

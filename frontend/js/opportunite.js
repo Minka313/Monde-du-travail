@@ -469,6 +469,7 @@
     bindReport(o);
     bindAlert();
     track('opportunity_view', o.id, { category: o.category });
+    window.ForumLinked?.mount(document.getElementById('oppForum'), { type: 'opportunity', id: o.id, title: o.title });
 
     try {
       const res = await window.Api.opportunities.getAll();

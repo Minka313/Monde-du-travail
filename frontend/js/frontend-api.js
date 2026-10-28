@@ -422,6 +422,7 @@ return headers;
         if (params.search) query.set('search', params.search);
         if (params.status) query.set('status', params.status);
         if (params.sort) query.set('sort', params.sort);
+        if (params.match) query.set('match', params.match);
         const qs = query.toString();
         return apiRequestWithRefresh(`/forum${qs ? `?${qs}` : ''}`);
       },
@@ -429,6 +430,9 @@ return headers;
       getPopularTags: () => apiRequestWithRefresh('/forum/tags/popular'),
       getById: (id) => apiRequestWithRefresh(`/forum/${id}`),
       getSimilar: (id) => apiRequestWithRefresh(`/forum/${id}/similar`),
+      getLinked: (type, id) => apiRequestWithRefresh(`/forum/linked?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`),
+      toggleFollow: (id) => apiRequestWithRefresh(`/forum/${encodeURIComponent(id)}/follow`, { method: 'POST' }),
+      toggleEndorse: (replyId) => apiRequestWithRefresh(`/forum/replies/${encodeURIComponent(replyId)}/endorse`, { method: 'PUT' }),
       createTopic: (data) => apiRequestWithRefresh('/forum', {
         method: 'POST',
         body: JSON.stringify(data),

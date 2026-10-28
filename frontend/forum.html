@@ -27,7 +27,7 @@
     <title>Forum - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
-    <link rel="stylesheet" href="css/forum-advanced.css">
+    <link rel="stylesheet" href="css/forum-advanced.css?v=20261028-1">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -286,7 +286,7 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-2"></script>
+    <script defer src="js/frontend-api.js?v=20261028-4"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
@@ -330,6 +330,10 @@
 
         function renderAuthorBadge(author) {
           if (!author) return '';
+          // Mentor vérifié : rôle MENTOR_EXPERT approuvé par la Présidence
+          if ((author.adminRoles || []).some((r) => r.role && r.role.name === 'MENTOR_EXPERT')) {
+            return '<span class="role-badge role-badge--verified" title="Mentor du club, identité vérifiée par le bureau">🌟 Mentor vérifié</span>';
+          }
           if (author.adminRoles && author.adminRoles.length > 0) {
             return '<span class="role-badge role-badge--admin">🛡️ Équipe</span>';
           }
@@ -449,25 +453,13 @@
               return;
             }
 
-            const categoryLabels = {
-              'Orientation & Métiers': 'Orientation',
-              'Vie du Club & Contributions': 'Vie du club',
-              'Formations': 'Formations',
-              'Entrepreneuriat': 'Entrepreneuriat',
-              'Opportunités': 'Opportunités',
-              'Vie professionnelle': 'Vie professionnelle',
-            };
-
-            categoriesContainer.innerHTML = categories.map(cat => {
-              const label = categoryLabels[cat.name] || cat.name;
-              return `
-                <button class="forum-category-card" data-category="${escapeHtml(cat.name)}" aria-label="Catégorie ${escapeHtml(label)}">
-                  <h3>${escapeHtml(label)}</h3>
-                  <p>Discussions et conseils</p>
-                  <div class="forum-category-meta">${cat.count} discussion${cat.count > 1 ? 's' : ''}</div>
+            categoriesContainer.innerHTML = categories.map(cat => `
+                <button class="forum-category-card" data-category="${escapeHtml(cat.name)}" aria-label="Catégorie ${escapeHtml(cat.name)}">
+                  <h3>${escapeHtml(cat.icon || '💬')} ${escapeHtml(cat.name)}</h3>
+                  <p>${escapeHtml(cat.description || 'Discussions et conseils')}</p>
+                  <div class="forum-category-meta">${cat.count ? `${cat.count} discussion${cat.count > 1 ? 's' : ''}` : 'Sois le premier à poser une question'}</div>
                 </button>
-              `;
-            }).join('');
+              `).join('');
 
             categoriesContainer.querySelectorAll('.forum-category-card').forEach(card => {
               card.addEventListener('click', () => {

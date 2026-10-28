@@ -1,3 +1,4 @@
+const Categories = require('./forumCategories');
 const prisma = require('../config/database');
 const { NotFoundError, BadRequestError, ForbiddenError } = require('../utils/errors');
 const logger = require('../utils/logger');
@@ -115,6 +116,62 @@ class ForumService {
         `);
         logs.push('forum_reports table verified');
 
+        await prisma.$executeRawUnsafe(`
+          ALTER TABLE topics
+            ADD COLUMN IF NOT EXISTS "contextType" TEXT,
+            ADD COLUMN IF NOT EXISTS "contextId" TEXT,
+            ADD COLUMN IF NOT EXISTS "contextTitle" TEXT;
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS topics_contextType_contextId_idx ON topics ("contextType", "contextId");
+        `);
+        logs.push('topic context columns verified');
+
+        await prisma.$executeRawUnsafe(`
+          ALTER TABLE replies
+            ADD COLUMN IF NOT EXISTS "endorsedAt" TIMESTAMP(3),
+            ADD COLUMN IF NOT EXISTS "endorsedById" TEXT;
+        `);
+        await prisma.$executeRawUnsafe(`
+          DO $$
+          BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'replies_endorsedById_fkey' AND conrelid = 'replies'::regclass) THEN
+              ALTER TABLE replies ADD CONSTRAINT "replies_endorsedById_fkey"
+                FOREIGN KEY ("endorsedById") REFERENCES users(id) ON DELETE SET NULL ON UPDATE CASCADE;
+            END IF;
+          END $$;
+        `);
+        logs.push('reply endorsement columns verified');
+
+        await prisma.$executeRawUnsafe(`
+          CREATE TABLE IF NOT EXISTS topic_follows (
+            id TEXT NOT NULL PRIMARY KEY,
+            "topicId" TEXT NOT NULL,
+            "userId" TEXT NOT NULL,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+          );
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE UNIQUE INDEX IF NOT EXISTS topic_follows_topicId_userId_key ON topic_follows ("topicId", "userId");
+        `);
+        await prisma.$executeRawUnsafe(`
+          CREATE INDEX IF NOT EXISTS topic_follows_userId_idx ON topic_follows ("userId");
+        `);
+        await prisma.$executeRawUnsafe(`
+          DO $$
+          BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'topic_follows_topicId_fkey' AND conrelid = 'topic_follows'::regclass) THEN
+              ALTER TABLE topic_follows ADD CONSTRAINT "topic_follows_topicId_fkey"
+                FOREIGN KEY ("topicId") REFERENCES topics(id) ON DELETE CASCADE ON UPDATE CASCADE;
+            END IF;
+            IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'topic_follows_userId_fkey' AND conrelid = 'topic_follows'::regclass) THEN
+              ALTER TABLE topic_follows ADD CONSTRAINT "topic_follows_userId_fkey"
+                FOREIGN KEY ("userId") REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE;
+            END IF;
+          END $$;
+        `);
+        logs.push('topic follows table verified');
+
         schemaEnsured = true;
         logger.info('Auto-migration: Schéma Forum synchronisé avec succès dans Supabase');
         return { status: 'success', logs };
@@ -132,12 +189,12 @@ class ForumService {
   /**
    * Récupère la liste des sujets avec filtres et pagination
    */
-  static async getAllTopics({ category, search, status, tag, page = 1, limit = 20, sort = 'latest', userId } = {}) {
+  static async getAllTopics({ category, search, status, tag, page = 1, limit = 20, sort = 'latest', match = 'all', userId } = {}) {
     await ForumService.ensureSchema();
     const where = {};
 
     if (category) {
-      where.category = category;
+      where.category = { in: Categories.storedNames(category) };
     }
 
     if (tag) {
@@ -163,6 +220,11 @@ class ForumService {
 
       if (searchTerms.length > 0) {
         orConditions.push({ tags: { hasSome: searchTerms } });
+      }
+      // Suggestions pendant la saisie d'une question : un des mots significatifs suffit
+      if (match === 'any') {
+        searchTerms.filter((term) => term.length > 3).slice(0, 6)
+          .forEach((term) => orConditions.push({ title: { contains: term, mode: 'insensitive' } }));
       }
 
       where.OR = orConditions;
@@ -198,7 +260,7 @@ class ForumService {
           role: true,
           avatarUrl: true,
           adminRoles: {
-            where: { isActive: true },
+            where: { isActive: true, status: 'APPROVED' },
             select: { role: { select: { name: true } } },
           },
         },
@@ -228,6 +290,7 @@ class ForumService {
       const { likes, ...rest } = t;
       return {
         ...rest,
+        category: Categories.canonical(rest.category),
         hasLiked,
       };
     });
@@ -261,7 +324,7 @@ class ForumService {
               role: true,
               avatarUrl: true,
               adminRoles: {
-                where: { isActive: true },
+                where: { isActive: true, status: 'APPROVED' },
                 select: { role: { select: { name: true } } },
               },
             },
@@ -280,7 +343,7 @@ class ForumService {
                   role: true,
                   avatarUrl: true,
                   adminRoles: {
-                    where: { isActive: true },
+                    where: { isActive: true, status: 'APPROVED' },
                     select: { role: { select: { name: true } } },
                   },
                 },
@@ -289,6 +352,7 @@ class ForumService {
                 where: { userId },
                 select: { id: true },
               } : false,
+              endorsedBy: { select: { id: true, firstName: true, lastName: true } },
             },
             orderBy: [
               { isSolution: 'desc' },
@@ -308,10 +372,17 @@ class ForumService {
         };
       });
 
+      const [followersCount, following] = await Promise.all([
+        prisma.topicFollow.count({ where: { topicId: id } }),
+        userId ? prisma.topicFollow.count({ where: { topicId: id, userId } }) : 0,
+      ]);
       const { likes, ...restTopic } = topic;
       return {
         ...restTopic,
+        category: Categories.canonical(restTopic.category),
         hasLiked,
+        isFollowing: following > 0,
+        followersCount,
         replies: formattedReplies,
       };
     } catch (err) {
@@ -331,9 +402,11 @@ class ForumService {
       data: {
         title: data.title,
         content: data.content,
-        category: data.category,
+        category: Categories.canonical(data.category),
         authorId: userId,
         tags: data.tags || [],
+        ...(data.context ? { contextType: data.context.type, contextId: data.context.id, contextTitle: data.context.title } : {}),
+        follows: { create: { userId } },
       },
       include: {
         author: {
@@ -372,7 +445,7 @@ class ForumService {
       data: {
         title: data.title !== undefined ? data.title : topic.title,
         content: data.content !== undefined ? data.content : topic.content,
-        category: data.category !== undefined ? data.category : topic.category,
+        category: data.category !== undefined ? Categories.canonical(data.category) : topic.category,
         tags: data.tags !== undefined ? data.tags : topic.tags,
         isEdited: true,
         editedAt: new Date(),
@@ -457,24 +530,30 @@ class ForumService {
           lastActivityAt: new Date(),
         },
       }),
+      prisma.topicFollow.upsert({
+        where: { topicId_userId: { topicId, userId } },
+        update: {},
+        create: { topicId, userId },
+      }),
     ]);
 
-    // Notification automatique à l'auteur du sujet
-    if (topic.authorId && topic.authorId !== userId) {
-      try {
-        const notificationService = require('./notificationService');
-        const authorName = `${reply.author?.firstName || ''} ${reply.author?.lastName || ''}`.trim() || 'Un membre';
-        await notificationService.createNotification({
-          userId: topic.authorId,
-          type: 'FORUM',
-          title: '💬 Nouvelle réponse sur votre sujet !',
-          message: `${authorName} a répondu à votre sujet « ${topic.title} ».`,
-          url: `/frontend/forum-topic.html?id=${topic.id}`,
-          dedupeKey: `FORUM_REPLY:${reply.id}`,
-        });
-      } catch (err) {
-        logger.warn('Notification de réponse forum non créée', { replyId: reply.id, error: err.message });
-      }
+    // Notification (dans le site + push) à l'auteur du sujet et aux personnes qui suivent la discussion
+    try {
+      const notificationService = require('./notificationService');
+      const authorName = `${reply.author?.firstName || ''} ${reply.author?.lastName || ''}`.trim() || 'Un membre';
+      const followers = await prisma.topicFollow.findMany({ where: { topicId, userId: { not: userId } }, select: { userId: true } });
+      const recipients = new Set(followers.map((f) => f.userId));
+      if (topic.authorId && topic.authorId !== userId) recipients.add(topic.authorId);
+      await Promise.allSettled([...recipients].map((recipientId) => notificationService.createNotification({
+        userId: recipientId,
+        type: 'FORUM',
+        title: recipientId === topic.authorId ? '💬 Nouvelle réponse sur votre sujet !' : '💬 Nouvelle réponse dans une discussion suivie',
+        message: `${authorName} a répondu à « ${topic.title} ».`,
+        url: `/frontend/forum-topic.html?id=${topic.id}#reply-${reply.id}`,
+        dedupeKey: recipientId === topic.authorId ? `FORUM_REPLY:${reply.id}` : `FORUM_REPLY:${reply.id}:${recipientId}`,
+      })));
+    } catch (err) {
+      logger.warn('Notification de réponse forum non créée', { replyId: reply.id, error: err.message });
     }
 
     return reply;
@@ -890,20 +969,90 @@ class ForumService {
    * Récupère les catégories existantes avec le nombre de sujets
    */
   static async getCategories() {
-    const result = await prisma.topic.groupBy({
-      by: ['category'],
-      _count: {
-        id: true,
-      },
-      orderBy: {
-        category: 'asc',
+    const result = await prisma.topic.groupBy({ by: ['category'], _count: { id: true } });
+    const counts = {};
+    result.forEach((item) => {
+      const name = Categories.canonical(item.category);
+      counts[name] = (counts[name] || 0) + item._count.id;
+    });
+    // Les 6 catégories du forum toujours affichées, même vides ; une valeur inconnue est gardée à la fin
+    const known = Categories.CATEGORIES.map((c) => ({ ...c, count: counts[c.name] || 0 }));
+    const others = Object.keys(counts).filter((name) => !Categories.NAMES.includes(name)).map((name) => ({ name, icon: '💬', description: '', count: counts[name] }));
+    return [...known, ...others];
+  }
+
+  /**
+   * Suivre / ne plus suivre une discussion
+   */
+  static async toggleFollow(topicId, userId) {
+    const topic = await prisma.topic.findUnique({ where: { id: topicId }, select: { id: true } });
+    if (!topic) throw new NotFoundError('Sujet non trouvé');
+    const existing = await prisma.topicFollow.findUnique({ where: { topicId_userId: { topicId, userId } } });
+    if (existing) await prisma.topicFollow.delete({ where: { id: existing.id } });
+    else await prisma.topicFollow.create({ data: { topicId, userId } });
+    return { following: !existing, followersCount: await prisma.topicFollow.count({ where: { topicId } }) };
+  }
+
+  /**
+   * Validation d'une réponse par un mentor vérifié (rôle MENTOR_EXPERT approuvé) ou la Présidence
+   */
+  static async isVerifiedMentor(userId) {
+    const count = await prisma.userAdminRole.count({
+      where: {
+        userId,
+        isActive: true,
+        status: 'APPROVED',
+        role: { name: 'MENTOR_EXPERT' },
+        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
       },
     });
+    return count > 0;
+  }
 
-    return result.map(item => ({
-      name: item.category,
-      count: item._count.id,
-    }));
+  static async toggleEndorsement(replyId, user) {
+    const reply = await prisma.reply.findUnique({ where: { id: replyId }, include: { topic: { select: { id: true, title: true } } } });
+    if (!reply) throw new NotFoundError('Réponse non trouvée');
+    if (user.role !== 'ULTRA_ADMIN' && !(await ForumService.isVerifiedMentor(user.id))) {
+      throw new ForbiddenError('Seuls les mentors vérifiés du club peuvent valider une réponse');
+    }
+    const endorse = !reply.endorsedById;
+    const updated = await prisma.reply.update({
+      where: { id: replyId },
+      data: endorse ? { endorsedById: user.id, endorsedAt: new Date() } : { endorsedById: null, endorsedAt: null },
+      include: { endorsedBy: { select: { id: true, firstName: true, lastName: true } } },
+    });
+    if (endorse && reply.authorId !== user.id) {
+      try {
+        await require('./notificationService').createNotification({
+          userId: reply.authorId,
+          type: 'FORUM',
+          title: '🌟 Ta réponse a été validée par un mentor',
+          message: `Ta réponse à « ${reply.topic.title} » a été validée par un mentor du club.`,
+          url: `/frontend/forum-topic.html?id=${reply.topic.id}#reply-${reply.id}`,
+          dedupeKey: `FORUM_ENDORSE:${reply.id}`,
+        });
+      } catch (err) {
+        logger.warn('Notification de validation non créée', { replyId, error: err.message });
+      }
+    }
+    return { endorsed: endorse, endorsedBy: updated.endorsedBy, endorsedAt: updated.endorsedAt };
+  }
+
+  /**
+   * Discussions liées à une fiche du site (concours, métier, formation)
+   */
+  static async getLinkedTopics(type, id, limit = 5) {
+    const where = { contextType: type, contextId: id };
+    const [topics, total] = await Promise.all([
+      prisma.topic.findMany({
+        where,
+        orderBy: [{ isPinned: 'desc' }, { lastActivityAt: 'desc' }],
+        take: limit,
+        select: { id: true, title: true, replyCount: true, isResolved: true, bestReplyId: true, createdAt: true, lastActivityAt: true },
+      }),
+      prisma.topic.count({ where }),
+    ]);
+    return { topics, total };
   }
 
   static async togglePin(id) {
