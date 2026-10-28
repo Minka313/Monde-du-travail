@@ -79,6 +79,7 @@
   ]
 }
     </script>
+    <link rel="stylesheet" href="css/home-film.css?v=20261028-1">
 </head>
 <body>
 <a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
@@ -209,6 +210,27 @@
                 </div>
             </section>
         </div>
+
+        <!-- Film de présentation : le club en 40 secondes, pour qui préfère regarder plutôt que lire -->
+        <section class="section home-film-section scene" id="scene-film" aria-labelledby="homeFilmTitle">
+            <div class="container">
+                <div class="section-header reveal-up">
+                    <span class="section-label">En 40 secondes</span>
+                    <h2 id="homeFilmTitle">Découvre le club en vidéo</h2>
+                    <p>Pas le temps de tout lire ? Le Monde du Travail, sa mission et sa plateforme, en un film.</p>
+                </div>
+                <div class="home-film reveal-scale" id="homeFilm">
+                    <video id="homeFilmVideo" playsinline preload="none"
+                        data-src-wide="videos/presentation-16x9.mp4" data-src-tall="videos/presentation-9x16.mp4"
+                        data-poster-wide="videos/presentation-16x9.webp" data-poster-tall="videos/presentation-9x16.webp"
+                        aria-label="Film de présentation du club Le Monde du Travail"></video>
+                    <button type="button" class="home-film-play" id="homeFilmPlay" aria-label="Lancer le film de présentation (40 secondes, avec son)">
+                        <span class="home-film-play-icon" aria-hidden="true">▶</span>
+                        <span class="home-film-play-label">Regarder le film · 40 s</span>
+                    </button>
+                </div>
+            </div>
+        </section>
 
         <section class="section section-editorial scene" id="scene-editorial">
             <div class="container page-content">
@@ -537,7 +559,7 @@
     <script defer src="js/frontend-api.js?v=20261028-1"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/layout.js"></script>
-    <script defer src="js/main.js?v=20261028-2"></script>
+    <script defer src="js/main.js?v=20261028-3"></script>
     <script defer src="js/notifications.js?v=2.2.0"></script>
 </body>
 </html>

@@ -1410,6 +1410,25 @@
     } catch (_) { /* jamais bloquant */ }
   }
 
+  // Film de présentation de l'accueil : rien n'est téléchargé avant le clic ;
+  // version verticale sur téléphone, horizontale ailleurs
+  function initHomeFilm() {
+    const box = document.getElementById('homeFilm');
+    const video = document.getElementById('homeFilmVideo');
+    const play = document.getElementById('homeFilmPlay');
+    if (!box || !video || !play) return;
+    const tall = window.matchMedia('(max-width: 640px)').matches;
+    box.classList.toggle('is-tall', tall);
+    video.poster = tall ? video.dataset.posterTall : video.dataset.posterWide;
+    play.addEventListener('click', () => {
+      if (!video.src) video.src = tall ? video.dataset.srcTall : video.dataset.srcWide;
+      video.controls = true;
+      box.classList.add('is-playing');
+      video.play().catch(() => { /* lecture refusée : les commandes restent disponibles */ });
+      try { window.AnalyticsTracker?.track?.('video_play', 'home', 'presentation'); } catch (_) { /* suivi facultatif */ }
+    });
+  }
+
   function init() {
     initPageTransitions();
     initScrollProgressBar();
@@ -1426,6 +1445,7 @@
     initForumInteractions();
     initNavAuth();
     initHomeDynamicSections();
+    initHomeFilm();
     initVisitorTracking();
     initProgressiveProfiling();
   }
