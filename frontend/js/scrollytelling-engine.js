@@ -121,7 +121,8 @@
         prevent: (node) => {
           if (!node || typeof node.closest !== 'function') return false;
           return Boolean(
-            node.closest('#job-dossier-overlay, #formation-dossier-overlay, .dossier-overlay, .dossier-modal, .dossier-body, [data-lenis-prevent]')
+            // Fenêtres et panneaux qui défilent par eux-mêmes (rapports, mentorat, inscriptions…)
+            node.closest('#job-dossier-overlay, #formation-dossier-overlay, .dossier-overlay, .dossier-modal, .dossier-body, [data-lenis-prevent], [role="dialog"], [aria-modal="true"], dialog, .bx-modal-overlay, .ms-overlay, .fd-modal-overlay, .opp-sidebar')
           );
         }
       });
