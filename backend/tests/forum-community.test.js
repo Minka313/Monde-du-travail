@@ -8,7 +8,7 @@ const { createTestUser, cleanupTestUsers, prisma } = require('./helpers/fixtures
 const EMAILS = ['asker@forumc.test.com', 'helper@forumc.test.com', 'mentor@forumc.test.com', 'follower@forumc.test.com'];
 
 describe('Forum : communauté', () => {
-  let asker, helper, mentor, follower, tokens, topicId, replyId;
+  let asker, helper, mentor, follower, tokens, topicId, replyId, pseudonymTopicId;
   const as = (token) => ({ Authorization: `Bearer ${token}` });
 
   beforeAll(async () => {
@@ -52,6 +52,43 @@ describe('Forum : communauté', () => {
     expect((await request(app).get('/api/forum/linked?type=autre&id=x')).status).toBe(400);
   });
 
+  it('permet un pseudonyme global tout en protégeant le nom public', async () => {
+    expect((await request(app).get('/api/forum/profile')).status).toBe(401);
+    expect((await request(app).put('/api/forum/profile').send({ forumDisplayName: 'Pseudo' })).status).toBe(401);
+    const saved = await request(app).put('/api/forum/profile').set(as(tokens[0])).send({ forumDisplayName: 'Étoile du Sahel' });
+    expect(saved.status).toBe(200);
+    expect(saved.body.data.forumDisplayName).toBe('Étoile du Sahel');
+    expect((await request(app).get('/api/forum/profile').set(as(tokens[0]))).body.data.forumDisplayName).toBe('Étoile du Sahel');
+
+    const created = await request(app).post('/api/forum').set(as(tokens[0])).send({
+      title: 'Une question sans réponse',
+      content: 'Comment choisir entre ces deux filières après le bac ?',
+      category: 'Études & lycée',
+    });
+    expect(created.status).toBe(201);
+    pseudonymTopicId = created.body.data.id;
+
+    const publicTopic = (await request(app).get(`/api/forum/${pseudonymTopicId}`)).body.data;
+    expect(publicTopic.author).toMatchObject({
+      firstName: 'Étoile du Sahel',
+      lastName: '',
+      avatarUrl: null,
+      isPseudonymous: true,
+    });
+    const publicListing = await request(app).get('/api/forum?search=sans%20réponse');
+    expect(publicListing.body.data.find((item) => item.id === pseudonymTopicId).author).toMatchObject({
+      firstName: 'Étoile du Sahel',
+      lastName: '',
+    });
+
+    expect((await request(app).get('/api/forum/unanswered')).status).toBe(401);
+    expect((await request(app).get('/api/forum/unanswered').set(as(tokens[0]))).status).toBe(403);
+    const queue = await request(app).get('/api/forum/unanswered').set(as(tokens[2]));
+    expect(queue.status).toBe(200);
+    const queued = queue.body.data.find((item) => item.id === pseudonymTopicId);
+    expect(queued.author).toMatchObject({ firstName: asker.firstName, lastName: asker.lastName, forumDisplayName: 'Étoile du Sahel' });
+  });
+
   it('prévient les personnes qui suivent la discussion à chaque réponse', async () => {
     const detail = (await request(app).get(`/api/forum/${topicId}`).set(as(tokens[0]))).body.data;
     expect(detail.isFollowing).toBe(true); // l'auteur suit sa question
@@ -80,5 +117,12 @@ describe('Forum : communauté', () => {
     expect(detail.replies[0].endorsedBy.id).toBe(mentor.id);
     expect(detail.replies[0].author.adminRoles).toEqual([]);
     expect(await prisma.notification.count({ where: { userId: helper.id, title: { contains: 'validée par un mentor' } } })).toBe(1);
+  });
+
+  it('permet de retirer le pseudonyme du compte', async () => {
+    const cleared = await request(app).put('/api/forum/profile').set(as(tokens[0])).send({ forumDisplayName: null });
+    expect(cleared.status).toBe(200);
+    expect(cleared.body.data.forumDisplayName).toBeNull();
+    expect((await request(app).get(`/api/forum/${pseudonymTopicId}`)).body.data.author.firstName).toBe(asker.firstName);
   });
 });

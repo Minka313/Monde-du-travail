@@ -428,6 +428,12 @@ return headers;
       },
       getCategories: () => apiRequestWithRefresh('/forum/categories'),
       getPopularTags: () => apiRequestWithRefresh('/forum/tags/popular'),
+      getUnanswered: () => apiRequestWithRefresh('/forum/unanswered'),
+      getProfile: () => apiRequestWithRefresh('/forum/profile'),
+      updateProfile: (forumDisplayName) => apiRequestWithRefresh('/forum/profile', {
+        method: 'PUT',
+        body: JSON.stringify({ forumDisplayName }),
+      }),
       getById: (id) => apiRequestWithRefresh(`/forum/${id}`),
       getSimilar: (id) => apiRequestWithRefresh(`/forum/${id}/similar`),
       getLinked: (type, id) => apiRequestWithRefresh(`/forum/linked?type=${encodeURIComponent(type)}&id=${encodeURIComponent(id)}`),

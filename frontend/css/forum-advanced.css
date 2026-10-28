@@ -406,3 +406,16 @@
 .btn-endorse.is-on { background: var(--forum-amber); color: #fff; }
 .btn-follow { font: inherit; font-size: 0.88rem; font-weight: 600; padding: 0.45rem 0.9rem; border-radius: 999px; border: 1px solid var(--forum-border); background: var(--forum-card-bg); color: var(--forum-text); cursor: pointer; }
 .btn-follow.is-on { border-color: var(--forum-accent); color: var(--forum-accent); background: var(--forum-accent-light); }
+.forum-community-rules, .forum-pseudonym-settings { margin: 0 0 1.25rem; padding: 1rem 1.1rem; border: 1px solid var(--forum-border); border-radius: 12px; background: var(--forum-card-bg); color: var(--forum-text); }
+.forum-community-rules h2, .forum-community-rules h3, .forum-pseudonym-settings h3 { margin: 0 0 0.5rem; color: var(--forum-text); font-size: 1rem; }
+.forum-community-rules ul { margin: 0; padding-left: 1.2rem; }
+.forum-community-rules li, .forum-pseudonym-settings p { margin: 0.35rem 0 0; color: var(--forum-muted); font-size: 0.88rem; line-height: 1.5; }
+.forum-community-rules--compact { margin-bottom: 1rem; }
+.forum-community-rules--compact p { margin: 0; color: var(--forum-muted); font-size: 0.9rem; line-height: 1.5; }
+.forum-community-rules a { color: var(--forum-accent); font-weight: 600; }
+.forum-pseudonym-settings label { display: block; margin: 0.65rem 0 0.35rem; font-weight: 600; }
+.forum-pseudonym-row { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+.forum-pseudonym-row input { flex: 1 1 14rem; min-width: 0; padding: 0.65rem 0.8rem; border: 1px solid var(--forum-border); border-radius: 8px; background: var(--forum-card-bg); color: var(--forum-text); font: inherit; }
+.forum-pseudonym-settings .forum-pseudonym-status { min-height: 1.2em; }
+.forum-pseudonym-status.is-error { color: #b91c1c; }
+.forum-pseudonym-badge { display: inline-flex; align-items: center; padding: 0.1rem 0.4rem; border-radius: 999px; background: var(--forum-accent-light); color: var(--forum-accent); font-size: 0.68rem; font-weight: 700; }

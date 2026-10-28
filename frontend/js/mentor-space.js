@@ -89,6 +89,9 @@
         list.push({ key: 'myTrainings', icon: '🎓', label: 'Mes formations' });
         list.push({ key: 'myReports', icon: '📝', label: 'Mes comptes rendus' });
       }
+      if (c.isMentor || c.isPresident) {
+        list.push({ key: 'forumQueue', icon: '💬', label: 'Questions sans réponse' });
+      }
       list.push({ key: 'messages', icon: '💬', label: c.isPresident ? 'Messages des mentors' : 'Messages à la Présidence', count: c.unreadMessages });
       return list;
     }
@@ -268,6 +271,31 @@
       return `<div class="ms-list">${list.length ? list.map(reportRow).join('') : empty('📝', 'Aucun compte rendu', 'Après chaque séance ou session, rédigez un compte rendu depuis « Mes mentorés » ou « Mes formations ».')}</div>`;
     }
 
+    async function viewForumQueue() {
+      const topics = (await request('/forum/unanswered')).data;
+      if (!topics.length) return empty('✅', 'Aucune question en attente', 'Les nouvelles questions sans réponse apparaîtront ici.');
+      return `
+        <h3 class="ms-h3">💬 Questions à accompagner</h3>
+        <p class="ms-hint">Les plus anciennes sont affichées en premier. Objectif : une première réponse sous 48 h. Les identités restent liées aux comptes pour la modération.</p>
+        <div class="ms-list">${topics.map((topic) => {
+          const author = topic.author || {};
+          const identity = [author.firstName, author.lastName].filter(Boolean).join(' ');
+          const authorLabel = author.forumDisplayName
+            ? `${esc(author.forumDisplayName)} · compte : ${esc(identity)}`
+            : esc(identity || 'Membre');
+          const ageHours = Math.max(0, Math.floor((Date.now() - new Date(topic.createdAt).getTime()) / 3600000));
+          const age = ageHours >= 24 ? `${Math.floor(ageHours / 24)} j` : `${ageHours} h`;
+          return `
+            <article class="ms-row">
+              <div class="ms-row-main">
+                <strong>${esc(topic.title)}</strong>
+                <span>${esc(topic.category)} · ${authorLabel} · publiée il y a ${age}</span>
+              </div>
+              <a class="ms-btn ms-btn-primary" href="/frontend/forum-topic.html?id=${encodeURIComponent(topic.id)}">Répondre</a>
+            </article>`;
+        }).join('')}</div>`;
+    }
+
     // ===== Messagerie =====
 
     async function viewMessages() {
@@ -329,7 +357,7 @@
 
     const VIEWS = {
       overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview,
-      mentees: viewMentees, myTrainings: viewMyTrainings, myReports: viewMyReports, messages: viewMessages,
+      forumQueue: viewForumQueue, mentees: viewMentees, myTrainings: viewMyTrainings, myReports: viewMyReports, messages: viewMessages,
     };
 
     // ===== Fenêtres d'action =====

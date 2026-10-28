@@ -17,7 +17,7 @@
     <title>Nouvelle discussion - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
-    <link rel="stylesheet" href="css/forum-advanced.css?v=20261028-1">
+    <link rel="stylesheet" href="css/forum-advanced.css?v=20261028-2">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -81,7 +81,27 @@
                 <div class="forum-form">
                     <h2>Nouvelle discussion</h2>
                     <p class="forum-context-note" id="topicContextNote" hidden></p>
+                    <section class="forum-community-rules" aria-labelledby="forumRulesTitle">
+                        <h3 id="forumRulesTitle">🤝 Quelques règles pour échanger sereinement</h3>
+                        <ul>
+                            <li>Respecte les autres : pas d’insultes, de harcèlement ni de discrimination.</li>
+                            <li>Ne publie pas de coordonnées ou d’informations personnelles, les tiennes ou celles d’autrui.</li>
+                            <li>Reste dans le sujet ; pour les concours et les formations, privilégie les sources officielles.</li>
+                            <li>Pas de publicité répétée ni de contenu dangereux ou illégal. Signale les problèmes à l’équipe.</li>
+                        </ul>
+                    </section>
                     <form id="topicForm">
+                        <section class="forum-pseudonym-settings" aria-labelledby="forumPseudonymTitle">
+                            <h3 id="forumPseudonymTitle">🪪 Ton nom public sur le forum (facultatif)</h3>
+                            <label for="forumPseudonym">Pseudonyme</label>
+                            <div class="forum-pseudonym-row">
+                                <input type="text" id="forumPseudonym" maxlength="32" minlength="2" autocomplete="nickname" placeholder="Ex. : Étoile du Sahel">
+                                <button type="button" class="btn btn-outline" id="saveForumPseudonym">Enregistrer</button>
+                            </div>
+                            <p>Ce pseudonyme remplace ton nom et ta photo sur toutes tes publications du forum. Tu peux le modifier ou l’effacer ici. Ton compte reste lié à tes messages pour la sécurité et la modération ; les mentors vérifiés et l’équipe du club peuvent faire le lien.</p>
+                            <p id="forumPseudonymStatus" class="forum-pseudonym-status" role="status" aria-live="polite"></p>
+                        </section>
+
                         <div class="forum-form-group">
                             <label for="topicTitle">Titre</label>
                             <input type="text" id="topicTitle" required minlength="3" placeholder="Ex : Comment préparer sa candidature en alternance ?">
@@ -255,16 +275,20 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-4"></script>
+    <script defer src="js/frontend-api.js?v=20261028-5"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
+      document.addEventListener('DOMContentLoaded', async () => {
         const form = document.getElementById('topicForm');
         const categorySelect = document.getElementById('topicCategory');
         const topicTextarea = document.getElementById('topicContent');
         const tagsInput = document.getElementById('topicTags');
+        const pseudonymInput = document.getElementById('forumPseudonym');
+        const pseudonymStatus = document.getElementById('forumPseudonymStatus');
+        const savePseudonymButton = document.getElementById('saveForumPseudonym');
+        let savedPseudonym = null;
         const params = new URLSearchParams(window.location.search);
         const categoryParam = params.get('category');
 
@@ -273,6 +297,45 @@
           window.location.href = `login.html?redirect=${encodeURIComponent(`forum-create.html${window.location.search}`)}`;
           return;
         }
+
+        try {
+          const profile = await window.Api.forum.getProfile();
+          savedPseudonym = profile.data.forumDisplayName || null;
+          pseudonymInput.value = savedPseudonym || '';
+          pseudonymStatus.textContent = savedPseudonym
+            ? `Ton nom public actuel est « ${savedPseudonym} ».`
+            : 'Aucun pseudonyme enregistré : ton prénom et ton nom seront affichés.';
+        } catch (error) {
+          console.error('Impossible de charger le pseudonyme du forum :', error);
+          pseudonymStatus.textContent = 'Impossible de vérifier ton pseudonyme. Recharge la page avant de le modifier.';
+          pseudonymStatus.classList.add('is-error');
+          savePseudonymButton.disabled = true;
+        }
+
+        savePseudonymButton.addEventListener('click', async () => {
+          const value = pseudonymInput.value.trim();
+          if (value && value.length < 2) {
+            pseudonymStatus.textContent = 'Le pseudonyme doit contenir au moins 2 caractères.';
+            pseudonymStatus.classList.add('is-error');
+            return;
+          }
+          savePseudonymButton.disabled = true;
+          try {
+            const profile = await window.Api.forum.updateProfile(value || null);
+            savedPseudonym = profile.data.forumDisplayName || null;
+            pseudonymInput.value = savedPseudonym || '';
+            pseudonymStatus.textContent = savedPseudonym
+              ? `C’est enregistré : « ${savedPseudonym} » sera affiché sur tes publications.`
+              : 'Pseudonyme retiré : ton prénom et ton nom seront affichés.';
+            pseudonymStatus.classList.remove('is-error');
+          } catch (error) {
+            console.error('Impossible d’enregistrer le pseudonyme du forum :', error);
+            pseudonymStatus.textContent = error.message || 'Impossible d’enregistrer le pseudonyme.';
+            pseudonymStatus.classList.add('is-error');
+          } finally {
+            savePseudonymButton.disabled = false;
+          }
+        });
 
         if (categoryParam) {
           categorySelect.value = categoryParam;

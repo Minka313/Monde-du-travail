@@ -331,6 +331,33 @@ class ForumController {
     }
   }
 
+  static async getUnansweredTopics(req, res, next) {
+    try {
+      const result = await forumService.getUnansweredTopics(req.user);
+      res.json({ success: true, data: result.topics, pagination: result.pagination });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getForumProfile(req, res, next) {
+    try {
+      const profile = await forumService.getForumProfile(req.user.id);
+      res.json({ success: true, data: profile });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async updateForumProfile(req, res, next) {
+    try {
+      const profile = await forumService.updateForumProfile(req.user.id, req.body.forumDisplayName);
+      res.json({ success: true, message: 'Pseudonyme du forum mis à jour', data: profile });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async toggleFollow(req, res, next) {
     try {
       const data = await forumService.toggleFollow(req.params.id, req.user.id);

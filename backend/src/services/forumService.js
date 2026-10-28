@@ -27,6 +27,11 @@ class ForumService {
         `);
         logs.push('topics columns verified');
 
+        await prisma.$executeRawUnsafe(`
+          ALTER TABLE users ADD COLUMN IF NOT EXISTS "forumDisplayName" TEXT;
+        `);
+        logs.push('forum display name column verified');
+
         // 2. Colonnes sur replies
         await prisma.$executeRawUnsafe(`
           ALTER TABLE replies
@@ -189,7 +194,7 @@ class ForumService {
   /**
    * Récupère la liste des sujets avec filtres et pagination
    */
-  static async getAllTopics({ category, search, status, tag, page = 1, limit = 20, sort = 'latest', match = 'all', userId } = {}) {
+  static async getAllTopics({ category, search, status, tag, page = 1, limit = 20, sort = 'latest', match = 'all', userId, includeIdentity = false } = {}) {
     await ForumService.ensureSchema();
     const where = {};
 
@@ -209,6 +214,9 @@ class ForumService {
       where.isLocked = true;
     } else if (status === 'unanswered') {
       where.replyCount = 0;
+      where.bestReplyId = null;
+      where.isResolved = false;
+      where.isLocked = false;
     }
 
     if (search) {
@@ -243,13 +251,12 @@ class ForumService {
       orderBy = { views: 'desc' };
     } else if (sort === 'activity') {
       orderBy = { lastActivityAt: 'desc' };
+    } else if (sort === 'oldest') {
+      orderBy = { createdAt: 'asc' };
     }
 
     // Les sujets épinglés passent toujours en premier
-    const orderByClause = [
-      { isPinned: 'desc' },
-      orderBy,
-    ];
+    const orderByClause = status === 'unanswered' ? [orderBy] : [{ isPinned: 'desc' }, orderBy];
 
     const includeClause = {
       author: {
@@ -257,6 +264,7 @@ class ForumService {
           id: true,
           firstName: true,
           lastName: true,
+          forumDisplayName: true,
           role: true,
           avatarUrl: true,
           adminRoles: {
@@ -290,6 +298,7 @@ class ForumService {
       const { likes, ...rest } = t;
       return {
         ...rest,
+        author: includeIdentity ? rest.author : ForumService.publicAuthor(rest.author),
         category: Categories.canonical(rest.category),
         hasLiked,
       };
@@ -321,6 +330,7 @@ class ForumService {
               id: true,
               firstName: true,
               lastName: true,
+              forumDisplayName: true,
               role: true,
               avatarUrl: true,
               adminRoles: {
@@ -340,6 +350,7 @@ class ForumService {
                   id: true,
                   firstName: true,
                   lastName: true,
+                  forumDisplayName: true,
                   role: true,
                   avatarUrl: true,
                   adminRoles: {
@@ -352,7 +363,7 @@ class ForumService {
                 where: { userId },
                 select: { id: true },
               } : false,
-              endorsedBy: { select: { id: true, firstName: true, lastName: true } },
+              endorsedBy: { select: { id: true, firstName: true, lastName: true, forumDisplayName: true } },
             },
             orderBy: [
               { isSolution: 'desc' },
@@ -368,6 +379,8 @@ class ForumService {
         const { likes, ...restReply } = r;
         return {
           ...restReply,
+          author: ForumService.publicAuthor(restReply.author),
+          endorsedBy: ForumService.publicAuthor(restReply.endorsedBy),
           hasLiked: replyHasLiked,
         };
       });
@@ -379,6 +392,7 @@ class ForumService {
       const { likes, ...restTopic } = topic;
       return {
         ...restTopic,
+        author: ForumService.publicAuthor(restTopic.author),
         category: Categories.canonical(restTopic.category),
         hasLiked,
         isFollowing: following > 0,
@@ -391,6 +405,43 @@ class ForumService {
       }
       throw err;
     }
+  }
+
+  static publicAuthor(author) {
+    if (!author?.forumDisplayName) return author;
+    return {
+      ...author,
+      firstName: author.forumDisplayName,
+      lastName: '',
+      avatarUrl: null,
+      isPseudonymous: true,
+    };
+  }
+
+  static async getForumProfile(userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { forumDisplayName: true },
+    });
+    if (!user) throw new NotFoundError('Compte introuvable');
+    return user;
+  }
+
+  static async updateForumProfile(userId, forumDisplayName) {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: { forumDisplayName: forumDisplayName?.trim() || null },
+      select: { forumDisplayName: true },
+    });
+    return user;
+  }
+
+  static async getUnansweredTopics(user) {
+    const canModerate = user.role === 'ULTRA_ADMIN' || (user.permissions || []).includes('forum.moderate');
+    if (!canModerate && !(await ForumService.isVerifiedMentor(user.id))) {
+      throw new ForbiddenError('La file des questions sans réponse est réservée aux mentors vérifiés');
+    }
+    return ForumService.getAllTopics({ status: 'unanswered', sort: 'oldest', limit: 50, includeIdentity: true });
   }
 
   /**

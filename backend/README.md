@@ -179,6 +179,9 @@ backend/
 ### Forum
 - `GET /api/forum` - Liste des sujets
 - `GET /api/forum/:id` - Détail d'un sujet avec réponses
+- `GET /api/forum/profile` - Lire le pseudonyme public du membre connecté
+- `PUT /api/forum/profile` - Modifier ou retirer son pseudonyme (`forumDisplayName`, nul pour le supprimer)
+- `GET /api/forum/unanswered` - File des questions sans réponse (mentor vérifié ou Ultra Admin)
 - `POST /api/forum` - Créer un sujet (membre/admin)
 - `POST /api/forum/:topicId/replies` - Ajouter une réponse (membre/admin)
 - `DELETE /api/forum/:id` - Supprimer un sujet (admin)

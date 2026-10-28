@@ -27,7 +27,7 @@
     <title>Forum - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
-    <link rel="stylesheet" href="css/forum-advanced.css?v=20261028-1">
+    <link rel="stylesheet" href="css/forum-advanced.css?v=20261028-2">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -103,6 +103,14 @@
 
         <section class="section scene" data-scene="forum-content">
             <div class="container">
+                <section class="forum-community-rules forum-community-rules--compact" aria-labelledby="forumRulesTitle">
+                    <h2 id="forumRulesTitle">🤝 Un forum bienveillant et utile</h2>
+                    <ul>
+                        <li>Respecte les autres : pas d’insultes, de harcèlement ni de discrimination.</li>
+                        <li>Ne publie pas d’informations personnelles et privilégie les sources fiables.</li>
+                        <li>Pas de spam ni de publicité répétée ; signale les problèmes à l’équipe.</li>
+                    </ul>
+                </section>
                 <div class="forum-toolbar reveal-up">
                     <div class="forum-search">
                         <span class="forum-search-icon">🔍</span>
@@ -286,7 +294,7 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-4"></script>
+    <script defer src="js/frontend-api.js?v=20261028-5"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
@@ -407,6 +415,7 @@
 
         function renderTopicCard(topic) {
           const authorName = topic.author ? `${escapeHtml(topic.author.firstName)} ${escapeHtml(topic.author.lastName)}` : 'Membre';
+          const pseudonymBadge = topic.author?.isPseudonymous ? '<span class="forum-pseudonym-badge">Pseudo</span>' : '';
           const authorBadge = renderAuthorBadge(topic.author);
           const hasSolution = topic.bestReplyId || topic.isResolved;
           const editedHtml = topic.isEdited ? '<span class="edited-notice">(modifié)</span>' : '';
@@ -421,6 +430,7 @@
                 <div class="forum-topic-meta" style="align-items:center;">
                   ${(window.avatarHtml || (() => ""))(topic.author, { size: 24 })}
                   <span class="author">${authorName}</span>
+                  ${pseudonymBadge}
                   ${authorBadge}
                   <span>·</span>
                   <span>${formatDate(topic.createdAt)}</span>

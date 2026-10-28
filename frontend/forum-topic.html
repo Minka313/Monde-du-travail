@@ -17,7 +17,7 @@
     <title>Sujet - Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
-    <link rel="stylesheet" href="css/forum-advanced.css?v=20261028-1">
+    <link rel="stylesheet" href="css/forum-advanced.css?v=20261028-2">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -244,7 +244,7 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-4"></script>
+    <script defer src="js/frontend-api.js?v=20261028-5"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
@@ -365,6 +365,7 @@
 
         function renderReply(reply, currentUser, isTopicAuthor) {
           const authorName = reply.author ? `${escapeHtml(reply.author.firstName)} ${escapeHtml(reply.author.lastName)}` : 'Membre';
+          const pseudonymBadge = reply.author?.isPseudonymous ? '<span class="forum-pseudonym-badge">Pseudo</span>' : '';
           const authorBadge = renderAuthorBadge(reply.author);
           const isReplyAuthor = currentUser && reply.authorId === currentUser.id;
           const isStaff = currentUser && ['ADMIN', 'ULTRA_ADMIN'].includes(currentUser.role);
@@ -387,6 +388,7 @@
                     <div style="display: flex; align-items: center; gap: 0.4rem;">
                       ${(window.avatarHtml || (() => ""))(reply.author, { size: 36 })}
                       <span class="forum-reply-author" style="font-weight: 700;">${authorName}</span>
+                      ${pseudonymBadge}
                       ${authorBadge}
                       ${isReplyAuthor ? '<span class="role-badge role-badge--author">Vous</span>' : ''}
                     </div>
@@ -501,6 +503,7 @@
             currentTopicData = topic;
             const currentUser = getCurrentUser();
             const authorName = topic.author ? `${escapeHtml(topic.author.firstName)} ${escapeHtml(topic.author.lastName)}` : 'Membre';
+            const pseudonymBadge = topic.author?.isPseudonymous ? '<span class="forum-pseudonym-badge">Pseudo</span>' : '';
             const authorBadge = renderAuthorBadge(topic.author);
             const isTopicAuthor = currentUser && topic.authorId === currentUser.id;
             const isStaff = currentUser && ['ADMIN', 'ULTRA_ADMIN'].includes(currentUser.role);
@@ -519,6 +522,7 @@
                   <div class="forum-topic-meta" style="margin-bottom: 1rem; align-items: center;">
                     ${(window.avatarHtml || (() => ""))(topic.author, { size: 32 })}
                     <span class="author">Par <strong>${authorName}</strong></span>
+                    ${pseudonymBadge}
                     ${authorBadge}
                     <span>·</span>
                     <span>${formatDate(topic.createdAt)}</span>
@@ -586,6 +590,15 @@
               ${canReply ? `
                 <div class="forum-reply-form" style="margin-top: 3rem;">
                   <h3>Votre contribution</h3>
+                  <section class="forum-community-rules">
+                    <h4>🤝 Avant de répondre</h4>
+                    <ul>
+                      <li>Reste respectueux et ne partage pas d’informations personnelles.</li>
+                      <li>Apporte une réponse utile et, si possible, des sources fiables.</li>
+                      <li>Pas d’insultes, de discrimination, de harcèlement ni de publicité répétée.</li>
+                    </ul>
+                    <a href="forum-create.html">Lire les règles de la communauté</a>
+                  </section>
                   <form id="replyForm">
                     <div class="forum-editor-container">
                       <div class="forum-editor-header">
