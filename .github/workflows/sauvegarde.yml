@@ -1,0 +1,61 @@
+name: Sauvegarde de la base
+
+# Chaque dimanche à 23 h (heure de Dakar = UTC) et à la demande.
+# Copie complète de la base, chiffrée (AES-256) avant de quitter la machine,
+# rangée dans l'espace de stockage privé « backups ». Les 12 dernières sont gardées.
+# Le dépôt est public : rien n'est conservé dans les résultats de la tâche.
+on:
+  schedule:
+    - cron: '0 23 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sauvegarde
+  cancel-in-progress: false
+
+jobs:
+  sauvegarde:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.BACKUP_S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_S3_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.BACKUP_S3_REGION }}
+      S3_ENDPOINT: ${{ secrets.BACKUP_S3_ENDPOINT }}
+      BUCKET: backups
+    steps:
+      - name: Outils PostgreSQL 17
+        run: |
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list > /dev/null
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client-17
+          /usr/lib/postgresql/17/bin/pg_dump --version
+
+      - name: Copie chiffrée de la base
+        env:
+          DB_URL: ${{ secrets.BACKUP_DATABASE_URL }}
+          PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          set -euo pipefail
+          fichier="mondedutravail-$(date -u +%Y%m%d-%H%M).dump.gpg"
+          /usr/lib/postgresql/17/bin/pg_dump --format=custom --no-owner --no-privileges "$DB_URL" \
+            | gpg --batch --yes --symmetric --cipher-algo AES256 --passphrase-fd 3 3<<<"$PASSPHRASE" -o "$RUNNER_TEMP/$fichier"
+          taille=$(stat -c %s "$RUNNER_TEMP/$fichier")
+          [ "$taille" -gt 1000 ] || { echo "Sauvegarde anormalement petite ($taille octets)"; exit 1; }
+          echo "FICHIER=$fichier" >> "$GITHUB_ENV"
+          echo "Sauvegarde chiffrée : $fichier ($(numfmt --to=iec "$taille"))"
+
+      - name: Rangement dans l'espace privé
+        run: |
+          set -euo pipefail
+          aws s3 cp "$RUNNER_TEMP/$FICHIER" "s3://$BUCKET/$FICHIER" --endpoint-url "$S3_ENDPOINT" --only-show-errors
+          rm -f "$RUNNER_TEMP/$FICHIER"
+          # Seules les 12 dernières sauvegardes sont conservées
+          aws s3 ls "s3://$BUCKET/" --endpoint-url "$S3_ENDPOINT" | awk '{print $4}' | grep '^mondedutravail-' | sort | head -n -12 \
+            | while read -r ancien; do aws s3 rm "s3://$BUCKET/$ancien" --endpoint-url "$S3_ENDPOINT" --only-show-errors; echo "Supprimée : $ancien"; done
+          echo "Sauvegardes disponibles :"; aws s3 ls "s3://$BUCKET/" --endpoint-url "$S3_ENDPOINT" | tail -n 12

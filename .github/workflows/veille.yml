@@ -1,0 +1,37 @@
+name: Veille du site
+
+# Toutes les heures : vérifie que le site, l'API et la base répondent.
+# - En cas de panne, la tâche échoue et GitHub envoie un e-mail d'alerte.
+# - Chaque passage interroge la base : l'offre gratuite de Supabase ne se met
+#   jamais en pause faute d'activité.
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  veille:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Le site, l'API et la base répondent
+        run: |
+          set -u
+          echec=0
+          verifier() {
+            local nom="$1" url="$2" attendu="$3"
+            for essai in 1 2 3; do
+              code=$(curl -s -o /tmp/reponse -w '%{http_code}' --max-time 25 "$url")
+              if [ "$code" = "200" ] && grep -q "$attendu" /tmp/reponse; then echo "✅ $nom ($url)"; return 0; fi
+              sleep 20
+            done
+            echo "❌ $nom ne répond pas correctement ($url, code $code)"; echec=1
+          }
+          verifier "Page d'accueil" "https://lemondedutravail.org/" "Le Monde du Travail"
+          # Les chiffres de la plateforme sont lus en base : vérifie aussi la base de données
+          verifier "API et base de données" "https://lemondedutravail.org/api/stats" '"success":true'
+          verifier "Concours & opportunités" "https://lemondedutravail.org/api/opportunities" '"success":true'
+          exit $echec
