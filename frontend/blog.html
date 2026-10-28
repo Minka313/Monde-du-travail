@@ -429,8 +429,7 @@
               limit: 9,
               category: currentCategory || undefined,
               search: currentSearch || undefined,
-              sort: currentSort || 'latest',
-              featured: false
+              sort: currentSort || 'latest'
             };
 
             const response = await window.Api.blog.getAll(params);
@@ -452,15 +451,12 @@
               return;
             }
 
-            const featuredPost = posts.find(p => p.featured) || posts[0];
+            // Page 1 : l'article mis à la une (sinon le plus récent) en bandeau, sans doublon dans la grille
+            const featuredPost = currentPage === 1 ? (posts.find(p => p.featured) || posts[0]) : null;
+            renderFeatured(featuredPost);
+            const gridPosts = featuredPost && posts.length > 1 ? posts.filter(p => p.id !== featuredPost.id) : posts;
 
-            if (featuredPost && currentPage === 1) {
-              renderFeatured(featuredPost);
-            } else {
-              renderFeatured(null);
-            }
-
-            container.innerHTML = posts.map((post, idx) => {
+            container.innerHTML = gridPosts.map((post, idx) => {
               const rawImg = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
               const img = optimizeBlogImg(rawImg, 450, 65);
               const categoryLabel = categoryLabels[post.category] || post.category;
@@ -499,65 +495,17 @@
             if (window.initCardSpotlight) window.initCardSpotlight();
             if (window.initScrollReveal) window.initScrollReveal();
           } catch (error) {
-            console.warn('API blog non joignable, affichage des articles de secours :', error);
+            console.warn('API blog non joignable :', error);
             if (container) {
-              const fallbackPosts = [
-                {
-                  id: 'fb-post-1',
-                  title: 'Lancement officiel du Club Le Monde du Travail',
-                  excerpt: 'Retour sur la cérémonie de lancement du club et les ambitions qui animent notre communauté de jeunes professionnels.',
-                  category: 'CLUB',
-                  coverImage: 'images/hero_senegalese_youth_960.webp',
-                  publishedAt: '2026-08-01',
-                  author: { firstName: 'Khadimoul', lastName: 'Barham' }
-                },
-                {
-                  id: 'fb-post-2',
-                  title: 'Conférence : Les métiers de demain en Afrique',
-                  excerpt: 'Quels sont les secteurs qui recruteront le plus dans les 10 prochaines années sur le continent africain ?',
-                  category: 'CONFERENCE',
-                  coverImage: 'images/communication.webp',
-                  publishedAt: '2026-08-25',
-                  author: { firstName: 'Khadimoul', lastName: 'Barham' }
-                },
-                {
-                  id: 'fb-post-3',
-                  title: 'Témoignage : « Le club a changé ma vision du travail »',
-                  excerpt: 'Fatou, membre depuis 6 mois, raconte comment le club a transformé son approche professionnelle.',
-                  category: 'TEMOIGNAGE',
-                  coverImage: 'images/orientation.webp',
-                  publishedAt: '2026-09-05',
-                  author: { firstName: 'Khadimoul', lastName: 'Barham' }
-                }
-              ];
-
-              renderFeatured(fallbackPosts[0]);
-
-              container.innerHTML = fallbackPosts.map((post, idx) => {
-                const img = safeUrl(post.coverImage || getDefaultImage(post.category), getDefaultImage(post.category));
-                const categoryLabel = categoryLabels[post.category] || post.category;
-                const categoryIcon = categoryIcons[post.category] || '📄';
-                return `
-                  <article class="card stagger-item" data-blog-post-id="${post.id}" style="--stagger-idx: ${idx};">
-                    <div class="card-image-wrap">
-                      <img src="${escapeHtml(img)}" alt="${escapeHtml(post.title)}" loading="lazy">
-                      <div class="card-image-overlay"></div>
-                    </div>
-                    <div class="card-body">
-                      <span class="blog-category">${escapeHtml(categoryIcon)} ${escapeHtml(categoryLabel)}</span>
-                      <h3>${escapeHtml(post.title)}</h3>
-                      <p>${escapeHtml(post.excerpt)}</p>
-                      <div class="blog-meta">
-                        <span>✍️ ${escapeHtml(post.author.firstName + ' ' + post.author.lastName)}</span>
-                        <span>📅 ${formatDate(post.publishedAt)}</span>
-                      </div>
-                      <a href="blog-post.html?id=${post.id}" class="card-link">Lire la suite</a>
-                    </div>
-                  </article>
-                `;
-              }).join('');
-              if (window.initCardSpotlight) window.initCardSpotlight();
-              if (window.initScrollReveal) window.initScrollReveal();
+              container.innerHTML = `
+                <div class="blog-empty-state">
+                  <div class="empty-icon">⚠️</div>
+                  <h3>Impossible de charger les articles</h3>
+                  <p>Vérifie ta connexion puis recharge la page.</p>
+                </div>
+              `;
+              featuredContainer.innerHTML = '';
+              paginationContainer.innerHTML = '';
             }
           }
         }

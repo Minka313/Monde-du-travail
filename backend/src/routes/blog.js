@@ -12,7 +12,7 @@ const router = express.Router();
 const postFields = {
   body: z.object({
     title: z.string().min(3, 'Titre requis (min 3 caractères)'),
-    excerpt: z.string().max(500, 'Résumé trop long (max 500 caractères)').optional(),
+    excerpt: z.string().max(500, 'Résumé trop long (max 500 caractères)').optional().nullable(),
     content: z.string().min(10, 'Contenu requis (min 10 caractères)'),
     coverImage: z.string().url('URL invalide').optional().nullable(),
     gallery: z.array(z.string().url('URL invalide')).max(10, 'Maximum 10 images dans la galerie').optional(),

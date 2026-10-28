@@ -482,15 +482,24 @@ class BlogService {
     }
   }
 
+  // Lien unique : « mon-titre », puis « mon-titre-2 », « mon-titre-3 »… si déjà pris
+  static async uniqueSlug(title, exceptId = null) {
+    const base = BlogService.generateSlug(title);
+    for (let i = 1; ; i += 1) {
+      const candidate = i === 1 ? base : `${base}-${i}`;
+      const taken = await prisma.post.findFirst({
+        where: { slug: candidate, ...(exceptId ? { id: { not: exceptId } } : {}) },
+        select: { id: true },
+      });
+      if (!taken) return candidate;
+    }
+  }
+
   static async createPost(data, authorId) {
     await BlogService.ensureSchema();
     const { title, excerpt, content, coverImage, gallery, category, featured, tags } = data;
 
-    const slug = BlogService.generateSlug(title);
-    const existing = await prisma.post.findUnique({ where: { slug } });
-    if (existing) {
-      throw new BadRequestError('Un article avec ce titre existe déjà');
-    }
+    const slug = await BlogService.uniqueSlug(title);
 
     const wordCount = (content || '').split(/\s+/).filter(Boolean).length;
     const readingTime = data.readingTime || Math.max(1, Math.ceil(wordCount / 200));
@@ -573,15 +582,9 @@ class BlogService {
       updateData.readingTime = Math.max(1, Math.ceil(wordCount / 200));
     }
 
-    if (title && title !== existing.title) {
-      const newSlug = BlogService.generateSlug(title);
-      const slugExists = await prisma.post.findFirst({
-        where: { slug: newSlug, id: { not: id } }
-      });
-      if (slugExists) {
-        throw new BadRequestError('Un article avec ce titre existe déjà');
-      }
-      updateData.slug = newSlug;
+    // Le lien d'un article déjà publié ne change pas (liens partagés, référencement)
+    if (title && title !== existing.title && existing.status !== 'PUBLISHED') {
+      updateData.slug = await BlogService.uniqueSlug(title, id);
     }
 
     const post = await prisma.post.update({
