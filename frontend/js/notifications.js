@@ -112,7 +112,10 @@
     }
 
     try {
-      const registration = await navigator.serviceWorker.register('sw.js', { scope: './' });
+      const registration = window.WowPwa
+        ? await window.WowPwa.register()
+        : await navigator.serviceWorker.register('sw.js', { scope: './' });
+      if (!registration) return null;
       swRegistration = registration;
       console.log('[Push] Service Worker enregistré avec succès:', registration.scope);
 

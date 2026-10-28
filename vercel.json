@@ -92,6 +92,11 @@
       "dest": "/frontend/images/$1"
     },
     {
+      "src": "/manifest\\.webmanifest",
+      "headers": { "Content-Type": "application/manifest+json", "Cache-Control": "public, max-age=3600" },
+      "dest": "/frontend/manifest.webmanifest"
+    },
+    {
       "src": "/sw.js",
       "headers": {
         "Content-Type": "application/javascript",

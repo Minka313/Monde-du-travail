@@ -1,0 +1,25 @@
+{
+  "name": "Le Monde du Travail",
+  "short_name": "Monde du Travail",
+  "description": "Orientation, concours et bourses, formations et forum du club Le Monde du Travail (WOW · World Of Work), fondé en 2025 au LYNAQE de Sédhiou.",
+  "lang": "fr",
+  "dir": "ltr",
+  "id": "/",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#0f2b46",
+  "categories": ["education", "productivity"],
+  "icons": [
+    { "src": "/images/app/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/images/app/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/images/app/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Concours & opportunités", "short_name": "Concours", "url": "/opportunites?source=app", "icons": [{ "src": "/images/app/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Test d'orientation RIASEC", "short_name": "Test RIASEC", "url": "/test-riasec?source=app", "icons": [{ "src": "/images/app/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Forum", "url": "/forum?source=app", "icons": [{ "src": "/images/app/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

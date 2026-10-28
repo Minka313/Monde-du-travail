@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hors connexion · Le Monde du Travail</title>
+    <meta name="robots" content="noindex">
+    <meta name="theme-color" content="#0f2b46">
+    <link rel="icon" type="image/webp" href="/logo.webp">
+    <style>
+        :root { --bg: #f8fafc; --card: #ffffff; --ink: #0f172a; --ink-2: #475569; --border: #e2e8f0; --navy: #0f2b46; --gold: #f5a623; }
+        @media (prefers-color-scheme: dark) { :root { --bg: #0b1220; --card: #111827; --ink: #f1f5f9; --ink-2: #cbd5e1; --border: #1f2a3c; } }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 16px; background: var(--bg); color: var(--ink); font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; }
+        main { max-width: 440px; width: 100%; text-align: center; background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 2rem 1.5rem; }
+        img { width: 96px; height: auto; }
+        h1 { font-size: 1.35rem; margin: 1rem 0 0.5rem; }
+        p { color: var(--ink-2); line-height: 1.6; margin: 0 0 1rem; }
+        ul { text-align: left; color: var(--ink-2); line-height: 1.7; padding-left: 1.2rem; margin: 0 0 1.25rem; }
+        button { font: inherit; font-weight: 700; border: 0; border-radius: 10px; padding: 0.8rem 1.4rem; background: var(--gold); color: #0f172a; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <main>
+        <img src="/logo.webp" alt="Le Monde du Travail">
+        <h1>Tu es hors connexion</h1>
+        <p>Cette page n'a pas encore été enregistrée sur ton appareil. Dès que le réseau revient, elle s'affichera normalement.</p>
+        <ul>
+            <li>Les pages que tu as déjà ouvertes restent disponibles.</li>
+            <li>La liste des concours consultée récemment aussi.</li>
+        </ul>
+        <button type="button" onclick="location.reload()">Réessayer</button>
+    </main>
+</body>
+</html>
