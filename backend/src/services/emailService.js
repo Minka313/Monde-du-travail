@@ -624,6 +624,26 @@ class EmailService {
     });
     return this.sendMail({ to, subject, html });
   }
+
+  static async notifyForumDigest({ to, firstName, topics, unanswered }) {
+    const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const base = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
+    const rows = topics.map((t) => {
+      const n = t.replyCount || 0;
+      const state = t.isResolved || t.bestReplyId ? '✓ résolue' : `${n} réponse${n > 1 ? 's' : ''}`;
+      return `<li style="margin:0 0 10px;"><a href="${base}/forum-topic?id=${encodeURIComponent(t.id)}" style="color:#0f2b46;font-weight:700;text-decoration:none;">${esc(t.title)}</a><br><span style="color:#64748b;font-size:0.85rem;">${esc(state)}</span></li>`;
+    }).join('');
+    const html = this.opportunityMail({
+      heading: `Bonjour ${esc(firstName || '')}, voici la semaine du forum 💬`,
+      body: `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0 0 14px;">Les discussions les plus actives des 7 derniers jours :</p>
+        <ul style="margin:0;padding-left:18px;">${rows}</ul>
+        ${unanswered ? `<p style="color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;font-size:0.9rem;margin:14px 0 0;">🙋 ${unanswered} question${unanswered > 1 ? 's attendent' : ' attend'} encore une réponse : un coup de main ?</p>` : ''}`,
+      ctaLabel: 'Ouvrir le forum',
+      ctaUrl: `${base}/forum`,
+      footer: `Tu reçois ce résumé car tu l'as demandé sur le forum. Pour l'arrêter, décoche « Recevoir un résumé hebdomadaire » sur <a href="${base}/forum-create" style="color:#64748b;">la page Nouvelle discussion</a>.`,
+    });
+    return this.sendMail({ to, subject: 'Le résumé de la semaine du forum · Le Monde du Travail', html });
+  }
 }
 
 module.exports = EmailService;

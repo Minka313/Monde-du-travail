@@ -119,6 +119,43 @@ describe('Forum : communauté', () => {
     expect(await prisma.notification.count({ where: { userId: helper.id, title: { contains: 'validée par un mentor' } } })).toBe(1);
   });
 
+  it("garde le pseudonyme quand on change seulement ses préférences, et met en avant le membre de la semaine", async () => {
+    await request(app).put('/api/forum/profile').set(as(tokens[1])).send({ forumDisplayName: 'Main tendue' });
+    const prefs = await request(app).put('/api/forum/profile').set(as(tokens[1])).send({ forumSpotlightOptIn: true });
+    expect(prefs.status).toBe(200);
+    expect(prefs.body.data).toMatchObject({ forumDisplayName: 'Main tendue', forumSpotlightOptIn: true });
+
+    const spot = (await request(app).get('/api/forum/community/spotlight')).body.data;
+    expect(spot).toMatchObject({ displayName: 'Main tendue', endorsementsCount: 1 });
+    expect(JSON.stringify(spot)).not.toContain(helper.lastName);
+  });
+
+  it('envoie le résumé hebdomadaire une seule fois aux membres qui le demandent', async () => {
+    const EmailService = require('../src/services/emailService');
+    const forumService = require('../src/services/forumService');
+    const mails = [];
+    const spy = jest.spyOn(EmailService, 'sendMail').mockImplementation(async (m) => { mails.push(m); return { success: true }; });
+    try {
+      await request(app).put('/api/forum/profile').set(as(tokens[3])).send({ forumDigestOptIn: true });
+      const monday = new Date();
+      monday.setUTCDate(monday.getUTCDate() - ((monday.getUTCDay() + 6) % 7));
+      monday.setUTCHours(9, 0, 0, 0);
+      expect((await forumService.sendWeeklyDigest(new Date(monday.getTime() + 86400000))).sent).toBe(0); // pas le mardi
+
+      const first = await forumService.sendWeeklyDigest(monday);
+      expect(first.sent).toBeGreaterThanOrEqual(1);
+      const mine = mails.filter((m) => m.to === EMAILS[3]);
+      expect(mine).toHaveLength(1);
+      expect(mine[0].html).toContain('Comment préparer le concours ?');
+      expect(mails.some((m) => m.to === EMAILS[0])).toBe(false); // pas inscrit
+
+      await forumService.sendWeeklyDigest(monday);
+      expect(mails.filter((m) => m.to === EMAILS[3])).toHaveLength(1);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it('permet de retirer le pseudonyme du compte', async () => {
     const cleared = await request(app).put('/api/forum/profile').set(as(tokens[0])).send({ forumDisplayName: null });
     expect(cleared.status).toBe(200);

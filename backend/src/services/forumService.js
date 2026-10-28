@@ -443,7 +443,8 @@ class ForumService {
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
-        forumDisplayName: typeof forumDisplayName === 'string' ? forumDisplayName.trim() || null : null,
+        // Champ absent : pseudonyme inchangé (enregistrer seulement les préférences ne doit pas l'effacer)
+        forumDisplayName: forumDisplayName === undefined ? undefined : (typeof forumDisplayName === 'string' ? forumDisplayName.trim() || null : null),
         forumDigestOptIn: typeof forumDigestOptIn === 'boolean' ? forumDigestOptIn : undefined,
         forumSpotlightOptIn: typeof forumSpotlightOptIn === 'boolean' ? forumSpotlightOptIn : undefined,
       },
@@ -468,7 +469,8 @@ class ForumService {
     const eligibleUsers = await prisma.user.findMany({
       where: {
         forumSpotlightOptIn: true,
-        forumDisplayName: { not: null, not: '' },
+        isActive: true,
+        AND: [{ forumDisplayName: { not: null } }, { forumDisplayName: { not: '' } }],
       },
       select: { id: true, forumDisplayName: true, avatarUrl: true },
     });
@@ -520,6 +522,55 @@ class ForumService {
       select: { id: true, email: true, firstName: true, lastName: true, forumDisplayName: true },
     });
     return users;
+  }
+
+  /**
+   * Résumé hebdomadaire du forum par e-mail, pour les membres qui l'ont demandé.
+   * Déclenché par le passage horaire (veille du site) : part le lundi à partir de 8 h (UTC = Dakar),
+   * une seule fois par semaine et par personne, par lots pour respecter le quota d'e-mails.
+   */
+  static async sendWeeklyDigest(now = new Date(), { maxPerRun = 30 } = {}) {
+    if (now.getUTCDay() !== 1 || now.getUTCHours() < 8) return { due: 0, sent: 0 };
+    const since = new Date(now.getTime() - 7 * 86400000);
+    const topics = await prisma.topic.findMany({
+      where: { lastActivityAt: { gte: since } },
+      orderBy: [{ replyCount: 'desc' }, { lastActivityAt: 'desc' }],
+      take: 5,
+      select: { id: true, title: true, replyCount: true, isResolved: true, bestReplyId: true, category: true },
+    });
+    // Semaine sans activité : pas d'e-mail vide
+    if (!topics.length) return { due: 0, sent: 0 };
+    const unanswered = await prisma.topic.count({ where: { replyCount: 0, isLocked: false, createdAt: { gte: new Date(now.getTime() - 14 * 86400000) } } });
+
+    // Identifiant de la semaine : date du lundi
+    const week = now.toISOString().slice(0, 10);
+    const recipients = await ForumService.getCommunityDigestRecipients();
+    const keyOf = (userId) => `FORUM_DIGEST:${week}:${userId}`;
+    const already = new Set((await prisma.notification.findMany({
+      where: { dedupeKey: { in: recipients.map((r) => keyOf(r.id)) } },
+      select: { dedupeKey: true },
+    })).map((n) => n.dedupeKey));
+    const pending = recipients.filter((r) => !already.has(keyOf(r.id)));
+
+    const EmailService = require('./emailService');
+    let sent = 0;
+    for (const user of pending.slice(0, maxPerRun)) {
+      const result = await EmailService.notifyForumDigest({ to: user.email, firstName: user.forumDisplayName || user.firstName, topics, unanswered });
+      if (!result?.success) continue;
+      // Trace dans le site (sans push) : sert aussi à ne pas renvoyer le résumé de la semaine
+      await prisma.notification.create({
+        data: {
+          userId: user.id,
+          type: 'FORUM',
+          title: '📬 Résumé de la semaine du forum',
+          message: `${topics.length} discussion${topics.length > 1 ? 's' : ''} active${topics.length > 1 ? 's' : ''} cette semaine${unanswered ? `, ${unanswered} question${unanswered > 1 ? 's' : ''} attend${unanswered > 1 ? 'ent' : ''} une réponse` : ''}.`,
+          url: '/frontend/forum.html',
+          dedupeKey: keyOf(user.id),
+        },
+      }).catch(() => {});
+      sent += 1;
+    }
+    return { due: pending.length, sent };
   }
 
   static async getUnansweredTopics(user) {

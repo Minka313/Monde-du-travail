@@ -366,8 +366,8 @@ class ForumController {
 
   static async updateForumProfile(req, res, next) {
     try {
-      const profile = await forumService.updateForumProfile(req.user.id, req.body.forumDisplayName);
-      res.json({ success: true, message: 'Pseudonyme du forum mis à jour', data: profile });
+      const profile = await forumService.updateForumProfile(req.user.id, req.body);
+      res.json({ success: true, message: 'Préférences du forum mises à jour', data: profile });
     } catch (error) {
       next(error);
     }
