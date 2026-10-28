@@ -10,6 +10,7 @@ const STATIC_PAGES = [
   { path: '/blog', changefreq: 'daily', priority: '0.8' },
   { path: '/forum', changefreq: 'daily', priority: '0.7' },
   { path: '/about', changefreq: 'monthly', priority: '0.5' },
+  { path: '/guide', changefreq: 'monthly', priority: '0.5' },
 ];
 
 // Les fiches métiers sont rendues depuis le catalogue d'orientation, indexé par slug.

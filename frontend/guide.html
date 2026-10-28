@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
+    <link rel="preload" as="image" href="images/hero_senegalese_youth_960.webp" fetchpriority="high">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Guide d'utilisation de la plateforme Le Monde du Travail : orientation, test RIASEC, concours et bourses, formations, visio, forum, espace membre, espace bureau et administration.">
+    <meta name="keywords" content="à propos, mission, club, monde du travail, valeurs, objectifs, leadership, formation">
+    <link rel="canonical" href="https://lemondedutravail.org/guide">
+    <meta property="og:url" content="https://lemondedutravail.org/guide">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Le Monde du Travail">
+    <meta property="og:title" content="Guide d'utilisation — Le Monde du Travail">
+    <meta property="og:description" content="Prends en main la plateforme : orientation, concours, formations, forum, espace membre et administration.">
+    <meta property="og:image" content="https://lemondedutravail.org/frontend/images/about_team.webp">
+    <meta name="twitter:card" content="summary_large_image">
+    <title>Guide d'utilisation - Le Monde du Travail</title>
+    <link rel="icon" type="image/webp" href="logo.webp">
+    <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
+    <script src="js/theme-engine.js"></script>
+    <script src="js/wow-brand.js?v=20261024-1"></script>
+        <link rel="stylesheet" href="css/guide.css?v=20261028-1">
+</head>
+<body>
+<a href="#main-content" class="skip-to-content">Aller au contenu principal</a>
+
+<header data-layout="header" class="site-header">
+    <div id="scrollProgressBar"></div>
+    <div class="header-inner">
+        <a href="index.html" class="logo-link" aria-label="Accueil Le Monde du Travail">
+            <img src="logo.webp" alt="Logo Le Monde du Travail" class="logo-img" width="40" height="40" onerror="this.onerror=null; this.src='logo.png';">
+            <span class="site-title">Le Monde du Travail</span>
+        </a>
+        <div class="header-actions">
+            <button type="button" class="theme-toggle-btn" id="headerThemeToggleBtn" aria-label="Changer de thème" title="Passer en Mode Sombre">
+                <span class="theme-toggle-icon">🌙</span>
+            </button>
+<div class="header-auth-slot" id="headerAuthSlot">
+                <a href="login.html" class="btn-cta" id="headerAuthBtn">Se connecter</a>
+            </div>
+            <button class="hamburger" aria-label="Menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<nav data-layout="nav" class="main-nav" aria-label="Navigation principale">
+    <div class="nav-overlay" id="navOverlay"></div>
+    <div class="nav-inner">
+        <div class="nav-links" id="navLinks">
+            <div class="mobile-nav-header">
+                <div class="mobile-nav-brand">
+                    <img src="logo.webp" alt="Logo Le Monde du Travail" class="mobile-nav-logo" width="36" height="36" onerror="this.onerror=null; this.src='logo.png';">
+                    <span>Le Monde du Travail</span>
+                </div>
+                <button class="mobile-nav-close" id="mobileNavClose" aria-label="Fermer le menu">&times;</button>
+            </div>
+            <div class="mobile-nav-menu">
+                <a href="index.html">Accueil</a>
+                <a href="about.html" >À Propos</a>
+                <a href="job.html">Métiers & Orientation</a>
+                <a href="opportunites.html">Concours & Opportunités</a>
+                <a href="formations.html">Formations</a>
+                <a href="forum.html">Forum</a>
+                <a href="blog.html">Blog</a>
+            </div>
+            <div class="mobile-nav-footer" id="mobileNavFooter">
+                <button type="button" class="theme-toggle-btn theme-toggle-btn-mobile" id="mobileThemeToggleBtn" aria-label="Changer de thème">
+                    <span class="theme-toggle-icon">🌙</span>
+                    <span class="theme-toggle-label">Mode Sombre</span>
+                </button>
+<a href="login.html" class="btn-mobile-cta" id="mobileNavAuthBtn">Se connecter / Espace Membre</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+    <main id="main-content" class="guide-page">
+        <section class="guide-hero">
+            <div class="container">
+                <span class="section-label">Prise en main</span>
+                <h1>Guide d'utilisation de la plateforme</h1>
+                <p>Tout ce qu'il faut savoir pour trouver ta voie, préparer tes concours, te former, échanger avec la communauté et, pour l'équipe du club, faire vivre la plateforme.</p>
+                <form class="guide-search" role="search" onsubmit="return false;">
+                    <label class="sr-only" for="guideSearch">Chercher dans le guide</label>
+                    <span aria-hidden="true">🔎</span>
+                    <input type="search" id="guideSearch" placeholder="Chercher dans le guide : concours, photo, rapport, visio…" autocomplete="off">
+                </form>
+                <p class="guide-search-empty" id="guideSearchEmpty" hidden>Aucune rubrique ne correspond. Essaie un autre mot ou écris-nous : <a href="mailto:lemondedutravailsen@gmail.com">lemondedutravailsen@gmail.com</a>.</p>
+            </div>
+        </section>
+
+        <div class="container guide-layout">
+            <nav class="guide-toc" aria-label="Sommaire du guide" data-lenis-prevent>
+                <p class="guide-toc-title">Sommaire</p>
+                <ol>
+                    <li><a href="#par-ou-commencer">Par où commencer ?</a></li>
+                    <li><a href="#naviguer">Naviguer sur le site</a></li>
+                    <li><a href="#compte">Créer son compte et se connecter</a></li>
+                    <li><a href="#orientation">Métiers & orientation</a></li>
+                    <li><a href="#riasec">Le test d'orientation RIASEC</a></li>
+                    <li><a href="#opportunites">Concours & opportunités</a></li>
+                    <li><a href="#formations">Formations</a></li>
+                    <li><a href="#visio">Les sessions en visio</a></li>
+                    <li><a href="#forum">Le forum</a></li>
+                    <li><a href="#blog">Le blog</a></li>
+                    <li><a href="#mon-espace">Mon espace & profil</a></li>
+                    <li><a href="#bureau">Espace bureau & rapports</a></li>
+                    <li><a href="#mentor">Espace mentor</a></li>
+                    <li><a href="#admin">Administration</a></li>
+                    <li><a href="#depannage">Questions & dépannage</a></li>
+                </ol>
+            </nav>
+
+            <div class="guide-content">
+
+                <section class="guide-sec" id="par-ou-commencer">
+                    <h2>🧭 Par où commencer ?</h2>
+                    <p>Choisis ce qui te correspond : chaque parcours renvoie aux rubriques utiles.</p>
+                    <div class="guide-paths">
+                        <article class="guide-path">
+                            <h3>🎒 Élève, étudiant ou visiteur</h3>
+                            <ol>
+                                <li>Fais le <a href="#riasec">test d'orientation RIASEC</a> (gratuit, sans compte).</li>
+                                <li>Explore les <a href="#orientation">fiches métiers</a> proposées par ton résultat.</li>
+                                <li>Repère les <a href="#opportunites">concours et bourses</a> de ton niveau et ajoute leurs dates à ton agenda.</li>
+                                <li>Pose tes questions sur le <a href="#forum">forum</a> (compte membre nécessaire pour écrire).</li>
+                            </ol>
+                        </article>
+                        <article class="guide-path">
+                            <h3>🤝 Membre du club</h3>
+                            <ol>
+                                <li>Complète <a href="#mon-espace">ton profil</a> et ajoute ta photo.</li>
+                                <li>Inscris-toi aux <a href="#formations">formations</a> et rejoins les <a href="#visio">sessions en visio</a>.</li>
+                                <li>Participe au <a href="#forum">forum</a> et aide les plus jeunes.</li>
+                            </ol>
+                        </article>
+                        <article class="guide-path">
+                            <h3>🏛️ Membre du bureau</h3>
+                            <ol>
+                                <li>Ouvre ton <a href="#bureau">Espace bureau</a> depuis le menu de ton compte.</li>
+                                <li>Rédige les rapports de ton poste et surveille tes échéances.</li>
+                                <li>Présidence : examine, valide, archive et exporte les rapports.</li>
+                            </ol>
+                        </article>
+                        <article class="guide-path">
+                            <h3>🧑‍🏫 Mentor</h3>
+                            <ol>
+                                <li>Ouvre ton <a href="#mentor">Espace mentor</a>.</li>
+                                <li>Suis tes mentorés et rédige tes comptes rendus.</li>
+                                <li>Anime tes formations en <a href="#visio">visio intégrée</a>.</li>
+                            </ol>
+                        </article>
+                        <article class="guide-path">
+                            <h3>🛡️ Administrateur</h3>
+                            <ol>
+                                <li>Connecte-toi puis clique sur <strong>Administration</strong> dans le menu de ton compte.</li>
+                                <li>Consulte le <a href="#admin">mode d'emploi de chaque module</a>.</li>
+                                <li>Astuce : <kbd>Ctrl</kbd> + <kbd>K</kbd> ouvre la recherche rapide de l'admin.</li>
+                            </ol>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="guide-sec" id="naviguer">
+                    <h2>🗺️ Naviguer sur le site</h2>
+                    <ul class="guide-list">
+                        <li><strong>Le menu principal</strong> (en haut) mène aux grandes rubriques : Accueil, À Propos, Métiers & Orientation, Concours & Opportunités, Formations, Forum et Blog. Sur téléphone, il s'ouvre avec le bouton <strong>☰</strong> en haut à droite.</li>
+                        <li><strong>Le mode sombre</strong> : le bouton 🌙 (ou ☀️) en haut à droite change l'apparence du site. Ton choix est mémorisé.</li>
+                        <li><strong>Les notifications</strong> : la cloche 🔔 affiche les nouveautés qui te concernent (réponses, validations, annonces du club). Autorise les notifications de ton navigateur pour être prévenu même quand le site est fermé.</li>
+                        <li><strong>Le menu de ton compte</strong> (ton prénom ou ta photo, en haut à droite) donne accès à ton espace, à l'Espace bureau ou mentor si tu en fais partie, et à l'administration pour l'équipe.</li>
+                        <li><strong>Le pied de page</strong> regroupe les réseaux sociaux du club, le contact, la charte et ce guide.</li>
+                        <li><strong>Liens partageables</strong> : sur les pages Concours et Métiers, les filtres choisis s'inscrivent dans l'adresse. Copie-la pour partager exactement ta recherche.</li>
+                    </ul>
+                    <p class="guide-tip">💡 Le questionnaire « Pour t'orienter au mieux, tu es… » apparaît une seule fois : il sert à adapter le site. Tu peux le fermer, il ne reviendra pas avant un mois.</p>
+                </section>
+
+                <section class="guide-sec" id="compte">
+                    <h2>🔐 Créer son compte et se connecter</h2>
+                    <h3>Devenir membre</h3>
+                    <ol class="guide-steps">
+                        <li>Clique sur <strong>Se connecter</strong> en haut à droite, puis sur <strong>Faire une demande d'adhésion</strong>.</li>
+                        <li>Remplis le formulaire (nom, e-mail, mot de passe, quelques mots sur ta motivation) puis <strong>Envoyer ma demande</strong>.</li>
+                        <li>L'équipe du club examine ta demande. Tu reçois un e-mail dès qu'elle est acceptée : tu peux alors te connecter.</li>
+                    </ol>
+                    <h3>Se connecter, mot de passe oublié</h3>
+                    <ul class="guide-list">
+                        <li><strong>Se connecter</strong> : e-mail et mot de passe, puis <strong>Accéder à l'espace club</strong>.</li>
+                        <li><strong>Mot de passe oublié ?</strong> : saisis ton e-mail, tu reçois un lien pour en choisir un nouveau. Pense à vérifier tes courriers indésirables.</li>
+                        <li><strong>Double authentification</strong> (administrateurs) : un code à 6 chiffres de ton application d'authentification est demandé après le mot de passe.</li>
+                    </ul>
+                    <p class="guide-tip">🔒 Ne partage jamais ton mot de passe. L'équipe du club ne te le demandera jamais.</p>
+                </section>
+
+                <section class="guide-sec" id="orientation">
+                    <h2>💼 Métiers & orientation</h2>
+                    <p>La rubrique <a href="job.html">Métiers & Orientation</a> présente plus de 500 fiches métiers réparties en 21 grandes familles professionnelles.</p>
+                    <ul class="guide-list">
+                        <li><strong>Chercher</strong> : tape un métier, une compétence, un outil ou un domaine dans la barre de recherche (ex. « IA », « BIM », « finance »).</li>
+                        <li><strong>Explorer par famille</strong> : clique sur une famille (Numérique, Santé, BTP…) pour voir ses métiers.</li>
+                        <li><strong>Lire une fiche</strong> : chaque métier se découvre par onglets : présentation, compétences, études et formations, carrière et salaires, métiers proches.</li>
+                        <li><strong>Garder une fiche</strong> : l'étoile ⭐ l'ajoute à tes favoris (retrouvés dans ton espace), l'icône de partage envoie le lien, l'icône d'impression télécharge la fiche en PDF.</li>
+                    </ul>
+                </section>
+
+                <section class="guide-sec" id="riasec">
+                    <h2>🧭 Le test d'orientation RIASEC</h2>
+                    <p>Le <a href="test-riasec.html">test RIASEC</a> est gratuit et ne demande pas de compte. Il mesure tes affinités avec six grands types d'activités : Réaliste, Investigateur, Artistique, Social, Entreprenant et Conventionnel.</p>
+                    <ol class="guide-steps">
+                        <li>Réponds aux questions selon ce que tu <em>aimes faire</em>, pas selon tes notes. Il n'y a pas de mauvaise réponse.</li>
+                        <li>Découvre ton profil (par exemple « ISA ») avec ses points forts.</li>
+                        <li>Consulte les métiers qui correspondent le mieux à ton profil et filtre-les selon ton niveau d'études.</li>
+                        <li>Télécharge ton résultat en PDF pour en parler avec tes parents, un professeur ou un mentor du club.</li>
+                    </ol>
+                    <p class="guide-tip">💡 Le test est une aide à la réflexion, pas un verdict. Croise-le avec tes résultats scolaires et les échanges avec les mentors.</p>
+                </section>
+
+                <section class="guide-sec" id="opportunites">
+                    <h2>🎯 Concours & opportunités</h2>
+                    <p>La rubrique <a href="opportunites.html">Concours & Opportunités</a> réunit les concours des grandes écoles et lycées d'excellence du Sénégal, les bourses, les admissions, les stages et les programmes. Chaque annonce est vérifiée sur sa source officielle.</p>
+                    <h3>Trouver une annonce</h3>
+                    <ul class="guide-list">
+                        <li><strong>« À ne pas manquer »</strong> : les dates limites, ouvertures et épreuves des 60 prochains jours.</li>
+                        <li><strong>Les filtres</strong> (colonne de gauche, ou bouton ⚙️ Filtres sur téléphone) : type, statut, date limite, ton niveau, ta série du bac, domaine, destination, bourses complètes, favoris. Les chiffres indiquent combien d'annonces correspondent.</li>
+                        <li><strong>Deux affichages</strong> : <em>Fiches</em> (groupées par statut : ouvertes, bientôt, prochaine session, clôturées) ou <em>Calendrier</em> (toutes les dates mois par mois).</li>
+                        <li><strong>« Prochaine session attendue »</strong> : la session est passée ; la fiche garde le calendrier habituel et une date estimée pour t'organiser à l'avance.</li>
+                    </ul>
+                    <h3>Utiliser une fiche</h3>
+                    <ul class="guide-list">
+                        <li><strong>Ton parcours étape par étape</strong>, les conditions (niveau, séries, âge), le calendrier, les épreuves, les frais et la marche à suivre.</li>
+                        <li><strong>Le dossier à cocher</strong> : coche les pièces au fur et à mesure, ta progression est gardée sur ton appareil.</li>
+                        <li><strong>📅 Ajouter à mon agenda</strong> : les dates s'ajoutent à Google Agenda, Outlook ou ton téléphone, avec un rappel 3 jours avant la date limite.</li>
+                        <li><strong>☆ Suivre cette annonce</strong>, <strong>WhatsApp</strong>, <strong>Partager</strong> et <strong>Imprimer</strong>.</li>
+                        <li><strong>🚩 Signaler une erreur</strong> : une date a changé, un lien ne marche plus ? Préviens l'équipe en deux clics.</li>
+                    </ul>
+                    <p class="guide-warn">⚠️ Le site et les communiqués officiels font toujours foi. Une vraie bourse ou un vrai concours ne te demandera jamais d'argent par message ou par Mobile Money pour « réserver » une place.</p>
+                </section>
+
+                <section class="guide-sec" id="formations">
+                    <h2>🎓 Formations</h2>
+                    <p>La page <a href="formations.html">Formations</a> présente les ateliers pratiques du club : prise de parole, CV et entretien, leadership, numérique et IA, entrepreneuriat, finances personnelles…</p>
+                    <ol class="guide-steps">
+                        <li>Parcours le catalogue ou cherche une compétence.</li>
+                        <li>Ouvre une formation pour voir son programme module par module, son public, ses prérequis et son format.</li>
+                        <li>Clique sur <strong>⚡ S'inscrire à la session</strong> et complète le formulaire. Tes inscriptions apparaissent dans ton espace, rubrique « Mes inscriptions aux formations ».</li>
+                    </ol>
+                    <p class="guide-tip">ℹ️ Pour le moment, les formations du club ne sont pas certifiantes : elles visent des compétences pratiques, utiles tout de suite.</p>
+                </section>
+
+                <section class="guide-sec" id="visio">
+                    <h2>📹 Les sessions en visio</h2>
+                    <p>Les sessions en ligne se déroulent <strong>directement sur le site</strong>, sans application à installer.</p>
+                    <ol class="guide-steps">
+                        <li>Quand la session est en direct, ouvre la formation et clique sur le bouton de la <strong>salle virtuelle</strong>.</li>
+                        <li>Indique ton nom puis clique sur <strong>Entrer dans la salle</strong>.</li>
+                        <li>Autorise la caméra et le micro, vérifie ton image, puis clique sur <strong>Rejoindre la réunion</strong>.</li>
+                        <li>Pendant la session : micro, caméra, discussion écrite, main levée ✋ et partage d'écran sont en bas de l'écran. Le programme de l'atelier et ton bloc-notes restent à droite.</li>
+                        <li>Pour partir, clique sur <strong>Quitter</strong>.</li>
+                    </ol>
+                    <ul class="guide-list">
+                        <li><strong>Mode Éco-Data</strong> : à activer sur une petite connexion, pour suivre en audio ou en vidéo légère.</li>
+                        <li><strong>Mes notes</strong> : prends des notes pendant la session et utilise <strong>Télécharger mes notes</strong> à la fin.</li>
+                        <li><strong>Formateurs</strong> : vous entrez comme modérateurs (couper les micros, gérer la salle, la fermer à la fin).</li>
+                    </ul>
+                    <p class="guide-tip">💡 Sur téléphone, reste dans le navigateur (Chrome ou Safari). Si le message « en attente de l'organisateur » s'affiche, patiente : l'animateur arrive.</p>
+                </section>
+
+                <section class="guide-sec" id="forum">
+                    <h2>💬 Le forum</h2>
+                    <p>Le <a href="forum.html">forum</a> est l'espace d'entraide du club : orientation, concours, études, premier emploi, vie du club. Tout le monde peut lire ; un compte membre est nécessaire pour écrire.</p>
+                    <ul class="guide-list">
+                        <li><strong>Trouver une discussion</strong> : recherche, catégories, tri, filtres par état et tags tendances.</li>
+                        <li><strong>Poser une question</strong> : <strong>+ Nouvelle discussion</strong>, choisis une catégorie, un titre clair (« Quel concours après un bac S2 ? ») et ajoute des tags.</li>
+                        <li><strong>Répondre</strong>, <strong>citer</strong> un message et voter ▲ pour les réponses utiles.</li>
+                        <li><strong>Solution</strong> : l'auteur d'un sujet peut marquer la réponse qui l'a aidé. Elle apparaît en tête, en vert.</li>
+                        <li><strong>Signaler</strong> un message inapproprié : l'équipe de modération est prévenue.</li>
+                        <li>Les discussions <strong>📌 épinglées</strong> par l'équipe sont mises en avant sur l'accueil.</li>
+                    </ul>
+                    <p class="guide-tip">🤝 Reste bienveillant et précis : un bon titre et le contexte (classe, série, ville) t'apportent de meilleures réponses.</p>
+                </section>
+
+                <section class="guide-sec" id="blog">
+                    <h2>📰 Le blog</h2>
+                    <p>Le <a href="blog.html">blog</a> raconte la vie du club : ateliers, conférences, visites, projets, témoignages et annonces. Filtre par catégorie, cherche un sujet, et utilise ❤️ pour dire qu'un article t'a plu.</p>
+                </section>
+
+                <section class="guide-sec" id="mon-espace">
+                    <h2>👤 Mon espace & profil</h2>
+                    <p>Accessible depuis le menu de ton compte, <a href="profile.html">Mon Espace & Profil</a> regroupe :</p>
+                    <ul class="guide-list">
+                        <li><strong>Ta photo de profil</strong> : choisis un avatar ou <strong>importe ta photo</strong> (glisse-la ou sélectionne-la), recadre-la puis enregistre. Elle apparaît partout : forum, organigramme, témoignages, visio.</li>
+                        <li><strong>Mon profil d'orientation</strong> : ta situation, ton niveau et tes centres d'intérêt, pour des suggestions adaptées.</li>
+                        <li><strong>Mes inscriptions aux formations</strong> et <strong>mes métiers favoris</strong>.</li>
+                        <li><strong>Communauté & forum</strong>, et ton <strong>poste au bureau</strong> ou ton <strong>Espace mentor</strong> si tu en as un.</li>
+                        <li><strong>Informations du compte</strong> : statut d'adhésion et coordonnées.</li>
+                    </ul>
+                </section>
+
+                <section class="guide-sec" id="bureau">
+                    <h2>🏛️ Espace bureau & rapports</h2>
+                    <p>Réservé aux membres du bureau, l'<a href="bureau.html">Espace bureau</a> (menu de ton compte) sert à rédiger et suivre les rapports de chaque poste.</p>
+                    <h3>Pour chaque responsable de poste</h3>
+                    <ol class="guide-steps">
+                        <li>Onglet <strong>Mes rapports</strong> : tes échéances (« À rendre », « En retard », « Rendu ») s'affichent pour chaque période.</li>
+                        <li><strong>+ Nouveau rapport</strong> : choisis la période, remplis les sections (les tableaux de trésorerie calculent les totaux) et joins des pièces si besoin. Enregistre en brouillon autant de fois que nécessaire.</li>
+                        <li><strong>Soumettre à la Présidence</strong> quand le rapport est prêt. Tu es notifié de la décision : validé ✅ ou corrections demandées ↩️ (avec le commentaire de la Présidence).</li>
+                        <li>Tout rapport non brouillon s'exporte en <strong>PDF</strong>.</li>
+                    </ol>
+                    <h3>Pour la Présidence</h3>
+                    <ul class="guide-list">
+                        <li><strong>À examiner</strong> : valide ou demande des corrections (commentaire obligatoire).</li>
+                        <li><strong>Rapports du bureau</strong> : tous les rapports validés, filtrables par poste et période, exportables en PDF.</li>
+                        <li><strong>Synthèse</strong> : situation de chaque poste, retards, trésorerie de l'année, export PDF.</li>
+                        <li><strong>Archiver</strong> un rapport traité le retire des listes courantes ; il reste consultable et restaurable dans l'onglet <strong>Archives</strong>.</li>
+                    </ul>
+                </section>
+
+                <section class="guide-sec" id="mentor">
+                    <h2>🧑‍🏫 Espace mentor</h2>
+                    <p>L'<a href="mentor.html">Espace mentor</a> (menu de ton compte) réunit :</p>
+                    <ul class="guide-list">
+                        <li><strong>Mes mentorés</strong> : les binômes attribués par la Présidence.</li>
+                        <li><strong>Mes formations</strong> : les formations que tu animes, avec l'accès à la visio en tant que modérateur.</li>
+                        <li><strong>Mes comptes rendus</strong> : rends compte de tes séances et échange avec la Présidence.</li>
+                    </ul>
+                </section>
+
+                <section class="guide-sec" id="admin">
+                    <h2>🛡️ Administration</h2>
+                    <p>Réservée à l'équipe, l'administration s'ouvre depuis le menu de ton compte (<strong>Administration</strong>). Chaque administrateur ne voit que les modules de son rôle. <kbd>Ctrl</kbd> + <kbd>K</kbd> ouvre la recherche rapide.</p>
+                    <div class="guide-admin">
+                        <details open><summary>📊 Tableau de bord</summary><p>Vue d'ensemble : adhésions en attente, contenus publiés, fréquentation, membres les plus actifs, alertes et dernières actions.</p></details>
+                        <details><summary>🎨 Vitrine & Éditorial</summary>
+                            <ul>
+                                <li><strong>À la Une ce mois-ci</strong> : l'événement mis en avant sur l'accueil. La case « Afficher sur la page d'accueil » permet de le masquer.</li>
+                                <li><strong>Les Grandes Étapes du Club</strong> : la frise de la page À Propos.</li>
+                                <li><strong>Témoignages</strong> (accueil) et <strong>Mentors & leur mot</strong> (À Propos) : relie la personne à son compte pour reprendre sa photo. Une section vide reste masquée sur le site.</li>
+                                <li><strong>Discussions à l'accueil</strong> : épingle les sujets du forum à mettre en avant.</li>
+                            </ul></details>
+                        <details><summary>💼 Métiers & Fiches</summary><p>Créer, modifier, publier les fiches métiers (images via « Importer », publication après relecture).</p></details>
+                        <details><summary>📚 Formations & Programmes</summary><p>Catalogue des formations, inscriptions et <strong>salle virtuelle</strong> : lancer la session en direct puis la fermer à la fin.</p></details>
+                        <details><summary>🎯 Concours & opportunités</summary>
+                            <ul>
+                                <li>Formulaire en 7 onglets avec jauge <strong>« Fiche complète à X % »</strong> : viser plus de 85 % avant de publier.</li>
+                                <li>Publication impossible sans <strong>lien officiel vérifié</strong> ; revérifier les annonces de plus de 30 jours.</li>
+                                <li><strong>⋯ → Nouvelle session</strong> : copie la fiche pour la session suivante, sans les dates.</li>
+                                <li><strong>Signalements</strong> des visiteurs en tête de page : corriger, puis « Marquer traité ».</li>
+                            </ul></details>
+                        <details><summary>📝 Blog & Articles</summary><p><strong>+ Rédiger un article</strong> (catégorie, image de couverture, contenu, « À la une »), puis <strong>Publier</strong>. « 🔗 Voir » ouvre l'article sur le site ; « Dépublier » ou « Archiver » le retirent.</p></details>
+                        <details><summary>💬 Forum</summary><p>Modération : épingler, verrouiller, marquer résolu, supprimer et traiter les signalements.</p></details>
+                        <details><summary>✅ Approbations & Validations</summary><p>Demandes d'adhésion des nouveaux membres et actions qui demandent un second regard de l'Ultra Admin.</p></details>
+                        <details><summary>📈 Audience & 🧭 Profils visiteurs</summary><p><strong>Audience</strong> compte les <em>visites</em> (pages vues, appareils, pages les plus vues). <strong>Profils visiteurs</strong> compte les <em>visiteurs</em> (situation, niveau, intérêts, pays, contenus consultés). Un même visiteur peut faire plusieurs visites : les deux chiffres diffèrent donc normalement.</p></details>
+                        <details><summary>👥 Utilisateurs & 🛡️ Administrateurs</summary><p>Fiche de suivi de chaque membre, activation ou suspension des comptes, attribution des rôles d'administration (avec validation de l'Ultra Admin).</p></details>
+                        <details><summary>🏛️ Organisation & Bureau</summary><p>Organigramme : postes, titulaires (avec leur photo), équipes, mandat. Définir pour chaque poste le modèle et le rythme des rapports.</p></details>
+                        <details><summary>📑 Rapports du bureau</summary><p>Suivi de tous les rapports : examen, validation, archivage (filtre « Archives »), synthèse et exports PDF.</p></details>
+                        <details><summary>🧑‍🏫 Mentorat</summary><p>Binômes mentor-mentoré, comptes rendus et messages des mentors.</p></details>
+                        <details><summary>🔔 Notifications Push</summary><p>Envoyer une annonce à tous les membres ou à un groupe : elle arrive sur leur téléphone ou ordinateur.</p></details>
+                        <details><summary>📋 Journal d'activité</summary><p>Historique de toutes les actions d'administration (qui, quoi, quand).</p></details>
+                        <details><summary>⚙️ Paramètres système & 2FA</summary><p>E-mail de contact de l'organisation, réseaux sociaux du club, ouverture des adhésions, mode maintenance, et activation de ta double authentification.</p></details>
+                    </div>
+                </section>
+
+                <section class="guide-sec" id="depannage">
+                    <h2>❓ Questions & dépannage</h2>
+                    <div class="guide-faq">
+                        <details><summary>Une page ne semble pas à jour</summary><p>Recharge-la (touche <kbd>F5</kbd>, ou tire la page vers le bas sur téléphone). Les contenus modifiés dans l'admin apparaissent sur le site en une minute environ.</p></details>
+                        <details><summary>Je ne reçois pas l'e-mail de confirmation ou de mot de passe</summary><p>Vérifie le dossier « Courrier indésirable » ou « Promotions ». Les e-mails partent de contact@lemondedutravail.org. Si rien n'arrive après 15 minutes, écris-nous.</p></details>
+                        <details><summary>Ma nouvelle photo de profil n'apparaît pas</summary><p>Vérifie que tu as bien cliqué sur « Enregistrer » après le recadrage, puis recharge la page. La photo doit faire moins de 3 Mo (JPG, PNG ou WebP).</p></details>
+                        <details><summary>La caméra ou le micro ne marchent pas en visio</summary><p>Autorise l'accès quand le navigateur le demande (icône 🔒 à gauche de l'adresse). Ferme les autres applications qui utilisent la caméra. Sur une petite connexion, active le mode Éco-Data.</p></details>
+                        <details><summary>Je ne vois pas l'Espace bureau ou l'administration</summary><p>Ces espaces n'apparaissent qu'aux personnes qui ont un poste au bureau ou un rôle d'administration. Demande à la Présidence de t'attribuer le rôle.</p></details>
+                        <details><summary>J'ai repéré une erreur sur le site</summary><p>Sur une fiche concours, utilise « 🚩 Signaler une erreur ». Ailleurs, écris-nous à <a href="mailto:lemondedutravailsen@gmail.com">lemondedutravailsen@gmail.com</a>.</p></details>
+                    </div>
+                    <div class="guide-contact">
+                        <p><strong>Besoin d'aide ?</strong> L'équipe du club te répond à <a href="mailto:lemondedutravailsen@gmail.com">lemondedutravailsen@gmail.com</a>.</p>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Imprimer ce guide</button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer data-layout="footer" class="site-footer">
+    <div class="footer-card footer-card-centered">
+        <!-- Tracé géométrique vectoriel filigrane aux tonalités or & bleu nuit -->
+        <svg class="footer-bg-lines" viewBox="0 0 1200 450" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 300,450 L 600,120 L 800,280 L 1200,40" fill="none" stroke="rgba(245, 166, 35, 0.08)" stroke-width="1.5" />
+            <path d="M 150,450 L 500,170 L 700,320 L 1100,140" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1.2" />
+            <path d="M 450,450 L 720,200 L 950,350 L 1200,90" fill="none" stroke="rgba(245, 166, 35, 0.05)" stroke-width="1" />
+        </svg>
+
+        <div class="footer-centered-content">
+            <!-- 1. En-tête de Marque Centré -->
+            <div class="footer-brand-header">
+                <a href="index.html" class="footer-brand-logo" aria-label="Accueil Le Monde du Travail">
+                    <img src="logo.webp" alt="Logo Le Monde du Travail" class="footer-logo-img" width="56" height="56" onerror="this.onerror=null; this.src='logo.png';">
+                    <span class="footer-site-title">Le Monde du Travail</span>
+                </a>
+                <p class="footer-mission-desc">
+                    Préparer une relève professionnelle de qualité, consciente et innovante. Accompagnement, orientation et compétences d'avenir pour bâtir demain.
+                </p>
+
+                <!-- Réseaux sociaux administrables -->
+                <div class="footer-socials footer-socials-centered" id="footerSocialsContainer" aria-label="Réseaux sociaux">
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="twitter" aria-label="X (Twitter)">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="linkedin" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+                    </a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="instagram" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="facebook" aria-label="Facebook">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                    </a>
+                    <a href="" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="youtube" aria-label="YouTube" style="display: none;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    </a>
+                    <a href="" target="_blank" rel="noopener noreferrer" class="footer-social-btn" data-social="tiktok" aria-label="TikTok" style="display: none;">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-1.01-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.89 3.5 2.72 1.36-.07 2.59-.97 3.03-2.27.2-.55.26-1.14.25-1.73.02-4.91.01-9.83.01-14.74z"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 2. Grille de Liens Centrée -->
+            <div class="footer-links-grid">
+                <div class="footer-link-group">
+                    <h4 class="footer-group-title">Navigation</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="index.html" class="footer-link">Accueil</a></li>
+                        <li><a href="about.html" class="footer-link">À Propos</a></li>
+                        <li><a href="formations.html" class="footer-link">Formations</a></li>
+                        <li><a href="forum.html" class="footer-link">Forum & Entraide</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-link-group">
+                    <h4 class="footer-group-title">Ressources</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="job.html" class="footer-link">Métiers & Orientation</a></li>
+                        <li><a href="opportunites.html" class="footer-link">Concours & Opportunités</a></li>
+                        <li><a href="blog.html" class="footer-link">Actualités & Blog</a></li>
+                        <li><a href="login.html" class="footer-link">Espace Membre</a></li>
+                        <li><a href="guide.html" class="footer-link">Guide d'utilisation</a></li>
+                        <li><a href="about.html#contact" class="footer-link">Contact & Partenariats</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-link-group">
+                    <h4 class="footer-group-title">Légal & Éthique</h4>
+                    <ul class="footer-links-list">
+                        <li><a href="about.html#charte" class="footer-link">Charte d'Orientation</a></li>
+                        <li><a href="about.html#confidentialite" class="footer-link">Politique de Confidentialité</a></li>
+                        <li><a href="about.html#cgu" class="footer-link">Conditions d'Utilisation</a></li>
+                        <li><a href="about.html#mentions" class="footer-link">Mentions Légales</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 3. Bouton Retour en Haut Centré -->
+            <div class="footer-back-to-top-container">
+                <button type="button" class="footer-back-to-top footer-back-to-top-centered" id="footerBackToTop" aria-label="Retourner en haut de page">
+                    <svg class="chevron-up-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                    <span>RETOUR EN HAUT</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. Bandeau Inférieur Copyright Ocre / Ambré Centré -->
+        <div class="footer-bottom-bar">
+            <p class="footer-wow-line"><img src="images/wow-mark.svg" alt="" class="footer-wow-mark" width="22" height="22" loading="lazy"> <span class="footer-wow-name">WOW · World Of Work</span> <span aria-hidden="true">·</span> &copy; 2026 Club Le Monde du Travail - Demain se prépare aujourd'hui !</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- Smooth Scroll (Lenis) & Moteur d'Animation (GSAP + ScrollTrigger) -->
+    <script defer src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
+    <script defer src="js/config.js"></script>
+    <script defer src="js/frontend-api.js?v=20261028-1"></script>
+    <script defer src="js/analytics-tracker.js"></script>
+    <script defer src="js/layout.js"></script>
+    <script defer src="js/main.js?v=20261028-2"></script>
+    <script defer src="js/guide.js?v=20261028-1"></script>
+</body>
+</html>

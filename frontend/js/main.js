@@ -927,6 +927,7 @@
             ${isMentor ? '<a href="mentor.html" class="user-dropdown-item"><span>🧑‍🏫</span> Espace Mentor</a>' : ''}
             <a href="formations.html" class="user-dropdown-item"><span>🎓</span> Mes Formations</a>
             <a href="forum.html" class="user-dropdown-item"><span>💬</span> Forum Communautaire</a>
+            <a href="guide.html" class="user-dropdown-item"><span>❓</span> Guide d'utilisation</a>
             ${isAdmin ? `<a href="${adminUrl}" class="user-dropdown-item user-dropdown-admin"><span>🛡️</span> Administration</a>` : ''}
             <div class="user-dropdown-divider"></div>
             <button type="button" class="user-dropdown-item user-dropdown-logout" id="btnLogoutAction"><span>🚪</span> Se déconnecter</button>

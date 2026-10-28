@@ -216,6 +216,7 @@
         { module: 'settings', label: 'Paramètres système & 2FA', icon: '⚙️', shortcut: 'Naviguer', action: () => window.AdminRouter.navigate('settings') },
         { label: 'Basculer Mode Sombre / Clair', icon: '🌓', shortcut: 'Thème', action: () => (document.getElementById('admin-theme-toggle') || document.getElementById('admin-sidebar-theme-toggle'))?.click() },
         { label: 'Voir le site public', icon: '🌐', shortcut: 'Lien', action: () => window.open('../frontend/index.html', '_blank') },
+        { label: 'Guide d\'utilisation de la plateforme', icon: '❓', shortcut: 'Lien', action: () => window.open('../frontend/guide.html#admin', '_blank') },
         { label: 'Déconnexion', icon: '🚪', shortcut: 'Compte', action: () => window.AdminApp?.logout() },
       ];
 
