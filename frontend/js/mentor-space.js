@@ -237,7 +237,7 @@
             <button type="button" class="ms-btn ${p.review ? 'ms-btn-primary' : 'ms-btn-ghost'}" data-act="report-view" data-id="${esc(r.id)}">${p.review ? 'Examiner' : 'Ouvrir'}</button>
             ${p.edit ? `<button type="button" class="ms-btn ms-btn-ghost" data-act="report-edit" data-id="${esc(r.id)}">Modifier</button>` : ''}
             ${p.submit ? `<button type="button" class="ms-btn ms-btn-primary" data-act="report-submit" data-id="${esc(r.id)}">Soumettre</button>` : ''}
-            ${r.status !== 'DRAFT' ? `<button type="button" class="ms-btn ms-btn-ghost" data-act="report-pdf" data-id="${esc(r.id)}">PDF</button>` : ''}
+            ${r.status !== 'DRAFT' ? `<button type="button" class="ms-btn ms-btn-ghost" data-act="report-pdf" data-id="${esc(r.id)}">⬇️ PDF</button>` : ''}
             ${p.delete && r.status === 'DRAFT' ? `<button type="button" class="ms-btn ms-btn-danger" data-act="report-delete" data-id="${esc(r.id)}">Supprimer</button>` : ''}
           </div>
         </article>`;

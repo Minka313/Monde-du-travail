@@ -35,7 +35,7 @@
         <td>
           <div style="display:flex;gap:0.3rem;flex-wrap:wrap;">
             <button class="btn btn-sm ${r.permissions.review ? 'btn-primary' : 'btn-secondary'}" data-ar-action="view" data-id="${esc(r.id)}">${r.permissions.review ? 'Examiner' : 'Ouvrir'}</button>
-            <button class="btn btn-sm btn-ghost" data-ar-action="pdf" data-id="${esc(r.id)}">PDF</button>
+            <button class="btn btn-sm btn-ghost" data-ar-action="pdf" data-id="${esc(r.id)}">⬇️ PDF</button>
           </div>
         </td>
       </tr>`;
@@ -122,7 +122,7 @@
           </div>
           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
             <label class="ar-inline">Année <select id="ar-year">${years.map((y) => `<option value="${y}" ${y === state.year ? 'selected' : ''}>${y}</option>`).join('')}</select></label>
-            <button class="btn btn-secondary" id="ar-export-summary">⬇️ Synthèse PDF</button>
+            <button class="btn btn-secondary" id="ar-export-summary">⬇️ Télécharger la synthèse (PDF)</button>
             <a class="btn btn-outline" style="text-decoration:none;" href="../frontend/bureau.html" target="_blank" rel="noopener">🏛️ Espace bureau du site</a>
           </div>
         </div>

@@ -156,7 +156,7 @@
     if (p.edit) actions.push(`<button type="button" class="bx-btn bx-btn-ghost" data-action="edit" data-id="${esc(report.id)}">Modifier</button>`);
     if (p.submit) actions.push(`<button type="button" class="bx-btn bx-btn-primary" data-action="submit" data-id="${esc(report.id)}">Soumettre</button>`);
     if (p.review) actions.push(`<button type="button" class="bx-btn bx-btn-primary" data-action="view" data-id="${esc(report.id)}">Examiner</button>`);
-    if (report.status !== 'DRAFT') actions.push(`<button type="button" class="bx-btn bx-btn-ghost" data-action="pdf" data-id="${esc(report.id)}" title="Exporter en PDF">PDF</button>`);
+    if (report.status !== 'DRAFT') actions.push(`<button type="button" class="bx-btn bx-btn-ghost" data-action="pdf" data-id="${esc(report.id)}" title="Télécharger le PDF">⬇️ PDF</button>`);
     if (p.delete && report.status === 'DRAFT') actions.push(`<button type="button" class="bx-btn bx-btn-danger" data-action="delete" data-id="${esc(report.id)}">Supprimer</button>`);
     if (p.archive) actions.push(`<button type="button" class="bx-btn bx-btn-ghost" data-action="archive" data-id="${esc(report.id)}" title="Retirer des listes courantes">🗄️ Archiver</button>`);
     if (p.unarchive) actions.push(`<button type="button" class="bx-btn bx-btn-ghost" data-action="unarchive" data-id="${esc(report.id)}">↩️ Restaurer</button>`);
@@ -251,7 +251,7 @@
             ${periods.map(([key, label]) => `<option value="${esc(key)}" ${f.period === key ? 'selected' : ''}>${esc(label)}</option>`).join('')}
           </select>
         </label>
-        <button type="button" class="bx-btn bx-btn-ghost" data-action="pdf-selection" ${filtered.length ? '' : 'disabled'}>⬇️ Exporter la sélection (PDF)</button>
+        <button type="button" class="bx-btn bx-btn-ghost" data-action="pdf-selection" ${filtered.length ? '' : 'disabled'}>⬇️ Télécharger la sélection (PDF)</button>
       </div>
       <p class="bx-muted">Rapports validés par la Présidence, consultables par tout le bureau.</p>
       <div class="bx-list">
@@ -289,7 +289,7 @@
         <label>Année
           <select data-filter="year">${years.map((y) => `<option value="${y}" ${y === s.year ? 'selected' : ''}>${y}</option>`).join('')}</select>
         </label>
-        <button type="button" class="bx-btn bx-btn-ghost" data-action="pdf-summary">⬇️ Exporter la synthèse (PDF)</button>
+        <button type="button" class="bx-btn bx-btn-ghost" data-action="pdf-summary">⬇️ Télécharger la synthèse (PDF)</button>
       </div>
       <div class="bx-kpis">
         <div class="bx-kpi bx-kpi-info"><span>À examiner</span><strong>${k.toReview}</strong></div>
@@ -374,7 +374,7 @@
       ${RV.render(report, templates())}
       ${review}
       <footer class="bx-modal-foot">
-        ${report.status !== 'DRAFT' ? '<button type="button" class="bx-btn bx-btn-ghost" data-v="pdf">⬇️ Exporter en PDF</button>' : ''}
+        ${report.status !== 'DRAFT' ? '<button type="button" class="bx-btn bx-btn-ghost" data-v="pdf">⬇️ Télécharger le PDF</button>' : ''}
         ${p.edit ? '<button type="button" class="bx-btn bx-btn-ghost" data-v="edit">Modifier</button>' : ''}
         ${p.submit ? '<button type="button" class="bx-btn bx-btn-primary" data-v="submit">Soumettre à la Présidence</button>' : ''}
         ${p.archive ? '<button type="button" class="bx-btn bx-btn-ghost" data-v="archive">🗄️ Archiver</button>' : ''}
