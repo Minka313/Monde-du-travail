@@ -158,12 +158,32 @@ class AuthService {
       throw new BadRequestError('Lien expiré ou invalide : demande un nouveau lien depuis la page de connexion.');
     }
     if (payload.purpose !== 'verify-email') throw new BadRequestError('Lien invalide');
-    const user = await prisma.user.findUnique({ where: { id: payload.sub }, select: { id: true, role: true, isVerified: true } });
+    const user = await prisma.user.findUnique({ where: { id: payload.sub }, select: { id: true, role: true, isVerified: true, firstName: true, lastName: true } });
     if (!user) throw new BadRequestError('Compte introuvable');
     if (user.role === 'VISITOR' && !user.isVerified) {
       await prisma.user.update({ where: { id: user.id }, data: { isActive: true, isVerified: true } });
+      await AuthService.notifyNewVisitorAccount(user);
     }
     return { verified: true };
+  }
+
+  // Nouveau compte gratuit activé : la Présidence (Ultra Admin) est prévenue, dans le site et en push
+  static async notifyNewVisitorAccount(user) {
+    try {
+      const notificationService = require('./notificationService');
+      const presidents = await prisma.user.findMany({ where: { role: 'ULTRA_ADMIN', isActive: true }, select: { id: true } });
+      const total = await prisma.user.count({ where: { role: 'VISITOR', isActive: true } });
+      await Promise.allSettled(presidents.map((p) => notificationService.createNotification({
+        userId: p.id,
+        type: 'MEMBERSHIP',
+        title: '👋 Nouveau compte gratuit',
+        message: `${user.firstName} ${user.lastName} vient de rejoindre la communauté (${total} compte${total > 1 ? 's' : ''} gratuit${total > 1 ? 's' : ''} au total).`,
+        url: '/admin-frontend/index.html#users',
+        dedupeKey: `VISITOR_JOINED:${user.id}:${p.id}`,
+      })));
+    } catch (err) {
+      logger.warn('Alerte « nouveau compte gratuit » non envoyée', { error: err.message });
+    }
   }
 
   // Nouveau lien : même réponse que l'adresse existe ou non (pas de divulgation des comptes)

@@ -30,6 +30,7 @@ describe('Comptes visiteurs', () => {
 
   afterAll(async () => {
     await prisma.formation.deleteMany({ where: { slug: SLUG } });
+    await prisma.notification.deleteMany({ where: { user: { email: ULTRA } } });
     await cleanupTestUsers([VISITOR, ULTRA]);
     await prisma.$disconnect();
   });
@@ -46,6 +47,12 @@ describe('Comptes visiteurs', () => {
     const token = linkToken();
     expect((await request(app).post('/api/auth/verify-email').send({ token: 'x'.repeat(30) })).status).toBe(400);
     expect((await request(app).post('/api/auth/verify-email').send({ token })).status).toBe(200);
+    // La Présidence est prévenue une seule fois, même si le lien est rouvert
+    const ultraUser = await prisma.user.findUnique({ where: { email: ULTRA } });
+    expect((await request(app).post('/api/auth/verify-email').send({ token })).status).toBe(200);
+    const alerts = await prisma.notification.findMany({ where: { userId: ultraUser.id, title: { contains: 'Nouveau compte gratuit' } } });
+    expect(alerts).toHaveLength(1);
+    expect(alerts[0].message).toContain('Fatou Ndiaye');
 
     const after = await login();
     expect(after.status).toBe(200);
