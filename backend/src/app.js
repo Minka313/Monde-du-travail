@@ -30,6 +30,7 @@ const analyticsRoutes = require('./routes/analytics');
 const uploadRoutes = require('./routes/upload');
 const reportRoutes = require('./routes/reports');
 const mentoringRoutes = require('./routes/mentoring');
+const meRoutes = require('./routes/me');
 const prisma = require('./config/database');
 const app = express();
 
@@ -141,6 +142,7 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/mentoring', mentoringRoutes);
+app.use('/api/me', meRoutes);
 
 // ===== GESTION DES ERREURS =====
 

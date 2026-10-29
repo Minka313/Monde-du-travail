@@ -138,7 +138,7 @@
     box.className = 'guide-welcome account-nudge';
     box.setAttribute('role', 'note');
     box.innerHTML = `
-      <p>👋 <strong>Content de te revoir !</strong> Avec un compte gratuit, tu peux poser tes questions au forum, suivre les discussions qui t'intéressent et recevoir tes alertes.</p>
+      <p>👋 <strong>Content de te revoir !</strong> Avec un compte gratuit, tu retrouves tes favoris et ton profil RIASEC sur tous tes appareils, et tu peux poser tes questions au forum.</p>
       <a class="guide-welcome-go" href="login.html?redirect=${back}#register">Créer mon compte gratuit</a>
       <button type="button" aria-label="Plus tard" title="Plus tard">&times;</button>`;
     box.querySelector('a').addEventListener('click', () => {

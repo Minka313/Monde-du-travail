@@ -525,6 +525,12 @@ return headers;
     },
 
     // Paramètres publics et statut de la plateforme
+    // Données du compte retrouvées sur tous les appareils (favoris, RIASEC, dossiers cochés)
+    me: {
+      getData: () => apiRequestWithRefresh('/me/data'),
+      saveData: (entries) => apiRequestWithRefresh('/me/data', { method: 'PUT', body: JSON.stringify({ entries }) }),
+    },
+
     settings: {
       getPublic: () => apiRequest('/settings/public'),
       getPublicByKey: (key) => apiRequest(`/settings/public/${encodeURIComponent(key)}`),

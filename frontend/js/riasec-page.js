@@ -239,6 +239,7 @@
         <button type="button" class="rx-btn rx-btn-ghost" id="rxReplay">🎡 Revoir la roue</button>
         <button type="button" class="rx-btn rx-btn-ghost" id="rxRestart">↺ Refaire le test</button>
       </div>
+      ${window.Api?.isLoggedIn?.() ? '' : `<p class="rx-account-hint">💾 Ton résultat n'est gardé que sur cet appareil. <a href="login.html?redirect=${encodeURIComponent('test-riasec.html?resultat=1')}#register">Crée ton compte gratuit</a> pour le retrouver sur ton téléphone comme sur un ordinateur.</p>`}
       <div class="print-only" id="rxPrintSignature" style="display:none;"></div></div>`;
 
     $('rxPrintMeta').textContent = [`Profil ${result.code}`, `version ${E.MODES[result.mode]?.label.toLowerCase() || ''}`, new Date(result.date || Date.now()).toLocaleDateString('fr-FR'), location.host + location.pathname].join(' · ');

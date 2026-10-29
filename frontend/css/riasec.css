@@ -212,3 +212,8 @@
 @media (max-width: 420px) { .rx-reveal-code { gap: 0.4rem; } .rx-slot { min-width: 0; flex: 1 1 0; max-width: 112px; padding: 0.4rem 0.3rem; min-height: 80px; } .rx-slot span { font-size: 1.8rem; } }
 @media (prefers-reduced-motion: reduce) { .rx-slot.is-on { animation: none; } }
 @media print { .rx-reveal { display: none !important; } }
+
+/* Invitation à garder son résultat sur son compte */
+.rx-account-hint { margin: 1rem auto 0; max-width: 640px; padding: 0.7rem 1rem; border-radius: 12px; text-align: center; font-size: 0.92rem; line-height: 1.5; color: var(--rx-ink-2); background: var(--rx-surface); border: 1px solid var(--rx-border); }
+.rx-account-hint a { font-weight: 700; color: inherit; }
+@media print { .rx-account-hint { display: none; } }
