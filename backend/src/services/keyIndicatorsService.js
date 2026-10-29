@@ -9,7 +9,8 @@ class KeyIndicatorsService {
     const [eventRows, riasecMembers, newMembers, topOpportunities, alerts, emailRows, recentEmails] = await Promise.all([
       prisma.$queryRaw`SELECT event_type AS type, COUNT(*)::int AS count FROM analytics_events
         WHERE created_at >= ${since} AND event_type IN ('riasec_start', 'riasec_result', 'riasec_pdf', 'riasec_share',
-          'opportunity_view', 'opportunity_ics', 'opportunity_alert', 'pwa_prompt', 'pwa_install', 'pwa_installed', 'pwa_dismiss')
+          'opportunity_view', 'opportunity_ics', 'opportunity_alert', 'pwa_prompt', 'pwa_install', 'pwa_installed', 'pwa_dismiss',
+          'account_nudge_view', 'account_nudge_click', 'account_nudge_dismiss', 'account_created', 'membership_requested')
         GROUP BY 1`,
       // Inscriptions de la période dont l'appareil avait d'abord fait le test RIASEC
       prisma.$queryRaw`SELECT COUNT(DISTINCT u.id)::int AS count FROM users u
@@ -56,6 +57,14 @@ class KeyIndicatorsService {
         top: topOpportunities.map((r) => ({ id: r.id, slug: r.slug, label: r.title, count: r.count })),
       },
       alerts: { active: activeAlerts, requested: requestedAlerts, confirmed: confirmedAlerts },
+      accounts: {
+        nudgeViews: count(eventRows, 'account_nudge_view'),
+        nudgeClicks: count(eventRows, 'account_nudge_click'),
+        nudgeDismissed: count(eventRows, 'account_nudge_dismiss'),
+        created: count(eventRows, 'account_created'),
+        membershipRequests: count(eventRows, 'membership_requested'),
+        newVisitorAccounts: await prisma.user.count({ where: { role: 'VISITOR', createdAt: { gte: since } } }),
+      },
       app: {
         prompts: count(eventRows, 'pwa_prompt'),
         accepted: count(eventRows, 'pwa_install'),

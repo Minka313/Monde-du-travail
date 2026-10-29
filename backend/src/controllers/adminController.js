@@ -19,7 +19,8 @@ async function approveMembershipRequest(id, reviewerId, welcomeMessage) {
       data: { status: 'APPROVED', reviewedBy: reviewerId, reviewedAt: new Date() },
       include: { user: { select: { id: true, email: true, firstName: true, lastName: true } } },
     }),
-    prisma.user.update({ where: { id: membership.userId }, data: { isActive: true, isVerified: true } }),
+    // Un compte visiteur devient adhérent
+    prisma.user.update({ where: { id: membership.userId }, data: { isActive: true, isVerified: true, ...(membership.user.role === 'VISITOR' ? { role: 'MEMBER' } : {}) } }),
   ]);
 
   // Invalidation immédiate du cache mémoire des statistiques

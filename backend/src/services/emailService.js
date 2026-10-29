@@ -571,13 +571,13 @@ class EmailService {
   }
 
   // Cadre commun des e-mails « Concours & opportunités »
-  static opportunityMail({ heading, body, ctaLabel, ctaUrl, footer }) {
+  static opportunityMail({ heading, body, ctaLabel, ctaUrl, footer, kicker = 'Concours & opportunités' }) {
     return `
       <div style="margin:0;padding:20px;background:#f1f5f9;font-family:'Segoe UI',Roboto,Helvetica,sans-serif;">
         <div style="max-width:600px;margin:auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;">
           <div style="background:linear-gradient(135deg, #0f2b46 0%, #1a3f5f 100%);padding:24px 20px;text-align:center;">
             <h1 style="color:#ffffff;margin:0;font-size:1.25rem;letter-spacing:0.5px;">LE MONDE DU TRAVAIL</h1>
-            <p style="color:#f5a623;margin:5px 0 0;font-size:0.85rem;">Concours & opportunités</p>
+            <p style="color:#f5a623;margin:5px 0 0;font-size:0.85rem;">${kicker}</p>
           </div>
           <div style="padding:26px 24px;">
             <h2 style="color:#0f172a;margin:0 0 12px;font-size:1.2rem;">${heading}</h2>
@@ -643,6 +643,20 @@ class EmailService {
       footer: `Tu reçois ce résumé car tu l'as demandé sur le forum. Pour l'arrêter, décoche « Recevoir un résumé hebdomadaire » sur <a href="${base}/forum-create" style="color:#64748b;">la page Nouvelle discussion</a>.`,
     });
     return this.sendMail({ to, subject: 'Le résumé de la semaine du forum · Le Monde du Travail', html });
+  }
+
+  static async notifyVisitorVerification({ to, firstName, url }) {
+    const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const html = this.opportunityMail({
+      kicker: 'Ton compte',
+      heading: `Bienvenue ${esc(firstName)} ! Confirme ton adresse ✉️`,
+      body: `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0 0 10px;">Clique sur le bouton pour activer ton compte gratuit. Tu pourras ensuite poser tes questions au forum, suivre des discussions et compléter ton profil d'orientation.</p>
+        <p style="color:#64748b;font-size:0.85rem;line-height:1.5;margin:0;">Le lien est valable 48 heures. Envie d'aller plus loin ? Depuis « Mon espace », tu pourras aussi demander à rejoindre le club (formations, mentorat).</p>`,
+      ctaLabel: 'Activer mon compte',
+      ctaUrl: url,
+      footer: "Tu n'as pas créé de compte ? Ignore simplement cet e-mail : rien ne sera activé.",
+    });
+    return this.sendMail({ to, subject: 'Active ton compte · Le Monde du Travail', html });
   }
 }
 

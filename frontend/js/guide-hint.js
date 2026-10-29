@@ -3,11 +3,18 @@
  * - bouton « ? Guide » dans l'en-tête de chaque page, qui ouvre la partie du guide liée à la page ;
  * - lien dans le menu mobile ;
  * - bandeau de bienvenue lors des premières visites, jusqu'à ce qu'il soit fermé ou le guide ouvert.
+ * Invitation au compte gratuit pour les visiteurs fidèles sans compte (3 jours de visite ou 8 pages) :
+ * une seule invitation par visite, jamais en même temps que le bandeau du guide, 14 jours de pause si fermée.
  */
 (function () {
   'use strict';
 
   const SEEN_KEY = 'lmdt_guide_seen';
+  const DAYS_KEY = 'lmdt_visit_days';
+  const PAGES_KEY = 'lmdt_visit_pages';
+  const NUDGE_SNOOZE_KEY = 'lmdt_account_nudge_until';
+  const NUDGE_SESSION_KEY = 'lmdt_account_nudge_shown';
+  const NUDGE_QUIET_PAGES = ['login', 'connexion', 'adhesion', 'reset-password', 'guide', 'legal', 'forum-create', 'profile'];
   const VIEWS_KEY = 'lmdt_guide_hint_views';
   const MAX_VIEWS = 5;
 
@@ -51,6 +58,8 @@
       .guide-welcome p { margin: 0; flex: 1 1 260px; }
       .guide-welcome a { font-weight: 700; color: inherit; }
       .guide-welcome .guide-welcome-go { display: inline-block; padding: 0.45rem 0.9rem; border-radius: 999px; background: #f5a623; color: #0f172a; text-decoration: none; }
+      .account-nudge { --gw-bg: #eff6ff; --gw-ink: #1e3a8a; --gw-border: #bfdbfe; }
+      [data-theme="dark"] .account-nudge { --gw-bg: #0f1f3a; --gw-ink: #bfdbfe; --gw-border: #1e3a8a; }
       .guide-welcome button { font: inherit; background: none; border: 0; color: inherit; cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 0.25rem 0.4rem; }
       @media (max-width: 640px) { .guide-welcome { margin: 0.5rem 16px; } }
       @media print { .guide-help-btn, .guide-welcome, .guide-mobile-link { display: none !important; } }`;
@@ -82,12 +91,12 @@
   }
 
   function addWelcome() {
-    if (page === 'guide' || store.get(SEEN_KEY)) return;
+    if (page === 'guide' || store.get(SEEN_KEY)) return false;
     const views = Number(store.get(VIEWS_KEY) || 0) + 1;
     store.set(VIEWS_KEY, String(views));
-    if (views > MAX_VIEWS) return;
+    if (views > MAX_VIEWS) return false;
     const main = document.querySelector('main');
-    if (!main) return;
+    if (!main) return false;
     const box = document.createElement('div');
     box.className = 'guide-welcome';
     box.setAttribute('role', 'note');
@@ -98,6 +107,51 @@
     box.querySelector('a').addEventListener('click', markSeen);
     box.querySelector('button').addEventListener('click', () => { markSeen(); box.remove(); });
     main.insertBefore(box, main.firstChild);
+    return true;
+  }
+
+  const track = (type, meta) => { try { window.AnalyticsTracker?.track?.(type, 'account', 'nudge', meta || {}); } catch (_) { /* suivi facultatif */ } };
+
+  // Fidélité du visiteur : jours de visite distincts et pages vues (sur cet appareil)
+  function recordVisit() {
+    let days = [];
+    try { days = JSON.parse(store.get(DAYS_KEY) || '[]'); } catch (_) { days = []; }
+    const today = new Date().toISOString().slice(0, 10);
+    if (!days.includes(today)) days = [...days, today].slice(-10);
+    store.set(DAYS_KEY, JSON.stringify(days));
+    const pages = Number(store.get(PAGES_KEY) || 0) + 1;
+    store.set(PAGES_KEY, String(pages));
+    return { days: days.length, pages };
+  }
+
+  function addAccountNudge(visit, welcomeShown) {
+    const loggedIn = Boolean(store.get('accessToken') || store.get('adminAccessToken'));
+    if (loggedIn || welcomeShown || NUDGE_QUIET_PAGES.includes(page)) return;
+    if (Number(store.get(NUDGE_SNOOZE_KEY) || 0) > Date.now()) return;
+    try { if (sessionStorage.getItem(NUDGE_SESSION_KEY)) return; } catch (_) { /* stockage indisponible */ }
+    if (visit.days < 3 && visit.pages < 8) return;
+    const main = document.querySelector('main');
+    if (!main) return;
+    try { sessionStorage.setItem(NUDGE_SESSION_KEY, '1'); } catch (_) { /* stockage indisponible */ }
+    const back = encodeURIComponent(`${location.pathname.split('/').pop() || 'index.html'}${location.search}`);
+    const box = document.createElement('div');
+    box.className = 'guide-welcome account-nudge';
+    box.setAttribute('role', 'note');
+    box.innerHTML = `
+      <p>👋 <strong>Content de te revoir !</strong> Avec un compte gratuit, tu peux poser tes questions au forum, suivre les discussions qui t'intéressent et recevoir tes alertes.</p>
+      <a class="guide-welcome-go" href="login.html?redirect=${back}#register">Créer mon compte gratuit</a>
+      <button type="button" aria-label="Plus tard" title="Plus tard">&times;</button>`;
+    box.querySelector('a').addEventListener('click', () => {
+      store.set(NUDGE_SNOOZE_KEY, String(Date.now() + 30 * 86400000));
+      track('account_nudge_click', { page });
+    });
+    box.querySelector('button').addEventListener('click', () => {
+      store.set(NUDGE_SNOOZE_KEY, String(Date.now() + 14 * 86400000));
+      track('account_nudge_dismiss', { page });
+      box.remove();
+    });
+    main.insertBefore(box, main.firstChild);
+    track('account_nudge_view', { page, days: visit.days, pages: visit.pages });
   }
 
   function start() {
@@ -105,7 +159,9 @@
     injectStyles();
     addHeaderButton();
     addMobileLink();
-    addWelcome();
+    const visit = recordVisit();
+    const welcomeShown = addWelcome();
+    addAccountNudge(visit, welcomeShown);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);

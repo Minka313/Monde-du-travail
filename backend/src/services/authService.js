@@ -58,6 +58,13 @@ class AuthService {
 
     logger.info('Nouvelle inscription (demande d\'adhésion créée)', { userId: user.id, email: user.email });
 
+    await AuthService.notifyMembershipRequest(user, motivation);
+
+    return user;
+  }
+
+  // E-mails (candidat + bureau) et alerte dans l'admin pour chaque demande d'adhésion
+  static async notifyMembershipRequest(user, motivation) {
     // Notifications par email (fiabilisées pour l'environnement Serverless Vercel)
     try {
       await Promise.allSettled([
@@ -101,7 +108,90 @@ class AuthService {
       logger.warn('Alerte des validateurs non envoyée', { error: err.message });
     }
 
+  }
+
+  /**
+   * Compte visiteur gratuit : forum, alertes, profil d'orientation. Actif dès que l'adresse
+   * e-mail est confirmée ; l'adhésion au club (formations, mentorat) se demande ensuite.
+   */
+  static async registerVisitor({ email, password, firstName, lastName }) {
+    if (!(await SettingsService.registrationsOpen())) {
+      throw new ForbiddenError('Les inscriptions sont momentanément fermées. Reviens bientôt !');
+    }
+    const normalizedEmail = email.trim().toLowerCase();
+    if (await prisma.user.findFirst({ where: { email: { equals: normalizedEmail, mode: 'insensitive' } } })) {
+      throw new ConflictError('Cet email est déjà utilisé');
+    }
+    const user = await prisma.user.create({
+      data: {
+        email: normalizedEmail,
+        password: await bcrypt.hash(password, 12),
+        firstName,
+        lastName,
+        role: 'VISITOR',
+        isActive: false,
+        isVerified: false,
+      },
+      select: { id: true, email: true, firstName: true, lastName: true, role: true, createdAt: true },
+    });
+    logger.info('Nouveau compte visiteur (confirmation e-mail envoyée)', { userId: user.id });
+    await AuthService.sendVisitorVerification(user);
     return user;
+  }
+
+  static visitorVerificationToken(userId) {
+    return jwt.sign({ sub: userId, purpose: 'verify-email' }, process.env.JWT_SECRET, { expiresIn: '48h' });
+  }
+
+  static async sendVisitorVerification(user) {
+    const base = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
+    const url = `${base}/login?verifier=${encodeURIComponent(AuthService.visitorVerificationToken(user.id))}`;
+    return EmailService.notifyVisitorVerification({ to: user.email, firstName: user.firstName, url });
+  }
+
+  // Lien de confirmation reçu par e-mail : active le compte visiteur
+  static async verifyVisitorEmail(token) {
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (_) {
+      throw new BadRequestError('Lien expiré ou invalide : demande un nouveau lien depuis la page de connexion.');
+    }
+    if (payload.purpose !== 'verify-email') throw new BadRequestError('Lien invalide');
+    const user = await prisma.user.findUnique({ where: { id: payload.sub }, select: { id: true, role: true, isVerified: true } });
+    if (!user) throw new BadRequestError('Compte introuvable');
+    if (user.role === 'VISITOR' && !user.isVerified) {
+      await prisma.user.update({ where: { id: user.id }, data: { isActive: true, isVerified: true } });
+    }
+    return { verified: true };
+  }
+
+  // Nouveau lien : même réponse que l'adresse existe ou non (pas de divulgation des comptes)
+  static async resendVisitorVerification(email) {
+    const user = await prisma.user.findFirst({
+      where: { email: { equals: String(email || '').trim().toLowerCase(), mode: 'insensitive' }, role: 'VISITOR', isVerified: false },
+      select: { id: true, email: true, firstName: true },
+    });
+    if (user) await AuthService.sendVisitorVerification(user);
+    return { sent: true };
+  }
+
+  // Un visiteur demande à rejoindre le club : demande d'adhésion examinée par le bureau
+  static async requestMembership(userId, motivation) {
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, email: true, firstName: true, lastName: true, role: true, createdAt: true } });
+    if (!user) throw new BadRequestError('Compte introuvable');
+    if (user.role !== 'VISITOR') throw new BadRequestError('Tu es déjà adhérent du club.');
+    const pending = await prisma.membershipRequest.findFirst({ where: { userId, status: 'PENDING' } });
+    if (pending) return { status: 'PENDING', alreadyPending: true };
+    await prisma.membershipRequest.create({ data: { userId, motivation: motivation || '', status: 'PENDING' } });
+    await AuthService.notifyMembershipRequest(user, motivation);
+    return { status: 'PENDING', alreadyPending: false };
+  }
+
+  static async getMembershipStatus(userId) {
+    const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+    const last = await prisma.membershipRequest.findFirst({ where: { userId }, orderBy: { createdAt: 'desc' }, select: { status: true, createdAt: true, reviewedAt: true } });
+    return { isVisitor: user?.role === 'VISITOR', request: last };
   }
 
   // Connexion
@@ -130,6 +220,10 @@ class AuthService {
 
     if (!isPasswordValid) {
       throw new UnauthorizedError('Email ou mot de passe incorrect');
+    }
+
+    if (!user.isActive && user.role === 'VISITOR' && !user.isVerified) {
+      throw new ForbiddenError('Confirme d\'abord ton adresse e-mail : clique sur le lien que nous t\'avons envoyé (pense aux spams).');
     }
 
     if (!user.isActive) {

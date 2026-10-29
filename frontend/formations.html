@@ -432,7 +432,7 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-2"></script>
+    <script defer src="js/frontend-api.js?v=20261029-1"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
@@ -850,6 +850,26 @@
           const defaultEmail = currentUser ? (currentUser.email || '') : '';
           const defaultPhone = currentUser ? (currentUser.phone || '') : '';
 
+          // Formations réservées aux adhérents du club
+          const access = window.Api?.memberAccess ? window.Api.memberAccess() : 'member';
+          if (access !== 'member') {
+            overlay.innerHTML = `
+              <div class="preregister-modal" role="dialog" aria-modal="true">
+                <div class="preregister-header">
+                  <button type="button" class="dossier-close-btn" id="preregister-close-x" aria-label="Fermer">&times;</button>
+                  <h3>🎓 Réservé aux adhérents</h3>
+                  <p>${escapeHtml(f.title)}</p>
+                </div>
+                <div class="preregister-body">${window.Api.membersOnlyHtml(access, 'formations.html')}</div>
+              </div>`;
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.classList.add('active'), 10);
+            const closeGate = () => { overlay.classList.remove('active'); setTimeout(() => overlay.remove(), 250); };
+            overlay.querySelector('#preregister-close-x').addEventListener('click', closeGate);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) closeGate(); });
+            return;
+          }
+
           overlay.innerHTML = `
             <div class="preregister-modal" role="dialog" aria-modal="true">
               <div class="preregister-header">
@@ -861,7 +881,7 @@
                 ${currentUser ? `
                   <div class="preregister-notice">
                     <span>✨</span>
-                    <div><strong>Membre Connecté :</strong> Tes coordonnées ont été pré-remplies. Valide pour confirmer ta place instantanément.</div>
+                    <div><strong>Adhérent connecté :</strong> tes coordonnées ont été pré-remplies. Valide pour envoyer ton inscription.</div>
                   </div>
                 ` : `
                   <div class="preregister-notice" style="background:#eff6ff;border-color:#bfdbfe;color:#1e40af;">
@@ -927,7 +947,14 @@
                 await window.Api.formations.register(f.id, { name, email, phone, motivation });
               }
             } catch (apiErr) {
-              console.warn('API inscription indisponible, sauvegarde locale active :', apiErr);
+              // Inscription refusée ou serveur indisponible : ne jamais annoncer une place confirmée
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '✅ Valider mon inscription';
+              }
+              const msg = apiErr.message || 'Inscription impossible pour le moment. Réessaie dans quelques instants.';
+              if (window.toast?.error) window.toast.error(msg); else alert(msg);
+              return;
             }
 
             // 2. Sauvegarde persistante dans le navigateur
@@ -949,7 +976,7 @@
 
             closeRegModal();
 
-            const successMsg = `🎉 Félicitations ${name} ! Ta place pour « ${f.title} » est confirmée. Un email de récapitulatif vient d'être généré.`;
+            const successMsg = `🎉 Merci ${name} ! Ton inscription à « ${f.title} » est enregistrée : un e-mail récapitulatif t'a été envoyé et l'équipe du club confirmera ta place.`;
             if (window.toast) {
               window.toast.success(successMsg);
             } else {
@@ -1429,6 +1456,6 @@
       });
     </script>
 <script defer src="js/pwa.js?v=20261028-1"></script>
-<script defer src="js/guide-hint.js?v=20261029-1"></script>
+<script defer src="js/guide-hint.js?v=20261029-2"></script>
 </body>
 </html>

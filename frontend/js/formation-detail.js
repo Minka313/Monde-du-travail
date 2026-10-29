@@ -369,12 +369,14 @@
     overlay.className = 'fd-modal-overlay';
     let user = null;
     try { user = JSON.parse(localStorage.getItem('currentUser') || 'null'); } catch (_) { /* invité */ }
+    // Formations réservées aux adhérents du club
+    const access = window.Api?.memberAccess ? window.Api.memberAccess() : 'member';
     overlay.innerHTML = `
       <div class="fd-modal" role="dialog" aria-modal="true" aria-labelledby="fdRegTitle">
         <button type="button" class="fd-modal-close" data-close aria-label="Fermer">&times;</button>
         <p class="fd-modal-kicker">${esc(f.icon)} Inscription</p>
         <h2 id="fdRegTitle">${esc(f.title)}</h2>
-        ${db ? `
+        ${db && access !== 'member' ? window.Api.membersOnlyHtml(access, `formation-detail.html${location.search}`) : db ? `
           <form class="fd-reg-form" novalidate>
             <label>Nom complet<input name="name" required minlength="2" autocomplete="name" value="${esc(user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : '')}"></label>
             <label>E-mail<input name="email" type="email" required autocomplete="email" value="${esc(user?.email || '')}"></label>

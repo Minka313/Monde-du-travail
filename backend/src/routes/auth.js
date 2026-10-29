@@ -34,6 +34,12 @@ const registerSchema = z.object({
   }),
 });
 
+// Compte visiteur : mêmes règles de mot de passe, sans motivation d'adhésion
+const visitorSchema = z.object({ body: registerSchema.shape.body.omit({ motivation: true }) });
+const verifyEmailSchema = z.object({ body: z.object({ token: z.string().min(20).max(1000) }) });
+const resendVerificationSchema = z.object({ body: z.object({ email: z.string().email('Email invalide') }) });
+const membershipRequestSchema = z.object({ body: z.object({ motivation: z.string().trim().max(1000, 'Motivation trop longue (max 1000 caractères)').optional() }) });
+
 const loginSchema = z.object({
   body: z.object({
     email: z.string().email('Email invalide'),
@@ -112,6 +118,11 @@ const resetPasswordSchema = z.object({
 
 // Routes
 router.post('/register', registerLimiter, validate(registerSchema), authController.register);
+router.post('/register-visitor', registerLimiter, validate(visitorSchema), authController.registerVisitor);
+router.post('/verify-email', loginLimiter, validate(verifyEmailSchema), authController.verifyEmail);
+router.post('/verify-email/resend', registerLimiter, validate(resendVerificationSchema), authController.resendVerification);
+router.get('/membership', authenticate, authController.getMembershipStatus);
+router.post('/membership', authenticate, validate(membershipRequestSchema), authController.requestMembership);
 router.post('/login', loginLimiter, validate(loginSchema), authController.login);
 router.post('/login-2fa', loginLimiter, validate(login2FASchema), authController.login2FA);
 router.post('/login-2fa/resend', loginLimiter, authController.resendLogin2FA);

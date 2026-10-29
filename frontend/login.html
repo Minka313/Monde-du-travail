@@ -102,7 +102,7 @@
                         <span class="tab-icon">🔑</span> Connexion
                     </button>
                     <button type="button" class="auth-tab-btn" id="tabBtnRegister" role="tab" aria-selected="false" aria-controls="infoBox">
-                        <span class="tab-icon">✍️</span> Demande d'adhésion
+                        <span class="tab-icon">✍️</span> Créer un compte
                     </button>
                 </div>
 
@@ -128,23 +128,27 @@
 
                         <div class="auth-switch-prompt">
                             <span>Pas encore membre ?</span>
-                            <button type="button" id="btnSwitchToRegister" class="btn-link-register">Faire une demande d'adhésion &rarr;</button>
+                            <button type="button" id="btnSwitchToRegister" class="btn-link-register">Pas encore de compte ? Créer un compte gratuit &rarr;</button>
                         </div>
 
                     </div>
 
                     <div class="info-box" id="infoBox" role="tabpanel" aria-labelledby="tabBtnRegister">
-                        <h2>Pas encore membre ?</h2>
-                        <p>Rejoins une communauté dynamique de jeunes qui se préparent au monde professionnel.</p>
+                        <h2>Pas encore de compte ?</h2>
+                        <p>Deux façons de nous rejoindre, selon ce que tu cherches.</p>
                         <ul class="mission-list">
-                            <li>Accès au forum d'échange</li>
-                            <li>Formations exclusives en leadership</li>
-                            <li>Conseils en orientation personnalisés</li>
+                            <li><strong>Compte gratuit</strong>, actif dès que ton e-mail est confirmé : poser tes questions au forum, suivre des discussions, compléter ton profil d'orientation.</li>
+                            <li><strong>Adhésion au club</strong>, validée par le bureau : en plus, les formations et le mentorat.</li>
                         </ul>
-                        <p><small>Note : Toute inscription doit être validée manuellement par nos administrateurs.</small></p>
-                        <button type="button" id="btnRegister" class="btn btn-register">Envoyer une demande d'adhésion</button>
+                        <p><small>Tu peux commencer par le compte gratuit et demander l'adhésion plus tard, depuis « Mon espace ».</small></p>
+                        <button type="button" id="btnRegister" class="btn btn-register">Créer mon compte</button>
 
                         <form id="registerForm" novalidate autocomplete="off" style="display:none; margin-top:1rem; text-align:left;">
+                            <fieldset class="form-group reg-kind" style="border:0;padding:0;margin:0 0 1rem;">
+                                <legend class="form-label">Type de compte</legend>
+                                <label class="reg-kind-option"><input type="radio" name="regKind" value="visitor" checked> <span><strong>Compte gratuit</strong> · forum, alertes, profil d'orientation</span></label>
+                                <label class="reg-kind-option"><input type="radio" name="regKind" value="member"> <span><strong>Adhérer au club</strong> · en plus formations et mentorat (validé par le bureau)</span></label>
+                            </fieldset>
                             <div class="form-group">
                                 <label for="regFirstName" class="form-label">Prénom</label>
                                 <input type="text" id="regFirstName" class="form-input" placeholder="Aminata" required minlength="2">
@@ -162,7 +166,7 @@
                                 <input type="password" id="regPassword" class="form-input" placeholder="••••••••" required minlength="8" autocomplete="new-password">
                                 <small>8 caractères minimum, avec au moins une lettre et un chiffre.</small>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" id="regMotivationGroup" hidden>
                                 <label for="regMotivation" class="form-label">Ta motivation (facultatif)</label>
                                 <textarea id="regMotivation" class="form-input" rows="3" placeholder="Pourquoi souhaites-tu rejoindre le club ?"></textarea>
                             </div>
@@ -173,11 +177,11 @@
                                 </label>
                             </div>
                             <span class="form-error" id="registerError" role="alert"></span>
-                            <button type="submit" class="btn btn-primary btn-full">Envoyer ma demande</button>
+                            <button type="submit" class="btn btn-primary btn-full" id="registerSubmitBtn">Créer mon compte gratuit</button>
                         </form>
 
                         <div class="auth-switch-prompt auth-switch-prompt-light" id="promptSwitchToLogin">
-                            <span>Déjà membre du club ?</span>
+                            <span>Déjà un compte ?</span>
                             <button type="button" id="btnSwitchToLogin" class="btn-link-login-switch">Se connecter &rarr;</button>
                         </div>
                     </div>
@@ -318,11 +322,15 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-2"></script>
+    <script defer src="js/frontend-api.js?v=20261029-1"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
     <style>
+    /* Choix du type de compte */
+    .reg-kind-option { display: flex; gap: 0.55rem; align-items: flex-start; padding: 0.6rem 0.75rem; margin-top: 0.4rem; border: 1px solid var(--border-subtle, #e2e8f0); border-radius: 10px; cursor: pointer; font-size: 0.9rem; line-height: 1.45; }
+    .reg-kind-option input { margin-top: 0.2rem; }
+    .reg-kind-option:has(input:checked) { border-color: #f5a623; background: rgba(245, 166, 35, 0.08); }
       /* Toggle mot de passe */
       .password-wrapper {
         position: relative;
@@ -595,7 +603,28 @@
             const status = error.status;
             const msg = error.message || '';
 
-            if (status === 403 || msg.includes('pas encore activé') || msg.includes('attente')) {
+            if (msg.includes('Confirme')) {
+              showLoginError("✉️ Confirme d'abord ton adresse e-mail : clique sur le lien « Activer mon compte » reçu par e-mail (pense aux spams).");
+              const errorBox = document.querySelector('#loginForm .form-error');
+              if (errorBox) {
+                const resend = document.createElement('button');
+                resend.type = 'button';
+                resend.className = 'btn-link-forgot';
+                resend.style.cssText = 'display:block;margin-top:6px;';
+                resend.textContent = 'Renvoyer le lien d\'activation';
+                resend.addEventListener('click', async () => {
+                  resend.disabled = true;
+                  try {
+                    const res = await window.Api.auth.resendVerification(cleanEmail);
+                    resend.textContent = (res && res.message) || 'Lien renvoyé.';
+                  } catch (e) {
+                    resend.textContent = e.message || 'Envoi impossible pour le moment.';
+                    resend.disabled = false;
+                  }
+                });
+                errorBox.appendChild(resend);
+              }
+            } else if (status === 403 || msg.includes('pas encore activé') || msg.includes('attente')) {
               showLoginError("⏳ Ton compte n'est pas encore activé. Ta demande d'adhésion est en cours d'examen par notre équipe d'administration. Tu recevras un email dès son approbation.");
             } else if (status === 429 || msg.includes('Trop de tentatives') || msg.includes('patienter')) {
               showLoginError("🛡️ Trop de tentatives de connexion infructueuses. Par mesure de sécurité, patiente quelques minutes avant de réessayer.");
@@ -649,7 +678,15 @@
             if (!window.Api || !window.Api.auth || typeof window.Api.auth.register !== 'function') {
               throw new Error('Le service est temporairement indisponible. Réessayez dans quelques instants.');
             }
-            await window.Api.auth.register(data);
+            const isVisitor = data.kind !== 'member';
+            const { kind, ...payload } = data;
+            if (isVisitor) {
+              delete payload.motivation;
+              await window.Api.auth.registerVisitor(payload);
+            } else {
+              await window.Api.auth.register(payload);
+            }
+            try { window.AnalyticsTracker?.track?.('account_created', 'account', isVisitor ? 'visitor' : 'member', {}); } catch (_) { /* suivi facultatif */ }
 
             // Succès : masquer le formulaire et afficher confirmation
             const registerForm = document.getElementById('registerForm');
@@ -666,10 +703,11 @@
               successDiv.style.cssText = 'background:#f0fdf4;border:1px solid #86efac;border-radius:0.75rem;padding:1.25rem;margin-top:1rem;text-align:center;';
               successDiv.innerHTML = `
                 <div style="font-size:2rem;margin-bottom:0.5rem;">✅</div>
-                <h3 style="margin:0 0 0.5rem 0;color:#15803d;font-size:1rem;">Demande envoyée !</h3>
+                <h3 style="margin:0 0 0.5rem 0;color:#15803d;font-size:1rem;">${isVisitor ? 'Compte créé !' : 'Demande envoyée !'}</h3>
                 <p style="margin:0;color:#166534;font-size:0.875rem;line-height:1.5;">
-                  Ta demande d'adhésion a bien été reçue.<br>
-                  Un administrateur l'examinera et tu pourras te connecter dès qu'elle sera validée.
+                  ${isVisitor
+                    ? 'Ouvre l\'e-mail que nous venons de t\'envoyer et clique sur « Activer mon compte » (pense à regarder dans les spams). Tu pourras ensuite te connecter.'
+                    : 'Ta demande d\'adhésion a bien été reçue.<br>Un administrateur l\'examinera et tu pourras te connecter dès qu\'elle sera validée.'}
                 </p>
               `;
               infoBox.appendChild(successDiv);
@@ -880,6 +918,37 @@
             }).catch(function() {});
           }
 
+          // Type de compte : la motivation ne concerne que l'adhésion au club
+          const syncRegKind = () => {
+            const member = (document.querySelector('input[name="regKind"]:checked') || {}).value === 'member';
+            const group = document.getElementById('regMotivationGroup');
+            if (group) group.hidden = !member;
+            const btn = document.getElementById('registerSubmitBtn');
+            if (btn) btn.textContent = member ? 'Envoyer ma demande d\'adhésion' : 'Créer mon compte gratuit';
+          };
+          document.querySelectorAll('input[name="regKind"]').forEach((r) => r.addEventListener('change', syncRegKind));
+          if (window.location.hash === '#adhesion') {
+            const memberRadio = document.querySelector('input[name="regKind"][value="member"]');
+            if (memberRadio) memberRadio.checked = true;
+          }
+          syncRegKind();
+
+          // Lien d'activation reçu par e-mail (login?verifier=…)
+          const verifyToken = new URLSearchParams(window.location.search).get('verifier');
+          if (verifyToken && window.Api?.auth?.verifyEmail) {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('verifier');
+            window.history.replaceState(null, '', url);
+            window.Api.auth.verifyEmail(verifyToken).then((res) => {
+              const el = document.querySelector('#loginForm .form-error');
+              if (el) {
+                el.innerHTML = `<span>✅ ${escapeHtml((res && res.message) || 'Adresse confirmée : tu peux te connecter.')}</span>`;
+                el.style.cssText = 'display:block;background:#f0fdf4;border:1px solid #86efac;color:#166534;padding:10px 14px;border-radius:8px;margin-top:10px;font-size:0.88rem;line-height:1.4;';
+              }
+              document.getElementById('loginEmail')?.focus();
+            }).catch((err) => showLoginError(err.message || 'Lien expiré ou invalide.'));
+          }
+
           // Détection d'ancre #adhesion ou #register au chargement
           if (window.location.hash === '#adhesion' || window.location.hash === '#register' || window.location.search.includes('action=register')) {
             setAuthTab('register');
@@ -911,6 +980,7 @@
                 email: (document.getElementById('regEmail').value || '').trim(),
                 password: document.getElementById('regPassword').value || '',
                 motivation: (document.getElementById('regMotivation').value || '').trim(),
+                kind: (document.querySelector('input[name="regKind"]:checked') || {}).value || 'visitor',
               };
 
               function showRegFieldError(message, inputToFocus) {
@@ -1074,6 +1144,6 @@
       })();
     </script>
 <script defer src="js/pwa.js?v=20261028-1"></script>
-<script defer src="js/guide-hint.js?v=20261029-1"></script>
+<script defer src="js/guide-hint.js?v=20261029-2"></script>
 </body>
 </html>

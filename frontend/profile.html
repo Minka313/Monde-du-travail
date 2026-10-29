@@ -126,6 +126,18 @@
                         <a href="mentor.html" class="btn btn-primary btn-sm">Ouvrir mon espace mentor &rarr;</a>
                     </div>
 
+                    <!-- Compte visiteur : rejoindre le club -->
+                    <div class="profile-box profile-join-box" id="profileJoinBox" hidden>
+                        <h2><span>🤝</span> Rejoindre le club</h2>
+                        <p style="margin:0 0 0.75rem;color:var(--color-gray-700);font-size:0.92rem;line-height:1.6;">Ton compte gratuit te donne accès au forum, aux alertes et à ton profil d'orientation. En devenant adhérent, tu pourras aussi t'inscrire aux <strong>formations</strong> et bénéficier du <strong>mentorat</strong>. Ta demande est examinée par le bureau du club.</p>
+                        <div id="profileJoinBody">
+                            <label for="profileJoinMotivation" style="display:block;font-weight:600;font-size:0.88rem;margin-bottom:0.35rem;">Pourquoi veux-tu rejoindre le club ? (facultatif)</label>
+                            <textarea id="profileJoinMotivation" class="form-input" rows="3" maxlength="1000" style="width:100%;box-sizing:border-box;" placeholder="Ex. : je prépare un concours et je voudrais suivre les formations du club."></textarea>
+                            <button type="button" class="btn btn-primary btn-sm" id="profileJoinBtn" style="margin-top:0.6rem;">Envoyer ma demande d'adhésion</button>
+                        </div>
+                        <p id="profileJoinStatus" role="status" style="margin:0.6rem 0 0;font-size:0.88rem;"></p>
+                    </div>
+
                     <!-- Formations réservées -->
                     <div class="profile-box">
                         <h2><span>🎓</span> Mes Inscriptions aux Formations</h2>
@@ -368,7 +380,7 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
 <script defer src="js/config.js"></script>
-<script defer src="js/frontend-api.js?v=20261028-2"></script>
+<script defer src="js/frontend-api.js?v=20261029-1"></script>
 <script defer src="js/analytics-tracker.js"></script>
 <script defer src="js/layout.js"></script>
 <script defer src="js/main.js?v=20261028-3"></script>
@@ -409,7 +421,9 @@
     document.getElementById('profileFullName').textContent = fullName;
     document.getElementById('profileEmail').textContent = email;
     document.getElementById('sideEmailText').textContent = email;
-    document.getElementById('sideRoleText').textContent = user.role === 'ULTRA_ADMIN' ? 'Administrateur' : 'Membre Adhérent';
+    const isVisitor = user.role === 'VISITOR';
+    document.getElementById('sideRoleText').textContent = user.role === 'ULTRA_ADMIN' ? 'Administrateur' : (isVisitor ? 'Compte gratuit' : 'Membre Adhérent');
+    document.getElementById('sideStatusText').textContent = isVisitor ? 'Visiteur' : 'Adhérent';
 
     function renderBigAvatar(url) {
       const bigAvatarEl = document.getElementById('profileBigAvatar');
@@ -426,9 +440,45 @@
     if (statusBadge) {
       if (user.role === 'ULTRA_ADMIN') {
         statusBadge.innerHTML = '<span class="profile-status-pill status-active">🛡️ Administrateur</span>';
+      } else if (isVisitor) {
+        statusBadge.innerHTML = '<span class="profile-status-pill">👋 Compte gratuit</span>';
       } else {
         statusBadge.innerHTML = '<span class="profile-status-pill status-active">✨ Membre Actif</span>';
       }
+    }
+
+    // 2 ter. Compte visiteur : demande d'adhésion au club
+    if (isVisitor) {
+      const joinBox = document.getElementById('profileJoinBox');
+      const joinBody = document.getElementById('profileJoinBody');
+      const joinStatus = document.getElementById('profileJoinStatus');
+      joinBox.hidden = false;
+      const showPending = () => {
+        joinBody.hidden = true;
+        joinStatus.style.color = '#92400e';
+        joinStatus.textContent = '⏳ Ta demande d\'adhésion est en cours d\'examen par le bureau. Tu recevras un e-mail dès qu\'elle sera validée.';
+      };
+      window.Api.auth.getMembership().then((res) => {
+        const req = res && res.data && res.data.request;
+        if (req && req.status === 'PENDING') showPending();
+        if (req && req.status === 'REJECTED') {
+          joinStatus.style.color = 'var(--color-gray-700)';
+          joinStatus.textContent = 'Ta précédente demande n\'a pas été retenue. Tu peux en envoyer une nouvelle en précisant ta motivation.';
+        }
+      }).catch(() => {});
+      document.getElementById('profileJoinBtn').addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
+        btn.disabled = true;
+        try {
+          await window.Api.auth.requestMembership(document.getElementById('profileJoinMotivation').value.trim());
+          try { window.AnalyticsTracker?.track?.('membership_requested', 'account', 'visitor', {}); } catch (_) { /* suivi facultatif */ }
+          showPending();
+        } catch (err) {
+          joinStatus.style.color = '#b91c1c';
+          joinStatus.textContent = err.message || 'Envoi impossible pour le moment.';
+          btn.disabled = false;
+        }
+      });
     }
 
     // 2 bis. Poste au bureau
@@ -909,6 +959,6 @@
   });
 </script>
 <script defer src="js/pwa.js?v=20261028-1"></script>
-<script defer src="js/guide-hint.js?v=20261029-1"></script>
+<script defer src="js/guide-hint.js?v=20261029-2"></script>
 </body>
 </html>

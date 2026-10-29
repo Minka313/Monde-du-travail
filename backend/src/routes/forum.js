@@ -84,15 +84,15 @@ router.get('/', optionalAuth, forumController.getAllTopics);
 router.get('/categories', forumController.getCategories);
 router.get('/tags/popular', forumController.getPopularTags);
 router.get('/linked', validate(z.object({ query: z.object({ type: z.enum(CONTEXT_TYPES), id: z.string().regex(/^[A-Za-z0-9_-]{1,120}$/) }) })), forumController.getLinkedTopics);
-router.get('/profile', authenticate, authorizeMember, forumController.getForumProfile);
-router.put('/profile', authenticate, authorizeMember, validate(forumProfileSchema), forumController.updateForumProfile);
+router.get('/profile', authenticate, forumController.getForumProfile);
+router.put('/profile', authenticate, validate(forumProfileSchema), forumController.updateForumProfile);
 router.get('/community/spotlight', forumController.getCommunitySpotlight);
 router.get('/unanswered', authenticate, authorizeMember, forumController.getUnansweredTopics);
 router.get('/:id', optionalAuth, forumController.getTopicById);
 router.get('/:id/similar', forumController.getSimilarTopics);
 
-// Routes protégées membres et admin
-router.use(authenticate, authorizeMember);
+// Routes protégées : adhérents, équipe et comptes visiteurs (le forum est ouvert à tous les comptes)
+router.use(authenticate);
 
 router.post('/', validate(topicSchema), forumController.createTopic);
 router.put('/:id', validate(topicUpdateSchema), forumController.updateTopic);

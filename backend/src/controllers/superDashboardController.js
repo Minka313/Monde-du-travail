@@ -120,9 +120,10 @@ class SuperDashboardController {
         maintenanceSetting,
         visitorStats,
         mostActiveUsers,
+        visitorAccounts,
       ] = await Promise.all([
         prisma.user.count(),
-        prisma.user.count({ where: { isActive: true } }),
+        prisma.user.count({ where: { isActive: true, role: { not: 'VISITOR' } } }),
         prisma.user.count({ where: { role: { in: ['ADMIN', 'ULTRA_ADMIN'] } } }),
         prisma.post.count(),
         prisma.topic.count(),
@@ -148,13 +149,16 @@ class SuperDashboardController {
         prisma.setting.findUnique({ where: { key: 'platform.maintenanceMode' } }),
         AnalyticsService.getVisitorStats().catch(() => null),
         AnalyticsService.getMostActiveUsers(6).catch(() => []),
+        prisma.user.count({ where: { isActive: true, role: 'VISITOR' } }),
       ]);
 
       const isMaintenance = maintenanceSetting?.value === 'true';
 
       const data = {
         totalUsers,
+        // activeUsers : adhérents actifs ; visitorAccounts : comptes gratuits actifs (comptés à part)
         activeUsers,
+        visitorAccounts,
         totalAdmins,
         totalMentors,
         totalPosts,

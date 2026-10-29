@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const formationController = require('../controllers/formationController');
-const { authenticate, authorize, optionalAuth } = require('../middleware/auth');
+const { authenticate, authorize, authorizeMember, optionalAuth } = require('../middleware/auth');
 const AdminApprovalMiddleware = require('../middleware/adminApproval');
 const { requireModulePermission } = require('../middleware/moduleScope');
 const requireReauth = require('../middleware/reauth');
@@ -57,7 +57,8 @@ router.get('/', formationController.getPublishedFormations);
 router.get('/categories', formationController.getCategories);
 
 // Inscription publique à une session de formation
-router.post('/:id/register', optionalAuth, validate(registrationSchema), formationController.registerCandidate);
+// Formations réservées aux adhérents du club (pas aux comptes visiteurs ni aux anonymes)
+router.post('/:id/register', authenticate, authorizeMember, validate(registrationSchema), formationController.registerCandidate);
 
 // Liste admin (filtres statut / mes créations / recherche) — avant /:id
 router.get('/admin/list', ...adminGate, authorize('formation.read'), formationController.getFormationsForAdmin);

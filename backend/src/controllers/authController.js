@@ -22,6 +22,58 @@ class AuthController {
     }
   }
 
+  static async registerVisitor(req, res, next) {
+    try {
+      const user = await authService.registerVisitor(req.body);
+      res.status(201).json({
+        success: true,
+        message: 'Compte créé ! Ouvre l\'e-mail que nous venons d\'envoyer et clique sur le lien pour l\'activer.',
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async verifyEmail(req, res, next) {
+    try {
+      const data = await authService.verifyVisitorEmail(req.body.token);
+      res.json({ success: true, message: 'Adresse confirmée : ton compte est actif, tu peux te connecter.', data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async resendVerification(req, res, next) {
+    try {
+      await authService.resendVisitorVerification(req.body.email);
+      res.json({ success: true, message: 'Si un compte en attente correspond à cette adresse, un nouveau lien vient d\'être envoyé.' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async getMembershipStatus(req, res, next) {
+    try {
+      res.json({ success: true, data: await authService.getMembershipStatus(req.user.id) });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async requestMembership(req, res, next) {
+    try {
+      const data = await authService.requestMembership(req.user.id, req.body.motivation);
+      res.status(data.alreadyPending ? 200 : 201).json({
+        success: true,
+        message: data.alreadyPending ? 'Ta demande d\'adhésion est déjà en cours d\'examen.' : 'Demande envoyée ! Le bureau du club va l\'examiner.',
+        data,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // Connexion
   static async login(req, res, next) {
     try {

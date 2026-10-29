@@ -629,6 +629,7 @@
     const superData = superStatsRes?.data || {};
 
     const activeMembers = superData.activeUsers ?? 0;
+    const visitorAccounts = superData.visitorAccounts ?? 0;
     const totalUsers = superData.totalUsers ?? activeMembers;
     const publishedFormations = superData.publishedFormations ?? 0;
     const draftFormations = superData.draftFormations ?? 0;
@@ -774,7 +775,8 @@
               <span class="dash-kpi-label"><span class="dash-kpi-icon">👥</span> Membres & Présence</span>
               <span class="dash-kpi-arrow">↓</span>
             </div>
-            <div class="dash-kpi-value">${activeMembers} <span style="font-size:0.92rem;font-weight:500;color:var(--color-muted);">actifs</span></div>
+            <div class="dash-kpi-value">${activeMembers} <span style="font-size:0.92rem;font-weight:500;color:var(--color-muted);">adhérents</span></div>
+            <div style="font-size:0.85rem;color:var(--color-muted);margin-top:0.2rem;">+ ${visitorAccounts} compte${visitorAccounts > 1 ? 's' : ''} gratuit${visitorAccounts > 1 ? 's' : ''} · communauté : ${activeMembers + visitorAccounts}</div>
             <div class="dash-kpi-footer">
               <span>Top présent : ${escapeHtml(mostActiveUsers[0]?.fullName || '—')}</span>
               <span class="badge badge-success">Présence</span>
@@ -3647,7 +3649,7 @@
               <option value="MEMBER" ${userFilters.role === 'MEMBER' ? 'selected' : ''}>MEMBER</option>
               <option value="ADMIN" ${userFilters.role === 'ADMIN' ? 'selected' : ''}>ADMIN</option>
               <option value="ULTRA_ADMIN" ${userFilters.role === 'ULTRA_ADMIN' ? 'selected' : ''}>ULTRA_ADMIN</option>
-              <option value="VISITOR" ${userFilters.role === 'VISITOR' ? 'selected' : ''}>VISITOR</option>
+              <option value="VISITOR" ${userFilters.role === 'VISITOR' ? 'selected' : ''}>Compte gratuit</option>
             </select>
           </label>
           <label>Statut

@@ -33,6 +33,8 @@ class StatsController {
         articles: c.articles,
         totalOrientationGuides: c.guides,
         members: c.members,
+        // Communauté : adhérents + comptes gratuits (toutes les personnes inscrites et actives)
+        community: c.members + c.visitorAccounts,
         mentors: c.mentors,
         topics: c.topics,
         replies: c.replies,

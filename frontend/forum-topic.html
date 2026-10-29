@@ -244,7 +244,7 @@
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
     <script defer src="js/config.js"></script>
-    <script defer src="js/frontend-api.js?v=20261028-5"></script>
+    <script defer src="js/frontend-api.js?v=20261029-1"></script>
     <script defer src="js/layout.js"></script>
     <script defer src="js/analytics-tracker.js"></script>
     <script defer src="js/main.js?v=20261028-3"></script>
@@ -632,7 +632,12 @@
                 </div>
               ` : !token ? `
                 <div class="forum-login-prompt" style="margin-top: 2.5rem; padding: 1.5rem; text-align: center; background: var(--forum-card-bg); border: 1px solid var(--forum-border); border-radius: 10px;">
-                  <p style="margin: 0;">Rejoignez la discussion ! Vous devez être <a href="login.html" style="font-weight: 700; color: var(--forum-accent);">connecté</a> pour répondre.</p>
+                  <p style="margin: 0 0 0.5rem; font-weight: 700;">💬 Rejoins la conversation</p>
+                  <p style="margin: 0 0 1rem; color: var(--forum-muted);">Un compte gratuit suffit pour répondre, poser tes propres questions et être prévenu des nouvelles réponses.</p>
+                  <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                    <a class="btn btn-primary btn-sm" href="login.html?redirect=${encodeURIComponent(`forum-topic.html?id=${topic.id}`)}#register" data-nudge="forum-reply">Créer mon compte gratuit</a>
+                    <a class="btn btn-outline btn-sm" href="login.html?redirect=${encodeURIComponent(`forum-topic.html?id=${topic.id}`)}">J'ai déjà un compte</a>
+                  </div>
                 </div>
               ` : `
                 <div class="forum-login-prompt" style="margin-top: 2.5rem; padding: 1.5rem; text-align: center; background: var(--forum-card-bg); border: 1px solid var(--forum-border); border-radius: 10px;">
@@ -1002,6 +1007,6 @@
       });
     </script>
 <script defer src="js/pwa.js?v=20261028-1"></script>
-<script defer src="js/guide-hint.js?v=20261029-1"></script>
+<script defer src="js/guide-hint.js?v=20261029-2"></script>
 </body>
 </html>

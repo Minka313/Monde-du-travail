@@ -290,6 +290,11 @@ return headers;
         method: 'POST',
         body: JSON.stringify(userData),
       }),
+      registerVisitor: (userData) => apiRequest('/auth/register-visitor', { method: 'POST', body: JSON.stringify(userData) }),
+      verifyEmail: (token) => apiRequest('/auth/verify-email', { method: 'POST', body: JSON.stringify({ token }) }),
+      resendVerification: (email) => apiRequest('/auth/verify-email/resend', { method: 'POST', body: JSON.stringify({ email }) }),
+      getMembership: () => apiRequestWithRefresh('/auth/membership'),
+      requestMembership: (motivation) => apiRequestWithRefresh('/auth/membership', { method: 'POST', body: JSON.stringify({ motivation }) }),
       login2FA: (tempToken, code) => apiRequestWithRefresh('/auth/login-2fa', { method: 'POST', body: JSON.stringify({ tempToken, code }) }),
       resend2FA: (tempToken) => apiRequestWithRefresh('/auth/login-2fa/resend', { method: 'POST', body: JSON.stringify({ tempToken }) }),
       login: (email, password) => apiRequestWithRefresh('/auth/login', {
@@ -530,5 +535,25 @@ return headers;
     setToken,
     removeToken,
     isLoggedIn: () => !!getToken(),
+    // Niveau d'accès : 'member' (adhérent, équipe), 'visitor' (compte gratuit) ou 'anonymous'
+    memberAccess: () => {
+      const token = getToken();
+      if (!token) return 'anonymous';
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        return payload.role === 'VISITOR' ? 'visitor' : 'member';
+      } catch (_) {
+        return 'anonymous';
+      }
+    },
+    // Message « réservé aux adhérents » (formations, mentorat), avec le bon bouton selon le compte
+    membersOnlyHtml: (access, returnTo) => {
+      const back = encodeURIComponent(returnTo || '');
+      return access === 'visitor'
+        ? `<p>Les formations sont réservées aux <strong>adhérents du club</strong>. Ton compte gratuit te permet déjà le forum et les alertes : demande ton adhésion en un clic depuis « Mon espace ».</p>
+           <a href="profile.html#profileJoinBox" class="btn btn-primary">Demander mon adhésion</a>`
+        : `<p>Les formations sont réservées aux <strong>adhérents du club</strong>. Connecte-toi, ou fais ta demande d'adhésion : le bureau l'examine rapidement.</p>
+           <div style="display:flex;gap:0.5rem;flex-wrap:wrap;"><a href="login.html${back ? `?redirect=${back}` : ''}" class="btn btn-primary">Se connecter</a><a href="login.html#adhesion" class="btn btn-outline">Adhérer au club</a></div>`;
+    },
   };
 })();

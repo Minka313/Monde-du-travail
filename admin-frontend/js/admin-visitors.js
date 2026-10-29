@@ -94,6 +94,7 @@
           ${tile('Alertes e-mail actives', nf.format(key.alerts.active), `${nf.format(key.alerts.confirmed)} confirmées sur ${nf.format(key.alerts.requested)} demandes`)}
           ${tile('Application installée', nf.format(Math.max(a.installed, a.accepted)), `${nf.format(a.prompts)} invitations · ${nf.format(a.dismissed)} refus`)}
           ${tile('E-mails envoyés', nf.format(key.emails.sent), key.emails.failed ? `⚠️ ${nf.format(key.emails.failed)} en échec` : 'aucun échec')}
+          ${key.accounts ? tile('Comptes gratuits créés', nf.format(key.accounts.newVisitorAccounts), `${nf.format(key.accounts.nudgeClicks)} clics sur ${nf.format(key.accounts.nudgeViews)} invitations · ${nf.format(key.accounts.membershipRequests)} demandes d'adhésion`) : ''}
         </div>
       </div>
       <div class="vz-grid vz-grid-wide" style="grid-template-columns:1fr;">
