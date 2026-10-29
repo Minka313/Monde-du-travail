@@ -4,9 +4,14 @@
  * Repères : body[data-print="dossier"], .print-only (en-tête et signature), [data-print-title] (titres de sections).
  */
 
+/* Marges imprimées aux couleurs du club : elles remplacent le titre et l'adresse que le
+   navigateur ajoute sinon en haut et en bas de chaque page (option « En-têtes et pieds de page »). */
 @page {
   size: A4;
   margin: 14mm 13mm 16mm;
+  @top-right { content: 'Le Monde du Travail · WOW'; font: 600 7.5pt Inter, 'Segoe UI', sans-serif; color: #b7791f; letter-spacing: .08em; }
+  @bottom-left { content: 'lemondedutravail.org'; font: 7.5pt Inter, 'Segoe UI', sans-serif; color: #64748b; }
+  @bottom-right { content: 'Page ' counter(page) ' / ' counter(pages); font: 7.5pt Inter, 'Segoe UI', sans-serif; color: #64748b; }
 }
 
 body[data-print="dossier"] {

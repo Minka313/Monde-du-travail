@@ -273,9 +273,10 @@
     .sum-table td { padding: 7px 8px; border-bottom: 1px solid var(--line); }
 
     /* Pages suivantes : marge haute ; première page : en-tête à fond perdu */
-    @page :first { margin-top: 0; }
+    @page :first { margin-top: 0; @top-right { content: none; } }
     @page { size: A4; margin: 12mm 0 14mm;
-      @bottom-left { content: 'Le Monde du Travail · WOW — document interne du club'; font: 7.5pt Inter, sans-serif; color: #64748b; padding-left: 16mm; }
+      @top-right { content: 'Le Monde du Travail · WOW'; font: 600 7.5pt Inter, sans-serif; color: #b7791f; letter-spacing: .08em; padding-right: 16mm; }
+      @bottom-left { content: 'lemondedutravail.org · document interne du club'; font: 7.5pt Inter, sans-serif; color: #64748b; padding-left: 16mm; }
       @bottom-right { content: 'Page ' counter(page) ' / ' counter(pages); font: 7.5pt Inter, sans-serif; color: #64748b; padding-right: 16mm; }
     }
     @media print {
