@@ -315,6 +315,14 @@
     $('visioFormationTitle').textContent = s.title || 'Formation';
     document.title = `${s.title} — Salle virtuelle | Le Monde du Travail`;
     $('visioObjectivesContent').textContent = s.objectives || 'Les objectifs seront présentés par l\'animateur en début de session.';
+    // Séance de mentorat : thème et objectifs du binôme, pas de programme en modules
+    if (s.kind === 'seance') {
+      const heading = $('visioObjectivesContent').previousElementSibling;
+      if (heading) heading.textContent = '🎯 Thème et objectifs de la séance';
+      $('visioObjectivesContent').style.whiteSpace = 'pre-line';
+      const modules = $('visioSyllabusList').parentElement;
+      if (modules) modules.hidden = true;
+    }
     $('visioDuration').textContent = s.duration || 'Session en direct';
     $('visioLocation').textContent = s.location || 'En ligne';
     let syllabus = s.syllabus || [];
