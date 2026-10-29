@@ -45,6 +45,11 @@ const MentoringController = {
   stopSessionVisio: handle((req) => MentoringService.setSessionVisio(req.user, req.params.id, false), { message: 'Salle virtuelle fermée' }),
   joinSessionVisio: handle((req) => MentoringService.joinSessionVisio(req.user, req.params.id, req.body?.name)),
 
+  submitSessionFeedback: handle((req) => MentoringService.submitSessionFeedback(req.user, req.params.id, req.body), { message: 'Merci pour ton avis !' }),
+  reportConcern: handle((req) => MentoringService.reportConcern(req.user, req.params.id, req.body.message), { status: 201, message: 'Ton signalement est transmis à la Présidence, en toute confidentialité.' }),
+  listConcerns: handle((req) => MentoringService.listConcerns(req.user)),
+  resolveConcern: handle((req) => MentoringService.resolveConcern(req.user, req.params.id, req.body.resolution, meta(req)), { message: 'Signalement traité' }),
+
   listApplications: handle((req) => MentorApplicationService.list(req.user)),
   decideApplication: handle((req) => MentorApplicationService.decide(req.user, req.params.id, req.body, meta(req)), { message: 'Décision enregistrée : le candidat est prévenu par e-mail' }),
 

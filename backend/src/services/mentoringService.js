@@ -49,6 +49,8 @@ function sessionDto(session) {
     topic: session.topic,
     status: session.status,
     visioLive: session.visioStatus === 'LIVE',
+    menteeRating: session.menteeRating ?? null,
+    feedbackAt: session.feedbackAt || null,
     visioUrl: session.format === 'Visio du club' ? `/visio.html?seance=${session.id}` : null,
   };
 }
@@ -199,9 +201,19 @@ class MentoringService {
       president ? prisma.mentorApplication.count({ where: { status: 'PENDING' } }) : 0,
     ]);
 
+    // Note moyenne donnée par les mentorés à chaque binôme (le commentaire reste à la Présidence)
+    const ratings = await prisma.mentorSession.groupBy({
+      by: ['mentorshipId'],
+      where: { mentorshipId: { in: mentorships.map((m) => m.id) }, menteeRating: { not: null } },
+      _avg: { menteeRating: true },
+      _count: { menteeRating: true },
+    });
+    const ratingOf = Object.fromEntries(ratings.map((r) => [r.mentorshipId, { average: Math.round((r._avg.menteeRating || 0) * 10) / 10, count: r._count.menteeRating }]));
+
     return {
       isMentor: isMentor(user),
       isPresident: president,
+      stats: president ? await MentoringService.presidentStats(mentorships, pendingRequests) : null,
       templates: MENTOR_TEMPLATES,
       unreadMessages: unread,
       pendingReview: toReview,
@@ -221,6 +233,7 @@ class MentoringService {
         reportsCount: m.reports.length,
         lastReportAt: m.reports[0]?.createdAt || null,
         upcomingSessions: m.sessions.map(sessionDto),
+        rating: ratingOf[m.id] || null,
       })),
       sessionFormats: SESSION_FORMATS,
       formations: trainings.map((f) => ({
@@ -359,6 +372,130 @@ class MentoringService {
     return updated;
   }
 
+  // ===== Indicateurs du mentorat (Présidence) =====
+
+  static async presidentStats(mentorships, pendingRequests) {
+    const now = Date.now();
+    const since30 = new Date(now - 30 * 86400000);
+    const active = mentorships.filter((m) => m.status === 'ACTIVE');
+    const [done30, planned, rating, oldestRequest, openConcerns, latestReports] = await Promise.all([
+      prisma.mentorSession.count({ where: { status: 'DONE', scheduledAt: { gte: since30 } } }),
+      prisma.mentorSession.count({ where: { status: 'PLANNED', scheduledAt: { gte: new Date() } } }),
+      prisma.mentorSession.aggregate({ where: { feedbackAt: { gte: new Date(now - 90 * 86400000) } }, _avg: { menteeRating: true }, _count: { menteeRating: true } }),
+      prisma.mentorRequest.findFirst({ where: { status: 'PENDING' }, orderBy: { createdAt: 'asc' }, select: { createdAt: true } }),
+      prisma.mentorshipConcern.count({ where: { status: 'OPEN' } }),
+      prisma.mentorReport.findMany({
+        where: { kind: 'MENTORAT', status: { not: 'DRAFT' }, mentorshipId: { in: active.map((m) => m.id) } },
+        select: { mentorshipId: true, content: true, createdAt: true },
+        orderBy: { createdAt: 'desc' },
+      }),
+    ]);
+    // Dernière progression notée par le mentor pour chaque binôme actif
+    const latest = {};
+    latestReports.forEach((r) => { if (!latest[r.mentorshipId]) latest[r.mentorshipId] = r; });
+    const toWatch = active
+      .map((m) => ({ m, r: latest[m.id] }))
+      .filter(({ r }) => ['En difficulté', 'À recadrer'].includes(r?.content?.progression))
+      .map(({ m, r }) => ({ mentorshipId: m.id, menteeName: m.menteeName, mentor: fullName(m.mentor), progression: r.content.progression, at: r.createdAt }));
+    // Binômes actifs sans séance faite ni prévue depuis 45 jours
+    const quiet = await prisma.mentorship.count({
+      where: {
+        id: { in: active.map((m) => m.id) },
+        startDate: { lt: new Date(now - 45 * 86400000) },
+        sessions: { none: { OR: [{ status: 'PLANNED', scheduledAt: { gte: new Date() } }, { scheduledAt: { gte: new Date(now - 45 * 86400000) } }] } },
+      },
+    });
+    return {
+      activePairs: active.length,
+      pausedPairs: mentorships.filter((m) => m.status === 'PAUSED').length,
+      sessionsDone30: done30,
+      sessionsPlanned: planned,
+      averageRating: rating._count.menteeRating ? Math.round(rating._avg.menteeRating * 10) / 10 : null,
+      ratingsCount: rating._count.menteeRating,
+      pendingRequests,
+      oldestRequestDays: oldestRequest ? Math.floor((now - new Date(oldestRequest.createdAt)) / 86400000) : null,
+      openConcerns,
+      quietPairs: quiet,
+      toWatch,
+    };
+  }
+
+  // ===== Avis du mentoré et signalement confidentiel =====
+
+  static async submitSessionFeedback(user, id, { rating, comment }) {
+    const session = await prisma.mentorSession.findUnique({ where: { id }, include: { mentorship: true } });
+    if (!session || session.mentorship.menteeId !== user.id) throw new NotFoundError('Séance introuvable');
+    if (session.feedbackAt) throw new BadRequestError('Tu as déjà donné ton avis sur cette séance');
+    if (session.status === 'CANCELLED') throw new BadRequestError('Cette séance a été annulée');
+    if (session.status !== 'DONE' && session.scheduledAt > new Date()) throw new BadRequestError('La séance n\'a pas encore eu lieu');
+    const note = Math.round(Number(rating));
+    if (!(note >= 1 && note <= 5)) throw new BadRequestError('Choisis une note de 1 à 5');
+    const text = String(comment || '').trim().slice(0, 1500) || null;
+    const updated = await prisma.mentorSession.update({
+      where: { id },
+      data: { menteeRating: note, menteeComment: text, feedbackAt: new Date(), ...(session.status === 'PLANNED' ? { status: 'DONE', visioStatus: 'CLOSED' } : {}) },
+    });
+    await notify([session.mentorship.mentorId], {
+      title: '⭐ Avis de ton mentoré',
+      message: `${session.mentorship.menteeName} a noté la séance ${'★'.repeat(note)}${'☆'.repeat(5 - note)}. Merci pour ton accompagnement !`,
+      url: '/mentor.html',
+    });
+    // Séance mal vécue : la Présidence est alertée
+    if (note <= 2) {
+      await notify(await presidentIds(), {
+        title: '⚠️ Séance de mentorat mal notée',
+        message: `${session.mentorship.menteeName} : ${note}/5${text ? ` — ${text.slice(0, 140)}` : ''}`,
+        url: '/mentor.html?tab=overview',
+      });
+    }
+    return sessionDto(updated);
+  }
+
+  static async reportConcern(user, mentorshipId, message) {
+    const mentorship = await prisma.mentorship.findUnique({ where: { id: mentorshipId } });
+    if (!mentorship || mentorship.menteeId !== user.id) throw new NotFoundError('Accompagnement introuvable');
+    const text = String(message || '').trim();
+    if (text.length < 10) throw new BadRequestError('Explique la situation en quelques mots (10 caractères minimum)');
+    const concern = await prisma.mentorshipConcern.create({ data: { mentorshipId, authorId: user.id, message: text.slice(0, 3000) } });
+    await notify(await presidentIds(), {
+      title: '🔒 Signalement confidentiel d\'un mentoré',
+      message: `${mentorship.menteeName} a signalé une difficulté avec son accompagnement.`,
+      url: '/mentor.html?tab=concerns',
+    });
+    return { id: concern.id, status: concern.status };
+  }
+
+  static async listConcerns(user) {
+    requirePresident(user);
+    const rows = await prisma.mentorshipConcern.findMany({
+      include: { mentorship: { include: { mentor: { select: USER_SUMMARY } } }, author: { select: USER_SUMMARY } },
+      orderBy: [{ status: 'asc' }, { createdAt: 'desc' }],
+      take: 200,
+    });
+    return rows.map((c) => ({
+      id: c.id, status: c.status, message: c.message, resolution: c.resolution, createdAt: c.createdAt, resolvedAt: c.resolvedAt,
+      mentee: { id: c.author.id, fullName: fullName(c.author), email: c.author.email },
+      mentor: fullName(c.mentorship.mentor), mentorshipId: c.mentorshipId, mentorshipStatus: c.mentorship.status,
+    }));
+  }
+
+  static async resolveConcern(user, id, resolution, meta = {}) {
+    requirePresident(user);
+    const concern = await prisma.mentorshipConcern.findUnique({ where: { id } });
+    if (!concern) throw new NotFoundError('Signalement introuvable');
+    if (concern.status !== 'OPEN') throw new BadRequestError('Ce signalement est déjà traité');
+    const note = String(resolution || '').trim();
+    if (note.length < 5) throw new BadRequestError('Note ce qui a été fait');
+    const updated = await prisma.mentorshipConcern.update({ where: { id }, data: { status: 'RESOLVED', resolution: note, resolvedAt: new Date() } });
+    await AuditService.log({ userId: user.id, action: 'mentoring.concern.resolve', module: 'mentoring', resource: 'MentorshipConcern', resourceId: id, ...meta });
+    await notify([concern.authorId], {
+      title: '🔒 Ton signalement a été traité',
+      message: 'La Présidence du club a pris en compte ton signalement. N\'hésite pas à revenir vers elle si besoin.',
+      url: '/profile.html#profileMentorshipBox',
+    });
+    return updated;
+  }
+
   // ===== Côté mentoré : mon mentor, ma demande d'accompagnement =====
 
   static async getMyMentoring(user) {
@@ -376,6 +513,17 @@ class MentoringService {
       prisma.mentorRequest.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } }),
     ]);
     const today = new Date().toISOString().slice(0, 10);
+    // Séances passées des 30 derniers jours sans avis du mentoré
+    const toReview = mentorships.length ? await prisma.mentorSession.findMany({
+      where: {
+        mentorshipId: { in: mentorships.map((m) => m.id) },
+        feedbackAt: null,
+        scheduledAt: { gte: new Date(Date.now() - 30 * 86400000) },
+        OR: [{ status: 'DONE' }, { status: 'PLANNED', scheduledAt: { lt: new Date(Date.now() - 3600000) } }],
+      },
+      orderBy: { scheduledAt: 'desc' },
+      take: 5,
+    }) : [];
     return {
       canRequest: isAdherent(user) && !mentorships.length && request?.status !== 'PENDING',
       isAdherent: isAdherent(user),
@@ -389,7 +537,8 @@ class MentoringService {
           startDate: m.startDate,
           mentor: { id: m.mentor.id, fullName: fullName(m.mentor), avatarUrl: m.mentor.avatarUrl },
           nextSession: typeof next === 'string' && next >= today ? next : null,
-          upcomingSessions: m.sessions.map(sessionDto),
+          upcomingSessions: m.sessions.filter((x) => x.scheduledAt > new Date(Date.now() - 3600000)).map(sessionDto),
+          toReview: toReview.filter((x) => x.mentorshipId === m.id).map(sessionDto),
           lastSessionAt: m.reports[0]?.createdAt || null,
         };
       }),

@@ -85,6 +85,7 @@
         list.push({ key: 'review', icon: '📥', label: 'Comptes rendus', count: c.pendingReview });
         list.push({ key: 'requests', icon: '🙋', label: 'Demandes de mentor', count: c.pendingRequests });
         list.push({ key: 'applications', icon: '🌟', label: 'Candidatures', count: c.pendingApplications });
+        list.push({ key: 'concerns', icon: '🔒', label: 'Signalements', count: c.stats?.openConcerns });
       }
       if (c.isMentor) {
         list.push({ key: 'mentees', icon: '🤝', label: 'Mes mentorés' });
@@ -153,13 +154,22 @@
         return empty('🧑‍🏫', 'Aucun mentor pour l\'instant', 'Nommez des mentors depuis l\'administration (Administrateurs › Mentors) : ils apparaîtront ici.');
       }
       const c = state.ctx;
+      const st = c.stats || {};
+      const nf = (v) => (v === null || v === undefined ? '—' : String(v).replace('.', ','));
       return `
         <div class="ms-kpis">
           <div class="ms-kpi"><span>Mentors</span><strong>${state.mentors.length}</strong></div>
-          <div class="ms-kpi"><span>Binômes actifs</span><strong>${c.mentorships.filter((m) => m.status === 'ACTIVE').length}</strong></div>
-          <div class="ms-kpi ms-kpi-info"><span>À examiner</span><strong>${c.pendingReview}</strong></div>
-          <div class="ms-kpi ms-kpi-warn"><span>Messages non lus</span><strong>${c.unreadMessages}</strong></div>
+          <div class="ms-kpi"><span>Binômes actifs</span><strong>${nf(st.activePairs ?? c.mentorships.filter((m) => m.status === 'ACTIVE').length)}</strong>${st.pausedPairs ? `<small>${st.pausedPairs} en pause</small>` : ''}</div>
+          <div class="ms-kpi"><span>Séances (30 jours)</span><strong>${nf(st.sessionsDone30)}</strong><small>${nf(st.sessionsPlanned)} prévue(s)</small></div>
+          <div class="ms-kpi"><span>Avis des mentorés</span><strong>${st.averageRating ? `${nf(st.averageRating)}/5` : '—'}</strong><small>${nf(st.ratingsCount)} avis (90 jours)</small></div>
+          <div class="ms-kpi ms-kpi-info"><span>Demandes en attente</span><strong>${nf(st.pendingRequests)}</strong>${st.oldestRequestDays !== null && st.oldestRequestDays !== undefined ? `<small>la plus ancienne : ${st.oldestRequestDays} j</small>` : ''}</div>
+          <div class="ms-kpi ms-kpi-info"><span>Comptes rendus à examiner</span><strong>${c.pendingReview}</strong></div>
+          <div class="ms-kpi ms-kpi-warn"><span>Signalements ouverts</span><strong>${nf(st.openConcerns)}</strong></div>
+          <div class="ms-kpi ms-kpi-warn"><span>Binômes sans séance (45 j)</span><strong>${nf(st.quietPairs)}</strong></div>
         </div>
+        ${(st.toWatch || []).length ? `<section class="ms-card ms-watch"><h3 style="margin:0 0 0.5rem;">⚠️ Mentorés à suivre</h3>
+          <p class="ms-hint" style="margin:0 0 0.5rem;">D'après le dernier compte rendu de leur mentor.</p>
+          <ul class="ms-sessions">${st.toWatch.map((w) => `<li><span><strong>${esc(w.menteeName)}</strong> · mentor : ${esc(w.mentor)}<br><em>${esc(w.progression)} · ${esc(frDate(w.at))}</em></span></li>`).join('')}</ul></section>` : ''}
         <div class="ms-grid">
           ${state.mentors.map((m) => `
             <article class="ms-card">
@@ -183,7 +193,7 @@
           </div>
           ${president ? `<p class="ms-meta">Mentor : <strong>${esc(m.mentor.fullName)}</strong></p>` : ''}
           <p class="ms-goals">${m.goals ? esc(m.goals) : '<em>Objectifs à définir</em>'}</p>
-          <p class="ms-meta">Depuis le ${esc(frDate(m.startDate))} · ${m.reportsCount} compte(s) rendu(s)${m.lastReportAt ? ` · dernier le ${esc(frDate(m.lastReportAt))}` : ''}</p>
+          <p class="ms-meta">Depuis le ${esc(frDate(m.startDate))} · ${m.reportsCount} compte(s) rendu(s)${m.lastReportAt ? ` · dernier le ${esc(frDate(m.lastReportAt))}` : ''}${m.rating ? ` · ⭐ ${String(m.rating.average).replace('.', ',')}/5 (${m.rating.count} avis)` : ''}</p>
           ${(m.upcomingSessions || []).length ? `<ul class="ms-sessions">${m.upcomingSessions.map((x) => `
             <li>
               <span>📅 <strong>${esc(frTime(x.scheduledAt))}</strong> · ${esc(x.format)}${x.place ? ` · ${esc(x.place)}` : ''}${x.topic ? `<br><em>${esc(x.topic)}</em>` : ''}</span>
@@ -413,6 +423,25 @@
         </article>`).join('')}</div>`;
     }
 
+    // ===== Signalements confidentiels des mentorés (Présidence) =====
+
+    async function viewConcerns() {
+      state.concerns = (await api('/concerns')).data;
+      if (!state.concerns.length) return empty('🔒', 'Aucun signalement', 'Les mentorés peuvent signaler, en toute confidentialité, une difficulté avec leur accompagnement depuis « Mon espace ».');
+      return `<p class="ms-hint" style="margin:0 0 0.75rem;">Confidentiel : le mentor n'est jamais informé d'un signalement.</p>
+        <div class="ms-grid">${state.concerns.map((x) => `
+        <article class="ms-card">
+          <div class="ms-card-head"><div><strong>${esc(x.mentee.fullName)}</strong><span>Mentor : ${esc(x.mentor)} · ${esc(frDate(x.createdAt))}</span></div>${pill(x.status === 'OPEN' ? ['À traiter', 'warning'] : ['Traité', 'success'])}</div>
+          <p class="ms-goals">${esc(x.message)}</p>
+          <p class="ms-meta">✉️ ${esc(x.mentee.email)}</p>
+          ${x.resolution ? `<p class="ms-meta"><strong>Suite donnée :</strong> ${esc(x.resolution)}</p>` : ''}
+          ${x.status === 'OPEN' ? `<div class="ms-actions">
+            <button type="button" class="ms-btn ms-btn-primary" data-act="concern-resolve" data-id="${esc(x.id)}">Marquer traité…</button>
+            <button type="button" class="ms-btn ms-btn-ghost" data-act="pair-edit" data-id="${esc(x.mentorshipId)}">Gérer le binôme</button>
+          </div>` : ''}
+        </article>`).join('')}</div>`;
+    }
+
     function openSessionForm(mentorshipId) {
       const formats = state.ctx.sessionFormats || ['Visio du club', 'Présentiel', 'Téléphone', 'WhatsApp', 'Autre lien'];
       const tomorrow = new Date(Date.now() + 86400000);
@@ -519,7 +548,7 @@
     }
 
     const VIEWS = {
-      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview, requests: viewRequests, applications: viewApplications,
+      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview, requests: viewRequests, applications: viewApplications, concerns: viewConcerns,
       forumQueue: viewForumQueue, suggestions: viewSuggestions, mentees: viewMentees, myTrainings: viewMyTrainings, myReports: viewMyReports, messages: viewMessages,
     };
 
@@ -827,6 +856,10 @@
         if (await run(btn, () => api(`/reports/${id}`, { method: 'DELETE' }), 'Brouillon supprimé')) refresh();
       }
       if (act === 'session-new') openSessionForm(id);
+      if (act === 'concern-resolve') {
+        const resolution = window.prompt('Ce qui a été fait (le mentoré est prévenu que son signalement est traité) :');
+        if (resolution && resolution.trim() && await run(btn, () => api(`/concerns/${id}/resolve`, json('POST', { resolution: resolution.trim() })), 'Signalement traité')) refresh();
+      }
       if (act === 'session-done' || act === 'session-cancel') {
         const cancel = act === 'session-cancel';
         if (!cancel || window.confirm('Annuler cette séance ? Ton mentoré sera prévenu.')) {

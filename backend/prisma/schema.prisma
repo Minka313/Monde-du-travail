@@ -534,6 +534,7 @@ model User {
   handledMentorRequests  MentorRequest[]         @relation("MentorRequestHandler")
   contentSuggestions     ContentSuggestion[]     @relation("ContentSuggestionAuthor")
   mentorApplications     MentorApplication[]     @relation("MentorApplicationUser")
+  mentorshipConcerns     MentorshipConcern[]     @relation("MentorshipConcernAuthor")
   handledApplications    MentorApplication[]     @relation("MentorApplicationHandler")
   resolvedSuggestions    ContentSuggestion[]     @relation("ContentSuggestionResolver")
   createdMentorships     Mentorship[]            @relation("MentorshipCreator")
@@ -652,25 +653,26 @@ model PositionReportEvent {
 
 // Binôme de mentorat attribué par la Présidence
 model Mentorship {
-  id            String          @id @default(cuid())
+  id            String              @id @default(cuid())
   mentorId      String
   // Mentoré inscrit sur le site, ou simple nom pour une personne sans compte
   menteeId      String?
   menteeName    String
   menteeContact String?
   goals         String?
-  status        String          @default("ACTIVE")
-  startDate     DateTime        @default(now())
+  status        String              @default("ACTIVE")
+  startDate     DateTime            @default(now())
   endDate       DateTime?
   createdById   String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  mentor        User            @relation("MentorshipMentor", fields: [mentorId], references: [id], onDelete: Cascade)
-  mentee        User?           @relation("MentorshipMentee", fields: [menteeId], references: [id], onDelete: SetNull)
-  createdBy     User?           @relation("MentorshipCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
+  mentor        User                @relation("MentorshipMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentee        User?               @relation("MentorshipMentee", fields: [menteeId], references: [id], onDelete: SetNull)
+  createdBy     User?               @relation("MentorshipCreator", fields: [createdById], references: [id], onDelete: SetNull)
   reports       MentorReport[]
   request       MentorRequest?
   sessions      MentorSession[]
+  concerns      MentorshipConcern[]
 
   @@index([mentorId])
   @@index([menteeId])
@@ -734,6 +736,10 @@ model MentorSession {
   visioStatus     String     @default("CLOSED")
   visioRoomId     String?
   reminderSentAt  DateTime?
+  // Avis du mentoré après la séance (1 à 5) : note visible du mentor, commentaire lu par la Présidence
+  menteeRating    Int?
+  menteeComment   String?
+  feedbackAt      DateTime?
   createdById     String?
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
@@ -742,6 +748,24 @@ model MentorSession {
   @@index([mentorshipId, scheduledAt])
   @@index([status, scheduledAt])
   @@map("mentor_sessions")
+}
+
+// Signalement confidentiel d'un mentoré sur son accompagnement : lu par la Présidence seulement
+model MentorshipConcern {
+  id           String     @id @default(cuid())
+  mentorshipId String
+  authorId     String
+  message      String
+  // OPEN, RESOLVED
+  status       String     @default("OPEN")
+  resolution   String?
+  resolvedAt   DateTime?
+  createdAt    DateTime   @default(now())
+  mentorship   Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+  author       User       @relation("MentorshipConcernAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+  @@map("mentorship_concerns")
 }
 
 // Candidature d'un professionnel ou d'un étudiant avancé pour devenir mentor du club

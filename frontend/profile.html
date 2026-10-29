@@ -386,7 +386,7 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
 <script defer src="js/config.js"></script>
-<script defer src="js/frontend-api.js?v=20261029-3"></script>
+<script defer src="js/frontend-api.js?v=20261029-4"></script>
 <script defer src="js/analytics-tracker.js"></script>
 <script defer src="js/layout.js"></script>
 <script defer src="js/main.js?v=20261028-3"></script>
@@ -510,8 +510,26 @@
                       ${x.visioUrl ? `<div style="margin-top:0.45rem;"><a class="btn ${x.visioLive ? 'btn-primary' : 'btn-outline'} btn-sm" href="${escapeHtml(x.visioUrl.replace(/^\//, ''))}">${x.visioLive ? '🟢 Rejoindre la visio' : '🎥 Salle de la séance'}</a></div>` : ''}
                     </li>`).join('')}</ul>`
                 : `<p ${p}>${ms.nextSession ? `📅 <strong>Prochaine séance prévue le ${escapeHtml(fr(ms.nextSession))}.</strong>` : '📅 Ton mentor te proposera la date de votre prochaine séance.'}</p>`}
+              ${(ms.toReview || []).map((x) => `
+                <form class="mentor-feedback" data-feedback="${escapeHtml(x.id)}" style="margin:0 0 0.6rem;padding:0.7rem 0.8rem;border-radius:10px;background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.35);">
+                  <p style="margin:0 0 0.4rem;font-size:0.9rem;"><strong>Comment s'est passée ta séance du ${escapeHtml(new Date(x.scheduledAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }))} ?</strong></p>
+                  <div role="radiogroup" aria-label="Note de la séance" style="display:flex;gap:0.25rem;font-size:1.5rem;">
+                    ${[1, 2, 3, 4, 5].map((n) => `<label style="cursor:pointer;" title="${n}/5"><input type="radio" name="rating" value="${n}" style="position:absolute;opacity:0;width:1px;height:1px;" required><span aria-hidden="true" data-star="${n}">☆</span><span class="sr-only">${n} sur 5</span></label>`).join('')}
+                  </div>
+                  <textarea name="comment" rows="2" maxlength="1500" class="form-input" placeholder="Un commentaire pour le club (facultatif, ton mentor ne le voit pas)" style="width:100%;box-sizing:border-box;margin:0.4rem 0;"></textarea>
+                  <button type="submit" class="btn btn-primary btn-sm">Envoyer mon avis</button>
+                </form>`).join('')}
               <p style="margin:0;font-size:0.85rem;color:var(--color-gray-600);">Ton mentor te contacte par e-mail ou par téléphone. Une question sur l'accompagnement ? Écris au club : <a href="mailto:lemondedutravailsen@gmail.com">lemondedutravailsen@gmail.com</a>.</p>
+              <details style="margin-top:0.6rem;font-size:0.88rem;">
+                <summary style="cursor:pointer;color:var(--color-gray-600);">🔒 Signaler un problème avec ton accompagnement</summary>
+                <form data-concern="${escapeHtml(ms.id)}" style="margin-top:0.5rem;display:grid;gap:0.45rem;">
+                  <p style="margin:0;color:var(--color-gray-600);">Seule la Présidence du club lit ce message : ton mentor n'en est pas informé.</p>
+                  <textarea name="message" rows="3" maxlength="3000" minlength="10" required class="form-input" style="width:100%;box-sizing:border-box;" placeholder="Explique la situation"></textarea>
+                  <button type="submit" class="btn btn-outline btn-sm" style="justify-self:start;">Envoyer à la Présidence</button>
+                </form>
+              </details>
             </div>`).join('');
+          bindMentoringForms();
           return;
         }
         const req = m.request;
@@ -558,6 +576,32 @@
             f.querySelector('button').disabled = false;
           }
         });
+      };
+      // Avis après une séance (étoiles) et signalement confidentiel
+      const bindMentoringForms = () => {
+        body.querySelectorAll('form[data-feedback]').forEach((f) => {
+          const paint = (n) => f.querySelectorAll('[data-star]').forEach((st) => { st.textContent = Number(st.dataset.star) <= n ? '★' : '☆'; st.style.color = Number(st.dataset.star) <= n ? '#f5a623' : ''; });
+          f.querySelectorAll('input[name=rating]').forEach((r) => r.addEventListener('change', () => paint(Number(r.value))));
+          f.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const rating = Number((f.querySelector('input[name=rating]:checked') || {}).value);
+            if (!rating) { alert('Choisis une note de 1 à 5 étoiles.'); return; }
+            f.querySelector('button').disabled = true;
+            try {
+              await window.Api.mentoring.feedback(f.dataset.feedback, { rating, comment: f.comment.value.trim() || null });
+              f.innerHTML = '<p style="margin:0;font-size:0.9rem;">✅ Merci pour ton avis !</p>';
+            } catch (err) { alert(err.message || 'Envoi impossible'); f.querySelector('button').disabled = false; }
+          });
+        });
+        body.querySelectorAll('form[data-concern]').forEach((f) => f.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if ((f.message.value || '').trim().length < 10) { alert('Explique la situation en quelques mots.'); return; }
+          f.querySelector('button').disabled = true;
+          try {
+            const res = await window.Api.mentoring.concern(f.dataset.concern, f.message.value.trim());
+            f.innerHTML = `<p style="margin:0;">✅ ${escapeHtml((res && res.message) || 'Signalement transmis à la Présidence.')}</p>`;
+          } catch (err) { alert(err.message || 'Envoi impossible'); f.querySelector('button').disabled = false; }
+        }));
       };
       window.Api.mentoring.me().then((res) => {
         const m = res && res.data;

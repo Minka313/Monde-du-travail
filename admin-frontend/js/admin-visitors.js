@@ -94,6 +94,7 @@
           ${tile('Alertes e-mail actives', nf.format(key.alerts.active), `${nf.format(key.alerts.confirmed)} confirmées sur ${nf.format(key.alerts.requested)} demandes`)}
           ${tile('Application installée', nf.format(Math.max(a.installed, a.accepted)), `${nf.format(a.prompts)} invitations · ${nf.format(a.dismissed)} refus`)}
           ${tile('E-mails envoyés', nf.format(key.emails.sent), key.emails.failed ? `⚠️ ${nf.format(key.emails.failed)} en échec` : 'aucun échec')}
+          ${key.mentoring ? tile('Mentorat', `${nf.format(key.mentoring.activePairs)} binômes`, `${nf.format(key.mentoring.sessionsDone)} séances faites · ${key.mentoring.averageRating ? `${String(key.mentoring.averageRating).replace('.', ',')}/5 (${nf.format(key.mentoring.ratingsCount)} avis)` : 'pas encore d\'avis'} · ${nf.format(key.mentoring.requests)} demandes · ${nf.format(key.mentoring.applications)} candidatures`) : ''}
           ${key.accounts ? tile('Comptes gratuits créés', nf.format(key.accounts.newVisitorAccounts), `${nf.format(key.accounts.nudgeClicks)} clics sur ${nf.format(key.accounts.nudgeViews)} invitations · ${nf.format(key.accounts.membershipRequests)} demandes d'adhésion`) : ''}
         </div>
       </div>

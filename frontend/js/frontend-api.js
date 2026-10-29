@@ -530,6 +530,8 @@ return headers;
       me: () => apiRequestWithRefresh('/mentoring/me'),
       request: (data) => apiRequestWithRefresh('/mentoring/requests', { method: 'POST', body: JSON.stringify(data) }),
       cancelRequest: (id) => apiRequestWithRefresh(`/mentoring/requests/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+      feedback: (sessionId, data) => apiRequestWithRefresh(`/mentoring/sessions/${encodeURIComponent(sessionId)}/feedback`, { method: 'POST', body: JSON.stringify(data) }),
+      concern: (mentorshipId, message) => apiRequestWithRefresh(`/mentoring/mentorships/${encodeURIComponent(mentorshipId)}/concerns`, { method: 'POST', body: JSON.stringify({ message }) }),
     },
 
     // Données du compte retrouvées sur tous les appareils (favoris, RIASEC, dossiers cochés)

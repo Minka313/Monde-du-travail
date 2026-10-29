@@ -65,6 +65,14 @@ class KeyIndicatorsService {
         membershipRequests: count(eventRows, 'membership_requested'),
         newVisitorAccounts: await prisma.user.count({ where: { role: 'VISITOR', createdAt: { gte: since } } }),
       },
+      mentoring: {
+        activePairs: await prisma.mentorship.count({ where: { status: 'ACTIVE' } }),
+        sessionsDone: await prisma.mentorSession.count({ where: { status: 'DONE', scheduledAt: { gte: since } } }),
+        requests: await prisma.mentorRequest.count({ where: { createdAt: { gte: since } } }),
+        applications: await prisma.mentorApplication.count({ where: { createdAt: { gte: since } } }),
+        ...(await prisma.mentorSession.aggregate({ where: { feedbackAt: { gte: since } }, _avg: { menteeRating: true }, _count: { menteeRating: true } })
+          .then((r) => ({ averageRating: r._count.menteeRating ? Math.round(r._avg.menteeRating * 10) / 10 : null, ratingsCount: r._count.menteeRating }))),
+      },
       app: {
         prompts: count(eventRows, 'pwa_prompt'),
         accepted: count(eventRows, 'pwa_install'),

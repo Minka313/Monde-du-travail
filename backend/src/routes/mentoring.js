@@ -48,6 +48,9 @@ const schemas = {
       status: z.enum(['PLANNED', 'DONE', 'CANCELLED']).optional(),
     }).strict(),
   }),
+  feedback: z.object({ body: z.object({ rating: z.number().int().min(1).max(5), comment: z.string().trim().max(1500).nullable().optional() }).strict() }),
+  concern: z.object({ body: z.object({ message: z.string().trim().min(10, 'Explique la situation en quelques mots (10 caractères minimum)').max(3000) }).strict() }),
+  concernResolve: z.object({ body: z.object({ resolution: z.string().trim().min(5, 'Note ce qui a été fait').max(1500) }).strict() }),
   applicationDecision: z.object({ body: z.object({ decision: z.enum(['ACCEPTED', 'DECLINED']), response: z.string().trim().max(1500).nullable().optional() }).strict() }),
   declineRequest: z.object({ body: z.object({ response: z.string().trim().min(5, 'Explique ta réponse').max(1500) }).strict() }),
   suggestion: z.object({
@@ -149,6 +152,12 @@ router.get('/sessions/:id/visio', C.getSessionVisio);
 router.post('/sessions/:id/visio/start', C.startSessionVisio);
 router.post('/sessions/:id/visio/stop', C.stopSessionVisio);
 router.post('/sessions/:id/visio/join', C.joinSessionVisio);
+
+// Avis du mentoré après une séance, signalement confidentiel (lu par la Présidence seulement)
+router.post('/sessions/:id/feedback', validate(schemas.feedback), C.submitSessionFeedback);
+router.post('/mentorships/:id/concerns', validate(schemas.concern), C.reportConcern);
+router.get('/concerns', C.listConcerns);
+router.post('/concerns/:id/resolve', validate(schemas.concernResolve), C.resolveConcern);
 
 // Candidatures « Devenir mentor » (Présidence) ; le dépôt est public : routes/mentorApplications.js
 router.get('/applications', C.listApplications);
