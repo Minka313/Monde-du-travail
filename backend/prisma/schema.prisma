@@ -535,6 +535,7 @@ model User {
   contentSuggestions     ContentSuggestion[]     @relation("ContentSuggestionAuthor")
   mentorApplications     MentorApplication[]     @relation("MentorApplicationUser")
   mentorshipConcerns     MentorshipConcern[]     @relation("MentorshipConcernAuthor")
+  mentorProfile          MentorProfile?
   handledApplications    MentorApplication[]     @relation("MentorApplicationHandler")
   resolvedSuggestions    ContentSuggestion[]     @relation("ContentSuggestionResolver")
   createdMentorships     Mentorship[]            @relation("MentorshipCreator")
@@ -718,6 +719,25 @@ model MentorRequest {
   @@index([status, createdAt])
   @@index([userId])
   @@map("mentor_requests")
+}
+
+// Profil du mentor, présenté à ses mentorés et à la Présidence (jamais ses coordonnées)
+model MentorProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  headline     String?
+  organization String?
+  domains      String?
+  bio          String?
+  experience   String?
+  linkedinUrl  String?
+  city         String?
+  languages    String?
+  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("mentor_profiles")
 }
 
 // Séance planifiée d'un binôme : rappel la veille au mentor et au mentoré, visio intégrée possible

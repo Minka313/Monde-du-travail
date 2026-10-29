@@ -48,6 +48,18 @@ const schemas = {
       status: z.enum(['PLANNED', 'DONE', 'CANCELLED']).optional(),
     }).strict(),
   }),
+  mentorProfile: z.object({
+    body: z.object({
+      headline: z.string().trim().max(150).nullable().optional(),
+      organization: z.string().trim().max(150).nullable().optional(),
+      domains: z.string().trim().max(300).nullable().optional(),
+      bio: z.string().trim().max(1500).nullable().optional(),
+      experience: z.string().trim().max(1500).nullable().optional(),
+      linkedinUrl: z.string().trim().max(300).nullable().optional(),
+      city: z.string().trim().max(100).nullable().optional(),
+      languages: z.string().trim().max(150).nullable().optional(),
+    }).strict(),
+  }),
   feedback: z.object({ body: z.object({ rating: z.number().int().min(1).max(5), comment: z.string().trim().max(1500).nullable().optional() }).strict() }),
   concern: z.object({ body: z.object({ message: z.string().trim().min(10, 'Explique la situation en quelques mots (10 caractères minimum)').max(3000) }).strict() }),
   concernResolve: z.object({ body: z.object({ resolution: z.string().trim().min(5, 'Note ce qui a été fait').max(1500) }).strict() }),
@@ -152,6 +164,10 @@ router.get('/sessions/:id/visio', C.getSessionVisio);
 router.post('/sessions/:id/visio/start', C.startSessionVisio);
 router.post('/sessions/:id/visio/stop', C.stopSessionVisio);
 router.post('/sessions/:id/visio/join', C.joinSessionVisio);
+
+// Profil du mentor (présenté à ses mentorés et à la Présidence)
+router.get('/profile', C.getMyMentorProfile);
+router.put('/profile', validate(schemas.mentorProfile), C.updateMyMentorProfile);
 
 // Avis du mentoré après une séance, signalement confidentiel (lu par la Présidence seulement)
 router.post('/sessions/:id/feedback', validate(schemas.feedback), C.submitSessionFeedback);

@@ -89,6 +89,7 @@
       }
       if (c.isMentor) {
         list.push({ key: 'mentees', icon: '🤝', label: 'Mes mentorés' });
+        list.push({ key: 'myProfile', icon: '🪪', label: 'Mon profil', count: c.profileComplete ? 0 : '!' });
         list.push({ key: 'myTrainings', icon: '🎓', label: 'Mes formations' });
         list.push({ key: 'myReports', icon: '📝', label: 'Mes comptes rendus' });
       }
@@ -173,7 +174,8 @@
         <div class="ms-grid">
           ${state.mentors.map((m) => `
             <article class="ms-card">
-              <div class="ms-card-head"><span class="ms-avatar">${esc((m.fullName || '?')[0])}</span><div><strong>${esc(m.fullName)}</strong><span>${esc(m.email)}</span></div></div>
+              <div class="ms-card-head"><span class="ms-avatar">${esc((m.fullName || '?')[0])}</span><div><strong>${esc(m.fullName)}</strong><span>${esc(m.profile?.headline ? `${m.profile.headline}${m.profile.organization ? ` · ${m.profile.organization}` : ''}` : m.email)}</span></div></div>
+              ${m.profile?.domains ? `<p class="ms-meta">Domaines : ${esc(m.profile.domains)}</p>` : '<p class="ms-meta"><em>Profil de mentor à compléter</em></p>'}
               <div class="ms-stats"><span><strong>${m.mentorshipsCount}</strong> binôme(s)</span><span><strong>${m.formationsCount}</strong> formation(s)</span><span><strong>${m.reportsCount}</strong> compte(s) rendu(s)</span></div>
               <div class="ms-actions">
                 <button type="button" class="ms-btn ms-btn-ghost" data-act="pair-new" data-mentor="${esc(m.id)}">+ Confier un mentoré</button>
@@ -282,7 +284,7 @@
 
     async function viewMentees() {
       const list = state.ctx.mentorships.filter((m) => m.mentor.id === user.id);
-      return `<div class="ms-grid">${list.length ? list.map((m) => mentorshipCard(m, { president: false })).join('') : empty('🤝', 'Aucun mentoré pour l\'instant', 'La Présidence vous confiera des mentorés : vous serez notifié.')}</div>`;
+      return `${state.ctx.profileComplete ? '' : '<div class="ms-card ms-watch" style="margin-bottom:1rem;"><strong>🪪 Complète ton profil de mentor</strong><p class="ms-hint" style="margin:0.3rem 0 0.5rem;">Tes mentorés pourront découvrir ton métier et ton parcours.</p><button type="button" class="ms-btn ms-btn-primary" data-tab-go="myProfile">Compléter mon profil</button></div>'}<div class="ms-grid">${list.length ? list.map((m) => mentorshipCard(m, { president: false })).join('') : empty('🤝', 'Aucun mentoré pour l\'instant', 'La Présidence vous confiera des mentorés : vous serez notifié.')}</div>`;
     }
 
     async function viewMyTrainings() {
@@ -423,6 +425,31 @@
         </article>`).join('')}</div>`;
     }
 
+    // ===== Profil du mentor (présenté à ses mentorés) =====
+
+    async function viewMyProfile() {
+      const p = (await api('/profile')).data;
+      const field = (name, label, { area = false, max = 300, placeholder = '' } = {}) => `<label>${esc(label)}${area
+        ? `<textarea name="${name}" rows="4" maxlength="${max}" placeholder="${esc(placeholder)}">${esc(p[name] || '')}</textarea>`
+        : `<input name="${name}" maxlength="${max}" value="${esc(p[name] || '')}" placeholder="${esc(placeholder)}">`}</label>`;
+      return `
+        <section class="ms-card">
+          <h3 style="margin:0 0 0.35rem;">🪪 Mon profil de mentor</h3>
+          <p class="ms-hint" style="margin:0 0 0.75rem;">Tes mentorés voient ce profil dans leur espace pour savoir qui les accompagne ; la Présidence s'en sert pour former les binômes. Ton e-mail et ton téléphone ne sont jamais affichés.${p.draft ? ' <strong>Pré-rempli avec ta candidature : vérifie et complète.</strong>' : ''}</p>
+          <form class="ms-form" data-form="mentor-profile">
+            ${field('headline', 'Métier ou fonction *', { max: 150, placeholder: 'Ex. : ingénieure géomètre, étudiant en médecine (6e année)' })}
+            ${field('organization', 'Entreprise ou établissement', { max: 150 })}
+            ${field('domains', 'Domaines où tu peux aider *', { placeholder: 'Ex. : BTP, concours d\'ingénieur, premier emploi' })}
+            ${field('bio', 'Présentation pour tes mentorés *', { area: true, max: 1500, placeholder: 'Qui tu es, ce que tu fais au quotidien, pourquoi tu accompagnes des jeunes…' })}
+            ${field('experience', 'Parcours (études, postes)', { area: true, max: 1500 })}
+            ${field('city', 'Ville', { max: 100 })}
+            ${field('languages', 'Langues parlées', { max: 150, placeholder: 'Ex. : français, wolof, anglais' })}
+            ${field('linkedinUrl', 'Profil en ligne (LinkedIn…)', { placeholder: 'https://' })}
+            <button type="submit" class="ms-btn ms-btn-primary">Enregistrer mon profil</button>
+          </form>
+        </section>`;
+    }
+
     // ===== Signalements confidentiels des mentorés (Présidence) =====
 
     async function viewConcerns() {
@@ -548,7 +575,7 @@
     }
 
     const VIEWS = {
-      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview, requests: viewRequests, applications: viewApplications, concerns: viewConcerns,
+      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview, requests: viewRequests, applications: viewApplications, concerns: viewConcerns, myProfile: viewMyProfile,
       forumQueue: viewForumQueue, suggestions: viewSuggestions, mentees: viewMentees, myTrainings: viewMyTrainings, myReports: viewMyReports, messages: viewMessages,
     };
 
@@ -559,7 +586,7 @@
       const el = modal(`
         <h2 class="ms-modal-title">🤝 Nouveau binôme</h2>
         <form class="ms-form" data-form="pair">
-          <label>Mentor<select name="mentorId" required>${state.mentors.map((m) => `<option value="${esc(m.id)}" ${m.id === mentorId ? 'selected' : ''}>${esc(m.fullName)}</option>`).join('')}</select></label>
+          <label>Mentor<select name="mentorId" required>${state.mentors.map((m) => `<option value="${esc(m.id)}" ${m.id === mentorId ? 'selected' : ''}>${esc(m.fullName)}${m.profile?.headline ? ` — ${esc(m.profile.headline)}` : ''}${m.profile?.domains ? ` (${esc(m.profile.domains)})` : ''}</option>`).join('')}</select></label>
           <label>Mentoré inscrit sur le site <span class="ms-hint">(recherche par nom ou e-mail)</span>
             <input type="search" name="search" autocomplete="off" placeholder="Ex. : Diallo, awa@…">
           </label>
@@ -828,6 +855,8 @@
     // ===== Événements =====
 
     async function onClick(e) {
+      const goTab = e.target.closest('[data-tab-go]');
+      if (goTab) { go(goTab.dataset.tabGo); return; }
       const btn = e.target.closest('[data-act]');
       if (!btn) return;
       const { act, id } = btn.dataset;
@@ -891,6 +920,14 @@
     function onChange() { /* réservé : filtres futurs */ }
 
     async function onSubmit(e) {
+      const profileForm = e.target.closest('[data-form="mentor-profile"]');
+      if (profileForm) {
+        e.preventDefault();
+        const body = Object.fromEntries(['headline', 'organization', 'domains', 'bio', 'experience', 'city', 'languages', 'linkedinUrl'].map((k) => [k, profileForm[k].value.trim() || null]));
+        if (!body.headline || !body.domains || !body.bio) { toast('Indique au moins ton métier, tes domaines et une présentation', 'error'); return; }
+        if (await run(profileForm.querySelector('button[type=submit]'), () => api('/profile', json('PUT', body)), 'Profil de mentor enregistré')) refresh();
+        return;
+      }
       const sugForm = e.target.closest('[data-form="suggestion"]');
       if (sugForm) {
         e.preventDefault();

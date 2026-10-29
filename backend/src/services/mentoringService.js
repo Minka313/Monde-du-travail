@@ -38,6 +38,13 @@ const VISIO_DOMAIN = 'meet.jit.si';
 const siteBase = () => (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
 const frDateTime = (d) => new Date(d).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Dakar' });
 
+// Profil public du mentor (pour ses mentorés et la Présidence) : jamais d'e-mail ni de téléphone
+const PROFILE_FIELDS = ['headline', 'organization', 'domains', 'bio', 'experience', 'linkedinUrl', 'city', 'languages'];
+function mentorProfileDto(profile) {
+  if (!profile) return null;
+  return Object.fromEntries(PROFILE_FIELDS.map((k) => [k, profile[k] || null]));
+}
+
 function sessionDto(session) {
   return {
     id: session.id,
@@ -210,9 +217,12 @@ class MentoringService {
     });
     const ratingOf = Object.fromEntries(ratings.map((r) => [r.mentorshipId, { average: Math.round((r._avg.menteeRating || 0) * 10) / 10, count: r._count.menteeRating }]));
 
+    const ownProfile = isMentor(user) ? await prisma.mentorProfile.findUnique({ where: { userId: user.id }, select: { headline: true, domains: true, bio: true } }) : null;
+
     return {
       isMentor: isMentor(user),
       isPresident: president,
+      profileComplete: Boolean(ownProfile?.headline && ownProfile?.domains && ownProfile?.bio),
       stats: president ? await MentoringService.presidentStats(mentorships, pendingRequests) : null,
       templates: MENTOR_TEMPLATES,
       unreadMessages: unread,
@@ -262,6 +272,7 @@ class MentoringService {
       where: { id: { in: ids } },
       select: {
         ...USER_SUMMARY,
+        mentorProfile: true,
         _count: { select: { mentorships: true, formationTrainings: true, mentorReports: true } },
       },
       orderBy: { firstName: 'asc' },
@@ -274,6 +285,7 @@ class MentoringService {
       mentorshipsCount: u._count.mentorships,
       formationsCount: u._count.formationTrainings,
       reportsCount: u._count.mentorReports,
+      profile: mentorProfileDto(u.mentorProfile),
     }));
   }
 
@@ -370,6 +382,43 @@ class MentoringService {
       resourceId: id, metadata: update, ...meta,
     });
     return updated;
+  }
+
+  // ===== Profil du mentor =====
+
+  static async getMyMentorProfile(user) {
+    if (!isMentor(user)) throw new ForbiddenError('Réservé aux mentors du club');
+    const profile = await prisma.mentorProfile.findUnique({ where: { userId: user.id } });
+    if (profile) return { ...mentorProfileDto(profile), complete: Boolean(profile.headline && profile.domains && profile.bio) };
+    // Pas encore de profil : pré-rempli à partir de la candidature « Devenir mentor »
+    const application = await prisma.mentorApplication.findFirst({
+      where: { OR: [{ userId: user.id }, { email: { equals: user.email, mode: 'insensitive' } }], status: 'ACCEPTED' },
+      orderBy: { createdAt: 'desc' },
+    });
+    return {
+      headline: application?.profession || null,
+      organization: application?.organization || null,
+      domains: application?.domains || null,
+      bio: null,
+      experience: application?.experience || null,
+      linkedinUrl: application?.linkedinUrl || null,
+      city: null,
+      languages: null,
+      complete: false,
+      draft: true,
+    };
+  }
+
+  static async updateMyMentorProfile(user, data) {
+    if (!isMentor(user)) throw new ForbiddenError('Réservé aux mentors du club');
+    const clean = Object.fromEntries(PROFILE_FIELDS.filter((k) => data[k] !== undefined).map((k) => [k, String(data[k] || '').trim() || null]));
+    if (clean.linkedinUrl && !/^https?:\/\//.test(clean.linkedinUrl)) throw new BadRequestError('Le lien doit commencer par https://');
+    const profile = await prisma.mentorProfile.upsert({
+      where: { userId: user.id },
+      update: clean,
+      create: { userId: user.id, ...clean },
+    });
+    return { ...mentorProfileDto(profile), complete: Boolean(profile.headline && profile.domains && profile.bio) };
   }
 
   // ===== Indicateurs du mentorat (Présidence) =====
@@ -503,7 +552,7 @@ class MentoringService {
       prisma.mentorship.findMany({
         where: { menteeId: user.id, status: { in: ['ACTIVE', 'PAUSED'] } },
         include: {
-          mentor: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+          mentor: { select: { id: true, firstName: true, lastName: true, avatarUrl: true, mentorProfile: true } },
           // Seule la date de la prochaine séance sort des comptes rendus (confidentiels)
           reports: { where: { kind: 'MENTORAT', status: { not: 'DRAFT' } }, select: { content: true, createdAt: true }, orderBy: { createdAt: 'desc' }, take: 1 },
           sessions: { where: { status: 'PLANNED', scheduledAt: { gte: new Date(Date.now() - 3 * 3600000) } }, orderBy: { scheduledAt: 'asc' }, take: 5 },
@@ -535,7 +584,7 @@ class MentoringService {
           status: m.status,
           goals: m.goals,
           startDate: m.startDate,
-          mentor: { id: m.mentor.id, fullName: fullName(m.mentor), avatarUrl: m.mentor.avatarUrl },
+          mentor: { id: m.mentor.id, fullName: fullName(m.mentor), avatarUrl: m.mentor.avatarUrl, profile: mentorProfileDto(m.mentor.mentorProfile) },
           nextSession: typeof next === 'string' && next >= today ? next : null,
           upcomingSessions: m.sessions.filter((x) => x.scheduledAt > new Date(Date.now() - 3600000)).map(sessionDto),
           toReview: toReview.filter((x) => x.mentorshipId === m.id).map(sessionDto),

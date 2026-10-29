@@ -17,6 +17,23 @@ function requirePresident(user) {
   if (!isPresident(user)) throw new ForbiddenError('Action réservée à la Présidence');
 }
 
+// Profil de mentor pré-rempli avec la candidature (le mentor le complète ensuite)
+async function seedProfile(userId, application) {
+  if (!application) return;
+  await prisma.mentorProfile.upsert({
+    where: { userId },
+    update: {},
+    create: {
+      userId,
+      headline: application.profession || null,
+      organization: application.organization || null,
+      domains: application.domains || null,
+      experience: application.experience || null,
+      linkedinUrl: application.linkedinUrl || null,
+    },
+  });
+}
+
 async function grantMentorRole(userId, grantedById = null) {
   const role = await prisma.adminRole.upsert({
     where: { name: MENTOR_ROLE },
@@ -97,7 +114,10 @@ class MentorApplicationService {
       account = application.userId
         ? await prisma.user.findUnique({ where: { id: application.userId }, select: { id: true } })
         : await prisma.user.findFirst({ where: { email: { equals: application.email, mode: 'insensitive' }, isActive: true }, select: { id: true } });
-      if (account) await grantMentorRole(account.id, user.id);
+      if (account) {
+        await grantMentorRole(account.id, user.id);
+        await seedProfile(account.id, application);
+      }
     }
     const updated = await prisma.mentorApplication.update({
       where: { id },
@@ -130,6 +150,7 @@ class MentorApplicationService {
     });
     if (!pending) return false;
     await grantMentorRole(user.id, pending.handledById);
+    await seedProfile(user.id, pending);
     await prisma.mentorApplication.update({ where: { id: pending.id }, data: { userId: user.id, roleGrantedAt: new Date() } });
     return true;
   }

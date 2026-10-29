@@ -45,6 +45,8 @@ const MentoringController = {
   stopSessionVisio: handle((req) => MentoringService.setSessionVisio(req.user, req.params.id, false), { message: 'Salle virtuelle fermée' }),
   joinSessionVisio: handle((req) => MentoringService.joinSessionVisio(req.user, req.params.id, req.body?.name)),
 
+  getMyMentorProfile: handle((req) => MentoringService.getMyMentorProfile(req.user)),
+  updateMyMentorProfile: handle((req) => MentoringService.updateMyMentorProfile(req.user, req.body), { message: 'Profil de mentor enregistré' }),
   submitSessionFeedback: handle((req) => MentoringService.submitSessionFeedback(req.user, req.params.id, req.body), { message: 'Merci pour ton avis !' }),
   reportConcern: handle((req) => MentoringService.reportConcern(req.user, req.params.id, req.body.message), { status: 201, message: 'Ton signalement est transmis à la Présidence, en toute confidentialité.' }),
   listConcerns: handle((req) => MentoringService.listConcerns(req.user)),

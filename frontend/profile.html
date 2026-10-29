@@ -499,8 +499,18 @@
             <div class="profile-mentor-card">
               <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;">
                 ${(window.avatarHtml || (() => ''))({ firstName: ms.mentor.fullName, avatarUrl: ms.mentor.avatarUrl }, { size: 48 })}
-                <div><strong>${escapeHtml(ms.mentor.fullName)}</strong><div style="font-size:0.85rem;color:var(--color-gray-600);">Mentor du club${ms.status === 'PAUSED' ? ' · accompagnement en pause' : ''} · depuis le ${escapeHtml(fr(ms.startDate))}</div></div>
+                <div><strong>${escapeHtml(ms.mentor.fullName)}</strong><div style="font-size:0.85rem;color:var(--color-gray-600);">${ms.mentor.profile?.headline ? `${escapeHtml(ms.mentor.profile.headline)}${ms.mentor.profile.organization ? ` · ${escapeHtml(ms.mentor.profile.organization)}` : ''}` : 'Mentor du club'}${ms.status === 'PAUSED' ? ' · accompagnement en pause' : ''} · depuis le ${escapeHtml(fr(ms.startDate))}</div></div>
               </div>
+              ${ms.mentor.profile ? (() => {
+                const pr = ms.mentor.profile;
+                const facts = [pr.domains && `🎯 ${escapeHtml(pr.domains)}`, pr.city && `📍 ${escapeHtml(pr.city)}`, pr.languages && `🗣️ ${escapeHtml(pr.languages)}`].filter(Boolean);
+                return `<div class="profile-mentor-bio" style="margin:0 0 0.6rem;padding:0.65rem 0.8rem;border-radius:10px;background:var(--color-gray-50, #f8fafc);border:1px solid var(--color-gray-200);">
+                  ${facts.length ? `<p style="margin:0 0 0.4rem;font-size:0.86rem;color:var(--color-gray-700);">${facts.join(' · ')}</p>` : ''}
+                  ${pr.bio ? `<p style="margin:0 0 0.4rem;font-size:0.9rem;line-height:1.6;white-space:pre-line;">${escapeHtml(pr.bio)}</p>` : ''}
+                  ${pr.experience ? `<details style="font-size:0.86rem;"><summary style="cursor:pointer;color:var(--color-gray-600);">Son parcours</summary><p style="margin:0.35rem 0 0;white-space:pre-line;line-height:1.55;">${escapeHtml(pr.experience)}</p></details>` : ''}
+                  ${pr.linkedinUrl && /^https?:\/\//.test(pr.linkedinUrl) ? `<a href="${escapeHtml(pr.linkedinUrl)}" target="_blank" rel="noopener noreferrer" style="font-size:0.86rem;font-weight:600;">Voir son profil en ligne ↗</a>` : ''}
+                </div>`;
+              })() : ''}
               ${ms.goals ? `<p ${p.replace('style="', 'style="white-space:pre-line;')}><strong>Objectifs :</strong>\n${escapeHtml(ms.goals)}</p>` : ''}
               ${(ms.upcomingSessions || []).length
                 ? `<ul class="profile-sessions" style="list-style:none;margin:0 0 0.6rem;padding:0;display:grid;gap:0.45rem;">${ms.upcomingSessions.map((x) => `
@@ -1089,7 +1099,7 @@
   });
 </script>
 <script defer src="js/pwa.js?v=20261028-1"></script>
-<script defer src="js/guide-hint.js?v=20261029-3"></script>
+<script defer src="js/guide-hint.js?v=20261029-4"></script>
 <script defer src="js/account-sync.js?v=20261029-1"></script>
 </body>
 </html>
