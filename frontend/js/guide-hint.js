@@ -49,6 +49,12 @@
         background: #f5a623; color: #0f172a; font-size: 0.8rem; }
       [data-theme="dark"] .guide-help-btn { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.18); color: #f1f5f9; }
       @media (max-width: 640px) { .guide-help-btn { width: 38px; padding: 0; justify-content: center; } .guide-help-btn .guide-help-label { display: none; } }
+      /* Téléphone : le nom du site ne doit pas être coupé. Le thème reste dans le menu (☰ › Mode sombre). */
+      @media (max-width: 480px) {
+        .header-actions #headerThemeToggleBtn { display: none !important; }
+        .guide-help-btn { width: 34px; height: 34px; }
+        .guide-help-btn .guide-help-q { width: 18px; height: 18px; font-size: 0.75rem; }
+      }
       .guide-mobile-link { display: block; margin-bottom: 0.75rem; padding: 0.75rem 1rem; border-radius: 12px; text-align: center; font-weight: 700;
         text-decoration: none; color: inherit; border: 1px solid rgba(245, 166, 35, 0.5); background: rgba(245, 166, 35, 0.1); }
       .guide-welcome { --gw-bg: #fffbeb; --gw-ink: #78350f; --gw-border: #fde68a;
