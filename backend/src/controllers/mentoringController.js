@@ -1,4 +1,5 @@
 const MentoringService = require('../services/mentoringService');
+const ContentSuggestionService = require('../services/contentSuggestionService');
 
 const meta = (req) => ({ ipAddress: req.ip, userAgent: req.get('user-agent') });
 
@@ -35,6 +36,19 @@ const MentoringController = {
   deleteReport: handle((req) => MentoringService.deleteReport(req.user, req.params.id, meta(req)), { message: 'Compte rendu supprimé' }),
   submitReport: handle((req) => MentoringService.submitReport(req.user, req.params.id, meta(req)), { message: 'Compte rendu soumis à la Présidence' }),
   reviewReport: handle((req) => MentoringService.reviewReport(req.user, req.params.id, req.body, meta(req)), { message: 'Décision enregistrée' }),
+
+  getMyMentoring: handle((req) => MentoringService.getMyMentoring(req.user)),
+  requestMentor: handle((req) => MentoringService.requestMentor(req.user, req.body), { status: 201, message: 'Demande envoyée à la Présidence' }),
+  cancelMentorRequest: handle((req) => MentoringService.cancelMentorRequest(req.user, req.params.id), { message: 'Demande retirée' }),
+  listMentorRequests: handle((req) => MentoringService.listMentorRequests(req.user)),
+  declineMentorRequest: handle((req) => MentoringService.declineMentorRequest(req.user, req.params.id, req.body.response, meta(req)), { message: 'Réponse envoyée' }),
+
+  searchSuggestionTargets: handle((req) => ContentSuggestionService.searchTargets(req.user, req.query.type, req.query.q)),
+  listSuggestions: handle((req) => (req.query.scope === 'review'
+    ? ContentSuggestionService.listForReview(req.user, req.query)
+    : ContentSuggestionService.listMine(req.user))),
+  createSuggestion: handle((req) => ContentSuggestionService.create(req.user, req.body), { status: 201, message: 'Merci ! Ta proposition est transmise aux responsables des fiches.' }),
+  resolveSuggestion: handle((req) => ContentSuggestionService.resolve(req.user, req.params.id, req.body, meta(req)), { message: 'Décision enregistrée' }),
 
   listThreads: handle((req) => MentoringService.listThreads(req.user)),
   getMessages: handle((req) => MentoringService.getMessages(req.user, req.query.thread)),

@@ -525,6 +525,13 @@ return headers;
     },
 
     // Paramètres publics et statut de la plateforme
+    // Mentorat côté adhérent : mon mentor, demander un mentor
+    mentoring: {
+      me: () => apiRequestWithRefresh('/mentoring/me'),
+      request: (data) => apiRequestWithRefresh('/mentoring/requests', { method: 'POST', body: JSON.stringify(data) }),
+      cancelRequest: (id) => apiRequestWithRefresh(`/mentoring/requests/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+    },
+
     // Données du compte retrouvées sur tous les appareils (favoris, RIASEC, dossiers cochés)
     me: {
       getData: () => apiRequestWithRefresh('/me/data'),

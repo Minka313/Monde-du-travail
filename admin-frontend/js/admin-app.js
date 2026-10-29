@@ -12,6 +12,8 @@
     rapports: 'reports.review',
     // Mentorat : Présidence (Ultra Admin) uniquement ; les mentors utilisent leur Espace Mentor
     mentorat: 'mentoring.manage',
+    // Propositions des mentors sur les fiches : Présidence, admins Formations ou Métiers
+    suggestions: 'formation.update',
     formations: 'formation.read',
     metiers: 'metier.read',
     opportunites: 'opportunite.read',
@@ -197,6 +199,9 @@
         }
         if (module === 'analytics') {
           return this.hasPermission(user, 'analytics.read');
+        }
+        if (module === 'suggestions') {
+          return this.hasPermission(user, 'formation.update') || this.hasPermission(user, 'metier.update');
         }
         const requiredPerm = MODULE_PERMISSIONS[module];
         return requiredPerm ? this.hasPermission(user, requiredPerm) : false;

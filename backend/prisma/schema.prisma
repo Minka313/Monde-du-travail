@@ -312,24 +312,24 @@ model Topic {
 }
 
 model Reply {
-  id         String        @id @default(cuid())
-  content    String
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
-  isSolution Boolean       @default(false)
-  isEdited   Boolean       @default(false)
-  editedAt   DateTime?     @db.Timestamptz(6)
-  likeCount  Int           @default(0)
+  id           String        @id @default(cuid())
+  content      String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+  isSolution   Boolean       @default(false)
+  isEdited     Boolean       @default(false)
+  editedAt     DateTime?     @db.Timestamptz(6)
+  likeCount    Int           @default(0)
   // Réponse validée par un mentor vérifié (rôle MENTOR_EXPERT) ou la Présidence
   endorsedById String?
   endorsedAt   DateTime?
-  endorsedBy   User?       @relation("ReplyEndorser", fields: [endorsedById], references: [id], onDelete: SetNull)
-  topicId    String
-  authorId   String
-  author     User          @relation(fields: [authorId], references: [id])
-  topic      Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
-  likes      ReplyLike[]
-  reports    ForumReport[]
+  endorsedBy   User?         @relation("ReplyEndorser", fields: [endorsedById], references: [id], onDelete: SetNull)
+  topicId      String
+  authorId     String
+  author       User          @relation(fields: [authorId], references: [id])
+  topic        Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  likes        ReplyLike[]
+  reports      ForumReport[]
 
   @@index([topicId])
   @@index([isSolution], map: "replies_is_solution_idx")
@@ -480,7 +480,7 @@ model User {
   lastName               String
   forumDisplayName       String?
   forumDigestOptIn       Boolean                 @default(false)
-  forumSpotlightOptIn     Boolean                 @default(false)
+  forumSpotlightOptIn    Boolean                 @default(false)
   role                   Role                    @default(MEMBER)
   isActive               Boolean                 @default(false)
   isVerified             Boolean                 @default(false)
@@ -530,6 +530,10 @@ model User {
   positionReportEvents   PositionReportEvent[]   @relation("PositionReportActor")
   mentorships            Mentorship[]            @relation("MentorshipMentor")
   menteeships            Mentorship[]            @relation("MentorshipMentee")
+  mentorRequests         MentorRequest[]         @relation("MentorRequestAuthor")
+  handledMentorRequests  MentorRequest[]         @relation("MentorRequestHandler")
+  contentSuggestions     ContentSuggestion[]     @relation("ContentSuggestionAuthor")
+  resolvedSuggestions    ContentSuggestion[]     @relation("ContentSuggestionResolver")
   createdMentorships     Mentorship[]            @relation("MentorshipCreator")
   formationTrainings     FormationTrainer[]      @relation("FormationTrainerUser")
   mentorReports          MentorReport[]          @relation("MentorReportAuthor")
@@ -663,6 +667,7 @@ model Mentorship {
   mentee        User?          @relation("MentorshipMentee", fields: [menteeId], references: [id], onDelete: SetNull)
   createdBy     User?          @relation("MentorshipCreator", fields: [createdById], references: [id], onDelete: SetNull)
   reports       MentorReport[]
+  request       MentorRequest?
 
   @@index([mentorId])
   @@index([menteeId])
@@ -685,6 +690,60 @@ model FormationTrainer {
 
 // Compte rendu d'un mentor : séance de mentorat ou session de formation animée.
 // Confidentiel : lu par son auteur et la Présidence uniquement.
+// Demande d'accompagnement d'un adhérent : examinée par la Présidence, qui forme le binôme
+model MentorRequest {
+  id           String      @id @default(cuid())
+  userId       String
+  goals        String
+  domain       String?
+  format       String?
+  availability String?
+  // PENDING : en attente ; MATCHED : binôme créé ; DECLINED : refusée ; CANCELLED : retirée par l'adhérent
+  status       String      @default("PENDING")
+  response     String?
+  mentorshipId String?     @unique
+  handledById  String?
+  handledAt    DateTime?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  user         User        @relation("MentorRequestAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  handledBy    User?       @relation("MentorRequestHandler", fields: [handledById], references: [id], onDelete: SetNull)
+  mentorship   Mentorship? @relation(fields: [mentorshipId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([userId])
+  @@map("mentor_requests")
+}
+
+// Signalement ou proposition de modification d'une fiche formation ou métier par un mentor,
+// traité par les responsables du contenu (admins Formations / Métiers) ou la Présidence
+model ContentSuggestion {
+  id           String    @id @default(cuid())
+  authorId     String
+  // formation (slug) ou job (slug)
+  targetType   String
+  targetId     String
+  targetTitle  String
+  // ERREUR, MISE_A_JOUR, AJOUT, AUTRE
+  kind         String
+  section      String?
+  message      String
+  proposal     String?
+  // OPEN, APPLIED, REJECTED
+  status       String    @default("OPEN")
+  response     String?
+  resolvedById String?
+  resolvedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  author       User      @relation("ContentSuggestionAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  resolvedBy   User?     @relation("ContentSuggestionResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([targetType, targetId])
+  @@map("content_suggestions")
+}
+
 model MentorReport {
   id            String               @id @default(cuid())
   authorId      String

@@ -9,6 +9,7 @@
     organization: { label: 'Organisation & Fonctionnement', icon: '🏛️' },
     rapports: { label: 'Rapports du bureau', icon: '📑' },
     mentorat: { label: 'Mentorat', icon: '🧑‍🏫' },
+    suggestions: { label: 'Propositions des mentors', icon: '✏️' },
     notifications: { label: 'Notifications Push', icon: '🔔' },
     formations: { label: 'Formations', icon: '📚' },
     metiers: { label: 'Métiers', icon: '💼' },
@@ -565,6 +566,9 @@
           break;
         case 'visiteurs':
           html = await window.AdminVisitors.render();
+          break;
+        case 'suggestions':
+          html = await window.AdminSuggestions.render();
           break;
         case 'mentorat':
           html = '<div class="card"><div class="card-header"><div><h2 style="margin:0 0 0.25rem;">🧑‍🏫 Mentorat</h2><p style="margin:0;font-size:0.85rem;color:#64748b;">Binômes, formations confiées aux mentors, comptes rendus à valider et messages. Les mentors travaillent depuis leur Espace Mentor sur le site.</p></div><a class="btn btn-outline" style="text-decoration:none;" href="../frontend/mentor.html" target="_blank" rel="noopener">Espace Mentor du site</a></div></div><div id="admin-mentor-root"></div>';
@@ -6671,6 +6675,10 @@
     }
     if (module === 'visiteurs') {
       window.AdminVisitors.bind();
+      return;
+    }
+    if (module === 'suggestions') {
+      window.AdminSuggestions.bind();
       return;
     }
     if (module === 'mentorat') {

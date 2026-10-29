@@ -138,6 +138,12 @@
                         <p id="profileJoinStatus" role="status" style="margin:0.6rem 0 0;font-size:0.88rem;"></p>
                     </div>
 
+                    <!-- Mentorat : mon mentor, ou demander un mentor (adhérents) -->
+                    <div class="profile-box" id="profileMentorshipBox" hidden>
+                        <h2><span>🤝</span> Mon mentor</h2>
+                        <div id="profileMentorshipBody"></div>
+                    </div>
+
                     <!-- Formations réservées -->
                     <div class="profile-box">
                         <h2><span>🎓</span> Mes Inscriptions aux Formations</h2>
@@ -380,7 +386,7 @@
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script defer src="js/scrollytelling-engine.js?v=20261028-1"></script>
 <script defer src="js/config.js"></script>
-<script defer src="js/frontend-api.js?v=20261029-2"></script>
+<script defer src="js/frontend-api.js?v=20261029-3"></script>
 <script defer src="js/analytics-tracker.js"></script>
 <script defer src="js/layout.js"></script>
 <script defer src="js/main.js?v=20261028-3"></script>
@@ -479,6 +485,79 @@
           btn.disabled = false;
         }
       });
+    }
+
+    // 2 quater. Mentorat (adhérents) : mon mentor, ma demande, ou demander un mentor
+    if (!isVisitor && window.Api.mentoring) {
+      const box = document.getElementById('profileMentorshipBox');
+      const body = document.getElementById('profileMentorshipBody');
+      const fr = (d) => new Date(d.length === 10 ? `${d}T00:00:00Z` : d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+      const renderMentoring = (m) => {
+        const p = 'style="margin:0 0 0.6rem;color:var(--color-gray-700);font-size:0.92rem;line-height:1.6;"';
+        if (m.mentorships.length) {
+          body.innerHTML = m.mentorships.map((ms) => `
+            <div class="profile-mentor-card">
+              <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;">
+                ${(window.avatarHtml || (() => ''))({ firstName: ms.mentor.fullName, avatarUrl: ms.mentor.avatarUrl }, { size: 48 })}
+                <div><strong>${escapeHtml(ms.mentor.fullName)}</strong><div style="font-size:0.85rem;color:var(--color-gray-600);">Mentor du club${ms.status === 'PAUSED' ? ' · accompagnement en pause' : ''} · depuis le ${escapeHtml(fr(ms.startDate))}</div></div>
+              </div>
+              ${ms.goals ? `<p ${p.replace('style="', 'style="white-space:pre-line;')}><strong>Objectifs :</strong>\n${escapeHtml(ms.goals)}</p>` : ''}
+              <p ${p}>${ms.nextSession ? `📅 <strong>Prochaine séance prévue le ${escapeHtml(fr(ms.nextSession))}.</strong>` : '📅 Ton mentor te proposera la date de votre prochaine séance.'}</p>
+              <p style="margin:0;font-size:0.85rem;color:var(--color-gray-600);">Ton mentor te contacte par e-mail ou par téléphone. Une question sur l'accompagnement ? Écris au club : <a href="mailto:lemondedutravailsen@gmail.com">lemondedutravailsen@gmail.com</a>.</p>
+            </div>`).join('');
+          return;
+        }
+        const req = m.request;
+        if (req && req.status === 'PENDING') {
+          body.innerHTML = `<p ${p}>⏳ <strong>Ta demande de mentor est en cours d'examen</strong> par la Présidence. Tu seras prévenu dès qu'un mentor te sera attribué.</p>
+            <p ${p}><em>« ${escapeHtml(req.goals)} »</em></p>
+            <button type="button" class="btn btn-outline btn-sm" id="mentorRequestCancel">Retirer ma demande</button>`;
+          document.getElementById('mentorRequestCancel').addEventListener('click', async (e) => {
+            if (!window.confirm('Retirer ta demande de mentor ?')) return;
+            e.currentTarget.disabled = true;
+            try { await window.Api.mentoring.cancelRequest(req.id); renderMentoring(await window.Api.mentoring.me().then((r) => r.data)); } catch (err) { alert(err.message); }
+          });
+          return;
+        }
+        body.innerHTML = `
+          ${req && req.status === 'DECLINED' && req.response ? `<p ${p} style="color:#92400e;">Réponse à ta dernière demande : ${escapeHtml(req.response)}</p>` : ''}
+          <p ${p}>Un mentor du club (professionnel ou étudiant avancé) peut t'accompagner pour ton orientation, un concours, ta recherche de stage ou ton projet. La Présidence choisit le mentor qui correspond à ta demande.</p>
+          <form id="mentorRequestForm" style="display:grid;gap:0.6rem;">
+            <label style="font-weight:600;font-size:0.88rem;">Ce que tu attends de l'accompagnement
+              <textarea name="goals" class="form-input" rows="3" maxlength="2000" required minlength="10" style="width:100%;box-sizing:border-box;margin-top:0.3rem;" placeholder="Ex. : je prépare le concours de l'ESP et j'hésite entre deux filières."></textarea></label>
+            <label style="font-weight:600;font-size:0.88rem;">Domaine (facultatif)
+              <input name="domain" class="form-input" maxlength="150" style="width:100%;box-sizing:border-box;margin-top:0.3rem;" placeholder="Ex. : ingénierie, santé, entrepreneuriat…"></label>
+            <label style="font-weight:600;font-size:0.88rem;">Format préféré
+              <select name="format" class="form-input" style="width:100%;box-sizing:border-box;margin-top:0.3rem;">${m.formats.map((f) => `<option>${escapeHtml(f)}</option>`).join('')}</select></label>
+            <label style="font-weight:600;font-size:0.88rem;">Tes disponibilités (facultatif)
+              <input name="availability" class="form-input" maxlength="300" style="width:100%;box-sizing:border-box;margin-top:0.3rem;" placeholder="Ex. : le samedi matin, après 18 h en semaine"></label>
+            <button type="submit" class="btn btn-primary btn-sm" style="justify-self:start;">🙋 Demander un mentor</button>
+            <p id="mentorRequestStatus" role="status" style="margin:0;font-size:0.88rem;"></p>
+          </form>`;
+        document.getElementById('mentorRequestForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const f = e.currentTarget;
+          const status = document.getElementById('mentorRequestStatus');
+          const data = Object.fromEntries(new FormData(f));
+          if ((data.goals || '').trim().length < 10) { status.style.color = '#b91c1c'; status.textContent = 'Explique en quelques mots ce que tu attends (10 caractères minimum).'; return; }
+          f.querySelector('button').disabled = true;
+          try {
+            await window.Api.mentoring.request({ goals: data.goals.trim(), domain: data.domain.trim() || null, format: data.format, availability: data.availability.trim() || null });
+            try { window.AnalyticsTracker?.track?.('mentor_requested', 'mentoring', 'request', {}); } catch (_) { /* suivi facultatif */ }
+            renderMentoring(await window.Api.mentoring.me().then((r) => r.data));
+          } catch (err) {
+            status.style.color = '#b91c1c';
+            status.textContent = err.message || 'Envoi impossible pour le moment.';
+            f.querySelector('button').disabled = false;
+          }
+        });
+      };
+      window.Api.mentoring.me().then((res) => {
+        const m = res && res.data;
+        if (!m || (!m.isAdherent && !m.mentorships.length)) return;
+        box.hidden = false;
+        renderMentoring(m);
+      }).catch(() => {});
     }
 
     // 2 bis. Poste au bureau

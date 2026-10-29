@@ -83,6 +83,7 @@
         list.push({ key: 'pairs', icon: '🤝', label: 'Binômes' });
         list.push({ key: 'trainings', icon: '🎓', label: 'Formations' });
         list.push({ key: 'review', icon: '📥', label: 'Comptes rendus', count: c.pendingReview });
+        list.push({ key: 'requests', icon: '🙋', label: 'Demandes de mentor', count: c.pendingRequests });
       }
       if (c.isMentor) {
         list.push({ key: 'mentees', icon: '🤝', label: 'Mes mentorés' });
@@ -91,6 +92,7 @@
       }
       if (c.isMentor || c.isPresident) {
         list.push({ key: 'forumQueue', icon: '💬', label: 'Questions sans réponse' });
+        list.push({ key: 'suggestions', icon: '✏️', label: 'Fiches : signaler, proposer', count: c.isPresident ? c.openSuggestions : 0 });
       }
       list.push({ key: 'messages', icon: '💬', label: c.isPresident ? 'Messages des mentors' : 'Messages à la Présidence', count: c.unreadMessages });
       return list;
@@ -131,6 +133,7 @@
       try {
         content.innerHTML = await VIEWS[tab]();
         if (tab === 'messages') afterMessages();
+        if (tab === 'suggestions') bindSuggestionForm();
       } catch (error) {
         content.innerHTML = `<div class="ms-error">⚠️ ${esc(error.message || 'Chargement impossible')}</div>`;
       }
@@ -355,14 +358,111 @@
       }, 20000);
     }
 
+    // ===== Demandes de mentor (Présidence) =====
+
+    const REQ_STATUS = { PENDING: ['En attente', 'warning'], MATCHED: ['Binôme créé', 'success'], DECLINED: ['Non retenue', 'muted'] };
+
+    async function viewRequests() {
+      state.requests = (await api('/requests')).data;
+      if (!state.requests.length) return empty('🙋', 'Aucune demande', 'Les adhérents peuvent demander un mentor depuis « Mon espace » : leurs demandes arrivent ici.');
+      return `<div class="ms-grid">${state.requests.map((r) => `
+        <article class="ms-card">
+          <div class="ms-card-head"><span class="ms-avatar">${esc((r.user.fullName || '?')[0])}</span><div><strong>${esc(r.user.fullName)}</strong><span>${esc(r.user.email)}</span></div>${pill(REQ_STATUS[r.status] || [r.status, 'muted'])}</div>
+          <p class="ms-goals">${esc(r.goals)}</p>
+          <p class="ms-meta">${[r.domain && `Domaine : <strong>${esc(r.domain)}</strong>`, r.format && `Format : ${esc(r.format)}`, r.availability && `Disponibilités : ${esc(r.availability)}`].filter(Boolean).join(' · ') || 'Aucune préférence indiquée'}</p>
+          <p class="ms-meta">Demande du ${esc(frDate(r.createdAt))}${r.handledAt ? ` · traitée le ${esc(frDate(r.handledAt))}${r.handledBy ? ` par ${esc(r.handledBy)}` : ''}` : ''}</p>
+          ${r.response ? `<p class="ms-meta"><strong>Réponse :</strong> ${esc(r.response)}</p>` : ''}
+          ${r.status === 'PENDING' ? `<div class="ms-actions">
+            <button type="button" class="ms-btn ms-btn-primary" data-act="request-match" data-id="${esc(r.id)}">🤝 Former le binôme</button>
+            <button type="button" class="ms-btn ms-btn-ghost" data-act="request-decline" data-id="${esc(r.id)}">Répondre sans binôme…</button>
+          </div>` : ''}
+        </article>`).join('')}</div>`;
+    }
+
+    // ===== Fiches formations et métiers : signaler une erreur, proposer une modification =====
+
+    const SUG_KINDS = { ERREUR: 'Erreur à corriger', MISE_A_JOUR: 'Information à mettre à jour', AJOUT: 'Contenu à ajouter', AUTRE: 'Autre' };
+    const SUG_STATUS = { OPEN: ['En cours d\'examen', 'info'], APPLIED: ['Appliquée', 'success'], REJECTED: ['Non retenue', 'muted'] };
+    let jobCatalog = null;
+
+    async function loadJobCatalog() {
+      if (jobCatalog) return jobCatalog;
+      const res = await fetch(siteUrl('data/riasec-jobs.json'));
+      const data = await res.json();
+      jobCatalog = (data.jobs || []).map((j) => ({ id: j.slug || j.id, title: j.title, search: `${j.title} ${j.slug || ''}`.toLowerCase() }));
+      return jobCatalog;
+    }
+
+    async function viewSuggestions() {
+      const mine = (await api('/suggestions')).data;
+      const preset = state.suggestPreset || {};
+      return `
+        <section class="ms-card ms-suggest-form">
+          <h3 style="margin:0 0 0.35rem;">✏️ Signaler une erreur ou proposer une modification</h3>
+          <p class="ms-hint" style="margin:0 0 0.75rem;">Ta proposition est examinée par les responsables des fiches (admins Formations ou Métiers) ou la Présidence, qui l'appliquent. Tu es prévenu de leur décision.</p>
+          <form class="ms-form" data-form="suggestion">
+            <label>Type de fiche<select name="targetType"><option value="job" ${preset.type === 'job' ? 'selected' : ''}>Fiche métier</option><option value="formation" ${preset.type === 'formation' ? 'selected' : ''}>Fiche formation</option></select></label>
+            <label>Fiche concernée <span class="ms-hint">(tape quelques lettres du titre)</span><input type="search" name="targetSearch" autocomplete="off" value="${esc(preset.title || '')}" placeholder="Ex. : géomètre, prise de parole…"></label>
+            <div class="ms-suggest" data-target-suggest>${preset.id ? `<p class="ms-hint">✅ ${esc(preset.title)}</p>` : ''}</div>
+            <input type="hidden" name="targetId" value="${esc(preset.id || '')}"><input type="hidden" name="targetTitle" value="${esc(preset.title || '')}">
+            <label>Nature<select name="kind">${Object.entries(SUG_KINDS).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('')}</select></label>
+            <label>Partie de la fiche (facultatif)<input name="section" maxlength="150" placeholder="Ex. : Salaires, Module 2, Études…"></label>
+            <label>Ce qui ne va pas ou ce qu'il faut changer<textarea name="message" rows="3" maxlength="3000" required minlength="10"></textarea></label>
+            <label>Texte proposé (facultatif)<textarea name="proposal" rows="3" maxlength="5000" placeholder="Le texte corrigé, prêt à être recopié"></textarea></label>
+            <button type="submit" class="ms-btn ms-btn-primary">Envoyer la proposition</button>
+          </form>
+        </section>
+        <h3 class="ms-section-title" style="margin:1.25rem 0 0.6rem;">Mes propositions</h3>
+        ${mine.length ? `<div class="ms-grid">${mine.map((x) => `
+          <article class="ms-card">
+            <div class="ms-card-head"><div><strong>${esc(x.targetTitle)}</strong><span>${x.targetType === 'formation' ? 'Formation' : 'Métier'} · ${esc(SUG_KINDS[x.kind] || x.kind)}${x.section ? ` · ${esc(x.section)}` : ''}</span></div>${pill(SUG_STATUS[x.status] || [x.status, 'muted'])}</div>
+            <p class="ms-goals">${esc(x.message)}</p>
+            ${x.response ? `<p class="ms-meta"><strong>Réponse${x.resolvedBy ? ` de ${esc(x.resolvedBy)}` : ''} :</strong> ${esc(x.response)}</p>` : ''}
+            <p class="ms-meta">Envoyée le ${esc(frDate(x.createdAt))}</p>
+          </article>`).join('')}</div>` : '<p class="ms-hint">Tu n\'as encore envoyé aucune proposition.</p>'}
+        ${state.ctx.isPresident ? `<p class="ms-hint" style="margin-top:1rem;">Les propositions de tous les mentors se traitent dans l'administration, page « Propositions des mentors »${state.ctx.openSuggestions ? ` (${state.ctx.openSuggestions} à traiter)` : ''}.</p>` : ''}`;
+    }
+
+    function bindSuggestionForm() {
+      const form = root.querySelector('[data-form="suggestion"]');
+      if (!form) return;
+      const box = form.querySelector('[data-target-suggest]');
+      let timer;
+      const reset = () => { form.targetId.value = ''; form.targetTitle.value = ''; };
+      form.targetType.addEventListener('change', () => { reset(); form.targetSearch.value = ''; box.innerHTML = ''; });
+      form.targetSearch.addEventListener('input', () => {
+        reset();
+        clearTimeout(timer);
+        timer = setTimeout(async () => {
+          const q = form.targetSearch.value.trim().toLowerCase();
+          if (q.length < 2) { box.innerHTML = ''; return; }
+          let items = [];
+          try {
+            items = form.targetType.value === 'job'
+              ? (await loadJobCatalog()).filter((j) => j.search.includes(q)).slice(0, 10)
+              : (await api(`/suggestions/targets?type=formation&q=${encodeURIComponent(q)}`)).data;
+          } catch (_) { items = []; }
+          box.innerHTML = items.map((i) => `<button type="button" class="ms-suggest-item" data-target="${esc(i.id)}" data-title="${esc(i.title)}">${esc(i.title)}</button>`).join('') || '<p class="ms-hint">Aucune fiche trouvée.</p>';
+        }, 250);
+      });
+      box.addEventListener('click', (e) => {
+        const pick = e.target.closest('[data-target]');
+        if (!pick) return;
+        form.targetId.value = pick.dataset.target;
+        form.targetTitle.value = pick.dataset.title;
+        form.targetSearch.value = pick.dataset.title;
+        box.innerHTML = `<p class="ms-hint">✅ ${esc(pick.dataset.title)}</p>`;
+      });
+    }
+
     const VIEWS = {
-      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview,
-      forumQueue: viewForumQueue, mentees: viewMentees, myTrainings: viewMyTrainings, myReports: viewMyReports, messages: viewMessages,
+      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview, requests: viewRequests,
+      forumQueue: viewForumQueue, suggestions: viewSuggestions, mentees: viewMentees, myTrainings: viewMyTrainings, myReports: viewMyReports, messages: viewMessages,
     };
 
     // ===== Fenêtres d'action =====
 
-    async function openPairForm(mentorId) {
+    async function openPairForm(mentorId, preset = {}) {
       if (!state.mentors) state.mentors = (await api('/mentors')).data;
       const el = modal(`
         <h2 class="ms-modal-title">🤝 Nouveau binôme</h2>
@@ -372,10 +472,12 @@
             <input type="search" name="search" autocomplete="off" placeholder="Ex. : Diallo, awa@…">
           </label>
           <div class="ms-suggest" data-suggest></div>
-          <input type="hidden" name="menteeId">
-          <label>Ou nom du mentoré (sans compte)<input name="menteeName" maxlength="150"></label>
-          <label>Contact (téléphone, e-mail)<input name="menteeContact" maxlength="200"></label>
-          <label>Objectifs de l'accompagnement<textarea name="goals" rows="3" maxlength="3000" placeholder="Orientation, recherche de stage, projet entrepreneurial…"></textarea></label>
+          <input type="hidden" name="menteeId" value="${esc(preset.menteeId || '')}">
+          <input type="hidden" name="requestId" value="${esc(preset.requestId || '')}">
+          ${preset.requestId ? `<p class="ms-hint">🙋 Demande de <strong>${esc(preset.menteeName)}</strong> : choisis le mentor qui lui correspond.</p>` : ''}
+          <label>Ou nom du mentoré (sans compte)<input name="menteeName" maxlength="150" value="${esc(preset.menteeName || '')}"></label>
+          <label>Contact (téléphone, e-mail)<input name="menteeContact" maxlength="200" value="${esc(preset.menteeContact || '')}"></label>
+          <label>Objectifs de l'accompagnement<textarea name="goals" rows="3" maxlength="3000" placeholder="Orientation, recherche de stage, projet entrepreneurial…">${esc(preset.goals || '')}</textarea></label>
           <button type="submit" class="ms-btn ms-btn-primary">Créer le binôme</button>
         </form>`, { label: 'Nouveau binôme' });
       if (!state.mentors.length) el.querySelector('form').innerHTML = '<p>Aucun mentor : nommez d\'abord des mentors dans l\'administration.</p>';
@@ -402,7 +504,7 @@
       el.querySelector('form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const f = e.target;
-        const body = { mentorId: f.mentorId.value, menteeId: f.menteeId.value || null, menteeName: f.menteeName.value.trim(), menteeContact: f.menteeContact.value.trim() || null, goals: f.goals.value.trim() || null };
+        const body = { mentorId: f.mentorId.value, menteeId: f.menteeId.value || null, menteeName: f.menteeName.value.trim(), menteeContact: f.menteeContact.value.trim() || null, goals: f.goals.value.trim() || null, requestId: f.requestId.value || null };
         if (!body.menteeId && !body.menteeName) { toast('Choisissez un membre ou indiquez un nom', 'error'); return; }
         if (await run(f.querySelector('button[type=submit]'), () => api('/mentorships', json('POST', body)), 'Binôme créé')) {
           closeModal();
@@ -661,6 +763,14 @@
       if (act === 'report-delete' && window.confirm('Supprimer définitivement ce brouillon ?')) {
         if (await run(btn, () => api(`/reports/${id}`, { method: 'DELETE' }), 'Brouillon supprimé')) refresh();
       }
+      if (act === 'request-match') {
+        const r = (state.requests || []).find((x) => x.id === id);
+        if (r) openPairForm(null, { requestId: r.id, menteeId: r.user.id, menteeName: r.user.fullName, menteeContact: r.user.email, goals: [r.goals, r.domain && `Domaine : ${r.domain}`, r.format && r.format !== 'Peu importe' && `Format souhaité : ${r.format}`, r.availability && `Disponibilités : ${r.availability}`].filter(Boolean).join('\n') });
+      }
+      if (act === 'request-decline') {
+        const response = window.prompt('Ta réponse à l\'adhérent (ex. : pas de mentor disponible dans ce domaine pour le moment, nous revenons vers toi en janvier) :');
+        if (response && response.trim() && await run(btn, () => api(`/requests/${id}/decline`, json('POST', { response: response.trim() })), 'Réponse envoyée')) refresh();
+      }
       if (act === 'open-thread') {
         state.threadUserId = btn.dataset.thread;
         go('messages');
@@ -670,6 +780,22 @@
     function onChange() { /* réservé : filtres futurs */ }
 
     async function onSubmit(e) {
+      const sugForm = e.target.closest('[data-form="suggestion"]');
+      if (sugForm) {
+        e.preventDefault();
+        const f = sugForm;
+        if (!f.targetId.value) { toast('Choisis la fiche concernée dans la liste', 'error'); return; }
+        const body = {
+          targetType: f.targetType.value, targetId: f.targetId.value, targetTitle: f.targetTitle.value,
+          kind: f.kind.value, section: f.section.value.trim() || null, message: f.message.value.trim(), proposal: f.proposal.value.trim() || null,
+        };
+        if (body.message.length < 10) { toast('Décris le problème en quelques mots (10 caractères minimum)', 'error'); return; }
+        if (await run(f.querySelector('button[type=submit]'), () => api('/suggestions', json('POST', body)), 'Merci ! Proposition transmise aux responsables des fiches')) {
+          state.suggestPreset = null;
+          go('suggestions');
+        }
+        return;
+      }
       const form = e.target.closest('[data-form="message"]');
       if (!form) return;
       e.preventDefault();
@@ -698,6 +824,13 @@
       const params = new URLSearchParams(window.location.search);
       if (params.get('thread')) state.threadUserId = params.get('thread');
       if (window.location.hash === '#messages') state.tab = 'messages';
+      if (params.get('tab')) state.tab = params.get('tab');
+      // Lien « Proposer une correction » depuis une fiche : suggest=job:<slug> ou formation:<slug>, title=<titre>
+      const suggest = /^(job|formation):([A-Za-z0-9_-]{1,120})$/.exec(params.get('suggest') || '');
+      if (suggest) {
+        state.suggestPreset = { type: suggest[1], id: suggest[2], title: (params.get('title') || '').slice(0, 200) };
+        state.tab = 'suggestions';
+      }
       await go(state.tab || tabs()[0].key);
       if (params.get('report')) openReport(params.get('report'));
     })();

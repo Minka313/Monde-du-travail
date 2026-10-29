@@ -33,6 +33,11 @@
     document.head.appendChild(style);
   }
 
+  // Mentor connecté : lien direct vers « Signaler / proposer » de son espace, fiche pré-remplie
+  function isMentor() {
+    try { return (JSON.parse(localStorage.getItem('currentUser') || 'null')?.adminRoles || []).includes('MENTOR_EXPERT'); } catch (_) { return false; }
+  }
+
   function askUrl({ type, id, title }) {
     const params = new URLSearchParams({ contextType: type, contextId: id, contextTitle: title });
     return `forum-create.html?${params}`;
@@ -71,6 +76,7 @@
       <div class="forum-linked-actions">
         <a class="btn btn-primary" href="${esc(askUrl(ctx))}">Poser une question sur ${esc(label.what)}</a>
         ${data.total > data.topics.length ? '<a class="btn btn-outline" href="forum.html">Voir le forum</a>' : ''}
+        ${ctx.type !== 'opportunity' && isMentor() ? `<a class="btn btn-outline" href="mentor.html?${new URLSearchParams({ suggest: `${ctx.type}:${ctx.id}`, title: ctx.title })}">✏️ Proposer une correction (mentor)</a>` : ''}
       </div>`;
   }
 

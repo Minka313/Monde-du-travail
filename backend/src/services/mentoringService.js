@@ -26,6 +26,9 @@ const USER_SUMMARY = { id: true, firstName: true, lastName: true, email: true, a
 const fullName = (u) => (u ? `${u.firstName} ${u.lastName}`.trim() : null);
 
 const isPresident = (user) => user?.role === 'ULTRA_ADMIN';
+// Le mentorat est réservé aux adhérents du club (pas aux comptes gratuits)
+const isAdherent = (user) => Boolean(user) && user.role !== 'VISITOR';
+const REQUEST_FORMATS = ['Peu importe', 'Présentiel', 'Visio', 'Téléphone', 'WhatsApp'];
 const isMentor = (user) => (user?.adminRoles || []).includes(MENTOR_ROLE);
 
 function requireMentorOrPresident(user) {
@@ -153,6 +156,10 @@ class MentoringService {
         : prisma.staffMessage.count({ where: { threadUserId: user.id, authorId: { not: user.id }, readAt: null } }),
       president ? prisma.mentorReport.count({ where: { status: 'SUBMITTED', authorId: { not: user.id } } }) : 0,
     ]);
+    const [pendingRequests, openSuggestions] = await Promise.all([
+      president ? prisma.mentorRequest.count({ where: { status: 'PENDING' } }) : 0,
+      president ? prisma.contentSuggestion.count({ where: { status: 'OPEN' } }) : 0,
+    ]);
 
     return {
       isMentor: isMentor(user),
@@ -160,6 +167,8 @@ class MentoringService {
       templates: MENTOR_TEMPLATES,
       unreadMessages: unread,
       pendingReview: toReview,
+      pendingRequests,
+      openSuggestions,
       mentorships: mentorships.map((m) => ({
         id: m.id,
         status: m.status,
@@ -221,6 +230,7 @@ class MentoringService {
     const users = await prisma.user.findMany({
       where: {
         isActive: true,
+        role: { not: 'VISITOR' },
         OR: [
           { firstName: { contains: query, mode: 'insensitive' } },
           { lastName: { contains: query, mode: 'insensitive' } },
@@ -243,6 +253,8 @@ class MentoringService {
       const mentee = await prisma.user.findUnique({ where: { id: data.menteeId }, select: USER_SUMMARY });
       if (!mentee) throw new NotFoundError('Mentoré introuvable');
       if (mentee.id === data.mentorId) throw new BadRequestError('Un mentor ne peut pas être son propre mentoré');
+      const menteeAccount = await prisma.user.findUnique({ where: { id: mentee.id }, select: { role: true } });
+      if (!isAdherent(menteeAccount)) throw new BadRequestError('Le mentorat est réservé aux adhérents : ce compte gratuit doit d\'abord adhérer au club');
       menteeName = menteeName || fullName(mentee);
     }
     if (!menteeName) throw new BadRequestError('Indiquez le mentoré');
@@ -257,6 +269,13 @@ class MentoringService {
         createdById: user.id,
       },
     });
+    // Binôme formé à partir d'une demande d'accompagnement : la demande est close
+    if (data.requestId) {
+      await prisma.mentorRequest.updateMany({
+        where: { id: data.requestId, status: 'PENDING' },
+        data: { status: 'MATCHED', mentorshipId: mentorship.id, handledById: user.id, handledAt: new Date() },
+      });
+    }
     await AuditService.log({
       userId: user.id, action: 'mentoring.mentorship.create', module: 'mentoring', resource: 'Mentorship',
       resourceId: mentorship.id, metadata: { mentorId: data.mentorId, menteeName }, ...meta,
@@ -269,8 +288,8 @@ class MentoringService {
     if (data.menteeId) {
       await notify([data.menteeId], {
         title: '🤝 Ton mentor t\'attend',
-        message: 'Un mentor du club t\'a été attribué. Il va prendre contact avec toi.',
-        url: '/profile.html',
+        message: 'Un mentor du club t\'a été attribué. Il va prendre contact avec toi : retrouve-le dans « Mon espace ».',
+        url: '/profile.html#profileMentorshipBox',
       });
     }
     return mentorship;
@@ -295,6 +314,117 @@ class MentoringService {
     await AuditService.log({
       userId: user.id, action: 'mentoring.mentorship.update', module: 'mentoring', resource: 'Mentorship',
       resourceId: id, metadata: update, ...meta,
+    });
+    return updated;
+  }
+
+  // ===== Côté mentoré : mon mentor, ma demande d'accompagnement =====
+
+  static async getMyMentoring(user) {
+    const [mentorships, request] = await Promise.all([
+      prisma.mentorship.findMany({
+        where: { menteeId: user.id, status: { in: ['ACTIVE', 'PAUSED'] } },
+        include: {
+          mentor: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
+          // Seule la date de la prochaine séance sort des comptes rendus (confidentiels)
+          reports: { where: { kind: 'MENTORAT', status: { not: 'DRAFT' } }, select: { content: true, createdAt: true }, orderBy: { createdAt: 'desc' }, take: 1 },
+        },
+        orderBy: { startDate: 'desc' },
+      }),
+      prisma.mentorRequest.findFirst({ where: { userId: user.id }, orderBy: { createdAt: 'desc' } }),
+    ]);
+    const today = new Date().toISOString().slice(0, 10);
+    return {
+      canRequest: isAdherent(user) && !mentorships.length && request?.status !== 'PENDING',
+      isAdherent: isAdherent(user),
+      formats: REQUEST_FORMATS,
+      mentorships: mentorships.map((m) => {
+        const next = m.reports[0]?.content?.prochaineSeance;
+        return {
+          id: m.id,
+          status: m.status,
+          goals: m.goals,
+          startDate: m.startDate,
+          mentor: { id: m.mentor.id, fullName: fullName(m.mentor), avatarUrl: m.mentor.avatarUrl },
+          nextSession: typeof next === 'string' && next >= today ? next : null,
+          lastSessionAt: m.reports[0]?.createdAt || null,
+        };
+      }),
+      request: request ? {
+        id: request.id, status: request.status, goals: request.goals, domain: request.domain, format: request.format,
+        availability: request.availability, response: request.response, createdAt: request.createdAt,
+      } : null,
+    };
+  }
+
+  static async requestMentor(user, data) {
+    if (!isAdherent(user)) throw new ForbiddenError('Le mentorat est réservé aux adhérents du club : demande d\'abord ton adhésion depuis « Mon espace ».');
+    const [pending, active] = await Promise.all([
+      prisma.mentorRequest.findFirst({ where: { userId: user.id, status: 'PENDING' } }),
+      prisma.mentorship.findFirst({ where: { menteeId: user.id, status: { in: ['ACTIVE', 'PAUSED'] } } }),
+    ]);
+    if (active) throw new BadRequestError('Tu as déjà un mentor du club.');
+    if (pending) throw new BadRequestError('Ta demande est déjà en cours d\'examen par la Présidence.');
+    const goals = String(data.goals || '').trim();
+    if (goals.length < 10) throw new BadRequestError('Explique en quelques mots ce que tu attends de l\'accompagnement (10 caractères minimum).');
+    const request = await prisma.mentorRequest.create({
+      data: {
+        userId: user.id,
+        goals,
+        domain: data.domain?.trim() || null,
+        format: REQUEST_FORMATS.includes(data.format) ? data.format : null,
+        availability: data.availability?.trim() || null,
+      },
+    });
+    await notify(await presidentIds(), {
+      title: '🙋 Nouvelle demande de mentor',
+      message: `${fullName(user)} souhaite être accompagné(e)${request.domain ? ` (${request.domain})` : ''}.`,
+      url: '/mentor.html?tab=requests',
+    });
+    return request;
+  }
+
+  static async cancelMentorRequest(user, id) {
+    const request = await prisma.mentorRequest.findUnique({ where: { id } });
+    if (!request || request.userId !== user.id) throw new NotFoundError('Demande introuvable');
+    if (request.status !== 'PENDING') throw new BadRequestError('Cette demande a déjà été traitée');
+    return prisma.mentorRequest.update({ where: { id }, data: { status: 'CANCELLED' } });
+  }
+
+  static async listMentorRequests(user) {
+    requirePresident(user);
+    const requests = await prisma.mentorRequest.findMany({
+      where: { status: { in: ['PENDING', 'MATCHED', 'DECLINED'] } },
+      include: { user: { select: USER_SUMMARY }, handledBy: { select: USER_SUMMARY } },
+      orderBy: [{ status: 'desc' }, { createdAt: 'asc' }],
+      take: 200,
+    });
+    return requests
+      .sort((a, b) => (a.status === 'PENDING' ? 0 : 1) - (b.status === 'PENDING' ? 0 : 1))
+      .map((r) => ({
+        id: r.id, status: r.status, goals: r.goals, domain: r.domain, format: r.format, availability: r.availability,
+        response: r.response, createdAt: r.createdAt, handledAt: r.handledAt, handledBy: fullName(r.handledBy),
+        user: { id: r.user.id, fullName: fullName(r.user), email: r.user.email, avatarUrl: r.user.avatarUrl },
+      }));
+  }
+
+  static async declineMentorRequest(user, id, response, meta = {}) {
+    requirePresident(user);
+    const request = await prisma.mentorRequest.findUnique({ where: { id } });
+    if (!request) throw new NotFoundError('Demande introuvable');
+    if (request.status !== 'PENDING') throw new BadRequestError('Cette demande a déjà été traitée');
+    const note = String(response || '').trim();
+    if (note.length < 5) throw new BadRequestError('Explique ta réponse à l\'adhérent');
+    const updated = await prisma.mentorRequest.update({
+      where: { id }, data: { status: 'DECLINED', response: note, handledById: user.id, handledAt: new Date() },
+    });
+    await AuditService.log({
+      userId: user.id, action: 'mentoring.request.decline', module: 'mentoring', resource: 'MentorRequest', resourceId: id, ...meta,
+    });
+    await notify([request.userId], {
+      title: 'Ta demande de mentor',
+      message: note.slice(0, 180),
+      url: '/profile.html#profileMentorshipBox',
     });
     return updated;
   }
