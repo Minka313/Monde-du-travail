@@ -34,10 +34,11 @@ const RIASEC_OUT = path.join(FRONTEND, 'data', 'riasec-jobs.json');
 const RIASEC_FIELDS = ['id', 'slug', 'title', 'icon', 'familyId', 'familyName', 'shortDescription', 'level', 'isEmerging', 'riasec'];
 const RIASEC_PATTERN = /^(?!.*(.).*\1)[RIASEC]{3}$/;
 // Champs lus par la liste, les filtres, le quiz et la roue (la recherche charge le catalogue complet)
+// « saviezVous » n'est affiché que sur la fiche d'un métier (data/jobs/<slug>.json) : inutile dans la liste
 const LITE_FIELDS = [
   'id', 'slug', 'title', 'aliases', 'icon', 'image', 'familyId', 'familyName', 'familyIcon',
   'connectedFamilies', 'domain', 'domainId', 'subdomain', 'shortDescription', 'simpleDefinition',
-  'salary', 'level', 'isEmerging', 'compatibility', 'interests', 'specializations', 'saviezVous', 'riasec',
+  'salary', 'level', 'isEmerging', 'compatibility', 'interests', 'specializations', 'riasec',
 ];
 const LITE_SOURCE_FLAGS = ['sourceESD', 'sourceOnisep', 'sourceLetudiant', 'sourcePoitiers', 'sourceStudyrama',
   'sourceImagineTonFutur', 'sourceESP', 'sourceBRGM'];
