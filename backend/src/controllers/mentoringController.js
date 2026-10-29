@@ -1,5 +1,6 @@
 const MentoringService = require('../services/mentoringService');
 const ContentSuggestionService = require('../services/contentSuggestionService');
+const MentorApplicationService = require('../services/mentorApplicationService');
 
 const meta = (req) => ({ ipAddress: req.ip, userAgent: req.get('user-agent') });
 
@@ -36,6 +37,16 @@ const MentoringController = {
   deleteReport: handle((req) => MentoringService.deleteReport(req.user, req.params.id, meta(req)), { message: 'Compte rendu supprimé' }),
   submitReport: handle((req) => MentoringService.submitReport(req.user, req.params.id, meta(req)), { message: 'Compte rendu soumis à la Présidence' }),
   reviewReport: handle((req) => MentoringService.reviewReport(req.user, req.params.id, req.body, meta(req)), { message: 'Décision enregistrée' }),
+
+  createSession: handle((req) => MentoringService.createSession(req.user, req.params.id, req.body, meta(req)), { status: 201, message: 'Séance planifiée : ton mentoré est prévenu' }),
+  updateSession: handle((req) => MentoringService.updateSession(req.user, req.params.id, req.body, meta(req)), { message: 'Séance mise à jour' }),
+  getSessionVisio: handle((req) => MentoringService.getSessionVisio(req.user, req.params.id)),
+  startSessionVisio: handle((req) => MentoringService.setSessionVisio(req.user, req.params.id, true), { message: 'Salle virtuelle ouverte' }),
+  stopSessionVisio: handle((req) => MentoringService.setSessionVisio(req.user, req.params.id, false), { message: 'Salle virtuelle fermée' }),
+  joinSessionVisio: handle((req) => MentoringService.joinSessionVisio(req.user, req.params.id, req.body?.name)),
+
+  listApplications: handle((req) => MentorApplicationService.list(req.user)),
+  decideApplication: handle((req) => MentorApplicationService.decide(req.user, req.params.id, req.body, meta(req)), { message: 'Décision enregistrée : le candidat est prévenu par e-mail' }),
 
   getMyMentoring: handle((req) => MentoringService.getMyMentoring(req.user)),
   requestMentor: handle((req) => MentoringService.requestMentor(req.user, req.body), { status: 201, message: 'Demande envoyée à la Présidence' }),

@@ -502,7 +502,14 @@
                 <div><strong>${escapeHtml(ms.mentor.fullName)}</strong><div style="font-size:0.85rem;color:var(--color-gray-600);">Mentor du club${ms.status === 'PAUSED' ? ' · accompagnement en pause' : ''} · depuis le ${escapeHtml(fr(ms.startDate))}</div></div>
               </div>
               ${ms.goals ? `<p ${p.replace('style="', 'style="white-space:pre-line;')}><strong>Objectifs :</strong>\n${escapeHtml(ms.goals)}</p>` : ''}
-              <p ${p}>${ms.nextSession ? `📅 <strong>Prochaine séance prévue le ${escapeHtml(fr(ms.nextSession))}.</strong>` : '📅 Ton mentor te proposera la date de votre prochaine séance.'}</p>
+              ${(ms.upcomingSessions || []).length
+                ? `<ul class="profile-sessions" style="list-style:none;margin:0 0 0.6rem;padding:0;display:grid;gap:0.45rem;">${ms.upcomingSessions.map((x) => `
+                    <li style="padding:0.6rem 0.75rem;border-radius:10px;border:1px solid var(--color-gray-200);font-size:0.9rem;line-height:1.5;">
+                      📅 <strong>${escapeHtml(new Date(x.scheduledAt).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }))}</strong> · ${escapeHtml(x.durationMinutes)} min<br>
+                      ${escapeHtml(x.format)}${x.place ? ` · ${escapeHtml(x.place)}` : ''}${x.topic ? `<br><em>${escapeHtml(x.topic)}</em>` : ''}
+                      ${x.visioUrl ? `<div style="margin-top:0.45rem;"><a class="btn ${x.visioLive ? 'btn-primary' : 'btn-outline'} btn-sm" href="${escapeHtml(x.visioUrl.replace(/^\//, ''))}">${x.visioLive ? '🟢 Rejoindre la visio' : '🎥 Salle de la séance'}</a></div>` : ''}
+                    </li>`).join('')}</ul>`
+                : `<p ${p}>${ms.nextSession ? `📅 <strong>Prochaine séance prévue le ${escapeHtml(fr(ms.nextSession))}.</strong>` : '📅 Ton mentor te proposera la date de votre prochaine séance.'}</p>`}
               <p style="margin:0;font-size:0.85rem;color:var(--color-gray-600);">Ton mentor te contacte par e-mail ou par téléphone. Une question sur l'accompagnement ? Écris au club : <a href="mailto:lemondedutravailsen@gmail.com">lemondedutravailsen@gmail.com</a>.</p>
             </div>`).join('');
           return;

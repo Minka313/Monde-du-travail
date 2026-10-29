@@ -260,6 +260,11 @@ class AuthService {
       };
     }
 
+    // Candidature de mentor acceptée avant la création du compte : rôle attribué à cette connexion
+    if (await require('./mentorApplicationService').grantPendingRole(user).catch(() => false)) {
+      user = await prisma.user.findUnique({ where: { id: user.id } });
+    }
+
     const accessToken = signAccessToken(user);
     const refreshToken = signRefreshToken(user);
 

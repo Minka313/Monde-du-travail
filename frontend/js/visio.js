@@ -1,5 +1,7 @@
 /**
  * Salle virtuelle (visio.html?formation=<id ou slug>) : salle d'attente des formations en direct.
+ * Aussi les séances de mentorat individuelles (visio.html?seance=<id>) : le mentor ouvre la salle,
+ * seuls le mentor, le mentoré et la Présidence y entrent.
  * L'animateur (Présidence, mentor de la formation, administrateur) ouvre et ferme la salle.
  * - JaaS configuré (session.provider === 'jaas') : la réunion s'affiche dans la page ; chacun
  *   entre avec un jeton personnel délivré par le serveur, l'animateur y est modérateur d'office.
@@ -11,7 +13,20 @@
   'use strict';
 
   const params = new URLSearchParams(window.location.search);
-  const formationId = params.get('formation') || params.get('id') || '';
+  const seanceId = params.get('seance') || '';
+  const formationId = seanceId || params.get('formation') || params.get('id') || '';
+  // Points d'entrée de l'API selon le type de salle
+  const API = seanceId
+    ? {
+      session: () => window.Api.request(`/mentoring/sessions/${encodeURIComponent(seanceId)}/visio`),
+      join: () => `/mentoring/sessions/${encodeURIComponent(seanceId)}/visio/join`,
+      host: (action) => window.Api.request(`/mentoring/sessions/${encodeURIComponent(seanceId)}/visio/${action}`, { method: 'POST' }),
+    }
+    : {
+      session: () => window.Api.formations.getVisioSession(formationId),
+      join: () => `/formations/${encodeURIComponent(session.formationId)}/visio/join`,
+      host: null,
+    };
   const NOTES_KEY = `lmdt_visio_notes_${formationId}`;
   const ECO_KEY = 'lmdt_visio_eco';
   const NAME_KEY = 'lmdt_user_name';
@@ -28,6 +43,9 @@
     setupNotes();
     setupEcoToggle();
     if (!formationId) return renderError('Aucune formation indiquée dans le lien.');
+    if (seanceId && !(window.Api && window.Api.getToken && window.Api.getToken())) {
+      return renderError('Connecte-toi pour rejoindre ta séance de mentorat.');
+    }
     await load();
   });
 
@@ -37,9 +55,9 @@
     clearTimeout(refreshTimer);
     if (meeting) return;
     try {
-      session = (await window.Api.formations.getVisioSession(formationId)).data;
+      session = (await API.session()).data;
     } catch (error) {
-      renderError(error.status === 404 ? 'Cette formation est introuvable. Vérifie le lien reçu.' : (error.message || 'Salle indisponible pour le moment.'));
+      renderError(error.status === 404 ? (seanceId ? 'Cette séance est introuvable.' : 'Cette formation est introuvable. Vérifie le lien reçu.') : (error.message || 'Salle indisponible pour le moment.'));
       return;
     }
     renderSidebar(session);
@@ -197,7 +215,7 @@
     btn.disabled = true;
     btn.textContent = 'Connexion…';
     try {
-      const access = (await window.Api.request(`/formations/${encodeURIComponent(session.formationId)}/visio/join`, {
+      const access = (await window.Api.request(API.join(), {
         method: 'POST',
         body: JSON.stringify({ name: displayName() }),
       })).data;
@@ -258,6 +276,7 @@
   // ===== Actions de l'animateur =====
 
   async function hostRequest(action) {
+    if (API.host) return API.host(action);
     const id = encodeURIComponent(session.formationId);
     // Mentors de la formation et Présidence : Espace Mentor ; autres administrateurs : API des formations
     try {

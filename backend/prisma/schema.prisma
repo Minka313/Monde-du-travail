@@ -533,6 +533,8 @@ model User {
   mentorRequests         MentorRequest[]         @relation("MentorRequestAuthor")
   handledMentorRequests  MentorRequest[]         @relation("MentorRequestHandler")
   contentSuggestions     ContentSuggestion[]     @relation("ContentSuggestionAuthor")
+  mentorApplications     MentorApplication[]     @relation("MentorApplicationUser")
+  handledApplications    MentorApplication[]     @relation("MentorApplicationHandler")
   resolvedSuggestions    ContentSuggestion[]     @relation("ContentSuggestionResolver")
   createdMentorships     Mentorship[]            @relation("MentorshipCreator")
   formationTrainings     FormationTrainer[]      @relation("FormationTrainerUser")
@@ -650,24 +652,25 @@ model PositionReportEvent {
 
 // Binôme de mentorat attribué par la Présidence
 model Mentorship {
-  id            String         @id @default(cuid())
+  id            String          @id @default(cuid())
   mentorId      String
   // Mentoré inscrit sur le site, ou simple nom pour une personne sans compte
   menteeId      String?
   menteeName    String
   menteeContact String?
   goals         String?
-  status        String         @default("ACTIVE")
-  startDate     DateTime       @default(now())
+  status        String          @default("ACTIVE")
+  startDate     DateTime        @default(now())
   endDate       DateTime?
   createdById   String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  mentor        User           @relation("MentorshipMentor", fields: [mentorId], references: [id], onDelete: Cascade)
-  mentee        User?          @relation("MentorshipMentee", fields: [menteeId], references: [id], onDelete: SetNull)
-  createdBy     User?          @relation("MentorshipCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  mentor        User            @relation("MentorshipMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentee        User?           @relation("MentorshipMentee", fields: [menteeId], references: [id], onDelete: SetNull)
+  createdBy     User?           @relation("MentorshipCreator", fields: [createdById], references: [id], onDelete: SetNull)
   reports       MentorReport[]
   request       MentorRequest?
+  sessions      MentorSession[]
 
   @@index([mentorId])
   @@index([menteeId])
@@ -713,6 +716,63 @@ model MentorRequest {
   @@index([status, createdAt])
   @@index([userId])
   @@map("mentor_requests")
+}
+
+// Séance planifiée d'un binôme : rappel la veille au mentor et au mentoré, visio intégrée possible
+model MentorSession {
+  id              String     @id @default(cuid())
+  mentorshipId    String
+  scheduledAt     DateTime
+  durationMinutes Int        @default(60)
+  // Présentiel, Visio du club, Téléphone, WhatsApp, Autre lien
+  format          String
+  place           String?
+  topic           String?
+  // PLANNED, DONE, CANCELLED
+  status          String     @default("PLANNED")
+  // Visio du club : salle ouverte par le mentor (LIVE) ou fermée (CLOSED)
+  visioStatus     String     @default("CLOSED")
+  visioRoomId     String?
+  reminderSentAt  DateTime?
+  createdById     String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  mentorship      Mentorship @relation(fields: [mentorshipId], references: [id], onDelete: Cascade)
+
+  @@index([mentorshipId, scheduledAt])
+  @@index([status, scheduledAt])
+  @@map("mentor_sessions")
+}
+
+// Candidature d'un professionnel ou d'un étudiant avancé pour devenir mentor du club
+model MentorApplication {
+  id            String    @id @default(cuid())
+  userId        String?
+  fullName      String
+  email         String
+  phone         String?
+  profession    String
+  organization  String?
+  domains       String
+  experience    String?
+  motivation    String
+  availability  String?
+  linkedinUrl   String?
+  // PENDING, ACCEPTED, DECLINED
+  status        String    @default("PENDING")
+  response      String?
+  // Rôle mentor attribué au compte (immédiatement, ou à la première connexion avec cet e-mail)
+  roleGrantedAt DateTime?
+  handledById   String?
+  handledAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User?     @relation("MentorApplicationUser", fields: [userId], references: [id], onDelete: SetNull)
+  handledBy     User?     @relation("MentorApplicationHandler", fields: [handledById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+  @@index([email])
+  @@map("mentor_applications")
 }
 
 // Signalement ou proposition de modification d'une fiche formation ou métier par un mentor,

@@ -16,6 +16,9 @@ const FormationService = require('./formationService');
 const NotificationService = require('./notificationService');
 const AuditService = require('./auditService');
 const logger = require('../utils/logger');
+const crypto = require('crypto');
+const JaasService = require('./jaasService');
+const EmailService = require('./emailService');
 
 const { sanitizeContent, missingRequired } = ReportService._internal;
 const MENTOR_ROLE = 'MENTOR_EXPERT';
@@ -29,6 +32,39 @@ const isPresident = (user) => user?.role === 'ULTRA_ADMIN';
 // Le mentorat est réservé aux adhérents du club (pas aux comptes gratuits)
 const isAdherent = (user) => Boolean(user) && user.role !== 'VISITOR';
 const REQUEST_FORMATS = ['Peu importe', 'Présentiel', 'Visio', 'Téléphone', 'WhatsApp'];
+const SESSION_FORMATS = ['Visio du club', 'Présentiel', 'Téléphone', 'WhatsApp', 'Autre lien'];
+const SESSION_STATUSES = ['PLANNED', 'DONE', 'CANCELLED'];
+const VISIO_DOMAIN = 'meet.jit.si';
+const siteBase = () => (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
+const frDateTime = (d) => new Date(d).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: 'Africa/Dakar' });
+
+function sessionDto(session) {
+  return {
+    id: session.id,
+    mentorshipId: session.mentorshipId,
+    scheduledAt: session.scheduledAt,
+    durationMinutes: session.durationMinutes,
+    format: session.format,
+    place: session.place,
+    topic: session.topic,
+    status: session.status,
+    visioLive: session.visioStatus === 'LIVE',
+    visioUrl: session.format === 'Visio du club' ? `/visio.html?seance=${session.id}` : null,
+  };
+}
+
+// Mentor du binôme, mentoré ou Présidence
+async function sessionWithAccess(user, id) {
+  const session = await prisma.mentorSession.findUnique({
+    where: { id },
+    include: { mentorship: { include: { mentor: { select: USER_SUMMARY }, mentee: { select: USER_SUMMARY } } } },
+  });
+  if (!session) throw new NotFoundError('Séance introuvable');
+  const isMentorOfPair = session.mentorship.mentorId === user?.id;
+  const isMentee = Boolean(user?.id) && session.mentorship.menteeId === user.id;
+  if (!isMentorOfPair && !isMentee && !isPresident(user)) throw new ForbiddenError('Cette séance ne te concerne pas');
+  return { session, isHost: isMentorOfPair || isPresident(user) };
+}
 const isMentor = (user) => (user?.adminRoles || []).includes(MENTOR_ROLE);
 
 function requireMentorOrPresident(user) {
@@ -138,6 +174,7 @@ class MentoringService {
           mentor: { select: USER_SUMMARY },
           mentee: { select: USER_SUMMARY },
           reports: { select: { id: true, status: true, createdAt: true }, orderBy: { createdAt: 'desc' } },
+          sessions: { where: { status: 'PLANNED', scheduledAt: { gte: new Date(Date.now() - 3 * 3600000) } }, orderBy: { scheduledAt: 'asc' }, take: 5 },
         },
         orderBy: [{ status: 'asc' }, { startDate: 'desc' }],
       }),
@@ -156,9 +193,10 @@ class MentoringService {
         : prisma.staffMessage.count({ where: { threadUserId: user.id, authorId: { not: user.id }, readAt: null } }),
       president ? prisma.mentorReport.count({ where: { status: 'SUBMITTED', authorId: { not: user.id } } }) : 0,
     ]);
-    const [pendingRequests, openSuggestions] = await Promise.all([
+    const [pendingRequests, openSuggestions, pendingApplications] = await Promise.all([
       president ? prisma.mentorRequest.count({ where: { status: 'PENDING' } }) : 0,
       president ? prisma.contentSuggestion.count({ where: { status: 'OPEN' } }) : 0,
+      president ? prisma.mentorApplication.count({ where: { status: 'PENDING' } }) : 0,
     ]);
 
     return {
@@ -169,6 +207,7 @@ class MentoringService {
       pendingReview: toReview,
       pendingRequests,
       openSuggestions,
+      pendingApplications,
       mentorships: mentorships.map((m) => ({
         id: m.id,
         status: m.status,
@@ -181,7 +220,9 @@ class MentoringService {
         menteeContact: m.menteeContact,
         reportsCount: m.reports.length,
         lastReportAt: m.reports[0]?.createdAt || null,
+        upcomingSessions: m.sessions.map(sessionDto),
       })),
+      sessionFormats: SESSION_FORMATS,
       formations: trainings.map((f) => ({
         id: f.id,
         slug: f.slug,
@@ -328,6 +369,7 @@ class MentoringService {
           mentor: { select: { id: true, firstName: true, lastName: true, avatarUrl: true } },
           // Seule la date de la prochaine séance sort des comptes rendus (confidentiels)
           reports: { where: { kind: 'MENTORAT', status: { not: 'DRAFT' } }, select: { content: true, createdAt: true }, orderBy: { createdAt: 'desc' }, take: 1 },
+          sessions: { where: { status: 'PLANNED', scheduledAt: { gte: new Date(Date.now() - 3 * 3600000) } }, orderBy: { scheduledAt: 'asc' }, take: 5 },
         },
         orderBy: { startDate: 'desc' },
       }),
@@ -347,6 +389,7 @@ class MentoringService {
           startDate: m.startDate,
           mentor: { id: m.mentor.id, fullName: fullName(m.mentor), avatarUrl: m.mentor.avatarUrl },
           nextSession: typeof next === 'string' && next >= today ? next : null,
+          upcomingSessions: m.sessions.map(sessionDto),
           lastSessionAt: m.reports[0]?.createdAt || null,
         };
       }),
@@ -427,6 +470,179 @@ class MentoringService {
       url: '/profile.html#profileMentorshipBox',
     });
     return updated;
+  }
+
+  // ===== Séances planifiées d'un binôme =====
+
+  static async createSession(user, mentorshipId, data, meta = {}) {
+    const mentorship = await prisma.mentorship.findUnique({ where: { id: mentorshipId } });
+    if (!mentorship) throw new NotFoundError('Binôme introuvable');
+    if (mentorship.mentorId !== user.id && !isPresident(user)) throw new ForbiddenError('Ce binôme ne vous est pas confié');
+    if (mentorship.status === 'ENDED') throw new BadRequestError('Cet accompagnement est terminé');
+    const when = new Date(data.scheduledAt);
+    if (Number.isNaN(when.getTime())) throw new BadRequestError('Date de séance invalide');
+    if (when < new Date(Date.now() - 3600000)) throw new BadRequestError('La séance doit être dans le futur');
+    if (!SESSION_FORMATS.includes(data.format)) throw new BadRequestError('Format de séance inconnu');
+    const session = await prisma.mentorSession.create({
+      data: {
+        mentorshipId,
+        scheduledAt: when,
+        durationMinutes: Math.min(Math.max(Number(data.durationMinutes) || 60, 15), 240),
+        format: data.format,
+        place: data.place?.trim() || null,
+        topic: data.topic?.trim() || null,
+        createdById: user.id,
+      },
+    });
+    await AuditService.log({
+      userId: user.id, action: 'mentoring.session.create', module: 'mentoring', resource: 'MentorSession', resourceId: session.id, ...meta,
+    });
+    if (mentorship.menteeId) {
+      await notify([mentorship.menteeId], {
+        title: '📅 Séance de mentorat planifiée',
+        message: `${frDateTime(when)} · ${session.format}${session.topic ? ` · ${session.topic}` : ''}`,
+        url: '/profile.html#profileMentorshipBox',
+      });
+    }
+    return sessionDto(session);
+  }
+
+  static async updateSession(user, id, data, meta = {}) {
+    const { session, isHost } = await sessionWithAccess(user, id);
+    if (!isHost) throw new ForbiddenError('Seul le mentor modifie la séance');
+    const update = {};
+    if (data.scheduledAt !== undefined) {
+      const when = new Date(data.scheduledAt);
+      if (Number.isNaN(when.getTime())) throw new BadRequestError('Date de séance invalide');
+      update.scheduledAt = when;
+      update.reminderSentAt = null;
+    }
+    if (data.durationMinutes !== undefined) update.durationMinutes = Math.min(Math.max(Number(data.durationMinutes) || 60, 15), 240);
+    if (data.format !== undefined) {
+      if (!SESSION_FORMATS.includes(data.format)) throw new BadRequestError('Format de séance inconnu');
+      update.format = data.format;
+    }
+    if (data.place !== undefined) update.place = data.place?.trim() || null;
+    if (data.topic !== undefined) update.topic = data.topic?.trim() || null;
+    if (data.status !== undefined) {
+      if (!SESSION_STATUSES.includes(data.status)) throw new BadRequestError('Statut invalide');
+      update.status = data.status;
+      if (data.status !== 'PLANNED') update.visioStatus = 'CLOSED';
+    }
+    const updated = await prisma.mentorSession.update({ where: { id }, data: update });
+    await AuditService.log({
+      userId: user.id, action: 'mentoring.session.update', module: 'mentoring', resource: 'MentorSession', resourceId: id, metadata: update, ...meta,
+    });
+    const menteeId = session.mentorship.menteeId;
+    if (menteeId && (update.status === 'CANCELLED' || update.scheduledAt)) {
+      await notify([menteeId], update.status === 'CANCELLED'
+        ? { title: '❌ Séance annulée', message: `La séance du ${frDateTime(session.scheduledAt)} est annulée. Ton mentor te proposera une nouvelle date.`, url: '/profile.html#profileMentorshipBox' }
+        : { title: '📅 Séance déplacée', message: `Nouvelle date : ${frDateTime(updated.scheduledAt)}.`, url: '/profile.html#profileMentorshipBox' });
+    }
+    return sessionDto(updated);
+  }
+
+  // Salle visio d'une séance : même fonctionnement que celle des formations (page visio.html?seance=…)
+  static async getSessionVisio(user, id) {
+    const { session, isHost } = await sessionWithAccess(user, id);
+    const live = session.visioStatus === 'LIVE' && Boolean(session.visioRoomId) && session.status === 'PLANNED';
+    const jaas = JaasService.isConfigured();
+    const m = session.mentorship;
+    return {
+      formationId: session.id,
+      slug: null,
+      title: `Séance de mentorat · ${fullName(m.mentor)} & ${m.menteeName}`,
+      objectives: [session.topic, m.goals].filter(Boolean).join('\n\n') || null,
+      duration: `${session.durationMinutes} min`,
+      location: 'Visio du club',
+      syllabus: [],
+      startDate: session.scheduledAt,
+      visioEnabled: true,
+      visioStatus: live ? 'LIVE' : 'INACTIVE',
+      visioScheduledAt: session.scheduledAt,
+      roomId: live ? session.visioRoomId : null,
+      provider: jaas ? 'jaas' : 'jitsi',
+      meetingUrl: live && !jaas ? `https://${VISIO_DOMAIN}/${session.visioRoomId}` : null,
+      isModerator: isHost,
+      domain: jaas ? JaasService.DOMAIN : VISIO_DOMAIN,
+      maxDurationMinutes: jaas ? null : 95,
+      userName: user ? fullName(user) : null,
+      kind: 'seance',
+    };
+  }
+
+  static async setSessionVisio(user, id, open) {
+    const { session, isHost } = await sessionWithAccess(user, id);
+    if (!isHost) throw new ForbiddenError('Seul le mentor ouvre la salle');
+    if (open && session.status !== 'PLANNED') throw new BadRequestError('Cette séance n\'est plus prévue');
+    const roomId = open ? (session.visioStatus === 'LIVE' && session.visioRoomId ? session.visioRoomId : `lmdt-mentorat-${crypto.randomBytes(8).toString('hex')}`) : session.visioRoomId;
+    await prisma.mentorSession.update({ where: { id }, data: { visioStatus: open ? 'LIVE' : 'CLOSED', visioRoomId: roomId } });
+    if (open && session.mentorship.menteeId) {
+      await notify([session.mentorship.menteeId], {
+        title: '🟢 Ton mentor t\'attend en visio',
+        message: 'La salle de ta séance de mentorat est ouverte.',
+        url: `/visio.html?seance=${id}`,
+      });
+    }
+    return MentoringService.getSessionVisio(user, id);
+  }
+
+  static async joinSessionVisio(user, id, name) {
+    if (!JaasService.isConfigured()) throw new BadRequestError('La visio intégrée n\'est pas activée : utilisez le lien de la réunion.');
+    const { session, isHost } = await sessionWithAccess(user, id);
+    if (session.visioStatus !== 'LIVE' || !session.visioRoomId) throw new BadRequestError('La salle n\'est pas encore ouverte.');
+    const displayName = String(name || '').replace(/[<>]/g, '').trim().slice(0, 60) || fullName(user) || 'Participant';
+    return {
+      ...JaasService.publicInfo(session.visioRoomId),
+      jwt: JaasService.createToken({ room: session.visioRoomId, user, name: displayName, moderator: isHost }),
+      displayName,
+      isModerator: isHost,
+    };
+  }
+
+  /**
+   * Rappel la veille (entre 1 h et 26 h avant) : notification au mentor et au mentoré, e-mail au mentoré.
+   * Déclenché par le passage horaire de la veille du site ; un seul rappel par séance.
+   */
+  static async sendSessionReminders(now = new Date(), { maxEmails = 20 } = {}) {
+    const sessions = await prisma.mentorSession.findMany({
+      where: { status: 'PLANNED', reminderSentAt: null, scheduledAt: { gte: new Date(now.getTime() + 3600000), lte: new Date(now.getTime() + 26 * 3600000) } },
+      include: { mentorship: { include: { mentor: { select: USER_SUMMARY }, mentee: { select: USER_SUMMARY } } } },
+      orderBy: { scheduledAt: 'asc' },
+      take: 50,
+    });
+    let emails = 0;
+    for (const session of sessions) {
+      const m = session.mentorship;
+      const when = frDateTime(session.scheduledAt);
+      const where = session.format === 'Visio du club' ? 'en visio sur le site' : `${session.format}${session.place ? ` (${session.place})` : ''}`;
+      await notify([m.mentorId], {
+        title: '⏰ Séance de mentorat demain',
+        message: `Avec ${m.menteeName} · ${when} · ${where}`,
+        url: '/mentor.html',
+      });
+      if (m.menteeId) {
+        await notify([m.menteeId], {
+          title: '⏰ Ta séance de mentorat approche',
+          message: `Avec ${fullName(m.mentor)} · ${when} · ${where}`,
+          url: '/profile.html#profileMentorshipBox',
+        });
+        if (m.mentee?.email && emails < maxEmails) {
+          const result = await EmailService.notifyMentorSessionReminder({
+            to: m.mentee.email,
+            firstName: m.mentee.firstName,
+            mentorName: fullName(m.mentor),
+            when,
+            where,
+            topic: session.topic,
+            url: session.format === 'Visio du club' ? `${siteBase()}/visio.html?seance=${session.id}` : `${siteBase()}/profile.html#profileMentorshipBox`,
+          }).catch(() => null);
+          if (result?.success) emails += 1;
+        }
+      }
+      await prisma.mentorSession.update({ where: { id: session.id }, data: { reminderSentAt: new Date() } });
+    }
+    return { due: sessions.length, emails };
   }
 
   // ===== Formations animées =====

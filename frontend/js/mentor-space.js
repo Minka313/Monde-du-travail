@@ -84,6 +84,7 @@
         list.push({ key: 'trainings', icon: '🎓', label: 'Formations' });
         list.push({ key: 'review', icon: '📥', label: 'Comptes rendus', count: c.pendingReview });
         list.push({ key: 'requests', icon: '🙋', label: 'Demandes de mentor', count: c.pendingRequests });
+        list.push({ key: 'applications', icon: '🌟', label: 'Candidatures', count: c.pendingApplications });
       }
       if (c.isMentor) {
         list.push({ key: 'mentees', icon: '🤝', label: 'Mes mentorés' });
@@ -183,7 +184,17 @@
           ${president ? `<p class="ms-meta">Mentor : <strong>${esc(m.mentor.fullName)}</strong></p>` : ''}
           <p class="ms-goals">${m.goals ? esc(m.goals) : '<em>Objectifs à définir</em>'}</p>
           <p class="ms-meta">Depuis le ${esc(frDate(m.startDate))} · ${m.reportsCount} compte(s) rendu(s)${m.lastReportAt ? ` · dernier le ${esc(frDate(m.lastReportAt))}` : ''}</p>
+          ${(m.upcomingSessions || []).length ? `<ul class="ms-sessions">${m.upcomingSessions.map((x) => `
+            <li>
+              <span>📅 <strong>${esc(frTime(x.scheduledAt))}</strong> · ${esc(x.format)}${x.place ? ` · ${esc(x.place)}` : ''}${x.topic ? `<br><em>${esc(x.topic)}</em>` : ''}</span>
+              <span class="ms-session-actions">
+                ${x.visioUrl ? `<a class="ms-btn ms-btn-ghost" href="${esc(siteUrl(x.visioUrl.replace(/^\//, '')))}" target="_blank" rel="noopener">${x.visioLive ? '🟢 Rejoindre' : '🎥 Salle visio'}</a>` : ''}
+                <button type="button" class="ms-btn ms-btn-ghost" data-act="session-done" data-id="${esc(x.id)}">✓ Faite</button>
+                <button type="button" class="ms-btn ms-btn-ghost" data-act="session-cancel" data-id="${esc(x.id)}">Annuler</button>
+              </span>
+            </li>`).join('')}</ul>` : ''}
           <div class="ms-actions">
+            ${m.status !== 'ENDED' ? `<button type="button" class="ms-btn ms-btn-ghost" data-act="session-new" data-id="${esc(m.id)}">📅 Planifier une séance</button>` : ''}
             ${state.ctx.isMentor && !president ? `<button type="button" class="ms-btn ms-btn-primary" data-act="report-new" data-kind="MENTORAT" data-id="${esc(m.id)}">+ Compte rendu de séance</button>` : ''}
             <button type="button" class="ms-btn ms-btn-ghost" data-act="pair-edit" data-id="${esc(m.id)}">${president ? 'Gérer' : 'Objectifs'}</button>
           </div>
@@ -379,6 +390,58 @@
         </article>`).join('')}</div>`;
     }
 
+    // ===== Candidatures « Devenir mentor » (Présidence) =====
+
+    const APP_STATUS = { PENDING: ['En attente', 'warning'], ACCEPTED: ['Acceptée', 'success'], DECLINED: ['Non retenue', 'muted'] };
+
+    async function viewApplications() {
+      state.applications = (await api('/applications')).data;
+      if (!state.applications.length) return empty('🌟', 'Aucune candidature', 'Les candidatures déposées sur la page « Devenir mentor » du site arrivent ici.');
+      return `<div class="ms-grid">${state.applications.map((a) => `
+        <article class="ms-card">
+          <div class="ms-card-head"><span class="ms-avatar">${esc((a.fullName || '?')[0])}</span><div><strong>${esc(a.fullName)}</strong><span>${esc(a.profession)}${a.organization ? ` · ${esc(a.organization)}` : ''}</span></div>${pill(APP_STATUS[a.status] || [a.status, 'muted'])}</div>
+          <p class="ms-meta"><strong>Domaines :</strong> ${esc(a.domains)}</p>
+          ${a.experience ? `<p class="ms-meta"><strong>Parcours :</strong> ${esc(a.experience)}</p>` : ''}
+          <p class="ms-goals">${esc(a.motivation)}</p>
+          <p class="ms-meta">${[`✉️ ${esc(a.email)}`, a.phone && `📞 ${esc(a.phone)}`, a.availability && `Disponibilités : ${esc(a.availability)}`, a.linkedinUrl && `<a href="${esc(a.linkedinUrl)}" target="_blank" rel="noopener noreferrer">Profil en ligne ↗</a>`].filter(Boolean).join(' · ')}</p>
+          <p class="ms-meta">Reçue le ${esc(frDate(a.createdAt))} · ${a.hasAccount ? 'a déjà un compte sur le site' : 'pas encore de compte'}${a.status === 'ACCEPTED' ? ` · ${a.roleGranted ? 'rôle mentor attribué' : 'rôle attribué à sa première connexion'}` : ''}</p>
+          ${a.response ? `<p class="ms-meta"><strong>Réponse :</strong> ${esc(a.response)}</p>` : ''}
+          ${a.status === 'PENDING' ? `<div class="ms-actions">
+            <button type="button" class="ms-btn ms-btn-primary" data-act="application-accept" data-id="${esc(a.id)}">🌟 Accepter comme mentor</button>
+            <button type="button" class="ms-btn ms-btn-ghost" data-act="application-decline" data-id="${esc(a.id)}">Ne pas retenir…</button>
+          </div>` : ''}
+        </article>`).join('')}</div>`;
+    }
+
+    function openSessionForm(mentorshipId) {
+      const formats = state.ctx.sessionFormats || ['Visio du club', 'Présentiel', 'Téléphone', 'WhatsApp', 'Autre lien'];
+      const tomorrow = new Date(Date.now() + 86400000);
+      tomorrow.setHours(17, 0, 0, 0);
+      const local = new Date(tomorrow.getTime() - tomorrow.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      const el = modal(`
+        <h2 class="ms-modal-title">📅 Planifier une séance</h2>
+        <form class="ms-form" data-form="session">
+          <label>Date et heure<input type="datetime-local" name="scheduledAt" required value="${local}"></label>
+          <label>Durée<select name="durationMinutes">${[30, 45, 60, 90, 120].map((d) => `<option value="${d}" ${d === 60 ? 'selected' : ''}>${d} min</option>`).join('')}</select></label>
+          <label>Format<select name="format">${formats.map((f) => `<option>${esc(f)}</option>`).join('')}</select></label>
+          <label>Lieu, numéro ou lien <span class="ms-hint">(inutile pour « Visio du club » : la salle est sur le site)</span><input name="place" maxlength="300"></label>
+          <label>Thème de la séance (facultatif)<input name="topic" maxlength="300" placeholder="Ex. : préparer l'oral du concours"></label>
+          <p class="ms-hint">Ton mentoré est prévenu tout de suite, puis vous recevez tous les deux un rappel la veille.</p>
+          <button type="submit" class="ms-btn ms-btn-primary">Planifier</button>
+        </form>`, { label: 'Planifier une séance' });
+      el.querySelector('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const f = e.target;
+        const when = new Date(f.scheduledAt.value);
+        if (Number.isNaN(when.getTime())) { toast('Choisis une date', 'error'); return; }
+        const body = { scheduledAt: when.toISOString(), durationMinutes: Number(f.durationMinutes.value), format: f.format.value, place: f.place.value.trim() || null, topic: f.topic.value.trim() || null };
+        if (await run(f.querySelector('button[type=submit]'), () => api(`/mentorships/${mentorshipId}/sessions`, json('POST', body)), 'Séance planifiée : ton mentoré est prévenu')) {
+          closeModal();
+          refresh();
+        }
+      });
+    }
+
     // ===== Fiches formations et métiers : signaler une erreur, proposer une modification =====
 
     const SUG_KINDS = { ERREUR: 'Erreur à corriger', MISE_A_JOUR: 'Information à mettre à jour', AJOUT: 'Contenu à ajouter', AUTRE: 'Autre' };
@@ -456,7 +519,7 @@
     }
 
     const VIEWS = {
-      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview, requests: viewRequests,
+      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview, requests: viewRequests, applications: viewApplications,
       forumQueue: viewForumQueue, suggestions: viewSuggestions, mentees: viewMentees, myTrainings: viewMyTrainings, myReports: viewMyReports, messages: viewMessages,
     };
 
@@ -762,6 +825,21 @@
       }
       if (act === 'report-delete' && window.confirm('Supprimer définitivement ce brouillon ?')) {
         if (await run(btn, () => api(`/reports/${id}`, { method: 'DELETE' }), 'Brouillon supprimé')) refresh();
+      }
+      if (act === 'session-new') openSessionForm(id);
+      if (act === 'session-done' || act === 'session-cancel') {
+        const cancel = act === 'session-cancel';
+        if (!cancel || window.confirm('Annuler cette séance ? Ton mentoré sera prévenu.')) {
+          if (await run(btn, () => api(`/sessions/${id}`, json('PUT', { status: cancel ? 'CANCELLED' : 'DONE' })), cancel ? 'Séance annulée' : 'Séance marquée comme faite')) refresh();
+        }
+      }
+      if (act === 'application-accept' && window.confirm('Accepter cette personne comme mentor du club ? Elle recevra son accès à l\'Espace mentor.')) {
+        const response = window.prompt('Un mot de bienvenue (facultatif) :', '') ?? '';
+        if (await run(btn, () => api(`/applications/${id}/decision`, json('POST', { decision: 'ACCEPTED', response: response.trim() || null })), 'Candidature acceptée')) refresh();
+      }
+      if (act === 'application-decline') {
+        const response = window.prompt('Ta réponse au candidat (elle lui sera envoyée par e-mail) :');
+        if (response && response.trim() && await run(btn, () => api(`/applications/${id}/decision`, json('POST', { decision: 'DECLINED', response: response.trim() })), 'Réponse envoyée')) refresh();
       }
       if (act === 'request-match') {
         const r = (state.requests || []).find((x) => x.id === id);

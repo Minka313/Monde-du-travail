@@ -12,6 +12,7 @@ const STATIC_PAGES = [
   { path: '/about', changefreq: 'monthly', priority: '0.5' },
   { path: '/guide', changefreq: 'monthly', priority: '0.5' },
   { path: '/legal', changefreq: 'yearly', priority: '0.3' },
+  { path: '/devenir-mentor', changefreq: 'monthly', priority: '0.5' },
 ];
 
 // Les fiches métiers sont rendues depuis le catalogue d'orientation, indexé par slug.

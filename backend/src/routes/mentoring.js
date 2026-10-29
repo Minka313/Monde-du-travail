@@ -29,6 +29,26 @@ const schemas = {
       availability: z.string().trim().max(300).nullable().optional(),
     }).strict(),
   }),
+  session: z.object({
+    body: z.object({
+      scheduledAt: z.string().min(10).max(40),
+      durationMinutes: z.number().int().min(15).max(240).optional(),
+      format: z.enum(['Visio du club', 'Présentiel', 'Téléphone', 'WhatsApp', 'Autre lien']),
+      place: z.string().trim().max(300).nullable().optional(),
+      topic: z.string().trim().max(300).nullable().optional(),
+    }).strict(),
+  }),
+  sessionUpdate: z.object({
+    body: z.object({
+      scheduledAt: z.string().min(10).max(40).optional(),
+      durationMinutes: z.number().int().min(15).max(240).optional(),
+      format: z.enum(['Visio du club', 'Présentiel', 'Téléphone', 'WhatsApp', 'Autre lien']).optional(),
+      place: z.string().trim().max(300).nullable().optional(),
+      topic: z.string().trim().max(300).nullable().optional(),
+      status: z.enum(['PLANNED', 'DONE', 'CANCELLED']).optional(),
+    }).strict(),
+  }),
+  applicationDecision: z.object({ body: z.object({ decision: z.enum(['ACCEPTED', 'DECLINED']), response: z.string().trim().max(1500).nullable().optional() }).strict() }),
   declineRequest: z.object({ body: z.object({ response: z.string().trim().min(5, 'Explique ta réponse').max(1500) }).strict() }),
   suggestion: z.object({
     body: z.object({
@@ -121,6 +141,18 @@ router.put('/reports/:id', validate(schemas.reportUpdate), C.updateReport);
 router.delete('/reports/:id', C.deleteReport);
 router.post('/reports/:id/submit', C.submitReport);
 router.post('/reports/:id/review', validate(schemas.review), C.reviewReport);
+
+// Séances planifiées d'un binôme (mentor du binôme ou Présidence) et salle visio de la séance
+router.post('/mentorships/:id/sessions', validate(schemas.session), C.createSession);
+router.put('/sessions/:id', validate(schemas.sessionUpdate), C.updateSession);
+router.get('/sessions/:id/visio', C.getSessionVisio);
+router.post('/sessions/:id/visio/start', C.startSessionVisio);
+router.post('/sessions/:id/visio/stop', C.stopSessionVisio);
+router.post('/sessions/:id/visio/join', C.joinSessionVisio);
+
+// Candidatures « Devenir mentor » (Présidence) ; le dépôt est public : routes/mentorApplications.js
+router.get('/applications', C.listApplications);
+router.post('/applications/:id/decision', validate(schemas.applicationDecision), C.decideApplication);
 
 // Côté mentoré (tout compte connecté ; l'adhésion est vérifiée par le service)
 router.get('/me', C.getMyMentoring);

@@ -658,6 +658,42 @@ class EmailService {
     });
     return this.sendMail({ to, subject: 'Active ton compte · Le Monde du Travail', html });
   }
+
+  static async notifyMentorSessionReminder({ to, firstName, mentorName, when, where, topic, url }) {
+    const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const html = this.opportunityMail({
+      kicker: 'Mentorat',
+      heading: `${esc(firstName)}, ta séance de mentorat approche ⏰`,
+      body: `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0 0 12px;">Rendez-vous avec <strong>${esc(mentorName)}</strong> :</p>
+        <p style="color:#0f2b46;font-size:1.05rem;font-weight:700;margin:0 0 6px;">${esc(when)}</p>
+        <p style="color:#475569;font-size:0.95rem;margin:0 0 ${topic ? '6px' : '0'};">${esc(where)}</p>
+        ${topic ? `<p style="color:#475569;font-size:0.95rem;margin:0;">Thème : ${esc(topic)}</p>` : ''}
+        <p style="color:#64748b;font-size:0.85rem;line-height:1.5;margin:14px 0 0;">Prépare tes questions et préviens ton mentor si tu ne peux pas venir.</p>`,
+      ctaLabel: 'Voir ma séance',
+      ctaUrl: url,
+      footer: 'Tu reçois ce rappel car un mentor du club t\'accompagne. Une question ? Écris à lemondedutravailsen@gmail.com.',
+    });
+    return this.sendMail({ to, subject: `Rappel : séance de mentorat ${when}`, html });
+  }
+
+  static async notifyMentorApplicationDecision({ to, fullName, accepted, response, hasAccount }) {
+    const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const base = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
+    const html = this.opportunityMail({
+      kicker: 'Mentorat',
+      heading: accepted ? `Bienvenue parmi les mentors, ${esc(fullName)} ! 🌟` : `Merci pour ta candidature, ${esc(fullName)}`,
+      body: accepted
+        ? `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0 0 10px;">La Présidence du club a accepté ta candidature de mentor.${response ? ` ${esc(response)}` : ''}</p>
+          <p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0;">${hasAccount
+            ? 'Ton Espace mentor est déjà ouvert : connecte-toi et ouvre « Mon espace », puis « Ouvrir mon espace mentor ».'
+            : 'Crée ton compte sur le site avec <strong>cette adresse e-mail</strong> : ton Espace mentor s\'ouvrira automatiquement à ta première connexion.'}</p>`
+        : `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0;">${esc(response || 'Nous ne pouvons pas donner suite pour le moment.')}</p>`,
+      ctaLabel: accepted ? (hasAccount ? 'Me connecter' : 'Créer mon compte') : 'Découvrir le club',
+      ctaUrl: accepted ? `${base}/login${hasAccount ? '' : '#register'}` : `${base}/about`,
+      footer: 'Le Monde du Travail · WOW — « Demain se prépare aujourd’hui »',
+    });
+    return this.sendMail({ to, subject: accepted ? 'Ta candidature de mentor est acceptée' : 'Ta candidature de mentor', html });
+  }
 }
 
 module.exports = EmailService;
