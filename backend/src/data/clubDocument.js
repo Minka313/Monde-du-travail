@@ -944,14 +944,23 @@ Après chaque réunion générale, le Secrétaire général doit préparer un co
 Le développement du club se fait progressivement : de l'idée initiale à une communauté dynamique et engagée.
 
 ::: etapes
-### 2025 : Fondation du Club au LYNAQE de Sédhiou
-Naissance de l'initiative au Lycée Nation-Armée pour la Qualité et l'Équité (LYNAQE) de Sédhiou, pour préparer concrètement les jeunes au monde professionnel. Lancement des premiers ateliers : simulation d'entretiens, prise de parole et décryptage des codes pro.
+### 2025 : La naissance d'une vision
+Tout commence par une volonté : permettre aux jeunes de mieux comprendre le monde professionnel, de découvrir les possibilités qui s'offrent à eux et de préparer leur avenir avec davantage de connaissances et de confiance.
 
-### 2025 – 2026 : Masterclasses Soft Skills & Réseau Mentorat
-Structuration d'un catalogue de formations et ralliement de professionnels et cadres partenaires pour guider les jeunes en individuel.
+### 2025 : La création du club
+Le Monde du Travail prend forme autour de cette ambition. Le club devient un espace d'échange, de découverte et d'apprentissage, avec pour objectif d'aider les jeunes à mieux s'orienter et à développer leur compréhension des métiers et du monde professionnel.
 
-### 2026 : Plateforme Numérique & Communauté Ouverte
-Déploiement de l'espace membre interactif, du forum d'entraide et du référentiel des 21 familles de métiers d'avenir pour impacter des milliers de jeunes.
+### 2026 : Le développement de nos activités
+Progressivement, le projet s'oriente vers des activités d'information, de sensibilisation et d'orientation. Les métiers, les formations et les parcours professionnels deviennent des sujets essentiels pour accompagner les jeunes dans leurs choix.
+
+### 2026 : L'élargissement de notre ambition
+Au-delà de la découverte des métiers, nous voulons faciliter l'accès aux ressources utiles à la réussite des jeunes. Les concours, les bourses, les examens et les opportunités de formation prennent ainsi une place importante dans notre démarche.
+
+### Octobre 2026 : Le lancement de notre plateforme numérique
+Une nouvelle étape est franchie avec la création et la mise en ligne de notre site web : lemondedutravail.org. Cette plateforme permet de prolonger notre action au-delà du cadre du club et de rendre nos ressources accessibles en ligne.
+
+### 2026 : Construire la suite, ensemble
+Notre parcours ne s'arrête pas là. Nous souhaitons faire du Monde du Travail une initiative toujours plus utile aux jeunes, en développant nos ressources, nos activités et nos collaborations. Notre ambition est de contribuer à former une jeunesse informée, curieuse, responsable et capable de construire son avenir.
 :::
 
 # Suivi et évaluation des activités
