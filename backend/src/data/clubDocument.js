@@ -735,11 +735,11 @@ Cette méthode permettra de gagner du temps et de donner plus de visibilité aux
 
 Pour bien fonctionner, le club doit avoir une organisation claire.
 
-Chaque personne doit savoir ce qu'elle doit faire, avec qui elle travaille et à qui elle rend compte. Voici les principaux postes proposés.
+Chaque personne doit savoir ce qu'elle doit faire, avec qui elle travaille et à qui elle rend compte. Voici les postes du club, tels qu'ils figurent dans l'organigramme du site.
 
 ::: cartes
-### Le Président
-Le Président dirige le club. Ses missions :
+### Président(e)
+Représentation légale du club, impulsion des orientations stratégiques, présidence des assemblées et coordination générale des activités. Ses missions :
 - Donner les grandes orientations.
 - Représenter le club.
 - Superviser les départements.
@@ -748,16 +748,16 @@ Le Président dirige le club. Ses missions :
 - Entretenir les relations avec les partenaires.
 - Faire respecter les règles de fonctionnement.
 
-### Le Vice-président
-Il seconde le Président. Ses missions :
+### Vice-Président(e)
+Assistance à la présidence, suppléance en cas d'empêchement et suivi transversal des commissions et projets. Ses missions :
 - Participer au suivi des activités.
 - Aider les responsables.
 - Vérifier l'avancement des tâches.
 - Faciliter la coordination.
 - Remplacer le Président lorsque cela est nécessaire.
 
-### Le Secrétaire général
-Il s'occupe de l'organisation administrative. Ses missions :
+### Secrétaire Général(e)
+Gestion administrative, rédaction des procès-verbaux, tenue des registres, archivage officiel et convocation des réunions. Ses missions :
 - Préparer les réunions.
 - Noter les décisions.
 - Rédiger les comptes rendus.
@@ -765,16 +765,16 @@ Il s'occupe de l'organisation administrative. Ses missions :
 - Suivre les tâches confiées aux membres.
 - Préparer les correspondances officielles.
 
-### Le Secrétaire général adjoint
-Il aide le Secrétaire général. Ses missions :
+### Secrétaire Général(e) Adjoint(e)
+Appui au secrétariat général, gestion de la correspondance courante et suivi documentaire. Ses missions :
 - Noter les présences.
 - Participer à la préparation des réunions.
 - Classer les documents.
 - Suivre les comptes rendus.
 - Remplacer le Secrétaire général si nécessaire.
 
-### Le Trésorier général
-Il s'occupe de l'argent du club. Ses missions :
+### Trésorier(ère) Général(e)
+Tenue de la comptabilité, élaboration des budgets prévisionnels, gestion de la trésorerie et encaissement des cotisations. Ses missions :
 - Préparer les budgets.
 - Noter les entrées et les sorties d'argent.
 - Conserver les justificatifs.
@@ -782,29 +782,15 @@ Il s'occupe de l'argent du club. Ses missions :
 - Présenter les rapports financiers.
 - Veiller à la bonne utilisation des ressources.
 
-### Le Trésorier adjoint
+### Trésorier(ère) Adjoint(e)
+Soutien aux opérations financières, suivi des pièces justificatives et contrôle des dépenses courantes.
+
 Il aide le Trésorier général dans le suivi des finances et la préparation des documents.
 
-### Le Responsable des projets
-Il coordonne les différents projets du club. Ses missions :
-- Organiser les équipes de projet.
-- Préparer les plans de travail.
-- Suivre les activités.
-- Respecter les délais.
-- Identifier les difficultés.
-- Présenter les résultats.
+### Responsable Communication & Médias
+Pilotage de la communication digitale, réseaux sociaux, relations presse, affichage et identité visuelle du club. Ses missions :
 
-### Le Responsable de la sensibilisation
-Il organise les activités de sensibilisation. Ses missions :
-- Choisir les thèmes.
-- Faire les recherches.
-- Préparer les campagnes.
-- Vérifier les informations.
-- Travailler avec la Communication.
-- Mesurer les résultats.
-
-### Le Responsable de la Communication
-Il dirige l'ensemble des activités de communication. Ses missions :
+**Communication**
 - Organiser les publications.
 - Superviser les réseaux sociaux.
 - Préparer les campagnes.
@@ -812,16 +798,27 @@ Il dirige l'ensemble des activités de communication. Ses missions :
 - Faire connaître les projets.
 - Suivre les résultats.
 
-### Le Responsable du site internet
-Il veille à la bonne gestion et à l'évolution du site. Ses missions :
+**Sensibilisation**
+- Choisir les thèmes.
+- Faire les recherches.
+- Vérifier les informations.
+- Préparer les campagnes de sensibilisation.
+- Mesurer les résultats.
+
+**Site internet**
 - Coordonner l'équipe numérique.
 - Suivre le fonctionnement du site.
 - Organiser les mises à jour.
 - Recevoir les contenus.
 - Proposer des améliorations.
 
-### Le Responsable de la Formation
-Il organise les activités destinées à développer les connaissances et les compétences. Ses missions :
+### Responsable Organisation & Logistique
+Planification logistique des événements, réservation et aménagement des salles, approvisionnement et matériel.
+
+### Responsable Pédagogique & Formations
+Conception des programmes d'ateliers, coordination des formateurs et mentors, suivi pédagogique des apprenants. Ses missions :
+
+**Formation**
 - Identifier les besoins de formation.
 - Proposer des thèmes.
 - Organiser les ateliers.
@@ -829,21 +826,35 @@ Il organise les activités destinées à développer les connaissances et les co
 - Suivre les participants.
 - Évaluer les activités.
 
-### Le Responsable de l'Orientation
-Il aide à organiser les activités liées à la découverte des métiers et des possibilités professionnelles. Ses missions :
+**Orientation**
 - Rechercher des informations sur les métiers.
 - Faire connaître les formations.
 - Suivre les possibilités de stages et de bourses.
 - Partager les opportunités.
-- Faciliter les échanges avec les professionnels.
 
-### Le Responsable du Mentorat et des Relations professionnelles
-Il développe les relations avec les professionnels et les personnes expérimentées. Ses missions :
+**Mentorat**
 - Rechercher des mentors.
 - Organiser les rencontres.
 - Mettre en relation les personnes.
 - Suivre les activités de mentorat.
+
+### Responsable Partenariats & Relations Extérieures
+Prospection de sponsors, relations avec les universités, entreprises partenaires et institutions professionnelles. Ses missions :
+- Développer les relations avec les professionnels et les personnes expérimentées.
 - Développer les partenariats professionnels.
+- Faciliter les échanges avec les professionnels.
+
+### Responsable Projets & Innovation
+Incubation et accompagnement des projets d'étudiants, organisation de hackathons et veille sur les métiers d'avenir. Ses missions :
+- Organiser les équipes de projet.
+- Préparer les plans de travail.
+- Suivre les activités.
+- Respecter les délais.
+- Identifier les difficultés.
+- Présenter les résultats.
+
+### Responsable Accueil & Vie Associative
+Accueil et intégration des nouveaux membres adhérents, dynamisation de la communauté et animation de la vie du club.
 :::
 
 ::: encadre Remarque
@@ -930,69 +941,17 @@ Après chaque réunion générale, le Secrétaire général doit préparer un co
 
 # Les différentes phases de développement du club
 
-Le développement du club doit se faire progressivement. Il faut d'abord bien organiser le travail avant de chercher à multiplier les projets.
+Le développement du club se fait progressivement : de l'idée initiale à une communauté dynamique et engagée.
 
 ::: etapes
-### Phase 1 : Mettre de l'ordre dans l'organisation
-**Objectif :** construire une bonne base de fonctionnement.
+### 2025 : Fondation du Club au LYNAQE de Sédhiou
+Naissance de l'initiative au Lycée Nation-Armée pour la Qualité et l'Équité (LYNAQE) de Sédhiou, pour préparer concrètement les jeunes au monde professionnel. Lancement des premiers ateliers : simulation d'entretiens, prise de parole et décryptage des codes pro.
 
-- Valider les différents postes.
-- Désigner les responsables.
-- Former les équipes.
-- Définir les missions.
-- Mettre en place les règles.
-- Organiser les réunions.
+### 2025 – 2026 : Masterclasses Soft Skills & Réseau Mentorat
+Structuration d'un catalogue de formations et ralliement de professionnels et cadres partenaires pour guider les jeunes en individuel.
 
-**Résultat attendu :** un club bien organisé, avec des responsabilités claires.
-
-### Phase 2 : Préparer les activités
-**Objectif :** savoir exactement ce que chaque département doit faire.
-
-- Préparer les programmes.
-- Définir les objectifs.
-- Établir les calendriers.
-- Identifier les besoins.
-- Préparer les budgets.
-- Répartir les tâches.
-
-**Résultat attendu :** un programme de travail pour chaque département.
-
-### Phase 3 : Passer à l'action
-**Objectif :** commencer réellement les activités.
-
-- Démarrer Agrinova.
-- Lancer les campagnes de sensibilisation.
-- Publier régulièrement sur les réseaux sociaux.
-- Améliorer le site.
-- Organiser les formations.
-- Développer le mentorat.
-- Rechercher des partenaires.
-
-**Résultat attendu :** des activités concrètes et des premiers résultats.
-
-### Phase 4 : Faire le bilan
-**Objectif :** vérifier ce qui fonctionne et ce qui doit être amélioré.
-
-- Examiner les résultats.
-- Identifier les difficultés.
-- Vérifier les dépenses.
-- Évaluer les activités.
-- Recueillir les avis.
-- Préparer des solutions.
-
-**Résultat attendu :** un bilan permettant d'améliorer le travail.
-
-### Phase 5 : Développer le club
-**Objectif :** faire grandir le club et renforcer ses projets.
-
-- Rechercher de nouveaux partenaires.
-- Développer les activités.
-- Élargir la communauté.
-- Renforcer le site internet.
-- Étendre Agrinova progressivement.
-- Développer les activités dans d'autres localités.
-
-**Résultat attendu :** un club plus solide, avec des projets capables de toucher un public plus large.
+### 2026 : Plateforme Numérique & Communauté Ouverte
+Déploiement de l'espace membre interactif, du forum d'entraide et du référentiel des 21 familles de métiers d'avenir pour impacter des milliers de jeunes.
 :::
 
 # Suivi et évaluation des activités
