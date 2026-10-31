@@ -121,7 +121,7 @@ Nous voulons encourager les membres à participer au développement de leur comm
 Le club organise ses activités autour de plusieurs domaines complémentaires.
 
 | Domaine | Objectifs |
-| Agrinova | Développer des activités agricoles et encourager l'innovation |
+| Agrinova | Développer des activités agricoles en boucle (cultures hors-sol, pisciculture, petit élevage) et encourager l'innovation |
 | Sensibilisation | Informer et sensibiliser toute la population |
 | Formation | Aider les personnes à développer leurs compétences |
 | Orientation | Faire découvrir les métiers et les possibilités professionnelles |
@@ -140,20 +140,85 @@ Chaque domaine doit avoir un responsable et une équipe chargée de faire avance
 
 ### Présentation du projet
 
-Agrinova est un projet agricole porté par le club Le Monde du Travail.
+Agrinova est un projet agricole porté par le club Le Monde du Travail. Son nom résume son idée : **Agri** pour la terre qu'on travaille, **Nova** pour ce qui naît de neuf.
 
-Son objectif est de montrer que l'agriculture est un secteur qui offre de nombreuses possibilités, notamment en matière d'emploi, d'entrepreneuriat et de développement économique.
+Le projet part d'une question que se sont posée les élèves du LYNAQE de Sédhiou : comment produire plus, toute l'année, sur peu d'espace et avec peu d'eau ?
 
-L'agriculture occupe une place importante dans la vie du Sénégal. Pourtant, elle reste confrontée à plusieurs difficultés : manque de moyens, difficultés d'accès aux équipements, problèmes de conservation des produits, manque de formation et difficultés de commercialisation.
+Pour y répondre, Agrinova fait travailler ensemble trois productions qui vivent d'habitude chacune de leur côté : **les cultures hors-sol**, **la pisciculture** (les bassins de poissons) et **le petit élevage**. Ce que l'une rejette, l'autre s'en nourrit. Moins d'eau, moins d'intrants achetés, plus de nourriture, sur une petite surface.
 
-Agrinova veut participer à la recherche de solutions à ces problèmes.
+Son objectif est aussi de montrer que l'agriculture est un secteur qui offre de nombreuses possibilités, notamment en matière d'emploi, d'entrepreneuriat et de développement économique.
 
-Le projet commencera à une échelle locale afin de permettre au club d'apprendre, d'expérimenter et de construire une expérience solide.
+Le projet commencera à une échelle locale, au sein du lycée, afin de permettre au club d'apprendre, d'expérimenter et de construire une expérience solide.
 
 Mais l'ambition est beaucoup plus grande : Agrinova pourrait, à l'avenir, s'étendre progressivement à l'ensemble du territoire sénégalais. L'idée serait de développer des activités agricoles dans différentes régions, en tenant compte des ressources et des possibilités de chaque territoire.
 
-::: encadre
-Il ne s'agit donc pas simplement de créer une exploitation agricole, mais de construire progressivement un projet qui pourrait avoir un impact économique et social important.
+::: encadre Notre réponse
+Faire d'un déchet une ressource, et d'un lycée un lieu de production.
+:::
+
+### Le constat
+
+L'agriculture occupe une place importante dans la vie du Sénégal. Pourtant, elle reste confrontée à plusieurs difficultés : manque de moyens, difficultés d'accès aux équipements, problèmes de conservation des produits, manque de formation et difficultés de commercialisation. Agrinova part de trois constats.
+
+::: cartes
+### Une agriculture suspendue à la pluie
+En Casamance, l'essentiel des cultures se fait pendant l'hivernage. Le reste de l'année, les légumes frais se raréfient sur les marchés et leurs prix grimpent.
+
+### Des productions qui travaillent chacune de leur côté
+Maraîchage, pisciculture et élevage sont presque toujours menés séparément. Chacun achète ses intrants et jette des « déchets » qui auraient pu nourrir les autres.
+
+### Des jeunes qui se détournent de la terre
+Le métier passe pour pénible et peu rentable. Les filières modernes ont pourtant besoin de jeunes formés, capables de produire, de gérer et d'innover.
+:::
+
+Agrinova veut participer à la recherche de solutions à ces problèmes.
+
+### La boucle Agrinova
+
+Agrinova relie trois ateliers dans un même circuit fermé : l'eau, les nutriments et la matière organique passent d'une production à l'autre au lieu d'être perdus.
+
+Le principe tient en une phrase : rien ne quitte le système sans avoir servi deux fois. Chaque production nourrit la suivante.
+
+::: etapes
+### Les poissons nourrissent les plantes
+Les déjections des poissons, transformées par des bactéries utiles, deviennent l'engrais des cultures. En se nourrissant, les racines filtrent l'eau, qui repart propre vers les bassins.
+
+### Les plantes nourrissent les animaux
+Une partie des bacs produit du fourrage hydroponique : des graines de maïs germées en une semaine environ, sans terre, pour compléter la ration des volailles.
+
+### Les animaux nourrissent les poissons
+Les fientes servent à élever des larves de mouche soldat noire, riches en protéines, qui remplacent une partie de l'aliment acheté. Le reste part au compost.
+:::
+
+::: encadre Objectif
+Zéro déchet : produire en toute saison, économiser l'eau et apprendre en faisant.
+:::
+
+### Les trois piliers
+
+Trois ateliers, un seul circuit. Voici ce que chacun produit, et ce qu'il apporte aux deux autres.
+
+::: cartes
+### Les cultures hors-sol
+Les plantes poussent sans terre, racines plongées dans une eau nourricière qui circule en continu dans des gouttières et des bacs. Peu de surface, peu d'eau, et des récoltes en toute saison.
+
+**Produit :** légumes-feuilles, aromates et fourrage pour l'élevage.
+
+**Dans la boucle :** filtre l'eau des bassins et nourrit les animaux.
+
+### La pisciculture
+Des bassins accueillent des poissons d'eau douce adaptés au climat local, comme le tilapia ou le silure. Leur eau, chargée en matières organiques, passe par les cultures avant de revenir.
+
+**Produit :** du poisson frais pour la consommation locale.
+
+**Dans la boucle :** fournit l'engrais naturel des cultures.
+
+### Le petit élevage
+Un poulailler à taille humaine, tenu avec des règles d'hygiène strictes. La ration des volailles est complétée par le fourrage et les larves produits sur place.
+
+**Produit :** œufs et viande de volaille.
+
+**Dans la boucle :** ses fientes nourrissent les larves et le compost.
 :::
 
 ### Les objectifs d'Agrinova
@@ -161,6 +226,9 @@ Il ne s'agit donc pas simplement de créer une exploitation agricole, mais de co
 - Encourager les jeunes à s'intéresser à l'agriculture.
 - Montrer que l'agriculture peut être une véritable activité économique.
 - Apprendre les bases de la production agricole.
+- Produire des légumes frais toute l'année, même en saison sèche.
+- Économiser l'eau en la faisant circuler en boucle au lieu de la jeter.
+- Transformer les déchets d'une production en ressources pour les autres.
 - Encourager l'utilisation de nouvelles méthodes de production.
 - Valoriser les produits locaux.
 - Encourager la transformation des produits agricoles.
@@ -173,10 +241,10 @@ Il ne s'agit donc pas simplement de créer une exploitation agricole, mais de co
 
 ::: cartes
 ### A. La production agricole
-Le projet pourra commencer par la production de cultures adaptées aux conditions locales.
+Le projet commencera par les trois ateliers de la boucle : des cultures hors-sol adaptées aux conditions locales, des bassins de poissons et un petit élevage de volailles.
 
 ### B. L'innovation
-Le club cherchera à découvrir et à expérimenter des méthodes permettant d'améliorer les résultats agricoles.
+Le club cherchera à découvrir et à expérimenter des méthodes permettant d'améliorer les résultats agricoles : culture hors-sol, fourrage hydroponique, élevage de larves, compost.
 
 ### C. La formation
 Des rencontres et des activités pratiques pourront être organisées avec des agriculteurs, des techniciens et des spécialistes.
@@ -189,6 +257,38 @@ Il faudra également réfléchir aux moyens de vendre les produits et de trouver
 
 ### F. Le développement territorial
 À long terme, Agrinova pourra travailler avec des acteurs d'autres régions pour développer des activités adaptées à leurs réalités.
+:::
+
+### Un projet porté par les élèves
+
+Agrinova est né au sein du club Le Monde du Travail, au Lycée Nation-Armée pour la Qualité et l'Équité (LYNAQE) de Sédhiou.
+
+Ce sont les élèves qui conçoivent les installations, les construisent, les entretiennent et suivent la production au quotidien. Ils tiennent les registres, calculent les coûts et organisent la vente. Le club leur offre ce qui manque souvent à l'école : une première expérience réelle du monde professionnel.
+
+Ce que les élèves apprennent :
+
+- La biologie appliquée.
+- La gestion de l'eau.
+- La construction et la maintenance.
+- La comptabilité.
+- Le travail en équipe.
+- La vente et l'entrepreneuriat.
+- La prise de parole.
+
+### Les retombées attendues
+
+::: cartes
+### Environnement
+Moins d'eau gaspillée, moins d'engrais chimiques, des déchets recyclés sur place.
+
+### Alimentation
+Des légumes frais, du poisson et des œufs produits au lycée, toute l'année.
+
+### Éducation
+Un laboratoire vivant pour les cours de SVT, de physique-chimie et de gestion.
+
+### Économie locale
+Une activité qui peut générer des revenus et inspirer d'autres jeunes de la région.
 :::
 
 ### Organisation de l'équipe Agrinova
@@ -207,29 +307,32 @@ Le projet aura besoin de plusieurs responsables.
 ### Les phases du projet Agrinova
 
 ::: etapes
-### Phase 1 : Préparation
-- Étudier les possibilités agricoles.
-- Identifier les besoins.
-- Choisir les activités prioritaires.
+### Phase 1 : Préparation et conception
+- Étudier le site et les possibilités agricoles.
+- Dessiner les plans des installations.
+- Choisir les espèces (cultures, poissons, volailles).
+- Identifier les besoins et les activités prioritaires.
 - Rechercher les ressources nécessaires.
 - Préparer le budget.
 - Définir les responsabilités.
 
-### Phase 2 : Démarrage
-- Trouver un terrain ou un espace adapté.
+### Phase 2 : Démarrage avec un prototype
+- Trouver un espace adapté au sein du lycée.
 - Réunir le matériel nécessaire.
-- Préparer le terrain.
+- Installer un premier module hors-sol relié à un bassin pilote.
 - Commencer les premières activités.
 - Suivre régulièrement les travaux.
 
-### Phase 3 : Amélioration
+### Phase 3 : Boucle complète et amélioration
+- Ajouter le poulailler, l'élevage de larves et la production de fourrage.
 - Évaluer les premiers résultats.
 - Identifier les difficultés.
 - Corriger les erreurs.
 - Améliorer les méthodes de travail.
 - Développer de nouveaux partenariats.
 
-### Phase 4 : Extension
+### Phase 4 : Extension et essaimage
+- Partager le modèle avec d'autres lycées et groupements de jeunes de la région.
 - Étudier les possibilités dans d'autres localités.
 - Identifier de nouveaux partenaires.
 - Adapter le projet aux conditions de chaque région.
@@ -239,6 +342,21 @@ Le projet aura besoin de plusieurs responsables.
 À long terme, Agrinova pourrait devenir un programme agricole présent dans plusieurs régions du Sénégal.
 
 Cette ambition dépendra des résultats obtenus, des moyens disponibles et des partenariats construits au fil du temps.
+:::
+
+### Les besoins du projet
+
+Pour démarrer, Agrinova a besoin de soutien dans plusieurs domaines.
+
+| Besoin | Détail |
+| Matériel | Bacs, gouttières, pompes, tuyaux, bâches. |
+| Démarrage | Alevins, poussins, semences. |
+| Énergie | Panneaux solaires pour les pompes. |
+| Expertise | Agronomes, pisciculteurs, éleveurs. |
+| Visibilité | Partenariats et mise en réseau. |
+
+::: encadre Rejoignez la boucle
+Partenaires, entreprises, collectivités, anciens élèves : chaque coup de pouce fait grandir Agrinova. Contact : lemondedutravailsen@gmail.com · LYNAQE de Sédhiou, Sénégal.
 :::
 
 ## La sensibilisation : un projet qui concerne tout le monde
@@ -602,7 +720,7 @@ LinkedIn sera donc particulièrement important pour le développement du réseau
 Le club pourra utiliser un même sujet pour produire différents contenus. Par exemple, sur le thème de l'agriculture :
 
 | Plateforme | Contenu |
-| Instagram | Une infographie sur les possibilités de l'agriculture. |
+| Instagram | Une infographie sur la boucle Agrinova : les poissons nourrissent les plantes, les plantes nourrissent les animaux, les animaux nourrissent les poissons. |
 | TikTok | Une courte vidéo expliquant un problème agricole. |
 | YouTube | Un reportage sur Agrinova. |
 | Spotify | Une discussion avec un agriculteur. |
@@ -882,7 +1000,7 @@ Le développement du club doit se faire progressivement. Il faut d'abord bien or
 Pour savoir si le club avance, il faut mesurer les résultats. Chaque département doit présenter régulièrement un bilan de son travail. Voici quelques éléments à suivre :
 
 | Département | Ce qu'il faut mesurer |
-| Agrinova | Activités agricoles, production, dépenses et partenariats |
+| Agrinova | Activités agricoles, production (légumes, poisson, œufs), eau économisée, dépenses et partenariats |
 | Sensibilisation | Nombre de campagnes et personnes touchées |
 | Site internet | Visites, inscriptions et mises à jour |
 | Communication | Publications, vues et réactions |
@@ -920,7 +1038,7 @@ Le site doit progressivement devenir un outil important pour apprendre, s'inform
 
 ## Faire grandir Agrinova
 
-Le projet agricole doit commencer avec des moyens réalistes, faire ses preuves et évoluer progressivement.
+Le projet agricole doit commencer avec des moyens réalistes, au sein du lycée, faire ses preuves et évoluer progressivement. Le modèle pourra ensuite être partagé avec d'autres lycées et groupements de jeunes de la région.
 
 L'ambition à long terme est de pouvoir développer Agrinova dans plusieurs régions du Sénégal, voire sur l'ensemble du territoire.
 
