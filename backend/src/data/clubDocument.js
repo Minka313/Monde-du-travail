@@ -307,29 +307,32 @@ Le projet aura besoin de plusieurs responsables.
 ### Les phases du projet Agrinova
 
 ::: etapes
-### Phase 1 : Préparation
-- Étudier les possibilités agricoles.
-- Identifier les besoins.
-- Choisir les activités prioritaires.
+### Phase 1 : Préparation et conception
+- Étudier le site et les possibilités agricoles.
+- Dessiner les plans des installations.
+- Choisir les espèces (cultures, poissons, volailles).
+- Identifier les besoins et les activités prioritaires.
 - Rechercher les ressources nécessaires.
 - Préparer le budget.
 - Définir les responsabilités.
 
-### Phase 2 : Démarrage
-- Trouver un terrain ou un espace adapté.
+### Phase 2 : Démarrage avec un prototype
+- Trouver un espace adapté au sein du lycée.
 - Réunir le matériel nécessaire.
-- Préparer le terrain.
+- Installer un premier module hors-sol relié à un bassin pilote.
 - Commencer les premières activités.
 - Suivre régulièrement les travaux.
 
-### Phase 3 : Amélioration
+### Phase 3 : Boucle complète et amélioration
+- Ajouter le poulailler, l'élevage de larves et la production de fourrage.
 - Évaluer les premiers résultats.
 - Identifier les difficultés.
 - Corriger les erreurs.
 - Améliorer les méthodes de travail.
 - Développer de nouveaux partenariats.
 
-### Phase 4 : Extension
+### Phase 4 : Extension et essaimage
+- Partager le modèle avec d'autres lycées et groupements de jeunes de la région.
 - Étudier les possibilités dans d'autres localités.
 - Identifier de nouveaux partenaires.
 - Adapter le projet aux conditions de chaque région.
