@@ -114,7 +114,9 @@
           continue;
         }
         if (/^\d+[.)]\s+/.test(t)) {
-          target.push({ type: 'ol', items: collect((l) => /^\s*\d+[.)]\s+/.test(l)).map((l) => l.trim().replace(/^\d+[.)]\s+/, '')) });
+          // Le numéro tapé est respecté : « 2. » après une liste à puces continue à 2
+          const olLines = collect((l) => /^\s*\d+[.)]\s+/.test(l));
+          target.push({ type: 'ol', start: parseInt(olLines[0], 10) || 1, items: olLines.map((l) => l.trim().replace(/^\d+[.)]\s+/, '')) });
           continue;
         }
         if (t.startsWith('|')) {
@@ -176,7 +178,7 @@
       // Phrase qui annonce la suite (« … : ») : reste sur la même page que sa liste ou ses cartes
       case 'p': return `<p${/:\s*$/.test(b.text) ? ' class="cd-keep"' : ''}>${inline(b.text)}</p>`;
       case 'ul': return `<ul class="cd-list">${b.items.map((it) => `<li>${inline(it)}</li>`).join('')}</ul>`;
-      case 'ol': return `<ol class="cd-olist">${b.items.map((it) => `<li>${inline(it)}</li>`).join('')}</ol>`;
+      case 'ol': return `<ol class="cd-olist"${b.start > 1 ? ` start="${b.start}" style="counter-reset: cd-ol ${b.start - 1}"` : ''}>${b.items.map((it) => `<li>${inline(it)}</li>`).join('')}</ol>`;
       case 'table': return `<div class="cd-table-wrap"><table class="cd-table"><thead><tr>${b.head.map((c) => `<th>${inline(c)}</th>`).join('')}</tr></thead>
         <tbody>${b.rows.map((r) => `<tr>${b.head.map((_, k) => `<td>${inline(r[k] || '')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
       case 'quote': return `<figure class="cd-quote"><blockquote>${inline(b.text)}</blockquote>${b.cite ? `<figcaption>${citeHtml(b.cite)}</figcaption>` : ''}</figure>`;
@@ -362,7 +364,7 @@
         else if (b.type === 'ul') b.items.forEach((it) => out.push(para(it, { numbering: { reference: 'cd-bullets', level: 0 }, spacing: { after: 40 } })));
         else if (b.type === 'ol') {
           const ref = `cd-num-${out.length}-${Math.random().toString(36).slice(2, 6)}`;
-          numberingConfigs.push({ reference: ref, levels: [{ level: 0, format: D.LevelFormat.DECIMAL, text: '%1.', alignment: D.AlignmentType.START, style: { paragraph: { indent: { left: 440, hanging: 300 } } } }] });
+          numberingConfigs.push({ reference: ref, levels: [{ level: 0, format: D.LevelFormat.DECIMAL, text: '%1.', start: b.start || 1, alignment: D.AlignmentType.START, style: { paragraph: { indent: { left: 440, hanging: 300 } } } }] });
           b.items.forEach((it) => out.push(para(it, { numbering: { reference: ref, level: 0 }, spacing: { after: 40 } })));
         } else if (b.type === 'table') {
           const cols = b.head.length || 1;
