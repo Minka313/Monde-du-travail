@@ -106,6 +106,19 @@ describe('Document de référence du club', () => {
       expect(res.body.data.hasPrevious).toBe(true);
     });
 
+    it('« Garder ma version » retire la partie des propositions sans toucher au texte', async () => {
+      const before = (await api('get', '', 'president')).body.data;
+      const [edited] = before.updates;
+      const res = await api('post', '/updates', 'president').send({ keep: [edited.key] });
+      expect(res.status).toBe(200);
+      expect(res.body.data.updates).toEqual([]);
+      expect(res.body.data.content).toBe(before.content);
+      // Le choix survit à un nouvel enregistrement de la Présidence
+      const saved = await api('put', '', 'president').send({ content: `${before.content}\nAjout.` });
+      expect(saved.body.data.updates).toEqual([]);
+      expect((await api('post', '/updates', 'president').send({})).status).toBe(400);
+    });
+
     it('a l\'historique de chaque version publiée du texte de référence', () => {
       const HISTORY = require('../src/data/clubDocumentHistory.json');
       const Chapters = require('../src/utils/clubDocumentChapters');

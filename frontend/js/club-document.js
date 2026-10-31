@@ -639,20 +639,23 @@
     overlay.setAttribute('aria-label', 'Mises à jour du document');
     overlay.innerHTML = `
       <header class="cd-editor-bar">
-        <div class="cd-editor-title"><strong>🔄 Mises à jour du texte de référence</strong><span>Coche les parties à mettre à jour. Les autres parties de ta version ne bougent pas.</span></div>
+        <div class="cd-editor-title"><strong>🔄 Mises à jour du texte de référence</strong><span>Pour chaque partie, choisis la mise à jour ou ta version. Les autres parties de ton document ne bougent pas.</span></div>
         <div class="cd-editor-btns">
           <button type="button" class="cd-btn cd-btn-ghost" data-mg="close">Fermer</button>
-          <button type="button" class="cd-btn cd-btn-gold" data-mg="apply">✅ Appliquer la sélection</button>
+          <button type="button" class="cd-btn cd-btn-gold" data-mg="apply">✅ Valider mes choix</button>
         </div>
       </header>
       <div class="cd-merge-body">
         ${data.updates.map((u) => `
           <section class="cd-merge-item">
-            <label class="cd-merge-head">
-              <input type="checkbox" value="${esc(u.key)}" ${u.status === 'safe' ? 'checked' : ''}>
+            <div class="cd-merge-head">
               <span class="cd-merge-name">${esc(u.title)}</span>
               <span class="cd-merge-badge ${u.status === 'safe' ? 'is-safe' : 'is-edited'}">${u.status === 'safe' ? 'Tu n\'as pas modifié cette partie' : 'Tu as modifié cette partie : compare avant de choisir'}</span>
-            </label>
+            </div>
+            <div class="cd-merge-choice" role="radiogroup" aria-label="${esc(u.title)}">
+              <label><input type="radio" name="mg-${esc(u.key)}" value="apply" data-key="${esc(u.key)}" ${u.status === 'safe' ? 'checked' : ''}> Prendre la mise à jour</label>
+              <label><input type="radio" name="mg-${esc(u.key)}" value="keep" data-key="${esc(u.key)}" ${u.status === 'safe' ? '' : 'checked'}> Garder ma version <small>(elle ne sera plus proposée)</small></label>
+            </div>
             <details ${u.status === 'safe' ? '' : 'open'}>
               <summary>Comparer ta version et la mise à jour</summary>
               <div class="cd-merge-cols">
@@ -661,7 +664,7 @@
               </div>
             </details>
           </section>`).join('')}
-        <p class="cd-merge-note">Après application, « ↩️ Version précédente » permet de revenir à ta version actuelle si besoin.</p>
+        <p class="cd-merge-note">Après une mise à jour, « ↩️ Version précédente » permet de revenir à ta version actuelle si besoin.</p>
       </div>`;
     document.body.appendChild(overlay);
     document.body.classList.add('bx-no-scroll');
@@ -670,19 +673,22 @@
       const action = e.target.closest('[data-mg]')?.dataset.mg;
       if (action === 'close') close();
       if (action !== 'apply') return;
-      const keys = [...overlay.querySelectorAll('input[type="checkbox"]:checked')].map((i) => i.value);
-      if (!keys.length) { api.toast('Coche au moins une partie', 'error'); return; }
+      const picked = (value) => [...overlay.querySelectorAll(`input[type="radio"][value="${value}"]:checked`)].map((i) => i.dataset.key);
+      const keys = picked('apply');
+      const keep = picked('keep');
       const btn = e.target.closest('[data-mg]');
       btn.disabled = true;
       btn.textContent = '⏳ Application…';
       try {
-        const res = await api.applyUpdates(keys);
+        const res = await api.applyUpdates(keys, keep);
         close();
-        api.toast(`${keys.length} partie${keys.length > 1 ? 's' : ''} mise${keys.length > 1 ? 's' : ''} à jour ✅`);
+        api.toast(keys.length
+          ? `${keys.length} partie${keys.length > 1 ? 's' : ''} mise${keys.length > 1 ? 's' : ''} à jour ✅`
+          : 'Ta version est conservée ✅');
         render(root, res.data, api);
       } catch (error) {
         btn.disabled = false;
-        btn.textContent = '✅ Appliquer la sélection';
+        btn.textContent = '✅ Valider mes choix';
         api.toast(error.message || 'Mise à jour impossible', 'error');
       }
     });

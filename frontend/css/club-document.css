@@ -174,6 +174,10 @@
 .cd-merge-badge { font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px; }
 .cd-merge-badge.is-safe { background: #dcfce7; color: #166534; }
 .cd-merge-badge.is-edited { background: #fef3c7; color: #92400e; }
+.cd-merge-choice { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; margin-top: 0.6rem; font-size: 0.9rem; font-weight: 600; color: var(--cd-navy); }
+.cd-merge-choice label { display: inline-flex; align-items: center; gap: 0.45rem; cursor: pointer; }
+.cd-merge-choice input { width: 18px; height: 18px; accent-color: #0f2b46; }
+.cd-merge-choice small { font-weight: 400; color: var(--cd-muted); }
 .cd-merge-item details { margin-top: 0.6rem; }
 .cd-merge-item summary { cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--cd-gold-ink); }
 .cd-merge-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin-top: 0.7rem; }

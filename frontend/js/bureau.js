@@ -348,7 +348,7 @@
           load: () => window.Api.reports.clubDocument(),
           save: (content) => window.Api.reports.saveClubDocument(content),
           restore: () => window.Api.reports.restoreClubDocument(),
-          applyUpdates: (keys) => window.Api.reports.applyClubDocumentUpdates(keys),
+          applyUpdates: (keys, keep) => window.Api.reports.applyClubDocumentUpdates(keys, keep),
           toast,
         });
         return;
