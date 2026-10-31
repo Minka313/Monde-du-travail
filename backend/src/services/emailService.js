@@ -539,6 +539,7 @@ class EmailService {
     const adminEmail = process.env.ULTRA_ADMIN_EMAIL || process.env.DEFAULT_ADMIN_EMAIL || 'admin@mondedutravail.com';
     const subject = `[Nouvelle Inscription Formation] ${candidateName} s'est inscrit à ${formationTitle}`;
     const dateStr = createdAt ? new Date(createdAt).toLocaleString('fr-FR') : new Date().toLocaleString('fr-FR');
+    const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const baseUrl = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
 
     const html = `
@@ -550,12 +551,12 @@ class EmailService {
           <div style="padding:24px;">
             <h3 style="color:#0f172a;margin-top:0;">Nouvelle inscription enregistrée</h3>
             <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:16px 0;">
-              <p style="margin:4px 0;"><strong>Formation :</strong> 🎓 ${formationTitle}</p>
-              <p style="margin:4px 0;"><strong>Apprenant :</strong> 👤 ${candidateName}</p>
-              <p style="margin:4px 0;"><strong>Email :</strong> ✉️ ${candidateEmail}</p>
-              <p style="margin:4px 0;"><strong>Téléphone / WhatsApp :</strong> 📱 ${candidatePhone || 'Non renseigné'}</p>
+              <p style="margin:4px 0;"><strong>Formation :</strong> 🎓 ${esc(formationTitle)}</p>
+              <p style="margin:4px 0;"><strong>Apprenant :</strong> 👤 ${esc(candidateName)}</p>
+              <p style="margin:4px 0;"><strong>Email :</strong> ✉️ ${esc(candidateEmail)}</p>
+              <p style="margin:4px 0;"><strong>Téléphone / WhatsApp :</strong> 📱 ${esc(candidatePhone || 'Non renseigné')}</p>
               <p style="margin:4px 0;"><strong>Date d'inscription :</strong> 🗓️ ${dateStr}</p>
-              ${motivation ? `<p style="margin:8px 0 0;font-style:italic;color:#475569;">« ${motivation} »</p>` : ''}
+              ${motivation ? `<p style="margin:8px 0 0;font-style:italic;color:#475569;">« ${esc(motivation)} »</p>` : ''}
             </div>
             <div style="text-align:center;margin-top:20px;">
               <a href="${baseUrl}/admin-frontend/index.html#formations" style="background:#0284c7;color:#fff;padding:10px 20px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">

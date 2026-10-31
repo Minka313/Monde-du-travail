@@ -307,28 +307,6 @@ class FormationService {
   static async registerCandidate({ formationId, name, email, phone, motivation, userId }) {
     const formation = await this.getFormationOrThrow(formationId);
 
-    // Initialisation résiliente de la table formation_registrations si non encore créée
-    try {
-      await prisma.$executeRawUnsafe(`
-        CREATE TABLE IF NOT EXISTS formation_registrations (
-          id TEXT PRIMARY KEY,
-          "formationId" TEXT NOT NULL REFERENCES formations(id) ON DELETE CASCADE,
-          "userId" TEXT REFERENCES users(id) ON DELETE SET NULL,
-          name TEXT NOT NULL,
-          email TEXT NOT NULL,
-          phone TEXT,
-          motivation TEXT,
-          status TEXT NOT NULL DEFAULT 'CONFIRMED',
-          "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
-        );
-        CREATE INDEX IF NOT EXISTS formation_reg_fid_idx ON formation_registrations ("formationId");
-        CREATE INDEX IF NOT EXISTS formation_reg_email_idx ON formation_registrations (email);
-      `);
-    } catch (e) {
-      // Table already created or statement ignored
-    }
-
     let registration = null;
     const regId = 'freg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
 
@@ -378,9 +356,9 @@ class FormationService {
       };
     }
 
-    // Déclenchement asynchrone des emails de confirmation et d'alerte admin (non bloquant)
+    // E-mails (apprenant + Présidence) et alerte dans le site : attendus, sinon Vercel coupe la fonction avant l'envoi
     const EmailService = require('./emailService');
-    Promise.allSettled([
+    await Promise.allSettled([
       EmailService.notifyFormationRegistrationConfirmation({
         to: email.trim().toLowerCase(),
         candidateName: name.trim(),
@@ -397,11 +375,40 @@ class FormationService {
         motivation: motivation ? motivation.trim() : null,
         createdAt: registration.createdAt,
       }),
-    ]).catch((err) => {
-      logger.warn("Erreur lors de l'envoi des notifications d'inscription formation", { error: err.message });
-    });
+      this.notifyFormationManagers(formation, registration),
+    ]);
 
     return { registration, formation };
+  }
+
+  // Alerte dans le site et en push : Présidence, responsables du module Formations et formateurs de la session
+  static async notifyFormationManagers(formation, registration) {
+    try {
+      const notificationService = require('./notificationService');
+      const managers = await prisma.user.findMany({
+        where: {
+          isActive: true,
+          OR: [
+            { role: 'ULTRA_ADMIN' },
+            { adminRoles: { some: { isActive: true, status: 'APPROVED', role: { permissions: { some: { permission: { code: 'formation.publish' } } } } } } },
+            { formationTrainings: { some: { formationId: formation.id } } },
+          ],
+        },
+        select: { id: true },
+      });
+      const total = await prisma.formationRegistration.count({ where: { formationId: formation.id, status: { not: 'CANCELLED' } } }).catch(() => null);
+      const count = total ? ` (${total} inscrit${total > 1 ? 's' : ''} au total)` : '';
+      await Promise.allSettled(managers.map((m) => notificationService.createNotification({
+        userId: m.id,
+        type: 'FORMATION',
+        title: '🎓 Nouvelle inscription à une formation',
+        message: `${registration.name} s'est inscrit(e) à « ${formation.title} »${count}.`,
+        url: '/admin-frontend/index.html#formations',
+        dedupeKey: `FORMATION_REG:${registration.id}:${m.id}`,
+      })));
+    } catch (err) {
+      logger.warn('Alerte « nouvelle inscription formation » non envoyée', { error: err.message, formationId: formation.id });
+    }
   }
 
   // 2. Consultation des inscrits à une formation (Espace Admin)
