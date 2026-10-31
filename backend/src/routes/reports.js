@@ -9,6 +9,7 @@ const multer = require('multer');
 const { z } = require('zod');
 const ReportController = require('../controllers/reportController');
 const ReportService = require('../services/reportService');
+const ClubDocumentService = require('../services/clubDocumentService');
 const { authenticate, authorizeUltraAdmin } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { BadRequestError, ForbiddenError } = require('../utils/errors');
@@ -78,6 +79,19 @@ async function requireBureauMember(req, res, next) {
     return next(error);
   }
 }
+
+// Document de référence du club : lu par le bureau, modifié par la Présidence
+const clubDocumentSchema = z.object({ body: z.object({ content: z.string().min(1).max(120000) }) });
+const requestMeta = (req) => ({ ipAddress: req.ip, userAgent: req.get('user-agent') });
+router.get('/club-document', async (req, res, next) => {
+  try { res.json({ success: true, data: await ClubDocumentService.get(req.user) }); } catch (error) { next(error); }
+});
+router.put('/club-document', authorizeUltraAdmin, validate(clubDocumentSchema), async (req, res, next) => {
+  try { res.json({ success: true, data: await ClubDocumentService.save(req.user, req.body.content, requestMeta(req)) }); } catch (error) { next(error); }
+});
+router.post('/club-document/restore', authorizeUltraAdmin, async (req, res, next) => {
+  try { res.json({ success: true, data: await ClubDocumentService.restorePrevious(req.user, requestMeta(req)) }); } catch (error) { next(error); }
+});
 
 router.get('/context', ReportController.getContext);
 router.get('/templates', ReportController.getTemplates);

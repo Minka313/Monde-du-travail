@@ -75,6 +75,8 @@ const PUBLIC_SETTINGS_CACHE_TTL_MS = 60 * 1000; // 60s cache mémoire
 
 // Anciens paramètres sans effet sur le site : conservés en base mais masqués de l'admin
 const DEPRECATED_KEYS = ['site.name', 'site.description', 'memberships.allowRegistrations'];
+// Gérés par leur propre écran (Espace Bureau) : absents de la page Paramètres
+const PRIVATE_KEYS = ['club.reference_document'];
 
 // Valeurs par défaut d'origine devenues fausses (histoire du club inventée, ancienne adresse).
 // Tant qu'elles n'ont pas été modifiées dans l'admin, la nouvelle valeur par défaut s'applique.
@@ -161,7 +163,7 @@ class SettingsService {
   static async getAll() {
     await this.ensureDefaults();
     const settings = await prisma.setting.findMany({
-      where: { key: { notIn: DEPRECATED_KEYS } },
+      where: { key: { notIn: [...DEPRECATED_KEYS, ...PRIVATE_KEYS] } },
       orderBy: [{ category: 'asc' }, { key: 'asc' }],
     });
     // Libellé et rubrique à jour depuis le code (les lignes existantes gardent leur valeur)
@@ -289,7 +291,7 @@ class SettingsService {
     }
 
     await this.ensureDefaults();
-    const existing = await prisma.setting.findUnique({ where: { key } });
+    const existing = PRIVATE_KEYS.includes(key) ? null : await prisma.setting.findUnique({ where: { key } });
     if (!existing) {
       throw new NotFoundError('Paramètre non trouvé');
     }

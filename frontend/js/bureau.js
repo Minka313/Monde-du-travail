@@ -135,6 +135,7 @@
     tabs.push({ key: 'bureau', label: 'Rapports du bureau', icon: '🏛️' });
     if (ctx.seesAll) tabs.push({ key: 'summary', label: 'Synthèse', icon: '📊' });
     if (ctx.seesAll || ctx.canReview) tabs.push({ key: 'archives', label: 'Archives', icon: '🗄️' });
+    tabs.push({ key: 'document', label: 'Document du club', icon: '📘' });
     return tabs;
   }
 
@@ -342,6 +343,15 @@
       if (state.tab === 'bureau') html = await renderBureau();
       if (state.tab === 'archives') html = `<p class="bx-muted">Rapports archivés par la Présidence : retirés des listes courantes, toujours consultables et exportables. « Restaurer » les remet dans les listes.</p>${await renderSimpleList('archives', ['🗄️', 'Aucun rapport archivé', 'Archive les rapports traités (validés ou en correction) pour garder des listes claires.'])}`;
       if (state.tab === 'summary') html = await renderSummary();
+      if (state.tab === 'document') {
+        await window.ClubDocument.mount(root, {
+          load: () => window.Api.reports.clubDocument(),
+          save: (content) => window.Api.reports.saveClubDocument(content),
+          restore: () => window.Api.reports.restoreClubDocument(),
+          toast,
+        });
+        return;
+      }
       root.innerHTML = html;
     } catch (error) {
       root.innerHTML = `<div class="bx-error">⚠️ ${esc(error.message || 'Chargement impossible')}</div>`;
@@ -802,6 +812,9 @@
 
     bind();
     renderHero();
+    // Lien direct vers un onglet : bureau.html?onglet=document
+    const askedTab = new URLSearchParams(window.location.search).get('onglet');
+    if (askedTab && tabsList().some((t) => t.key === askedTab)) state.tab = askedTab;
     renderTabs();
     await renderTab();
 

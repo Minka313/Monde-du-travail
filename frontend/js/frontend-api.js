@@ -370,6 +370,9 @@ return headers;
         body: JSON.stringify({ decision, comment }),
       }),
       summary: (year) => apiRequestWithRefresh(`/reports/summary${year ? `?year=${encodeURIComponent(year)}` : ''}`),
+      clubDocument: () => apiRequestWithRefresh('/reports/club-document'),
+      saveClubDocument: (content) => apiRequestWithRefresh('/reports/club-document', { method: 'PUT', body: JSON.stringify({ content }) }),
+      restoreClubDocument: () => apiRequestWithRefresh('/reports/club-document/restore', { method: 'POST' }),
       uploadAttachment: (file) => {
         const body = new FormData();
         body.append('file', file);
