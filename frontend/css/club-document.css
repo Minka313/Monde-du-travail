@@ -162,6 +162,27 @@
 .cd-end strong { display: block; letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.85rem; }
 .cd-end span { font: italic 600 1rem/1.4 var(--cd-display); color: var(--cd-gold-ink); }
 
+/* ===== Mises à jour du texte de référence ===== */
+.cd-updates { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin: -0.5rem 0 1.25rem; padding: 0.9rem 1.15rem; border-radius: 14px; background: var(--cd-gold-soft); border: 1px solid rgba(245, 166, 35, 0.45); border-left: 5px solid var(--cd-gold); }
+.cd-updates p { margin: 0; flex: 1 1 420px; font-size: 0.9rem; color: var(--cd-ink-2); line-height: 1.55; }
+.cd-updates strong { color: var(--cd-navy); }
+.cd-merge-body { flex: 1; overflow-y: auto; padding: 1rem clamp(0.75rem, 3vw, 2rem) 2rem; }
+.cd-merge-item { margin: 0 auto 1rem; max-width: 1200px; padding: 0.9rem 1rem; border-radius: 14px; background: var(--cd-card); border: 1px solid var(--cd-line); }
+.cd-merge-head { display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap; cursor: pointer; }
+.cd-merge-head input { width: 20px; height: 20px; accent-color: #0f2b46; }
+.cd-merge-name { font: 700 1.05rem/1.3 var(--cd-display); color: var(--cd-navy); }
+.cd-merge-badge { font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px; }
+.cd-merge-badge.is-safe { background: #dcfce7; color: #166534; }
+.cd-merge-badge.is-edited { background: #fef3c7; color: #92400e; }
+.cd-merge-item details { margin-top: 0.6rem; }
+.cd-merge-item summary { cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--cd-gold-ink); }
+.cd-merge-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem; margin-top: 0.7rem; }
+.cd-merge-cols .cd-doc { padding: 0.9rem 1.1rem; max-height: 60vh; overflow-y: auto; border-radius: 12px; box-shadow: none; }
+.cd-merge-label { margin: 0 0 0.35rem; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cd-muted); }
+.cd-cmp-title { margin: 0 0 0.6rem; font: 700 1.1rem/1.3 var(--cd-display); color: var(--cd-navy); }
+.cd-merge-note { max-width: 1200px; margin: 0.5rem auto 0; font-size: 0.85rem; color: var(--cd-muted); }
+@media (max-width: 800px) { .cd-merge-cols { grid-template-columns: 1fr; } }
+
 /* ===== Éditeur (Présidence) ===== */
 .cd-editor { position: fixed; inset: 0; z-index: 3000; display: flex; flex-direction: column; background: var(--cd-soft); color: var(--cd-ink); font-family: var(--cd-text); }
 .cd-editor-bar { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; padding: 0.7rem 1rem; background: #0f2b46; color: #fff; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18); }

@@ -7,6 +7,8 @@ const prisma = require('../config/database');
 const AuditService = require('./auditService');
 const DEFAULT_CONTENT = require('../data/clubDocument');
 const { BadRequestError, ForbiddenError } = require('../utils/errors');
+const Chapters = require('../utils/clubDocumentChapters');
+const HISTORY = require('../data/clubDocumentHistory.json');
 
 const KEY = 'club.reference_document';
 const MAX_LENGTH = 120000;
@@ -24,8 +26,27 @@ async function canRead(user) {
   return count > 0;
 }
 
+/**
+ * Parties du texte de référence mises à jour depuis que la Présidence a enregistré sa version.
+ * « safe » : la Présidence n'a pas touché cette partie (elle correspond à une ancienne version
+ * de référence) ; « edited » : elle l'a modifiée, c'est à elle de choisir.
+ */
+function pendingUpdates(content) {
+  const mine = new Map(Chapters.split(content).map((p) => [p.key, p]));
+  return Chapters.split(DEFAULT_CONTENT).flatMap((latest) => {
+    const known = HISTORY[latest.key] || [];
+    if (known.length < 2) return []; // partie jamais modifiée dans le texte de référence
+    const own = mine.get(latest.key);
+    if (!own) return [];
+    const ownHash = Chapters.hash(own.text);
+    if (ownHash === Chapters.hash(latest.text)) return [];
+    return [{ key: latest.key, title: latest.title, status: known.includes(ownHash) ? 'safe' : 'edited', mine: own.text, proposed: latest.text }];
+  });
+}
+
 function dto(stored, user) {
   const current = stored?.current;
+  const canEdit = user.role === 'ULTRA_ADMIN';
   return {
     content: current?.content || DEFAULT_CONTENT,
     isDefault: !current,
@@ -33,7 +54,8 @@ function dto(stored, user) {
     updatedBy: current?.updatedBy || null,
     hasPrevious: Boolean(stored?.previous),
     previousAt: stored?.previous?.updatedAt || null,
-    canEdit: user.role === 'ULTRA_ADMIN',
+    canEdit,
+    updates: canEdit && current ? pendingUpdates(current.content) : [],
   };
 }
 
@@ -68,6 +90,18 @@ class ClubDocumentService {
       resourceId: KEY, metadata: { length: text.length }, ...meta,
     });
     return dto(next, user);
+  }
+
+  // Applique à la version de la Présidence les parties choisies du texte de référence mis à jour
+  static async applyUpdates(user, keys, meta = {}) {
+    if (user.role !== 'ULTRA_ADMIN') throw new ForbiddenError('Seule la Présidence peut modifier le document');
+    const stored = parse(await prisma.setting.findUnique({ where: { key: KEY } }));
+    if (!stored?.current) throw new BadRequestError('Ton document suit déjà le texte de référence');
+    const wanted = new Set(pendingUpdates(stored.current.content).filter((u) => keys.includes(u.key)).map((u) => u.key));
+    if (!wanted.size) throw new BadRequestError('Aucune mise à jour à appliquer');
+    const latest = new Map(Chapters.split(DEFAULT_CONTENT).map((p) => [p.key, p]));
+    const merged = Chapters.join(Chapters.split(stored.current.content).map((p) => (wanted.has(p.key) ? latest.get(p.key) : p)));
+    return ClubDocumentService.save(user, merged, meta);
   }
 
   static async restorePrevious(user, meta = {}) {

@@ -89,6 +89,10 @@ router.get('/club-document', async (req, res, next) => {
 router.put('/club-document', authorizeUltraAdmin, validate(clubDocumentSchema), async (req, res, next) => {
   try { res.json({ success: true, data: await ClubDocumentService.save(req.user, req.body.content, requestMeta(req)) }); } catch (error) { next(error); }
 });
+const clubDocumentUpdatesSchema = z.object({ body: z.object({ keys: z.array(z.string().max(200)).min(1).max(50) }) });
+router.post('/club-document/updates', authorizeUltraAdmin, validate(clubDocumentUpdatesSchema), async (req, res, next) => {
+  try { res.json({ success: true, data: await ClubDocumentService.applyUpdates(req.user, req.body.keys, requestMeta(req)) }); } catch (error) { next(error); }
+});
 router.post('/club-document/restore', authorizeUltraAdmin, async (req, res, next) => {
   try { res.json({ success: true, data: await ClubDocumentService.restorePrevious(req.user, requestMeta(req)) }); } catch (error) { next(error); }
 });

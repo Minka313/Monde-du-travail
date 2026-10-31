@@ -273,7 +273,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>${esc(fileName(doc))}</title>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap">
-      <link rel="stylesheet" href="${assetUrl('css/club-document.css?v=20261031-1')}">
+      <link rel="stylesheet" href="${assetUrl('css/club-document.css?v=20261101-1')}">
       </head><body class="cd-print-body">
       <div class="cd-print-toolbar"><button type="button" onclick="window.print()">⬇️ Télécharger en PDF</button><small>Dans la fenêtre d'impression, choisis « Enregistrer au format PDF ».</small></div>
       <main class="cd-doc cd-paper">${bodyHtml(doc, { ...info, assets: ASSETS() })}</main>
@@ -560,6 +560,7 @@
             ${data.canEdit && data.hasPrevious ? '<button type="button" class="cd-btn cd-btn-ghost" data-cd="restore" title="Annuler la dernière modification enregistrée">↩️ Version précédente</button>' : ''}
           </div>
         </div>
+        ${updatesBanner(data)}
         <div class="cd-layout">
           <aside class="cd-side">
             <details class="cd-side-box" open>
@@ -592,6 +593,7 @@
       btn.textContent = label;
     });
     root.querySelector('[data-cd="edit"]')?.addEventListener('click', () => openEditor(root, data, api));
+    root.querySelector('[data-cd="updates"]')?.addEventListener('click', () => openUpdates(root, data, api));
     root.querySelector('[data-cd="restore"]')?.addEventListener('click', async () => {
       const when = data.previousAt ? `du ${frDate(data.previousAt)}` : 'd\'origine';
       if (!window.confirm(`Revenir à la version ${when} ? La version actuelle restera récupérable avec ce même bouton.`)) return;
@@ -601,6 +603,87 @@
         render(root, res.data, api);
       } catch (error) {
         api.toast(error.message, 'error');
+      }
+    });
+  }
+
+  // ===== Mises à jour du texte de référence (Présidence) =====
+
+  function updatesBanner(data) {
+    const list = data.updates || [];
+    if (!data.canEdit || !list.length) return '';
+    const safe = list.filter((u) => u.status === 'safe').length;
+    const edited = list.length - safe;
+    return `
+      <div class="cd-updates" role="status">
+        <p><strong>🔄 Le texte de référence a été mis à jour sur ${list.length} partie${list.length > 1 ? 's' : ''}</strong> que ta version enregistrée ne contient pas encore
+        (${list.map((u) => esc(u.title)).join(' · ')}).
+        ${safe ? `${safe} peu${safe > 1 ? 'vent' : 't'} être appliquée${safe > 1 ? 's' : ''} sans toucher à tes modifications` : ''}${safe && edited ? ' ; ' : ''}${edited ? `${edited} que tu as modifiée${edited > 1 ? 's' : ''} demande${edited > 1 ? 'nt' : ''} ton choix` : ''}.</p>
+        <button type="button" class="cd-btn cd-btn-gold" data-cd="updates">Voir et appliquer</button>
+      </div>`;
+  }
+
+  // Une partie (« # Titre » + contenu) rendue comme dans le document
+  function partHtml(text) {
+    const doc = parse(text);
+    const c = doc.chapters[0];
+    if (!c) return doc.intro.map(blockHtml).join('');
+    return `<h4 class="cd-cmp-title">${inline(c.title)}</h4>${c.blocks.map(blockHtml).join('')}`;
+  }
+
+  function openUpdates(root, data, api) {
+    const overlay = document.createElement('div');
+    overlay.className = 'cd-editor cd-merge';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Mises à jour du document');
+    overlay.innerHTML = `
+      <header class="cd-editor-bar">
+        <div class="cd-editor-title"><strong>🔄 Mises à jour du texte de référence</strong><span>Coche les parties à mettre à jour. Les autres parties de ta version ne bougent pas.</span></div>
+        <div class="cd-editor-btns">
+          <button type="button" class="cd-btn cd-btn-ghost" data-mg="close">Fermer</button>
+          <button type="button" class="cd-btn cd-btn-gold" data-mg="apply">✅ Appliquer la sélection</button>
+        </div>
+      </header>
+      <div class="cd-merge-body">
+        ${data.updates.map((u) => `
+          <section class="cd-merge-item">
+            <label class="cd-merge-head">
+              <input type="checkbox" value="${esc(u.key)}" ${u.status === 'safe' ? 'checked' : ''}>
+              <span class="cd-merge-name">${esc(u.title)}</span>
+              <span class="cd-merge-badge ${u.status === 'safe' ? 'is-safe' : 'is-edited'}">${u.status === 'safe' ? 'Tu n\'as pas modifié cette partie' : 'Tu as modifié cette partie : compare avant de choisir'}</span>
+            </label>
+            <details ${u.status === 'safe' ? '' : 'open'}>
+              <summary>Comparer ta version et la mise à jour</summary>
+              <div class="cd-merge-cols">
+                <div><p class="cd-merge-label">Ta version actuelle</p><div class="cd-doc cd-screen cd-mini">${partHtml(u.mine)}</div></div>
+                <div><p class="cd-merge-label">Mise à jour proposée</p><div class="cd-doc cd-screen cd-mini">${partHtml(u.proposed)}</div></div>
+              </div>
+            </details>
+          </section>`).join('')}
+        <p class="cd-merge-note">Après application, « ↩️ Version précédente » permet de revenir à ta version actuelle si besoin.</p>
+      </div>`;
+    document.body.appendChild(overlay);
+    document.body.classList.add('bx-no-scroll');
+    const close = () => { overlay.remove(); document.body.classList.remove('bx-no-scroll'); };
+    overlay.addEventListener('click', async (e) => {
+      const action = e.target.closest('[data-mg]')?.dataset.mg;
+      if (action === 'close') close();
+      if (action !== 'apply') return;
+      const keys = [...overlay.querySelectorAll('input[type="checkbox"]:checked')].map((i) => i.value);
+      if (!keys.length) { api.toast('Coche au moins une partie', 'error'); return; }
+      const btn = e.target.closest('[data-mg]');
+      btn.disabled = true;
+      btn.textContent = '⏳ Application…';
+      try {
+        const res = await api.applyUpdates(keys);
+        close();
+        api.toast(`${keys.length} partie${keys.length > 1 ? 's' : ''} mise${keys.length > 1 ? 's' : ''} à jour ✅`);
+        render(root, res.data, api);
+      } catch (error) {
+        btn.disabled = false;
+        btn.textContent = '✅ Appliquer la sélection';
+        api.toast(error.message || 'Mise à jour impossible', 'error');
       }
     });
   }
