@@ -1,0 +1,132 @@
+{
+ "corrections": [
+  {
+   "slug": "concours-cesti",
+   "keyDates": [
+    {
+     "date": "2026-02-16",
+     "label": "Ouverture des inscriptions"
+    },
+    {
+     "date": "2026-05-25",
+     "label": "Clôture des dépôts (17 h)"
+    },
+    {
+     "date": "2026-06-13",
+     "label": "Présélection à l'UCAD (14 h 30)"
+    },
+    {
+     "date": "2026-09-03",
+     "label": "Concours d'entrée au CESTI : à partir du 3 septembre"
+    },
+    {
+     "date": "2026-09-24",
+     "label": "Publication des résultats (journalisme, communication, production audiovisuelle)"
+    }
+   ],
+   "usualPeriod": "Inscriptions de mi-février à fin mai · présélection en juin · concours en été (session 2026 : à partir du 3 septembre)",
+   "selectionSteps": [
+    {
+     "title": "Inscription et paiement des frais",
+     "detail": "Dépose le dossier à la scolarité du CESTI ou dans un CAOSP (Kaolack, Thiès, Tambacounda, Ziguinchor, Saint-Louis) et règle les frais : 10 000 FCFA en région, 10 100 FCFA à Dakar via Wave."
+    },
+    {
+     "title": "Présélection et concours",
+     "detail": "Session 2026 : le concours d'entrée au CESTI a lieu à partir du 3 septembre 2026, et les résultats ont été publiés le 24 septembre 2026. Les étapes de chaque session sont annoncées sur cesti.ucad.sn."
+    }
+   ],
+   "sourceNote": "Vérifié sur cesti.ucad.sn en novembre 2026 (concours à partir du 3 septembre 2026, résultats du 24 septembre 2026). Dates d'ouverture, de clôture et de présélection, frais et pièces : communiqué repris dans « Le Manuel des concours au Sénégal », édition 2026, non reconfirmés sur le site.",
+   "_source": "https://cesti.ucad.sn",
+   "_note": "Concours « 23 au 25 juillet » → « à partir du 3 septembre 2026 » ; résultats du 24 septembre 2026 ajoutés. Clôture du 25 mai, présélection du 13 juin, frais et pièces non reconfirmés par la page officielle : conservés tels quels (à confirmer)."
+  },
+  {
+   "slug": "concours-ebad-ucad",
+   "sessionLabel": "Session 2026",
+   "keyDates": [
+    {
+     "date": "2026-10-29",
+     "label": "Épreuves orales pour les admissibles (29 et 30 octobre, à l'EBAD)"
+    }
+   ],
+   "usualPeriod": "Session 2026 : oraux des admissibles les 29 et 30 octobre 2026 ; dates d'inscription et de test à confirmer sur ebad.ucad.sn",
+   "contact": "ebad@ucad.edu.sn",
+   "selectionSteps": [
+    {
+     "title": "Dépôt du dossier",
+     "detail": "Dépose les pièces à la scolarité de l'EBAD à Dakar ou au bureau des examens du lycée Valdiodio Ndiaye de Kaolack."
+    },
+    {
+     "title": "Test de présélection",
+     "detail": "Le test se passe dans ces deux centres."
+    },
+    {
+     "title": "Épreuves orales",
+     "detail": "Pour les candidats admissibles. Session 2026 : les oraux se déroulent les 29 et 30 octobre 2026 dans les locaux de l'EBAD."
+    }
+   ],
+   "sourceNote": "Vérifié sur ebad.ucad.sn en novembre 2026 (oraux de la session 2026 les 29 et 30 octobre). Dates d'inscription et de test, frais et pièces non publiés sur la page consultée.",
+   "_source": "https://ebad.ucad.sn",
+   "_note": "« dernière session publiée 2024 » → session 2026, oraux les 29 et 30 octobre 2026 ; contact scolarite.ebad@ucad.edu.sn → ebad@ucad.edu.sn ; sessionLabel null → Session 2026. Frais, pièces, lieux non reconfirmés : conservés."
+  },
+  {
+   "slug": "concours-esea-ucad",
+   "sessionLabel": "Session 2026-2027",
+   "openingDate": null,
+   "deadline": null,
+   "keyDates": [
+    {
+     "date": "2026-10-05",
+     "label": "Publication de la liste des admissibles"
+    }
+   ],
+   "usualPeriod": "Dépôts en été · écrits en septembre · liste des admissibles début octobre (dates 2026 à confirmer sur esea.ucad.sn)",
+   "selectionSteps": [
+    {
+     "title": "Dépôt en ligne",
+     "detail": "Sur concours.ucad.sn, en précisant la filière (ATEGU, DECOF ou PEGO) dans ta demande."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Culture générale, épreuve de spécialité et mathématiques."
+    },
+    {
+     "title": "Oraux",
+     "detail": "Réservés aux admissibles, qui fournissent avant les oraux leur casier judiciaire et leur certificat de nationalité. Session 2026-2027 : liste des admissibles publiée le 5 octobre 2026 sur esea.ucad.sn."
+    }
+   ],
+   "sourceNote": "Vérifié sur esea.ucad.sn en novembre 2026 (liste des admissibles du concours 2026-2027 publiée le 5 octobre 2026). Dates de dépôt et d'écrits 2026, frais, âge et séries : communiqué 2025, non reconfirmés.",
+   "_source": "https://esea.ucad.sn",
+   "_note": "Session 2025 (dépôt 28/07-03/09/2025, écrits 9-10/09/2025) → session 2026-2027 ; dates 2025 retirées, liste des admissibles du 5 octobre 2026 ajoutée. Dates de dépôt/écrits 2026 non publiées sur la page : openingDate et deadline vidées."
+  },
+  {
+   "slug": "concours-ept-thies",
+   "series": [
+    "S1",
+    "S2",
+    "S3",
+    "STIDD",
+    "T1",
+    "T2"
+   ],
+   "eligibility": "Élèves de Terminale scientifique ou technique (S1, S2, S3, STIDD, T1, T2), bacheliers et candidats libres au bac de ces séries.",
+   "contact": "+221 76 223 61 60",
+   "sourceNote": "Vérifié sur ept.edu.sn et concours.ept.edu.sn en novembre 2026 (série STIDD, téléphone, concours écrit du 13 juin 2026). Les dates d'inscription 2026 diffèrent entre les deux sites. Aucune session 2027 annoncée.",
+   "_source": "https://concours.ept.edu.sn ; https://www.ept.edu.sn",
+   "_note": "STI2D → STIDD (série et eligibility) ; téléphone 76 223 61 77 → +221 76 223 61 60 (e-mail scolarite@ept.edu.sn retiré car non confirmé). Dates d'inscription NON modifiées (contradiction entre les sites officiels). T1, T2 conservées (non vues sur les pages)."
+  },
+  {
+   "slug": "concours-ecole-des-douanes",
+   "officialUrl": "https://www.ecoledesdouanes.sn/",
+   "sourceNote": "Vérifié sur ecoledesdouanes.sn en novembre 2026 (niveaux de recrutement et contacts). Le site ne publie ni âges ni dates de concours : les âges de la fiche viennent d'un communiqué de 2017-2018 et sont à confirmer à l'ouverture de la prochaine session.",
+   "_source": "https://ecoledesdouanes.sn",
+   "_note": "officialUrl douanes.sn → ecoledesdouanes.sn ; sourceNote mis à jour. Âges non confirmés par le site : inchangés avec avertissement déjà présent dans details et faq."
+  },
+  {
+   "slug": "concours-isfar-bambey",
+   "usualPeriod": "Session 2025 : dépôt jusqu'au 24 juillet, épreuves le 6 août (dates 2026 à confirmer sur uadb.edu.sn)",
+   "sourceNote": "Vérifié sur uadb.edu.sn en novembre 2026 : dernière session confirmée par une source de l'université = 2025 (61e promotion, bacheliers S1 à S5, épreuves le 6 août 2025, dépôt avant le 24 juillet 2025). Session 2026 non confirmée par le site officiel.",
+   "_source": "https://uadb.edu.sn/images/POB%20juillet.pdf",
+   "_note": "usualPeriod « mi-septembre / début octobre (2024) » → session 2025 : dépôt avant le 24 juillet, épreuves le 6 août 2025 ; sourceNote 2024 → 2025. Session 2026 vue seulement sur des relais : non retenue."
+  }
+ ]
+}

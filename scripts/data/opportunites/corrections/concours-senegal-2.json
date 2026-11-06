@@ -1,0 +1,287 @@
+{
+ "corrections": [
+  {
+   "slug": "concours-prytanee-militaire",
+   "details": "Le Prytanée militaire de Saint-Louis est une école militaire d'excellence qui dispense l'enseignement moyen et secondaire, en internat. Le concours d'entrée en classe de Sixième des Écoles militaires préparatoires est organisé par l'État-major général des Armées. Pour la session 2026, le communiqué fixe le concours au mercredi 20 mai 2026 et la remise des dossiers au plus tard le 15 mars 2026. Selon le site du Prytanée, l'admission se fait par un concours national très sélectif, et chaque promotion compte environ cinquante garçons sénégalais et une quinzaine d'élèves de pays africains partenaires. Le concours comprend cinq épreuves écrites : rédaction, problème, opérations, dictée et texte suivi de questions. Une visite d'aptitude puis une visite d'incorporation, avec certificat de nationalité, précèdent l'admission définitive.",
+   "eligibility": "Élèves sénégalais de sexe masculin inscrits en CM2 pendant l'année scolaire 2025-2026, âgés de 14 ans au plus au 31 décembre 2026, aptes physiquement (acuité visuelle de 15/20 sans correction à la visite d'aptitude ; 10/10 avec ou sans verres à l'incorporation). Admission définitive après visite d'incorporation et production du certificat de nationalité.",
+   "deadline": "2026-03-15",
+   "keyDates": [
+    {
+     "date": "2026-03-15",
+     "label": "Clôture des dépôts"
+    },
+    {
+     "date": "2026-05-20",
+     "label": "Concours"
+    }
+   ],
+   "sessionLabel": "Session 2026",
+   "documents": [
+    "Demande sur imprimé (bureaux de garnison, brigades, prytanee.sn) signée et légalisée par le père, la mère ou le tuteur",
+    "Extrait d'acte de naissance de moins de 3 mois (pas de jugement supplétif)",
+    "2 photos d'identité récentes",
+    "Certificat médical d'un médecin militaire de moins de 3 mois",
+    "Certificat de scolarité de CM2 et relevé de notes du 1er semestre 2025-2026",
+    "Enveloppe timbrée 23 × 32 avec adresse exacte et téléphone",
+    "Reçu des frais (Ecobank, compte du Centre comptable des Armées)",
+    "Le cas échéant, jugement de tutelle légalisé",
+    "Certificat de nationalité sénégalaise, à fournir seulement après admission"
+   ],
+   "ageLimit": "14 ans au plus au 31 décembre de l'année du concours (31 décembre 2026 pour la session 2026).",
+   "applyMode": "Dépôt au bureau de garnison le plus proche, ou à la brigade de gendarmerie dans les localités éloignées, au plus tard le 15 mars 2026. Convocation à retirer environ 15 jours avant le concours, au bureau de garnison, à la brigade ou sur prytanee.sn.",
+   "contact": "Prytanée militaire de Saint-Louis, Dakar-Bango, BP 404, Saint-Louis. Renseignements : État-major général des Armées, Camp Dial Diop, avenue des Jambaars, BP 4042, Dakar · +221 77 333 85 56 / +221 77 740 66 21 · contactdgf@armee.sn",
+   "usualPeriod": "Dépôts jusqu'à mi-mars · concours à la mi- ou fin mai",
+   "resources": [
+    {
+     "url": "https://prytanee.sn",
+     "label": "Prytanée militaire"
+    },
+    {
+     "url": "https://prytanee.sn/admission/",
+     "label": "Page d'admission"
+    },
+    {
+     "url": "https://formations.armee.sn/communiques/concours-d-entr%C3%A9e-en-classe-de-sixieme-des-%C3%A9coles-miliaires-pr%C3%A9paratoires-session-2026-692f077944ad9",
+     "label": "Communiqué de l'État-major général des Armées, session 2026"
+    }
+   ],
+   "sourceNote": "Vérifié sur formations.armee.sn (État-major général des Armées) en novembre 2026 : communiqué de la session 2026. Frais, épreuves et coefficients identiques à ceux du communiqué.",
+   "_source": "https://formations.armee.sn/communiques/concours-d-entr%C3%A9e-en-classe-de-sixieme-des-%C3%A9coles-miliaires-pr%C3%A9paratoires-session-2026-692f077944ad9 (PDF https://formations.armee.sn/plannings/document/download/311, lu par OCR) ; liste https://formations.armee.sn/communiques",
+   "_note": "Session 2025 (clôture 15/03/2025, concours 21/05/2025) → session 2026 (clôture 15/03/2026, concours mercredi 20/05/2026), CM2 de 2025-2026, 14 ans max au 31/12/2026, 5 500 FCFA et 5 épreuves (coef 2,4,2,1,2) inchangés. Le concours d'entrée en Sixième des écoles militaires préparatoires existe donc toujours en 2026 (communiqué EMGA de novembre 2025) ; la suppression du concours national d'entrée en Sixième (décret 2026-1112) n'y est pas mentionnée. Rien n'est publié pour 2027 : à surveiller."
+  },
+  {
+   "slug": "concours-ensoa",
+   "details": "Formation de deux ans pour devenir sous-officier d'active des Forces armées. Deux voies : sur titre (bac, BTS, BPMS, DTS ou équivalent, dans des spécialités comme l'électrotechnique, l'électromécanique, les réseaux, transmissions et données, ou la communication) et sur concours (BFEM ou équivalent). Les épreuves physiques de présélection comprennent six disciplines, toutes au coefficient 1 : 100 m, 1 000 m, saut en hauteur, saut en longueur, lancer de poids et grimper de corde lisse de 5 m. Elles sont suivies d'épreuves écrites du niveau de la Troisième (français, mathématiques, histoire, géographie). Une moyenne inférieure à 10/20 à l'ensemble des épreuves physiques, un abandon ou un zéro à l'une d'elles élimine le candidat. Moins de 5/20 en composition française est éliminatoire. Les candidats sur titre passent ensuite un entretien avec le jury.",
+   "exams": [
+    {
+     "subject": "Course 100 m",
+     "coefficient": "1"
+    },
+    {
+     "subject": "Course 1 000 m",
+     "coefficient": "1"
+    },
+    {
+     "subject": "Saut en hauteur",
+     "coefficient": "1"
+    },
+    {
+     "subject": "Saut en longueur",
+     "coefficient": "1"
+    },
+    {
+     "subject": "Lancer de poids",
+     "coefficient": "1"
+    },
+    {
+     "subject": "Grimper de corde lisse de 5 m",
+     "coefficient": "1"
+    },
+    {
+     "subject": "Français (rédaction ; moins de 5/20 éliminatoire)",
+     "duration": "2 h",
+     "coefficient": "2"
+    },
+    {
+     "subject": "Mathématiques",
+     "duration": "2 h",
+     "coefficient": "2"
+    },
+    {
+     "subject": "Histoire",
+     "duration": "1 h",
+     "coefficient": "1"
+    },
+    {
+     "subject": "Géographie",
+     "duration": "1 h",
+     "coefficient": "1"
+    },
+    {
+     "subject": "Entretien avec le jury (candidats sur titre)"
+    }
+   ],
+   "applyMode": "Dépôt aux bureaux de garnison des zones militaires, ou aux brigades de gendarmerie dans les localités éloignées, au plus tard le 20 février 2026 à 17 h. Moyenne inférieure à 10/20 à l'ensemble des épreuves physiques éliminatoire.",
+   "selectionSteps": [
+    {
+     "title": "Dépôt du dossier",
+     "detail": "Aux bureaux de garnison des zones militaires ou aux brigades de gendarmerie, avec une demande précisant l'option (sur titre ou sur concours)."
+    },
+    {
+     "title": "Épreuves physiques de présélection",
+     "detail": "100 m, 1 000 m, saut en hauteur, saut en longueur, lancer de poids et grimper de corde de 5 m, chacune au coefficient 1. Moyenne inférieure à 10/20, abandon ou zéro à une épreuve : éliminé."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Français, mathématiques, histoire et géographie, du niveau de la Troisième, pour les candidats retenus après les épreuves physiques."
+    },
+    {
+     "title": "Entretien",
+     "detail": "Prévu pour les candidats sur titre, dans la seconde quinzaine de juin à l'ENSOA."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quel âge faut-il avoir ?",
+     "answer": "Entre 18 et 21 ans au 1er novembre de l'année du concours, et jusqu'à 26 ans pour les spécialistes titulaires d'un BTS, DTS ou équivalent."
+    },
+    {
+     "question": "Quels sont les frais ?",
+     "answer": "5 500 FCFA, non remboursables, à régler via Ecobank au Centre comptable des Armées."
+    },
+    {
+     "question": "Peut-on être éliminé aux épreuves physiques ?",
+     "answer": "Oui : une moyenne inférieure à 10/20 à l'ensemble des épreuves physiques, un abandon ou un zéro à l'une d'elles est éliminatoire."
+    }
+   ],
+   "contact": "État-major général des Armées, Camp Dial Diop, avenue des Jambaars, BP 4042, Dakar · +221 77 333 85 56 / +221 77 740 66 21 · contactdgf@armee.sn",
+   "sessionLabel": "Session 2026 (46e promotion)",
+   "resources": [
+    {
+     "url": "https://www.forcesarmees.gouv.sn",
+     "label": "Forces armées sénégalaises"
+    },
+    {
+     "url": "https://formations.armee.sn/communiques/concours-ensoa-session-2026-692ed4d24a6ff",
+     "label": "Communiqué de l'État-major général des Armées, session 2026"
+    }
+   ],
+   "sourceNote": "Vérifié sur formations.armee.sn (État-major général des Armées) en novembre 2026 : communiqué du 28 novembre 2025, 46e promotion, session 2026.",
+   "_source": "https://formations.armee.sn/communiques/concours-ensoa-session-2026-692ed4d24a6ff (PDF https://formations.armee.sn/plannings/document/download/307, lu par OCR)",
+   "_note": "Coefficients physiques 3,4,2,1,2 (cinq épreuves) → six épreuves toutes au coefficient 1 (ajout du saut en longueur), d'après le communiqué officiel. Dates (clôture 20/02, physiques 18-19/04, écrits 9-10/05/2026), frais 5 500 FCFA, âges (18-21 / 26 au 1er novembre 2026) et coefficients des écrits (2,2,1,1) confirmés. Condition d'élimination reformulée (moyenne <10/20 à l'ensemble, abandon ou zéro). Contact ajouté. Matières de spécialité sur titre alignées sur le communiqué (électrotechnique, électromécanique, réseaux/transmissions/données, communication)."
+  },
+  {
+   "slug": "concours-ecole-militaire-sante",
+   "keyDates": [
+    {
+     "date": "2026-02-06",
+     "label": "Clôture du dépôt des dossiers selon le dernier paragraphe du communiqué (17 h)"
+    },
+    {
+     "date": "2026-02-20",
+     "label": "Clôture du dépôt des dossiers selon le paragraphe sur les dossiers recevables (17 h)"
+    },
+    {
+     "date": "2026-06-06",
+     "label": "Épreuves écrites (6 et 7 juin)"
+    }
+   ],
+   "contact": "État-major général des Armées, Camp Dial Diop, avenue des Jambaars, BP 4042, Dakar · +221 77 333 85 56 / +221 77 740 66 21 · contactdgf@armee.sn",
+   "resources": [
+    {
+     "url": "https://www.forcesarmees.gouv.sn",
+     "label": "Ministère des Forces armées"
+    },
+    {
+     "url": "https://formations.armee.sn/communiques/concours-direct-d-entr%C3%A9e-a-l-%C3%A9cole-militaire-de-sant%C3%A9-session-2026-692f02cb32afb",
+     "label": "Communiqué de l'État-major général des Armées, session 2026"
+    }
+   ],
+   "sourceNote": "Vérifié sur formations.armee.sn (État-major général des Armées) en novembre 2026 : le communiqué officiel de la session 2026 cite lui-même deux dates limites de dépôt, le 20 février 2026 à 17 h (dossiers recevables) et le 6 février 2026 à 17 h (dernier paragraphe de la partie dossier).",
+   "_source": "https://formations.armee.sn/communiques/concours-direct-d-entr%C3%A9e-a-l-%C3%A9cole-militaire-de-sant%C3%A9-session-2026-692f02cb32afb (PDF https://formations.armee.sn/plannings/document/download/310, lu par OCR)",
+   "_note": "Les deux dates figurent dans le communiqué officiel lui-même : le 20 février 2026 (« au plus tard le vendredi 20 février 2026 à 17 heures », suivi de la transmission à l'EMS le 27 février et de la liste des candidats le 9 mars) et le 6 février 2026 (dernier paragraphe de la partie dossier). La source officielle ne tranche donc pas ; deadline laissé au 6 février (date la plus prudente) et les deux dates sont désormais affichées dans keyDates. Contact ajouté. Épreuves 6-7 juin 2026, âges, frais, matières et 5/20 éliminatoire confirmés."
+  },
+  {
+   "slug": "concours-esp-dakar-dut",
+   "keyDates": [
+    {
+     "date": "2026-04-30",
+     "label": "Date limite de dépôt"
+    },
+    {
+     "date": "2026-06-06",
+     "label": "Concours (présentation dans les centres à 14 h 30)"
+    }
+   ],
+   "resources": [
+    {
+     "url": "https://esp.sn",
+     "label": "Site de l'ESP"
+    },
+    {
+     "url": "https://esp.sn/wp-content/uploads/2026/02/Communique-DUT-concours-2026_signe.pdf",
+     "label": "Communiqué officiel du concours DUT 2026 (PDF)"
+    }
+   ],
+   "sourceNote": "Vérifié sur esp.sn en novembre 2026 : communiqué officiel du concours d'entrée en 1re année du cycle DUT, année universitaire 2026-2027.",
+   "_source": "https://esp.sn/wp-content/uploads/2026/02/Communique-DUT-concours-2026_signe.pdf",
+   "_note": "Dates déjà exactes et maintenant confirmées par le communiqué officiel de l'ESP : clôture du dépôt le 30 avril 2026, concours le 6 juin 2026 à 14 h 30 dans les centres, frais 5 000 FCFA, épreuves communes (mathématiques, français, anglais) et épreuves par option. Seule la sourceNote (ancienne attribution au Manuel des concours) et la précision de l'heure sont mises à jour."
+  },
+  {
+   "slug": "concours-polytech-diamniadio-uam",
+   "contact": "Concours : concours@uam.edu.sn · +221 78 345 56 77. Standard de l'UAM : +221 33 844 10 00 · uam@uam.edu.sn (8 h - 17 h)",
+   "usualPeriod": "Après les résultats du bac ; l'UAM annonce les dates à l'ouverture des inscriptions",
+   "resources": [
+    {
+     "url": "https://depot.uam.sn",
+     "label": "Dépôt des dossiers UAM"
+    },
+    {
+     "url": "https://uam.sn/concours-dentree/",
+     "label": "Page officielle du concours d'entrée de l'UAM"
+    }
+   ],
+   "sourceNote": "Vérifié sur uam.sn en novembre 2026 : la page officielle du concours d'entrée ne publie ni session ni dates ; elles sont annoncées à l'ouverture des inscriptions.",
+   "_source": "https://uam.sn/concours-dentree/",
+   "_note": "Contact : aucun → concours@uam.edu.sn et +221 78 345 56 77, publiés par l'UAM. L'adresse concours-polytech@uam.edu.sn n'apparaît pas sur la page officielle : non retenue. Aucune date de session 2026 n'est publiée (la page indique que les dates seront communiquées à l'ouverture) : openingDate, deadline et sessionLabel restent vides. Conditions (bachelier de la session, 22 ans max, 12/20 en Terminale pour L2 vers gestion), 10 000 FCFA et six bulletins confirmés."
+  },
+  {
+   "slug": "concours-endss-infirmier",
+   "summary": "Devenir infirmier ou infirmière diplômé(e) : licence en sciences infirmières et obstétricales, parcours infirmier. 50 places lors de la session 2025.",
+   "details": "L'ENDSS, rattachée à l'UCAD, propose la licence en sciences infirmières et obstétricales, parcours infirmier (et parcours sage-femme), ainsi que des masters dont une spécialité d'infirmier de bloc opératoire. Pour la session 2026-2027, l'UCAD a ouvert les candidatures du 15 juin au 2 août 2026 (délai de rigueur), sur concours.ucad.sn/endss. La page officielle ne publie pas la date du concours, les frais ni le nombre de places pour 2026-2027. Pour la session 2025, la fiche indique 50 places, deux épreuves de 3 h (coefficient 1 chacune) : une dissertation et une épreuve de mathématiques ou de SVT au choix, et 10 000 FCFA de frais non remboursables.",
+   "openingDate": "2026-06-15",
+   "deadline": "2026-08-02",
+   "keyDates": [
+    {
+     "date": "2026-06-15",
+     "label": "Ouverture des dépôts"
+    },
+    {
+     "date": "2026-08-02",
+     "label": "Clôture des dépôts (délai de rigueur)"
+    }
+   ],
+   "fees": "10 000 FCFA, non remboursables (montant de la session 2025, non précisé pour 2026-2027)",
+   "usualPeriod": "Dépôts en 2025 : du 22 août au 30 septembre ; en 2026 : du 15 juin au 2 août. Le calendrier change d'une session à l'autre",
+   "sessionLabel": "Session 2026-2027",
+   "selectionSteps": [
+    {
+     "title": "Dépôt en ligne",
+     "detail": "Dépose ta candidature sur concours.ucad.sn/endss entre le 15 juin et le 2 août 2026 (session 2026-2027) et règle les frais de dossier."
+    },
+    {
+     "title": "Dissertation",
+     "detail": "Épreuve de 3 h, coefficient 1 (épreuves de la session 2025)."
+    },
+    {
+     "title": "Mathématiques ou SVT",
+     "detail": "Épreuve de 3 h au choix, coefficient 1 (épreuves de la session 2025)."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quels bacs sont acceptés ?",
+     "answer": "Les séries L et S, ou un diplôme admis en équivalence."
+    },
+    {
+     "question": "Combien de places y a-t-il ?",
+     "answer": "50 places pour le parcours infirmier à la session 2025. Le nombre de places 2026-2027 n'est pas publié sur la page officielle."
+    },
+    {
+     "question": "Quand déposer ma candidature ?",
+     "answer": "Pour la session 2026-2027, du 15 juin au 2 août 2026 (délai de rigueur). En 2025, c'était du 22 août au 30 septembre : surveille le site de l'UCAD chaque année."
+    }
+   ],
+   "sourceNote": "Vérifié sur ucad.sn en novembre 2026 (appel à candidatures licences 2026-2027 de l'ENDSS : dépôt du 15 juin au 2 août 2026). Date du concours, frais, places et épreuves : communiqué de la session 2025, repris dans « Le Manuel des concours au Sénégal », non reconfirmés pour 2026-2027.",
+   "_source": "https://www.ucad.sn/endss-appels-candidatures-licences-2026-2027 ; https://endss.ucad.sn",
+   "_note": "Session 2025 (22/08-30/09/2025, concours 13/10/2025) → session 2026-2027 : dépôt du 15 juin au 2 août 2026, délai de rigueur, plateforme concours.ucad.sn/endss. La date du concours 2026-2027 n'est pas publiée : l'ancienne date (13/10/2025) est retirée de keyDates. Frais, places, épreuves : non confirmés pour 2026-2027, donc présentés comme chiffres de 2025."
+  },
+  {
+   "slug": "concours-lycee-scientifique-diourbel",
+   "sessionLabel": "Session 2025-2026",
+   "sourceNote": "Vérifié sur education.sn en novembre 2026 : communiqué du 29 juillet 2025 (session 2025/2026). Aucun communiqué d'ouverture 2026-2027 n'est publié sur education.sn à cette date.",
+   "_source": "https://education.sn/posts/concours-dentree-au-lycee-scientifique-dexcellence-de-diourbel-lappel-a-la-nouvelle-generation-delites-scientifiques-est-lance",
+   "_note": "La fiche (dépôt du 31/07 au 22/08/2025, 60 places, 17 ans max au 31/12/2025, notes 15/20 en 4e, 16/20 en 3e ou 16/20 au BFEM 1er groupe, moyenne 14/20, 10 000 FCFA) est confirmée par le communiqué officiel du ministère du 29/07/2025. Seul le libellé de session « Session 2025 » est précisé en « Session 2025-2026 » (intitulé du communiqué) et la source rattachée à education.sn. Pas de communiqué 2026-2027 trouvé sur education.sn : dates non modifiées."
+  }
+ ]
+}

@@ -146,7 +146,56 @@ async function enrich({ dry = false } = {}) {
   return stats;
 }
 
-if (require.main === module && process.argv.includes('--enrich')) {
+// Corrections (corrections/*.json : { corrections: [{ slug, champ: valeur, ... }] }) : contrairement à l'enrichissement,
+// les champs listés REMPLACENT la valeur en base, annonce par annonce. Chaque correction vient d'une source officielle relue.
+const CORRECT_DIR = path.join(DATA_DIR, 'corrections');
+const CORRECT_FIELDS = ['title', 'summary', 'details', 'eligibility', 'benefits', 'documents', 'applyMode', 'contact', 'fees', 'ageLimit',
+  'openingDate', 'deadline', 'keyDates', 'usualPeriod', 'sessionLabel', 'officialUrl', 'levels', 'series', 'places', 'exams', 'funding',
+  'recurring', 'selectionSteps', 'faq', 'tips', 'resources', 'sourceNote', 'organization', 'location'];
+
+function loadCorrections() {
+  if (!fs.existsSync(CORRECT_DIR)) return { corrections: [], errors: [] };
+  const schema = z.object({ slug: z.string(), ...Object.fromEntries(CORRECT_FIELDS.map((k) => [k, fields[k].optional()])) }).strict();
+  const corrections = [];
+  const errors = [];
+  fs.readdirSync(CORRECT_DIR).filter((f) => f.endsWith('.json')).sort().forEach((file) => {
+    const { corrections: list = [] } = JSON.parse(fs.readFileSync(path.join(CORRECT_DIR, file), 'utf8'));
+    list.forEach((raw, index) => {
+      const { _source, _note, ...rest } = raw;
+      const parsed = schema.safeParse(rest);
+      if (parsed.success) corrections.push(parsed.data);
+      else errors.push(`${file} #${index + 1} (${raw.slug}) : ${parsed.error.errors.map((e) => `${e.path.join('.')} ${e.message}`).join(' ; ')}`);
+    });
+  });
+  return { corrections, errors };
+}
+
+async function correct({ dry = false } = {}) {
+  const { corrections, errors } = loadCorrections();
+  if (errors.length) {
+    errors.forEach((e) => console.error(`✖ ${e}`));
+    throw new Error(`${errors.length} correction(s) invalide(s) : rien n'a été écrit`);
+  }
+  const stats = { annonces: 0, champs: 0, absentes: 0 };
+  for (const { slug, ...values } of corrections) {
+    const existing = await prisma.opportunity.findUnique({ where: { slug }, select: { id: true } });
+    if (!existing) { stats.absentes += 1; continue; }
+    const data = OpportunityService.buildData(values);
+    const picked = Object.fromEntries(Object.keys(values).map((k) => [k, data[k]]).filter(([, v]) => v !== undefined));
+    if (!Object.keys(picked).length) continue;
+    stats.annonces += 1;
+    stats.champs += Object.keys(picked).length;
+    if (!dry) await prisma.opportunity.update({ where: { slug }, data: { ...picked, lastVerifiedAt: new Date() } });
+  }
+  console.log(`✔ Corrections${dry ? ' (essai, rien écrit)' : ''} : ${stats.champs} champ(s) corrigé(s) sur ${stats.annonces} annonce(s)${stats.absentes ? `, ${stats.absentes} introuvable(s)` : ''}.`);
+  return stats;
+}
+
+if (require.main === module && process.argv.includes('--correct')) {
+  correct({ dry: process.argv.includes('--dry') })
+    .catch((error) => { console.error(error.message); process.exitCode = 1; })
+    .finally(() => prisma.$disconnect());
+} else if (require.main === module && process.argv.includes('--enrich')) {
   enrich({ dry: process.argv.includes('--dry') })
     .catch((error) => { console.error(error.message); process.exitCode = 1; })
     .finally(() => prisma.$disconnect());
@@ -158,4 +207,4 @@ if (require.main === module && process.argv.includes('--enrich')) {
     .finally(() => prisma.$disconnect());
 }
 
-module.exports = { run, loadItems, enrich, loadPatches, DATA_DIR };
+module.exports = { run, loadItems, enrich, loadPatches, correct, loadCorrections, DATA_DIR };
