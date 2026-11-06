@@ -1,0 +1,567 @@
+{
+ "patches": [
+  {
+   "slug": "concours-ensmg-ucad",
+   "selectionSteps": [
+    {
+     "title": "Inscription",
+     "detail": "Dépôt physique à l'ENSMG ou inscription en ligne sur la plateforme des concours de l'UCAD, avec les pièces scannées en PDF."
+    },
+    {
+     "title": "Présélection",
+     "detail": "Les candidats présélectionnés déposent ensuite un dossier physique complet."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Mathématiques, physique, chimie et sciences de la Terre."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles séries peuvent candidater ?",
+     "answer": "Les élèves de Terminale candidats au bac de l'année, dans les séries S1, S2, S4 et S5."
+    },
+    {
+     "question": "Combien coûtent les frais de dossier ?",
+     "answer": "10 000 FCFA, non remboursables."
+    },
+    {
+     "question": "Et si je n'ai pas encore mon bac au moment du dépôt ?",
+     "answer": "Tu fournis les relevés de Seconde, Première et Terminale (le 2e semestre de Terminale est à régulariser). Après le bac, tu ajoutes les copies légalisées du relevé et de l'attestation."
+    }
+   ],
+   "tips": "Légalise tes copies et prépare tes cinq relevés de notes bien avant la clôture. Garde le reçu de paiement des frais : il fait partie du dossier. Révise les quatre matières écrites : mathématiques, physique, chimie et sciences de la Terre.",
+   "resources": [
+    {
+     "label": "Plateforme des concours de l'UCAD",
+     "url": "https://concours.ucad.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-ensoa",
+   "details": "Formation de deux ans pour devenir sous-officier d'active des Forces armées. Deux voies : sur titre (bac, BTS, BPSM, DTS ou équivalent, dans des spécialités comme l'informatique, l'électromécanique, l'électricité, l'hydraulique, la maintenance, le génie civil ou l'administration) et sur concours (BFEM ou équivalent). Les épreuves comprennent des tests physiques (100 m, 1 000 m, saut en hauteur, lancer de poids, grimper de corde) puis des écrits (français, mathématiques, histoire, géographie). Une moyenne physique inférieure à 10/20 est éliminatoire, tout comme moins de 5/20 en français.",
+   "selectionSteps": [
+    {
+     "title": "Dépôt du dossier",
+     "detail": "Aux bureaux de garnison des zones militaires ou aux brigades de gendarmerie, avec une demande précisant l'option (sur titre ou sur concours)."
+    },
+    {
+     "title": "Épreuves physiques",
+     "detail": "Course 100 m, 1 000 m, saut en hauteur, lancer de poids et grimper de corde de 5 m. Moyenne inférieure à 10/20 : éliminé."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Français, mathématiques, histoire et géographie."
+    },
+    {
+     "title": "Entretien",
+     "detail": "Prévu pour les candidats sur titre."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quel âge faut-il avoir ?",
+     "answer": "Entre 18 et 21 ans au 1er novembre, et jusqu'à 26 ans pour les titulaires d'un BTS, DTS ou équivalent."
+    },
+    {
+     "question": "Quels sont les frais ?",
+     "answer": "5 500 FCFA, non remboursables, à régler via Ecobank au Centre comptable des Armées."
+    },
+    {
+     "question": "Peut-on être éliminé aux épreuves physiques ?",
+     "answer": "Oui : une moyenne physique inférieure à 10/20 est éliminatoire."
+    }
+   ],
+   "tips": "Prépare-toi physiquement dès maintenant : une moyenne physique inférieure à 10/20 élimine. Rassemble tôt les pièces à faire légaliser et les documents de moins de 3 mois (extrait de naissance, casier judiciaire n° 3, certificat médical). N'oublie pas l'autorisation légalisée de tes parents ou tuteurs.",
+   "resources": [
+    {
+     "label": "Forces armées sénégalaises",
+     "url": "https://www.forcesarmees.gouv.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-ept-thies",
+   "selectionSteps": [
+    {
+     "title": "Inscription en ligne",
+     "detail": "Obligatoire sur concours.ept.edu.sn, qui permet de suivre ton dossier."
+    },
+    {
+     "title": "Dépôt du dossier physique",
+     "detail": "Par l'établissement ou le CAOSP en un seul lot, ou par toi-même à la scolarité de l'EPT à Thiès (8 h à 15 h, du lundi au vendredi)."
+    },
+    {
+     "title": "Concours écrit",
+     "detail": "QCM de 3 heures en mathématiques, physique, français et anglais, organisé dans toutes les régions. Session 2026 : le samedi 13 juin, de 15 h à 18 h."
+    },
+    {
+     "title": "Après le bac",
+     "detail": "En cas de réussite, envoie le relevé de notes légalisé dans les 10 jours suivant les résultats."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "Moins de 22 ans au 1er octobre de l'année du concours."
+    },
+    {
+     "question": "Un dossier incomplet est-il accepté ?",
+     "answer": "Non. Tout dossier incomplet ou hors limite d'âge est rejeté, sans remboursement des frais."
+    },
+    {
+     "question": "Combien coûtent les frais ?",
+     "answer": "7 000 FCFA, non remboursables."
+    }
+   ],
+   "tips": "Fais l'inscription en ligne ET le dépôt physique : l'un sans l'autre ne suffit pas. Vérifie ta date de naissance par rapport à la limite d'âge avant de payer. Le jour du concours, aie sur toi une pièce d'identité valide ou ta carte scolaire signée et cachetée.",
+   "resources": [
+    {
+     "label": "Site de l'EPT Thiès",
+     "url": "https://www.ept.edu.sn"
+    },
+    {
+     "label": "Plateforme d'inscription au concours",
+     "url": "https://concours.ept.edu.sn"
+    }
+   ],
+   "benefits": "Formation d'ingénieur de conception en 5 ans : 2 ans de tronc commun (cycle préparatoire intégré), puis 3 ans de spécialisation. Selon le site de l'EPT, le diplôme est reconnu par l'ANAQ-Sup au niveau national et par la CTI au niveau international, et plus de 85 % des diplômés trouvent un emploi dans les 6 mois."
+  },
+  {
+   "slug": "concours-esea-ucad",
+   "details": "L'ESEA propose des formations de 4 ans dans trois filières : aménagement du territoire et gestion urbaine (ATEGU), développement communautaire (DECOF) et planification économique (PEGO). Le concours comprend une épreuve de culture générale commune, une épreuve de spécialité et une épreuve de mathématiques (niveau Terminale L pour ATEGU et DECOF, niveau Terminale S ou STEG pour PEGO), puis des oraux pour les admissibles. La double inscription la même année n'est pas permise.",
+   "selectionSteps": [
+    {
+     "title": "Dépôt en ligne",
+     "detail": "Sur concours.ucad.sn, en précisant la filière (ATEGU, DECOF ou PEGO) dans ta demande."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Culture générale, épreuve de spécialité et mathématiques."
+    },
+    {
+     "title": "Oraux",
+     "detail": "Réservés aux admissibles, qui fournissent avant les oraux leur casier judiciaire et leur certificat de nationalité."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles séries du bac sont acceptées ?",
+     "answer": "Les séries L, S et STEG."
+    },
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "24 ans au plus au 31 décembre de l'année du concours."
+    },
+    {
+     "question": "Comment payer les frais ?",
+     "answer": "10 000 FCFA, via la plateforme InTouch."
+    }
+   ],
+   "tips": "Choisis ta filière avant de rédiger ta demande manuscrite : elle doit la préciser. Vérifie la date de ton certificat de visite et contre-visite (moins de 3 mois) et de ton extrait de naissance (moins de 6 mois). Prépare les mathématiques au niveau correspondant à ta filière.",
+   "resources": [
+    {
+     "label": "Plateforme des concours de l'UCAD",
+     "url": "https://concours.ucad.sn"
+    },
+    {
+     "label": "ESEA - UCAD",
+     "url": "https://esea.ucad.sn"
+    }
+   ],
+   "contact": "ESEA : +221 32 824 10 26 · esea@ucad.edu.sn · Avenue Cheikh Anta Diop, BP 5084 Dakar-Fann"
+  },
+  {
+   "slug": "concours-esp-dakar-dut",
+   "details": "Le concours donne accès aux diplômes universitaires de technologie (DUT) de l'ESP : analyses biologiques, génie chimique, industries alimentaires, génie biomédical, génie civil, génie électrique, génie mécanique, informatique, télécommunications et réseaux, gestion. Les épreuves communes sont les mathématiques, le français et l'anglais. Selon l'option s'ajoutent chimie-biologie-physique, physique-électricité ou économie. Chaque option est ouverte à des séries précises du bac.",
+   "selectionSteps": [
+    {
+     "title": "Inscription en ligne",
+     "detail": "Sur concours.esp.sn."
+    },
+    {
+     "title": "Dépôt du dossier",
+     "detail": "Bacheliers : en ligne ou à la scolarité de l'ESP. Élèves de Terminale : dossiers groupés et déposés par l'établissement en un seul envoi."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Mathématiques, français, anglais et une épreuve propre à l'option choisie."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Combien coûtent les frais de dossier ?",
+     "answer": "5 000 FCFA, non remboursables."
+    },
+    {
+     "question": "Les élèves de Terminale peuvent-ils candidater ?",
+     "answer": "Oui, par l'intermédiaire de leur établissement, qui dépose les dossiers groupés."
+    },
+    {
+     "question": "Toutes les séries peuvent-elles viser toutes les options ?",
+     "answer": "Non. Chaque option est ouverte à des séries précises, indiquées dans la liste des épreuves."
+    }
+   ],
+   "tips": "Repère d'abord la liste des séries autorisées pour l'option qui t'intéresse. Prépare les trois épreuves communes (mathématiques, français, anglais) en plus de la matière propre à ton option. Si tu es en Terminale, rappelle à ton établissement la date limite du dépôt groupé.",
+   "contact": "Scolarité de l'ESP : +221 33 824 05 40 · esp@esp.sn · Corniche Ouest, BP 5085 Dakar-Fann",
+   "resources": [
+    {
+     "label": "Site de l'ESP",
+     "url": "https://esp.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-fastef-eleves-professeurs",
+   "selectionSteps": [
+    {
+     "title": "Inscription en ligne",
+     "detail": "Sur concours.ucad.sn/fastef, en choisissant ton option selon ton niveau (bac, licence ou master 2)."
+    },
+    {
+     "title": "Dossier papier",
+     "detail": "Exigé seulement en cas d'admissibilité."
+    },
+    {
+     "title": "Diplôme à produire",
+     "detail": "Les candidats en Terminale, L3 ou M2 composent sous réserve et doivent produire leur diplôme avant fin août."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quels niveaux d'entrée existent ?",
+     "answer": "Trois : niveau bac, niveau licence et niveau master 2 (mémoire soutenu)."
+    },
+    {
+     "question": "Puis-je candidater avant d'avoir mon diplôme ?",
+     "answer": "Oui, sous réserve : tu composes en Terminale, L3 ou M2, mais tu dois produire ton diplôme avant fin août."
+    },
+    {
+     "question": "Faut-il envoyer un dossier papier tout de suite ?",
+     "answer": "Non, il n'est exigé qu'en cas d'admissibilité."
+    }
+   ],
+   "tips": "Compare les listes d'options de chaque niveau avant de t'inscrire. Prépare tôt les documents à légaliser et les certificats de moins de 3 mois (casier judiciaire, visite médicale), pour ne pas être pris de court si tu es admissible.",
+   "resources": [
+    {
+     "label": "Plateforme des concours de l'UCAD",
+     "url": "https://concours.ucad.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-inseps-ucad",
+   "selectionSteps": [
+    {
+     "title": "Dépôt de candidature",
+     "detail": "Avec les pièces demandées : attestation du bac, CNI légalisée, CV (ou CV sportif pour STAPS-JL) et reçu de paiement."
+    },
+    {
+     "title": "Épreuves physiques",
+     "detail": "STASEJS : test semi-Cooper de 6 minutes. STAPS-JL : 100 m, quintuple saut, 400 m ou Luc Léger, avec 30/60 requis. Elles ont lieu au camp Général Idrissa Fall (Liberté 6)."
+    },
+    {
+     "title": "Épreuves écrites et entretien",
+     "detail": "STASEJS : français et entretien. STAPS-JL : français, biologie humaine/SVT, sports collectifs et entretien."
+    },
+    {
+     "title": "Visite médicale",
+     "detail": "Obligatoire avant la rentrée pour les admis."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Qui peut candidater ?",
+     "answer": "Les bacheliers des trois dernières sessions."
+    },
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "24 ans au plus au 31 décembre de l'année des tests."
+    },
+    {
+     "question": "Combien de places en STAPS-JL ?",
+     "answer": "40 places lors de la session 2025."
+    }
+   ],
+   "tips": "Entraîne-toi à l'endurance (semi-Cooper ou Luc Léger) et à la vitesse bien avant les tests. Prépare un CV adapté à la filière visée : détaillé pour STASEJS, sportif pour STAPS-JL.",
+   "resources": [
+    {
+     "label": "INSEPS - UCAD",
+     "url": "https://inseps.ucad.sn"
+    }
+   ],
+   "contact": "INSEPS : +221 32 823 33 84 · inseps@ucad.edu.sn · Rue 11 x 18, Médina, Dakar (stade Iba Mar Diop)"
+  },
+  {
+   "slug": "concours-ipsl-ugb",
+   "details": "Le concours donne accès à la 1re année du cycle préparatoire intégré de l'IPSL, qui mène au diplôme d'ingénieur de conception (bac +5) en génie civil, électromécanique ou informatique et télécommunications. Les épreuves portent sur les mathématiques, la physique, le français et l'anglais. Les candidatures se font exclusivement en ligne.",
+   "selectionSteps": [
+    {
+     "title": "Candidature en ligne",
+     "detail": "Inscription et dépôt du dossier exclusivement sur ipsl-concours.ugb.sn."
+    },
+    {
+     "title": "Concours écrit",
+     "detail": "Mathématiques, physique, français et anglais. Début à 7 h 30, avec une pièce d'identité obligatoire."
+    },
+    {
+     "title": "Après le bac",
+     "detail": "Les élèves de Terminale complètent leur dossier avec le relevé de notes du bac et le bulletin du 2e semestre de Terminale."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles séries sont acceptées ?",
+     "answer": "S1, S2, S3, T1 et T2, pour les bacheliers et les élèves de Terminale."
+    },
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "Moins de 22 ans au 1er octobre de l'année du concours."
+    },
+    {
+     "question": "Peut-on déposer sur papier ?",
+     "answer": "Non, l'inscription et le dépôt se font exclusivement en ligne."
+    }
+   ],
+   "tips": "Prépare des scans lisibles de tes bulletins et de ton extrait de naissance avant de te connecter. N'oublie pas ta pièce d'identité le jour du concours et arrive avant 7 h 30.",
+   "resources": [
+    {
+     "label": "Concours IPSL - UGB",
+     "url": "https://ipsl-concours.ugb.sn/"
+    }
+   ]
+  },
+  {
+   "slug": "concours-isfar-bambey",
+   "details": "L'ISFAR forme aux métiers de l'agriculture et du développement rural. Les épreuves écrites ont lieu dans 8 centres régionaux : mathématiques, physique-chimie et SVT (2 h chacune, coefficient 2) et dissertation (1 h, coefficient 1). Les admissibles passent ensuite un entretien avec le jury. L'admission définitive est prononcée après une visite médicale. Fondé en 1960 sous le nom d'École nationale des cadres ruraux, l'ISFAR est aujourd'hui rattaché à l'Université Alioune Diop de Bambey, qui présente sur son site les licences Conseil agricole et rural, Ingénieur des travaux d'élevage, des eaux et forêts et agricoles, et deux masters (développement agricole et rural ; gestion des aires protégées et de la faune).",
+   "selectionSteps": [
+    {
+     "title": "Dépôt du dossier",
+     "detail": "Au siège de l'ISFAR, dans un CAOSP, ou scanné par e-mail à concours.isfar@uadb.edu.sn."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Mathématiques, physique-chimie, SVT et dissertation, dans l'un des centres régionaux."
+    },
+    {
+     "title": "Entretien",
+     "detail": "Avec le jury, pour les admissibles."
+    },
+    {
+     "title": "Visite médicale",
+     "detail": "Elle précède l'admission définitive. La CNI est obligatoire à chaque étape."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Qui peut candidater ?",
+     "answer": "Les bacheliers de l'année des séries S1, S2, S3, S4 et S5."
+    },
+    {
+     "question": "Quels moyens de paiement sont possibles ?",
+     "answer": "Les comptes UAD Ecobank ou BICIS, Wave ou Orange Money. Les frais sont de 10 000 FCFA."
+    },
+    {
+     "question": "Faut-il mentionner un centre d'examen ?",
+     "answer": "Oui, ta demande manuscrite indique le centre d'examen, ton téléphone et ton e-mail."
+    }
+   ],
+   "tips": "Choisis un centre d'examen proche de chez toi et note-le dans ta demande. Garde ta CNI sur toi à chaque étape. Révise les trois matières scientifiques à égalité, elles ont le même coefficient.",
+   "resources": [
+    {
+     "label": "Université Alioune Diop de Bambey",
+     "url": "https://www.uadb.edu.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-iut-thies-dut",
+   "selectionSteps": [
+    {
+     "title": "Inscription en ligne",
+     "detail": "Sur iut.uidt.sn/admissions, avec paiement en ligne des frais."
+    },
+    {
+     "title": "Choix d'un centre",
+     "detail": "L'un des 14 centres : Dakar, Guédiawaye, Rufisque, Thiès, Tivaouane, Mbour, Kaolack, Diourbel, Louga, Linguère, Saint-Louis, Tambacounda, Kolda, Ziguinchor."
+    },
+    {
+     "title": "Test QCM",
+     "detail": "Anglais, français, mathématiques, physique et logique (psychotechnique)."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "23 ans au plus au 1er janvier de l'année du concours."
+    },
+    {
+     "question": "Combien coûtent les frais ?",
+     "answer": "5 000 FCFA, non remboursables, payés en ligne."
+    },
+    {
+     "question": "Quelles séries du bac sont concernées ?",
+     "answer": "La fiche ne limite pas les séries : le concours est ouvert aux bacheliers et aux élèves de Terminale."
+    }
+   ],
+   "tips": "Choisis le centre le plus proche de chez toi pour limiter les déplacements. Entraîne-toi aux QCM de logique et de mathématiques sous contrainte de temps. Prépare tes copies légalisées de CNI et de bac à l'avance."
+  },
+  {
+   "slug": "concours-lycee-scientifique-diourbel",
+   "details": "Le concours recrute 60 élèves pour la classe de Seconde scientifique du lycée de Diourbel. Il s'adresse aux élèves sénégalais de Troisième, sans redoublement au moyen, qui ont de très bonnes notes en mathématiques, SVT et sciences physiques. Le dossier est déposé à l'inspection de l'éducation et de la formation (IEF) de la circonscription du candidat. La liste des candidats, la date et le lieu du concours sont publiés par le ministère et les inspections.",
+   "selectionSteps": [
+    {
+     "title": "Constitution du dossier",
+     "detail": "Lettre manuscrite au ministre de l'Éducation nationale, extrait de naissance, bulletins certifiés, attestation de l'inspecteur d'académie, certificat médical et quittance."
+    },
+    {
+     "title": "Dépôt à l'IEF",
+     "detail": "Dans la circonscription de l'établissement du candidat, après le BFEM."
+    },
+    {
+     "title": "Concours",
+     "detail": "La liste des candidats, la date et le lieu sont publiés par le ministère et les inspections."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles notes faut-il avoir ?",
+     "answer": "En Troisième : 16/20 en maths, SVT et sciences physiques, et 14/20 de moyenne générale. En Quatrième : 15/20 dans ces matières et 14/20 de moyenne."
+    },
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "17 ans révolus au plus au 31 décembre de l'année du concours."
+    },
+    {
+     "question": "Combien de places sont proposées ?",
+     "answer": "60 places en Seconde scientifique."
+    }
+   ],
+   "tips": "Demande tôt à ton établissement tes bulletins certifiés et l'attestation de l'inspecteur d'académie. Prépare la quittance des 10 000 FCFA de droits d'inscription. Si tes notes de classe sont justes, regarde la possibilité de rattrapage avec les notes du BFEM au 1er groupe.",
+   "resources": [
+    {
+     "label": "Ministère de l'Éducation nationale",
+     "url": "https://www.education.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-lynaqe",
+   "selectionSteps": [
+    {
+     "title": "Résultats du BFEM",
+     "detail": "Les listes des 100 premiers au BFEM sont publiées dans les IA et IEF."
+    },
+    {
+     "title": "Dépôt du dossier",
+     "detail": "À l'IEF de l'établissement, avec la demande d'inscription signée par l'élève et contresignée par un parent ou le tuteur légal, et les bulletins certifiés de Quatrième et de Troisième."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "17 ans au plus au 31 décembre de l'année du concours."
+    },
+    {
+     "question": "Que faire en cas de vulnérabilité ?",
+     "answer": "Tu peux joindre au dossier tout document qui la justifie."
+    },
+    {
+     "question": "Où déposer le dossier ?",
+     "answer": "À l'IEF de ton établissement."
+    }
+   ],
+   "tips": "Surveille la publication des listes dans ton IEF juste après les résultats du BFEM. Prépare à l'avance la CNI légalisée de ton parent ou tuteur, ton extrait de naissance et tes bulletins certifiés.",
+   "resources": [
+    {
+     "label": "Ministère de l'Éducation nationale",
+     "url": "https://www.education.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-polytech-diamniadio-uam",
+   "selectionSteps": [
+    {
+     "title": "Dépôt en ligne",
+     "detail": "Pièces scannées sur depot.uam.sn, en précisant ton centre d'examen. Tout dossier incomplet est rejeté."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Anglais, français, mathématiques et culture générale ou tests psychotechniques."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "22 ans au plus durant l'année du concours."
+    },
+    {
+     "question": "Combien coûtent les frais de dossier ?",
+     "answer": "10 000 FCFA, non remboursables."
+    },
+    {
+     "question": "Un candidat de série L2 peut-il viser la gestion ?",
+     "answer": "Oui, vers la gestion des organisations, avec 12/20 de moyenne en Terminale."
+    }
+   ],
+   "tips": "Vérifie que ton dossier est complet avant l'envoi : un dossier incomplet est rejeté. Prépare les six bulletins (Seconde, Première, Terminale) et ton relevé de notes du bac. Indique bien ton centre d'examen.",
+   "resources": [
+    {
+     "label": "Dépôt des dossiers UAM",
+     "url": "https://depot.uam.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-prytanee-militaire",
+   "details": "Le Prytanée militaire de Saint-Louis est une école militaire d'excellence qui dispense l'enseignement moyen et secondaire, en internat. Selon son site, l'admission se fait par un concours national très sélectif, et chaque promotion compte environ cinquante garçons sénégalais et une quinzaine d'élèves de pays africains partenaires. Le concours comprend cinq épreuves écrites : rédaction, problème, opérations, dictée et texte suivi de questions. Une visite d'aptitude puis une visite d'incorporation, avec certificat de nationalité, précèdent l'admission définitive.",
+   "benefits": "Internat et enseignement général d'excellence dans un cadre militaire (source : prytanee.sn). D'après le communiqué de la session 2024, les admis sont affectés selon leur classement à Saint-Louis ou dans l'une des écoles partenaires d'Afrique.",
+   "contact": "Prytanée militaire de Saint-Louis, Dakar-Bango, BP 404, Saint-Louis",
+   "selectionSteps": [
+    {
+     "title": "Dépôt du dossier",
+     "detail": "Au bureau de garnison ou à la brigade de gendarmerie la plus proche, avec la demande signée et légalisée par le parent ou tuteur."
+    },
+    {
+     "title": "Convocation",
+     "detail": "À retirer environ 15 jours avant le concours, ou sur prytanee.sn."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Rédaction, problème, opérations, dictée et texte suivi de questions."
+    },
+    {
+     "title": "Visites et admission",
+     "detail": "Visite d'aptitude, puis visite d'incorporation et certificat de nationalité pour l'admission définitive."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "14 ans au plus au 31 décembre de l'année du concours."
+    },
+    {
+     "question": "Quels sont les frais ?",
+     "answer": "5 500 FCFA, non remboursables, via Ecobank au compte du Centre comptable des Armées."
+    },
+    {
+     "question": "Les filles peuvent-elles candidater ?",
+     "answer": "Non, la fiche indique que le concours est réservé aux garçons de CM2."
+    }
+   ],
+   "tips": "Prépare le dossier tôt avec tes parents : le certificat médical doit venir d'un médecin militaire et dater de moins de 3 mois, et les jugements supplétifs sont refusés pour l'acte de naissance. Entraîne-toi à la dictée et aux problèmes, le problème ayant le coefficient le plus élevé (4). N'oublie pas l'enveloppe timbrée avec l'adresse et le téléphone.",
+   "resources": [
+    {
+     "label": "Prytanée militaire",
+     "url": "https://prytanee.sn"
+    },
+    {
+     "label": "Page d'admission",
+     "url": "https://prytanee.sn/admission/"
+    }
+   ]
+  }
+ ]
+}

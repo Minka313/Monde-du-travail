@@ -7,6 +7,8 @@
  *   node src/scripts/import-opportunities.js --update --fields=domains,location
  *                                                       ne met à jour que ces champs (le reste est conservé)
  *   node src/scripts/import-opportunities.js --dry      vérifie les fichiers sans rien écrire
+ *   node src/scripts/import-opportunities.js --enrich   complète les annonces existantes avec
+ *                                                       enrichissements/*.json, champ vide par champ vide
  *
  * Par défaut, une annonce déjà présente n'est jamais modifiée : les corrections faites
  * dans l'espace admin sont conservées. Chaque annonce est validée avec les mêmes règles
@@ -101,7 +103,54 @@ async function run({ update = false, dry = false, only = null } = {}) {
   return stats;
 }
 
-if (require.main === module) {
+// Enrichissements (enrichissements/*.json : { patches: [{ slug, champ: valeur }] }) :
+// un champ n'est écrit que s'il est encore vide en base, les saisies de l'admin sont donc conservées.
+const ENRICH_DIR = path.join(DATA_DIR, 'enrichissements');
+const ENRICH_FIELDS = ['details', 'benefits', 'documents', 'applyMode', 'contact', 'selectionSteps', 'faq', 'tips', 'resources'];
+const isEmpty = (value) => value == null || value === '' || (Array.isArray(value) && value.length === 0);
+
+function loadPatches() {
+  if (!fs.existsSync(ENRICH_DIR)) return { patches: [], errors: [] };
+  const schema = z.object({ slug: z.string(), ...Object.fromEntries(ENRICH_FIELDS.map((k) => [k, fields[k]])) }).strict();
+  const patches = [];
+  const errors = [];
+  fs.readdirSync(ENRICH_DIR).filter((f) => f.endsWith('.json')).sort().forEach((file) => {
+    const { patches: list = [] } = JSON.parse(fs.readFileSync(path.join(ENRICH_DIR, file), 'utf8'));
+    list.forEach((raw, index) => {
+      const parsed = schema.safeParse(raw);
+      if (parsed.success) patches.push(parsed.data);
+      else errors.push(`${file} #${index + 1} (${raw.slug}) : ${parsed.error.errors.map((e) => `${e.path.join('.')} ${e.message}`).join(' ; ')}`);
+    });
+  });
+  return { patches, errors };
+}
+
+async function enrich({ dry = false } = {}) {
+  const { patches, errors } = loadPatches();
+  if (errors.length) {
+    errors.forEach((e) => console.error(`✖ ${e}`));
+    throw new Error(`${errors.length} enrichissement(s) invalide(s) : rien n'a été écrit`);
+  }
+  const stats = { annonces: 0, champs: 0, absentes: 0 };
+  for (const { slug, ...values } of patches) {
+    const existing = await prisma.opportunity.findUnique({ where: { slug }, select: Object.fromEntries(ENRICH_FIELDS.map((k) => [k, true])) });
+    if (!existing) { stats.absentes += 1; continue; }
+    const data = {};
+    ENRICH_FIELDS.forEach((key) => { if (values[key] !== undefined && !isEmpty(values[key]) && isEmpty(existing[key])) data[key] = values[key]; });
+    if (!Object.keys(data).length) continue;
+    stats.annonces += 1;
+    stats.champs += Object.keys(data).length;
+    if (!dry) await prisma.opportunity.update({ where: { slug }, data });
+  }
+  console.log(`✔ Enrichissement${dry ? ' (essai, rien écrit)' : ''} : ${stats.champs} champ(s) complété(s) sur ${stats.annonces} annonce(s)${stats.absentes ? `, ${stats.absentes} annonce(s) introuvable(s)` : ''}.`);
+  return stats;
+}
+
+if (require.main === module && process.argv.includes('--enrich')) {
+  enrich({ dry: process.argv.includes('--dry') })
+    .catch((error) => { console.error(error.message); process.exitCode = 1; })
+    .finally(() => prisma.$disconnect());
+} else if (require.main === module) {
   const fieldsArg = process.argv.find((arg) => arg.startsWith('--fields='));
   const only = fieldsArg ? fieldsArg.slice('--fields='.length).split(',').map((f) => f.trim()).filter(Boolean) : null;
   run({ update: process.argv.includes('--update'), dry: process.argv.includes('--dry'), only })
@@ -109,4 +158,4 @@ if (require.main === module) {
     .finally(() => prisma.$disconnect());
 }
 
-module.exports = { run, loadItems, DATA_DIR };
+module.exports = { run, loadItems, enrich, loadPatches, DATA_DIR };

@@ -25,7 +25,7 @@
     { key: 'CLOSED', title: 'Clôturées et résultats', icon: '⚪', hint: 'Pour information et pour préparer la session suivante.' },
   ];
   const DEFAULTS = {
-    category: '', phase: 'ACTIVE', within: '', level: '', series: '', domains: [], destination: '',
+    category: '', phase: 'ACTIVE', within: '', level: '', series: '', domains: [], destination: '', country: '',
     funded: false, free: false, favorites: false, search: '',
   };
   const SOON_DAYS = 60;
@@ -59,6 +59,7 @@
     if (skip !== 'series' && f.series && !(o.series || []).includes(f.series)) return false;
     if (skip !== 'domains' && f.domains.length && !f.domains.some((d) => (o.domains || []).includes(d))) return false;
     if (skip !== 'destination' && f.destination && o.destination !== f.destination) return false;
+    if (skip !== 'country' && f.country && o.country !== f.country) return false;
     if (skip !== 'funded' && f.funded && o.funding !== 'FULL') return false;
     if (skip !== 'free' && f.free && !O.isFree(o)) return false;
     if (skip !== 'favorites' && f.favorites && !O.favorites.has(o.id)) return false;
@@ -129,11 +130,34 @@
       </fieldset>
       ${radioGroup('destination', 'Destination', [['', 'Toutes', null],
         ...Object.entries(O.DESTINATION).map(([value, label]) => [value, label, count('destination', (o) => o.destination === value)])])}
+      ${countrySelect()}
       <fieldset class="opp-fgroup">
         <legend>Options</legend>
         <label class="opp-option"><input type="checkbox" name="opp-flag" value="funded" ${f.funded ? 'checked' : ''}><span>💰 Bourses complètes</span><em>${count('funded', (o) => o.funding === 'FULL')}</em></label>
         ${freeCount || f.free ? `<label class="opp-option"><input type="checkbox" name="opp-flag" value="free" ${f.free ? 'checked' : ''}><span>Sans frais de dossier</span><em>${freeCount}</em></label>` : ''}
         <label class="opp-option"><input type="checkbox" name="opp-flag" value="favorites" ${f.favorites ? 'checked' : ''}><span>★ Mes favoris</span><em>${favCount}</em></label>
+      </fieldset>`;
+  }
+
+  // Pays de destination, groupés par région du monde (Afrique, Europe, Amériques, Asie, Moyen-Orient)
+  function countrySelect() {
+    const f = state.filters;
+    const countries = [...new Set(state.all.map((o) => o.country).filter(Boolean))];
+    if (countries.length < 2 && !f.country) return '';
+    const byRegion = {};
+    countries.forEach((c) => { (byRegion[O.regionOf(c)] = byRegion[O.regionOf(c)] || []).push(c); });
+    const groups = O.REGIONS.filter((r) => byRegion[r]).map((r) => `
+      <optgroup label="${esc(r)}">${byRegion[r].sort((a, b) => a.localeCompare(b, 'fr')).map((c) => `
+        <option value="${esc(c)}" ${f.country === c ? 'selected' : ''}>${esc(c)} (${count('country', (o) => o.country === c)})</option>`).join('')}
+      </optgroup>`).join('');
+    return `
+      <fieldset class="opp-fgroup">
+        <legend>Pays</legend>
+        <label class="opp-select">Pays de destination
+          <select id="oppCountry">
+            <option value="">Tous les pays</option>${groups}
+          </select>
+        </label>
       </fieldset>`;
   }
 
@@ -148,6 +172,7 @@
     if (f.series) list.push(['series', `Série ${f.series}`]);
     f.domains.forEach((d) => list.push([`domain:${d}`, O.DOMAIN[d]]));
     if (f.destination) list.push(['destination', O.DESTINATION[f.destination]]);
+    if (f.country) list.push(['country', f.country]);
     if (f.funded) list.push(['funded', 'Bourses complètes']);
     if (f.free) list.push(['free', 'Sans frais de dossier']);
     if (f.favorites) list.push(['favorites', 'Mes favoris']);
@@ -314,7 +339,7 @@
   function writeUrl() {
     const f = state.filters;
     const url = new URL(window.location.href);
-    ['category', 'phase', 'within', 'level', 'series', 'destination', 'q', 'domain', 'funded', 'free', 'fav', 'sort', 'view', 'search', 'id']
+    ['category', 'phase', 'within', 'level', 'series', 'destination', 'country', 'q', 'domain', 'funded', 'free', 'fav', 'sort', 'view', 'search', 'id']
       .forEach((key) => url.searchParams.delete(key));
     const set = (key, value) => { if (value) url.searchParams.set(key, value); };
     set('q', f.search);
@@ -325,6 +350,7 @@
     set('series', f.series);
     set('domain', f.domains.join(','));
     set('destination', f.destination);
+    set('country', f.country);
     set('funded', f.funded ? '1' : '');
     set('free', f.free ? '1' : '');
     set('fav', f.favorites ? '1' : '');
@@ -345,6 +371,7 @@
     f.series = get('series');
     f.domains = get('domain').split(',').filter((d) => O.DOMAIN[d]);
     if (O.DESTINATION[get('destination')]) f.destination = get('destination');
+    f.country = get('country');
     f.funded = p.get('funded') === '1';
     f.free = p.get('free') === '1';
     f.favorites = p.get('fav') === '1';
@@ -399,6 +426,7 @@
       const f = state.filters;
       if (input.id === 'oppLevel') f.level = input.value;
       else if (input.id === 'oppSeries') f.series = input.value;
+      else if (input.id === 'oppCountry') f.country = input.value;
       else if (input.name === 'opp-domain') f.domains = [...els.groups.querySelectorAll('input[name="opp-domain"]:checked')].map((x) => x.value);
       else if (input.name === 'opp-flag') f[input.value] = input.checked;
       else if (input.name && input.name.startsWith('opp-')) f[input.name.slice(4)] = input.value;

@@ -212,7 +212,26 @@
       </article>`;
   }
 
+  // Régions du monde pour le filtre « Pays » (noms de pays tels que saisis dans les fiches)
+  const REGIONS = ['Afrique', 'Europe', 'Amériques', 'Asie', 'Moyen-Orient', 'Océanie', 'Plusieurs pays'];
+  const REGION_OF = {
+    Afrique: ['Sénégal', 'Maroc', 'Algérie', 'Tunisie', 'Égypte', 'Côte d\'Ivoire', 'Burkina Faso', 'Mali', 'Togo', 'Bénin', 'Niger', 'Guinée',
+      'Cameroun', 'Gabon', 'Ghana', 'Nigeria', 'Kenya', 'Rwanda', 'Éthiopie', 'Afrique du Sud', 'Ouganda', 'Tanzanie', 'Mauritanie', 'Gambie', 'Cap-Vert', 'Maurice'],
+    Europe: ['France', 'Belgique', 'Luxembourg', 'Suisse', 'Allemagne', 'Royaume-Uni', 'Irlande', 'Italie', 'Espagne', 'Portugal', 'Pays-Bas',
+      'Suède', 'Norvège', 'Danemark', 'Finlande', 'Autriche', 'Hongrie', 'Pologne', 'Roumanie', 'République tchèque', 'Russie', 'Turquie', 'Grèce'],
+    Amériques: ['États-Unis', 'Canada', 'Mexique', 'Brésil', 'Argentine', 'Chili', 'Colombie', 'Pérou', 'Cuba'],
+    Asie: ['Chine', 'Japon', 'Corée du Sud', 'Inde', 'Singapour', 'Malaisie', 'Indonésie', 'Thaïlande', 'Taïwan', 'Brunei', 'Kazakhstan', 'Vietnam', 'Philippines'],
+    'Moyen-Orient': ['Arabie saoudite', 'Émirats arabes unis', 'Qatar', 'Koweït', 'Oman', 'Bahreïn', 'Jordanie', 'Liban'],
+    Océanie: ['Australie', 'Nouvelle-Zélande'],
+  };
+  const regionOf = (country) => {
+    const key = String(country || '').trim();
+    const found = Object.keys(REGION_OF).find((r) => REGION_OF[r].some((c) => c.localeCompare(key, 'fr', { sensitivity: 'base' }) === 0));
+    return found || 'Plusieurs pays';
+  };
+
   window.Opp = {
+    REGIONS, regionOf,
     CATEGORY, LEVEL, DESTINATION, DOMAIN, FUNDING, PHASE, STALE_DAYS,
     esc, toDate, formatDay, todayKey, dayKey, daysUntil, phaseKey, isActive, countdown, verification, isFree,
     detailUrl, events, expectedNext, favorites, icsText, downloadIcs, badges, levelText, place, renderCard,

@@ -1,0 +1,523 @@
+{
+ "patches": [
+  {
+   "slug": "admission-iupa-ucad",
+   "details": "L'IUPA, rattaché à l'Université Cheikh Anta Diop de Dakar, propose une licence, un master, un DESS et un doctorat. Selon son site, l'admission en licence se fait sur concours. D'après la fiche, le concours comprend des épreuves écrites suivies d'un entretien avec le jury pour les admissibles, et les frais de dossier sont de 10 000 FCFA, non remboursables.",
+   "selectionSteps": [
+    {
+     "title": "Constitution du dossier",
+     "detail": "Prépare la demande manuscrite au directeur, les copies légalisées du bac et du relevé, l'extrait de naissance de moins de 6 mois et la copie légalisée de la CNI (licence)."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Les candidats composent en français, SVT et mathématiques."
+    },
+    {
+     "title": "Entretien avec le jury",
+     "detail": "Les candidats admissibles passent un entretien avec le jury."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quels documents faut-il pour la licence ?",
+     "answer": "Une demande manuscrite au directeur, les copies légalisées du bac et du relevé, un extrait de naissance de moins de 6 mois et une copie légalisée de la CNI."
+    },
+    {
+     "question": "Combien coûtent les frais de dossier ?",
+     "answer": "10 000 FCFA, non remboursables."
+    },
+    {
+     "question": "Y a-t-il un oral ?",
+     "answer": "Oui, un entretien avec le jury pour les candidats déclarés admissibles à l'écrit."
+    }
+   ],
+   "tips": "Fais légaliser tes copies avant la période de dépôt. Révise les trois matières écrites (français, SVT, mathématiques) et prépare-toi à expliquer pourquoi tu choisis les métiers de la pêche et de l'aquaculture. Consulte les annonces sur iupa.ucad.sn avant de payer les frais.",
+   "contact": "iupa@ucad.edu.sn · UCAD II, bâtiment pédagogique, rez-de-chaussée, BP 5005, Dakar-Fann",
+   "resources": [
+    {
+     "label": "Site officiel de l'IUPA",
+     "url": "https://iupa.ucad.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-cesti",
+   "details": "Le CESTI, école de l'UCAD à Dakar, propose des licences de 3 ans en journalisme, en communication et en production audiovisuelle, ainsi qu'un master et un doctorat. Deux niveaux de recrutement existent : niveau bac (17 à 24 ans, sans limite pour les professionnels de l'information et de la communication) et niveau licence (sans limite d'âge). Les agents de l'État déposent leur dossier par voie hiérarchique. Les conditions d'admission détaillées sont publiées par filière sur cesti.ucad.sn.",
+   "selectionSteps": [
+    {
+     "title": "Inscription et paiement des frais",
+     "detail": "Dépose le dossier à la scolarité du CESTI ou dans un CAOSP (Kaolack, Thiès, Tambacounda, Ziguinchor, Saint-Louis) et règle les frais : 10 000 FCFA en région, 10 100 FCFA à Dakar via Wave."
+    },
+    {
+     "title": "Présélection et concours",
+     "detail": "Les étapes et dates de chaque session sont annoncées par le CESTI sur cesti.ucad.sn."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quel âge faut-il avoir ?",
+     "answer": "Niveau bac : 17 à 24 ans, sans limite pour les professionnels de l'information et de la communication. Niveau licence : pas de limite d'âge."
+    },
+    {
+     "question": "Puis-je candidater en Terminale ?",
+     "answer": "Oui, sous réserve de l'obtention du bac : tu fournis alors les relevés de Seconde et Première et le certificat de scolarité."
+    },
+    {
+     "question": "Où déposer mon dossier ?",
+     "answer": "À la scolarité du CESTI à Dakar ou dans les CAOSP de Kaolack, Thiès, Tambacounda, Ziguinchor et Saint-Louis, de 8 h à 12 h et de 15 h à 17 h."
+    }
+   ],
+   "tips": "Prépare ton dossier dès l'ouverture des inscriptions. Lis la presse chaque jour et entraîne-toi à écrire court et clair. Garde le reçu de paiement et la fiche individuelle avec le reste des pièces.",
+   "benefits": "Selon le site du CESTI, les formations visent des métiers tels que journaliste professionnel, responsable de stratégies de communication ou professionnel de la chaîne de production audiovisuelle.",
+   "resources": [
+    {
+     "label": "Site officiel du CESTI",
+     "url": "https://cesti.ucad.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-cfj-2026",
+   "details": "Le Centre de Formation Judiciaire recrute par concours des magistrats, des greffiers, des inspecteurs de l'éducation surveillée et des éducateurs spécialisés, en voie directe ou professionnelle. En 2026, 132 postes étaient ouverts : 35 magistrats, 45 greffiers, 12 inspecteurs de l'éducation surveillée (professionnel) et 40 éducateurs spécialisés. L'inscription se fait en ligne ; les admissibles déposent ensuite un dossier physique au moins 48 h avant les épreuves d'admission.",
+   "selectionSteps": [
+    {
+     "title": "Inscription en ligne",
+     "detail": "Inscris-toi sur le site du CFJ et paie les frais via Orange Money (de 15 000 à 25 000 FCFA selon la section)."
+    },
+    {
+     "title": "Admissibilité",
+     "detail": "Les épreuves d'admissibilité ont lieu habituellement en septembre-octobre."
+    },
+    {
+     "title": "Dépôt du dossier physique",
+     "detail": "Les admissibles déposent leur dossier au moins 48 h avant les épreuves d'admission."
+    },
+    {
+     "title": "Admission",
+     "detail": "Les épreuves d'admission se déroulent habituellement d'octobre à décembre."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles sont les limites d'âge ?",
+     "answer": "Magistrature directe : 40 ans. Greffiers directs : 33 ans. Éducateurs : 32 ans. Concours professionnels : 53 ans, au 1er janvier."
+    },
+    {
+     "question": "Combien de fois puis-je me présenter ?",
+     "answer": "Trois tentatives au plus par section."
+    },
+    {
+     "question": "Un diplôme d'une école privée est-il accepté ?",
+     "answer": "Oui, s'il est reconnu par le CAMES ou l'ANAQ-Sup."
+    }
+   ],
+   "tips": "Commence tôt les démarches longues : certificat de nationalité, casier judiciaire et visite médicale doivent dater de moins de 3 mois pour les concours directs. Vérifie ta limite d'âge au 1er janvier avant de payer. Relis les conditions de la section visée, car elles diffèrent entre magistrature, greffe et éducation spécialisée."
+  },
+  {
+   "slug": "concours-cugem",
+   "selectionSteps": [
+    {
+     "title": "Retrait et dépôt du dossier",
+     "detail": "Dépose ton dossier complet dans une zone militaire (bureau de garnison) ou une brigade de gendarmerie, avec le reçu de paiement des 5 500 FCFA."
+    },
+    {
+     "title": "Liste des candidats autorisés",
+     "detail": "Les listes des candidats autorisés à concourir sont affichées dans les zones militaires."
+    },
+    {
+     "title": "Épreuves physiques",
+     "detail": "100 m, 1 000 m, grimper de corde, saut en hauteur ou longueur, habituellement en avril (coefficient 4 pour la moyenne)."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Français, anglais, mathématiques et physique-chimie ou connaissances générales selon l'option, habituellement début mai."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quel âge faut-il avoir ?",
+     "answer": "Niveau bac : 18 à 21 ans au 1er septembre. Niveau licence 3 : 19 à 25 ans au 1er septembre."
+    },
+    {
+     "question": "Puis-je candidater sans avoir encore le diplôme ?",
+     "answer": "Oui, sous réserve : il faut alors un certificat de scolarité ou une attestation d'inscription en L3 (ou en Terminale pour le niveau bac)."
+    },
+    {
+     "question": "Qu'est-ce qui élimine un candidat ?",
+     "answer": "Une moyenne inférieure à 5/20 en épreuves physiques, un zéro ou un abandon, ou moins de 5/20 en français ou dans la matière dominante."
+    }
+   ],
+   "tips": "Entraîne-toi aux épreuves physiques longtemps à l'avance, car la moyenne inférieure à 5/20 élimine. Fais faire le certificat médical par un médecin militaire à temps (moins de 3 mois). Prépare tes 3 exemplaires de chaque pièce légalisée avant la période de dépôt, qui commence habituellement fin novembre.",
+   "resources": [
+    {
+     "label": "Ministère des Forces armées",
+     "url": "https://www.forcesarmees.gouv.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-ebad-ucad",
+   "details": "L'EBAD, école de l'UCAD, propose trois parcours de licence accrédités par l'ANAQ-Sup (dont les sciences de l'information documentaire : archivistique, bibliothéconomie, documentation), un master et des formations continues. Pour la première année de licence, l'EBAD organise un test de présélection pour les bacheliers sénégalais, à Dakar et à Kaolack (lycée Valdiodio Ndiaye). Les frais sont de 10 000 FCFA, non remboursables. Les admissions en L3, M1 et M2 se font par appels à candidatures séparés.",
+   "selectionSteps": [
+    {
+     "title": "Dépôt du dossier",
+     "detail": "Dépose les pièces à la scolarité de l'EBAD à Dakar ou au bureau des examens du lycée Valdiodio Ndiaye de Kaolack."
+    },
+    {
+     "title": "Test de présélection",
+     "detail": "Le test se passe dans ces deux centres."
+    },
+    {
+     "title": "Épreuves orales",
+     "detail": "Pour les candidats admissibles, l'EBAD communique la date des oraux."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Qui peut candidater ?",
+     "answer": "Les bacheliers des deux dernières sessions et les élèves de Terminale."
+    },
+    {
+     "question": "Où passer le test ?",
+     "answer": "À l'EBAD (Dakar) ou au lycée Valdiodio Ndiaye (Kaolack)."
+    },
+    {
+     "question": "Quelles pièces faut-il ?",
+     "answer": "Une demande manuscrite au directeur, le relevé du bac (ou certificat de scolarité) et la CNI légalisés, la fiche de renseignements du site ebad.ucad.sn et les droits d'inscription."
+    }
+   ],
+   "tips": "Télécharge la fiche de renseignements sur ebad.ucad.sn et fais légaliser tes copies avant la date limite. Suis les annonces de l'école pour les dates de la session.",
+   "resources": [
+    {
+     "label": "Site officiel de l'EBAD",
+     "url": "https://ebad.ucad.sn/"
+    }
+   ]
+  },
+  {
+   "slug": "concours-ecole-armee-de-l-air",
+   "details": "L'École de l'Armée de l'Air forme les futurs officiers : pilotes, officiers de commandement, officiers techniques et sécurité aérienne. Les candidats sont des Sénégalais des deux sexes, célibataires sans enfant, titulaires d'un bac scientifique ou technique (ou en Terminale, sous réserve). La candidature se fait en ligne sur concours.eaa.sn ou par dépôt physique. Calendrier habituel : inscriptions jusqu'à fin février, épreuves physiques en mars, écrits mi-mai, tests psychotechniques fin juin.",
+   "selectionSteps": [
+    {
+     "title": "Candidature",
+     "detail": "Candidate sur concours.eaa.sn (5 100 FCFA via Orange Money, Wave ou KPay) ou dépose le dossier (5 000 FCFA à Ecobank)."
+    },
+    {
+     "title": "Épreuves physiques",
+     "detail": "1 000 m, 100 m, corde, longueur, hauteur et poids (coefficient 2), habituellement en mars."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Mathématiques et sciences physiques (coefficient 4 chacune), français et anglais (coefficient 2 chacun), habituellement mi-mai."
+    },
+    {
+     "title": "Tests psychotechniques",
+     "detail": "Ils ont lieu habituellement fin juin."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quel âge faut-il avoir ?",
+     "answer": "18 à 21 ans au 31 décembre de l'année du concours."
+    },
+    {
+     "question": "Puis-je candidater en Terminale ?",
+     "answer": "Oui, avec un certificat d'inscription en Terminale scientifique ou technique, sous réserve de l'obtention du bac."
+    },
+    {
+     "question": "Combien coûte la candidature ?",
+     "answer": "5 100 FCFA en ligne, 5 000 FCFA en dépôt physique."
+    }
+   ],
+   "tips": "Maths et sciences physiques pèsent le plus lourd (coefficient 4) : travaille-les en priorité sans négliger l'anglais. Prépare ton physique plusieurs semaines avant mars. Fais passer la visite chez un médecin militaire à temps, le certificat devant dater de moins de 3 mois."
+  },
+  {
+   "slug": "concours-ecole-des-douanes",
+   "details": "Selon le site de l'École des Douanes, la formation forme des agents des douanes des hiérarchies B2, B4 et C1. Elle dure deux ans pour les contrôleurs (bac) et les sous-officiers (bac et service militaire), et un an pour les agents de constatation (BEM), les agents brevetés (BEM et service militaire) et les préposés (certificat d'études élémentaires et service militaire). L'accès se fait par concours d'entrée. Les sessions sont ouvertes par communiqué du ministère des Finances, sans calendrier fixe. Les âges donnés sur cette fiche viennent d'un communiqué de 2017-2018 : confirme-les à l'ouverture de la prochaine session.",
+   "selectionSteps": [
+    {
+     "title": "Annonce de la session",
+     "detail": "Surveille le communiqué du ministère des Finances et les sites ecoledesdouanes.sn et douanes.sn."
+    },
+    {
+     "title": "Inscription et paiement",
+     "detail": "Paie les droits d'inscription via les plateformes agréées par l'École des Douanes ; les candidatures sont validées par le ministère chargé du Budget."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Elles varient selon le niveau : culture générale, droit, mathématiques et géographie du Sénégal pour le bac ; dissertation, mathématiques, géographie et dictée pour le BFEM ; rédaction, arithmétique, géographie et dictée pour le CFEE."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles conditions physiques faut-il remplir ?",
+     "answer": "Taille minimale de 1,65 m pour les hommes et 1,60 m pour les femmes, et acuité visuelle d'au moins 15/10 sans correction."
+    },
+    {
+     "question": "Quelles sont les limites d'âge ?",
+     "answer": "Concours directs : 20 à 30 ans. Emplois réservés : 35 ans au plus. Concours professionnels : 50 ans au plus, au 1er janvier. Ces âges viennent d'un communiqué de 2017-2018 : à vérifier."
+    },
+    {
+     "question": "Quel niveau de diplôme faut-il ?",
+     "answer": "Cela dépend du corps : bac, BFEM ou CFEE."
+    }
+   ],
+   "contact": "contact@ecoledesdouanes.sn · 33 824 98 11 · 33 868 93 68",
+   "resources": [
+    {
+     "label": "Site de l'École des Douanes",
+     "url": "https://www.ecoledesdouanes.sn/"
+    }
+   ]
+  },
+  {
+   "slug": "concours-ecole-militaire-sante",
+   "selectionSteps": [
+    {
+     "title": "Dépôt du dossier",
+     "detail": "Dépose les pièces auprès d'un bureau de garnison ou d'une brigade de gendarmerie, avec le reçu des 5 500 FCFA (compte du Centre comptable des Armées, Ecobank)."
+    },
+    {
+     "title": "Retrait de la convocation",
+     "detail": "Retire ta convocation au centre de dépôt 15 jours avant le concours."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "SVT, français, physique et chimie, habituellement début juin ; toute note inférieure à 5/20 est éliminatoire."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles séries sont acceptées ?",
+     "answer": "Le bac S1 ou S2, ou une inscription en Terminale S1 ou S2."
+    },
+    {
+     "question": "Quel âge faut-il avoir ?",
+     "answer": "Médecine : 17 à 20 ans au 31 décembre de l'année du concours. Pharmacie, chirurgie dentaire et vétérinaire : 17 à 22 ans au 31 août."
+    },
+    {
+     "question": "Peut-on candidater si on a déjà tenté la faculté ?",
+     "answer": "Non : il ne faut pas avoir été inscrit ni ajourné en faculté de médecine, pharmacie, odontostomatologie ou à l'EISMV."
+    }
+   ],
+   "tips": "Révise SVT, physique et chimie au niveau Terminale S, sans négliger le français : une note sous 5/20 élimine. Demande très tôt le certificat médical à un médecin militaire. Si tu as 17 ans, prévois l'autorisation parentale. Vérifie la date de clôture, la fiche signale deux dates différentes pour 2026.",
+   "resources": [
+    {
+     "label": "Ministère des Forces armées",
+     "url": "https://www.forcesarmees.gouv.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-ena-senegal",
+   "details": "L'ENA du Sénégal est la porte d'entrée de la haute fonction publique. Le cycle A direct s'adresse aux titulaires d'une maîtrise ou d'un diplôme classé au moins A3, le cycle B direct aux bacheliers. Des concours professionnels sont ouverts aux agents de l'État avec l'autorisation de l'autorité compétente. Les dates sont publiées par arrêté chaque année. Le dossier comprend notamment la demande manuscrite, la fiche de renseignements, le casier judiciaire et la quittance de 10 000 FCFA.",
+   "selectionSteps": [
+    {
+     "title": "Tests psychotechniques",
+     "detail": "Ils figurent aux épreuves des cycles A et B."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Cycle A : culture générale, droit public, économie politique ou gestion publique, et épreuve de synthèse. Cycle B : résumé de texte et dissertation de culture générale. Concours professionnels : matière de section, note de synthèse, droit public ou économie politique."
+    },
+    {
+     "title": "Épreuves orales",
+     "detail": "Elles concernent les cycles A et B."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quel âge faut-il avoir ?",
+     "answer": "Concours directs : 18 à 33 ans. Concours professionnels : 53 ans au plus."
+    },
+    {
+     "question": "Quels sont les frais d'inscription ?",
+     "answer": "10 000 FCFA."
+    },
+    {
+     "question": "Quelles sont les conditions pour un concours professionnel ?",
+     "answer": "Être agent de l'État : hiérarchie B au moins et 5 ans de service pour le cycle A, 4 ans en hiérarchie B ou C pour le cycle B, avec autorisation de l'autorité compétente."
+    }
+   ],
+   "tips": "Entraîne-toi régulièrement à la synthèse, au résumé et à la dissertation, avec des annales et des tests psychotechniques. Suis l'actualité nationale et internationale pour la culture générale. Prépare le casier judiciaire et le certificat médical à temps, car ils doivent être récents."
+  },
+  {
+   "slug": "concours-endss-infirmier",
+   "details": "L'ENDSS, rattachée à l'UCAD, propose la licence en sciences infirmières et obstétricales, parcours infirmier, ainsi que des masters dont une spécialité d'infirmier de bloc opératoire. D'après la fiche, le concours d'entrée en licence compte 50 places et comporte deux épreuves de 3 h (coefficient 1 chacune) : une dissertation et une épreuve de mathématiques ou de SVT au choix. Le dépôt se fait en ligne sur concours.ucad.sn/endss, avec 10 000 FCFA de frais non remboursables.",
+   "selectionSteps": [
+    {
+     "title": "Dépôt en ligne",
+     "detail": "Dépose ta candidature sur concours.ucad.sn/endss et règle les frais de 10 000 FCFA."
+    },
+    {
+     "title": "Dissertation",
+     "detail": "Épreuve de 3 h, coefficient 1."
+    },
+    {
+     "title": "Mathématiques ou SVT",
+     "detail": "Épreuve de 3 h au choix, coefficient 1."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quels bacs sont acceptés ?",
+     "answer": "Les séries L et S, ou un diplôme admis en équivalence."
+    },
+    {
+     "question": "Combien de places y a-t-il ?",
+     "answer": "50 places pour le parcours infirmier."
+    },
+    {
+     "question": "Quand déposer ma candidature ?",
+     "answer": "Habituellement de fin août à fin septembre, avec un concours mi-octobre. Pour la session 2025 : du 22 août au 30 septembre."
+    }
+   ],
+   "tips": "Choisis dès le départ la matière (mathématiques ou SVT) où tu es le plus à l'aise. Pour la dissertation, entraîne-toi à structurer en 3 h. La visite et la contre-visite médicales doivent dater de moins de 3 mois : ne les fais pas trop tôt.",
+   "resources": [
+    {
+     "label": "Site officiel de l'ENDSS",
+     "url": "https://endss.ucad.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-ensa-thies",
+   "details": "L'ENSA de Thiès forme des ingénieurs en agronomie, productions végétales et animales, génie rural, économie agricole et développement rural. La candidature se fait uniquement en ligne (www.concoursensa.com lors de la session 2026), étape par étape jusqu'à validation. Il faut une adresse e-mail valide et un numéro lié à Orange Money avec 7 500 FCFA disponibles. Le concours a habituellement lieu fin mai.",
+   "selectionSteps": [
+    {
+     "title": "Candidature en ligne",
+     "detail": "Remplis le formulaire jusqu'à la validation, avant la mi-mai habituellement."
+    },
+    {
+     "title": "Paiement des frais",
+     "detail": "Paie 7 500 FCFA par Orange Money."
+    },
+    {
+     "title": "Concours",
+     "detail": "Il se tient habituellement fin mai à l'ENSA, km 3 route de Khombole (RN3), Thiès."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles séries sont acceptées ?",
+     "answer": "S1, S2, S3, S4 et S5, pour les élèves de Terminale comme pour les bacheliers."
+    },
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "22 ans au plus au 1er janvier de l'année du concours."
+    },
+    {
+     "question": "De quoi ai-je besoin pour candidater ?",
+     "answer": "D'une adresse e-mail valide et d'un numéro de téléphone lié à Orange Money, avec le montant des frais disponible."
+    }
+   ],
+   "tips": "Prépare ton e-mail et ton compte Orange Money avant d'ouvrir la candidature, pour ne pas bloquer à l'étape du paiement. Ne t'inscris pas à la dernière minute : la clôture est habituellement vers la mi-mai. Vérifie bien l'adresse du site du concours sur ensath.sn.",
+   "contact": "Formulaire de contact en ligne sur ensath.sn (aucun numéro ni e-mail publié)",
+   "resources": [
+    {
+     "label": "Site officiel de l'ENSA de Thiès",
+     "url": "https://ensath.sn"
+    }
+   ]
+  },
+  {
+   "slug": "concours-ensae-niveau-bac",
+   "details": "Le concours ENSAE niveau bac mène à deux cursus : l'ISE cycle long (5 ans) ou analyste statisticien (3 ans). Tu peux candidater aux deux en indiquant ton ordre de préférence. Seuls les candidats retenus au test de présélection passent le concours. Les frais sont de 5 000 FCFA, non remboursables. Calendrier habituel : inscriptions de fin novembre à fin janvier, présélection mi-février, épreuves début avril.",
+   "selectionSteps": [
+    {
+     "title": "Inscription",
+     "detail": "Inscris-toi à l'ENSAE (Dakar) ou dans un centre régional, avec 5 000 FCFA de frais."
+    },
+    {
+     "title": "Test de présélection",
+     "detail": "Habituellement mi-février. Seuls les retenus continuent."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Deux compositions de mathématiques de 4 h (coefficient 30 chacune), ordre général de 3 h (coefficient 25) et contraction de texte de 3 h (coefficient 15)."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "22 ans au plus l'année du concours : né après le 31/12/2003 pour la session 2026."
+    },
+    {
+     "question": "Puis-je candidater aux deux cursus ?",
+     "answer": "Oui, en indiquant ton ordre de préférence."
+    },
+    {
+     "question": "Faut-il avoir le bac ?",
+     "answer": "Non, un bac scientifique ou une inscription en Terminale scientifique suffit, l'admission étant sous réserve du bac."
+    }
+   ],
+   "tips": "Les mathématiques comptent pour 60 des 100 points de coefficient : fais-en ton axe principal. Entraîne-toi à la contraction de texte et à l'ordre général. Inscris-toi dès l'ouverture, fin novembre, plutôt qu'à la clôture de fin janvier."
+  },
+  {
+   "slug": "concours-ensae-niveau-licence",
+   "details": "Ce concours donne accès au cycle d'ingénieur statisticien économiste pour les étudiants de L3 de mathématiques ou d'économie, ou de mathématiques spéciales, ainsi qu'aux ITS et analystes statisticiens diplômés. Deux options existent : mathématiques et économie. Les épreuves se tiennent à Dakar, Saint-Louis (UGB) et Thiès (CPGE). Frais : 10 000 FCFA, non remboursables.",
+   "selectionSteps": [
+    {
+     "title": "Inscription",
+     "detail": "Inscris-toi à l'ENSAE (Dakar) ou dans un centre régional, habituellement de fin novembre à fin janvier."
+    },
+    {
+     "title": "Épreuves écrites",
+     "detail": "Habituellement en avril : ordre général, deux compositions de mathématiques et contraction de texte (option maths), ou économie (option éco), plus anglais (1 h)."
+    },
+    {
+     "title": "Choix du centre",
+     "detail": "Les épreuves ont lieu à Dakar, Saint-Louis (UGB) ou Thiès (CPGE)."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelle est la limite d'âge ?",
+     "answer": "26 ans au plus l'année du concours : né après le 31/12/1999 pour 2026."
+    },
+    {
+     "question": "Combien de tentatives ai-je ?",
+     "answer": "Trois au maximum."
+    },
+    {
+     "question": "Quelle différence entre les deux options ?",
+     "answer": "L'option mathématiques est ouverte aux L3 de mathématiques ou mathématiques spéciales ; l'option économie aux L3 de sciences économiques. Les épreuves et coefficients diffèrent."
+    }
+   ],
+   "tips": "Regarde bien les coefficients de ton option : 35 pour la 1re composition de maths en option maths, 30 pour l'économie en option éco. N'oublie pas l'anglais (1 h, coefficient 5), souvent négligé. Garde ton attestation d'inscription en L3 à jour."
+  },
+  {
+   "slug": "concours-ensetp-ucad",
+   "details": "L'ENSETP, école de l'UCAD, forme des enseignants et des professionnels du technique à travers des licences en construction et ouvrages, systèmes électro-énergétiques, et mécanique et procédés de fabrication. Les frais de dossier sont de 5 000 FCFA. Le dépôt se fait à la scolarité (Cité Claudel, Corniche Ouest) ou par e-mail. La bourse n'est pas automatique.",
+   "selectionSteps": [
+    {
+     "title": "Retrait du formulaire",
+     "detail": "Télécharge le formulaire d'inscription à la scolarité ou sur ensetp.ucad.sn."
+    },
+    {
+     "title": "Dépôt du dossier",
+     "detail": "Dépose les pièces à la scolarité ou envoie-les par e-mail, avec le reçu des frais de dossier."
+    },
+    {
+     "title": "Suites du concours",
+     "detail": "Renseigne-toi auprès de l'école sur la date et la forme des épreuves, qui ne figurent pas dans cette fiche."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles séries sont acceptées ?",
+     "answer": "S1, S2, S3, T1, T2 et STIDD, ou un diplôme équivalent au bac."
+    },
+    {
+     "question": "Combien coûtent les frais de dossier ?",
+     "answer": "5 000 FCFA."
+    },
+    {
+     "question": "La bourse est-elle automatique ?",
+     "answer": "Non, elle n'est pas automatique."
+    }
+   ],
+   "tips": "Prépare tes copies légalisées de la CNI et du diplôme avant le dépôt. Si tu es en Terminale, joins le certificat de scolarité. Lat Niang au 77 521 03 43."
+  }
+ ]
+}

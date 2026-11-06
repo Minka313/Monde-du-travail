@@ -1,0 +1,767 @@
+{
+ "patches": [
+  {
+   "slug": "bourse-chevening",
+   "details": "Chevening est le programme international de bourses du gouvernement britannique, financé par le Foreign, Commonwealth and Development Office (FCDO) et des organisations partenaires. Les candidatures 2027-2028 sont closes ; la page Sénégal invite à suivre les canaux de Chevening pour la prochaine ouverture. Certains partenaires proposent des bourses complémentaires, dont certaines ne sont pas pourvues chaque année.",
+   "documents": [],
+   "applyMode": "Candidature en ligne sur le site de Chevening, avec un code d'accès personnel à conserver : il sert à chaque étape. Il faut une adresse e-mail et un numéro de téléphone. Les candidatures 2027-2028 sont closes ; consulte la page « Application timeline » pour la prochaine ouverture.",
+   "contact": "Formulaire de contact : chevening.org/about/contact-us",
+   "selectionSteps": [
+    {
+     "title": "Vérifier l'éligibilité",
+     "detail": "Les candidatures inéligibles sont rejetées : nationalité d'un pays éligible, au moins 2 ans (2 800 heures) d'expérience professionnelle après la licence, diplôme de premier cycle terminé depuis au moins 2 ans à la date limite."
+    },
+    {
+     "title": "Déposer la candidature en ligne",
+     "detail": "Candidature avec trois choix de masters britanniques éligibles différents."
+    },
+    {
+     "title": "Offre inconditionnelle",
+     "detail": "Il faut obtenir une offre inconditionnelle d'au moins un des trois cours avant la date indiquée dans le calendrier officiel."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quand puis-je candidater à Chevening ?",
+     "answer": "Les candidatures 2027-2028 ont fermé le 6 octobre 2026. Surveille la page Sénégal de Chevening et la page « Application timeline » pour la prochaine ouverture."
+    },
+    {
+     "question": "Combien d'années d'expérience professionnelle faut-il ?",
+     "answer": "Au moins deux ans d'expérience acquise après ta licence, soit 2 800 heures, selon la page officielle des critères."
+    },
+    {
+     "question": "Dois-je rentrer au Sénégal après le master ?",
+     "answer": "Oui. Tu t'engages à rentrer dans ton pays pendant au moins deux ans après la fin de la bourse."
+    },
+    {
+     "question": "Combien de masters dois-je choisir ?",
+     "answer": "Trois cours britanniques éligibles différents, avec une offre inconditionnelle d'au moins un d'entre eux avant la date indiquée par Chevening."
+    }
+   ],
+   "tips": "Lis la page officielle des critères avant de rédiger quoi que ce soit : une candidature inéligible est rejetée. Compte tes heures d'expérience dès maintenant. Garde ton code d'accès en lieu sûr. Contacte les universités britanniques assez tôt pour avoir ton offre inconditionnelle à temps.",
+   "resources": [
+    {
+     "label": "Page Chevening Sénégal",
+     "url": "https://www.chevening.org/scholarship/senegal/"
+    },
+    {
+     "label": "Critères d'éligibilité",
+     "url": "https://www.chevening.org/scholarships/eligibility/"
+    },
+    {
+     "label": "Calendrier des candidatures",
+     "url": "https://www.chevening.org/scholarships/application-timeline"
+    },
+    {
+     "label": "Conseils pour candidater",
+     "url": "https://www.chevening.org/resource-hub/guidance"
+    }
+   ]
+  },
+  {
+   "slug": "bourse-mastercard-foundation-scholars",
+   "details": "Le Mastercard Foundation Scholars Program soutient des jeunes talentueux et engagés au service des autres, en particulier issus de milieux sous-représentés, dont les femmes et les groupes marginalisés. Il passe par des universités et organisations partenaires, surtout en Afrique, et couvre le secondaire, la licence et le master. Les doctorants ne sont pas éligibles pour l'instant. Le programme est très compétitif. Être admis dans une université partenaire ne garantit pas la bourse : la sélection est faite par chaque partenaire.",
+   "documents": [],
+   "contact": "Questions sur une candidature : contacter directement l'établissement partenaire. Signalement de fraude : privacy@mastercardfdn.org",
+   "selectionSteps": [
+    {
+     "title": "Choisir un partenaire",
+     "detail": "Consulte la page « Where to apply » de la Fondation et repère les universités ou organisations partenaires."
+    },
+    {
+     "title": "Candidater auprès du partenaire",
+     "detail": "La Fondation n'accepte pas de candidature directe. Chaque partenaire fixe ses dates limites, ses conditions d'admission et ses frais."
+    },
+    {
+     "title": "Sélection par le partenaire",
+     "detail": "Le partenaire décide de l'attribution de la bourse. L'admission seule ne garantit pas la bourse."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Puis-je candidater directement à la Fondation Mastercard ?",
+     "answer": "Non. Tu dois candidater auprès d'une université ou d'une organisation partenaire."
+    },
+    {
+     "question": "Dois-je payer pour être sélectionné ?",
+     "answer": "Non. La Fondation ne demande aucun paiement aux individus et met en garde contre des groupes Facebook qui réclament des frais. Si un partenaire demande des frais de dossier, ils sont remboursés si tu es retenu, selon la page officielle."
+    },
+    {
+     "question": "Puis-je candidater à plusieurs partenaires ?",
+     "answer": "Oui, la page officielle indique qu'on peut candidater à plusieurs établissements."
+    }
+   ],
+   "tips": "Passe uniquement par le site du partenaire ou la page officielle de la Fondation. Méfie-toi de toute personne qui te demande de l'argent. Lis les conditions de chaque partenaire : certains demandent des tests d'anglais (TOEFL) ou le SAT, d'autres non. Prépare tôt ton dossier, car chaque partenaire a ses propres délais.",
+   "resources": [
+    {
+     "label": "Programme Mastercard Foundation Scholars",
+     "url": "https://www.mastercardfdn.org/en/what-we-do/our-programs/mastercard-foundation-scholars-program/"
+    },
+    {
+     "label": "Où candidater (partenaires)",
+     "url": "https://www.mastercardfdn.org/en/what-we-do/our-programs/mastercard-foundation-scholars-program/where-to-apply/"
+    }
+   ]
+  },
+  {
+   "slug": "bourse-daad-epos",
+   "details": "EPOS (Development-Related Postgraduate Courses) forme des spécialistes de pays en développement et nouvellement industrialisés, toutes disciplines confondues. Le public type travaille dans une administration ou une entreprise publique ou privée, sur des projets ou de la planification liés au développement. Le financement dure de 12 à 42 mois selon le programme. Les pays éligibles figurent sur une liste PDF publiée par le DAAD : vérifie que le Sénégal y est bien avant de candidater.",
+   "documents": [
+    "Liste de contrôle signée",
+    "Formulaire de candidature EPOS",
+    "CV de type Europass, en ordre chronologique inverse, sans trou inexpliqué",
+    "Lettre de motivation unique pour tous les cours choisis (avec l'ordre de priorité si plusieurs cours)",
+    "Lettre de recommandation de l'employeur actuel, sur papier à en-tête, signée, tamponnée et datée",
+    "Attestations d'emploi prouvant au moins deux ans d'expérience pertinente après la licence",
+    "Certificat de langue récent (IELTS ou TOEFL pour l'anglais, pas de TOEFL institutionnel ; certificat d'allemand pour les cours en allemand)",
+    "Copies des diplômes, avec traductions certifiées si ce n'est ni en allemand ni en anglais",
+    "Relevé de notes complet"
+   ],
+   "contact": "Pas de contact dédié sur la page du programme : voir la FAQ du DAAD pour les candidats ou écrire au cours visé. Contact général : daad.de/en/the-daad/contact/",
+   "selectionSteps": [
+    {
+     "title": "Choisir jusqu'à trois cours",
+     "detail": "Tu candidates directement aux cours EPOS (3 au maximum). Les candidatures envoyées au DAAD ne sont pas transmises."
+    },
+    {
+     "title": "Sélection par le cours",
+     "detail": "Un comité du cours propose des candidats au DAAD."
+    },
+    {
+     "title": "Dossier sur le portail DAAD",
+     "detail": "Le DAAD invite les candidats proposés à déposer leur dossier complet en PDF sur son portail."
+    },
+    {
+     "title": "Décision du DAAD",
+     "detail": "Le DAAD arrête la sélection finale et informe les candidats."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Faut-il de l'expérience professionnelle ?",
+     "answer": "Oui. Il faut au moins deux ans d'expérience pertinente après ta licence à la date de candidature, prouvée par des attestations d'emploi."
+    },
+    {
+     "question": "Mon diplôme peut-il être ancien ?",
+     "answer": "Le diplôme ne doit normalement pas avoir plus de six ans."
+    },
+    {
+     "question": "Combien de cours puis-je viser ?",
+     "answer": "Jusqu'à trois cours. Chacun a sa propre date limite ; celles de 2027/2028 sont dans le PDF des dates limites du DAAD."
+    },
+    {
+     "question": "Que couvre la bourse ?",
+     "answer": "Selon la page officielle : 992 euros par mois pour un master, des contributions aux assurances, une aide au voyage sauf prise en charge ailleurs, et dans certains cas une aide au loyer et pour la famille."
+    }
+   ],
+   "tips": "Vérifie d'abord que le Sénégal figure sur la liste des pays éligibles. Rassemble tôt les attestations d'emploi et la lettre de ton employeur, ce sont les pièces les plus longues à obtenir. Écris une seule lettre de motivation centrée sur le développement. Prépare ton certificat de langue à l'avance.",
+   "resources": [
+    {
+     "label": "Fiche officielle EPOS (base de bourses DAAD)",
+     "url": "https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database/?detail=50076777"
+    },
+    {
+     "label": "Cours EPOS et dates limites 2027/2028 (PDF)",
+     "url": "https://static.daad.de/media/daad_de/pdfs_nicht_barrierefrei/in-deutschland-studieren-forschen-lehren/daad_epos_deadlines.pdf"
+    },
+    {
+     "label": "Bourses DAAD pour étudier en Allemagne",
+     "url": "https://www.daad.de/en/studying-in-germany/scholarships/"
+    }
+   ]
+  },
+  {
+   "slug": "stage-banque-mondiale",
+   "details": "WBG Pioneers est le programme de stages du Groupe de la Banque mondiale : une expérience de terrain dans le domaine du développement mondial, avec des contacts parmi des professionnels internationaux. Le stage est rémunéré à l'heure (taux non publié sur la page). La durée n'est pas précisée sur la page du programme.",
+   "documents": [
+    "CV de 2 pages maximum",
+    "Lettre de motivation de 1 page maximum",
+    "Justificatif d'éligibilité : relevés de notes et/ou attestations d'inscription",
+    "Lettre officielle de l'université, seulement pour les stages sans frais (stage validé pour au moins un trimestre, ou bourse universitaire suffisante)"
+   ],
+   "applyMode": "Cherche les postes ouverts sur le site carrières du Groupe de la Banque mondiale. Tu peux postuler à trois postes au maximum ; au-delà, les candidatures ne sont pas examinées.",
+   "contact": "Pas de contact sur la page du programme. Un formulaire « Talent Network » est proposé sur le site officiel.",
+   "selectionSteps": [
+    {
+     "title": "Candidature",
+     "detail": "Cycle printemps-été : janvier-février. Cycle hiver-automne : juillet-août."
+    },
+    {
+     "title": "Présélection et évaluation",
+     "detail": "Présélection puis évaluation en février (cycle printemps-été) ou en août (cycle hiver-automne)."
+    },
+    {
+     "title": "Entretiens",
+     "detail": "En mars ou en septembre selon le cycle."
+    },
+    {
+     "title": "Sélection",
+     "detail": "Résultats en avril ou en octobre selon le cycle."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Qui peut postuler ?",
+     "answer": "Les étudiants de dernière année de licence, ou inscrits en master ou en doctorat, courant anglais, 0 à 6 ans d'expérience, citoyens d'un pays membre du Groupe de la Banque mondiale."
+    },
+    {
+     "question": "Combien de postes puis-je viser ?",
+     "answer": "Trois au maximum."
+    },
+    {
+     "question": "Le stage est-il payé ?",
+     "answer": "Oui, le programme annonce un salaire horaire compétitif, sans en publier le montant."
+    }
+   ],
+   "tips": "Prépare un CV de deux pages et une lettre d'une page, pas plus. Choisis tes trois postes avec soin : ils doivent correspondre à ta formation. Prépare tes relevés de notes et ton attestation d'inscription avant l'ouverture. Si tu fais un stage sans frais, demande tôt la lettre de ton université.",
+   "resources": [
+    {
+     "label": "Programme WBG Pioneers",
+     "url": "https://www.worldbank.org/ext/en/careers/talent-programs/wbg-pioneers"
+    },
+    {
+     "label": "Programmes de carrière du Groupe de la Banque mondiale",
+     "url": "https://www.worldbank.org/ext/en/careers/talent-programs"
+    }
+   ]
+  },
+  {
+   "slug": "bourse-stipendium-hungaricum",
+   "details": "Le programme du gouvernement hongrois vise à attirer des étudiants internationaux dans des universités hongroises, avec un nombre croissant de formations en anglais dans toutes les disciplines. Seules les formations prévues par l'accord de coopération entre la Hongrie et le pays du candidat sont ouvertes ; la liste figure dans les annexes de l'appel et dans le Study Finder. Il faut être nommé par son pays. Les candidatures 2026/27 sont closes. Une seule candidature par an est acceptée.",
+   "documents": [
+    "Liste de documents requis selon le type de bourse (modèle sur le site)",
+    "Certificat médical obligatoire sur le modèle officiel, signé par un médecin",
+    "Passeport valide (ou, à défaut, copie de la carte d'identité et déclaration signée de fournir un passeport valide avant le 1er août)",
+    "Certificats de langue et d'école (certains peuvent être fournis après la date limite, voir la section 3.3 de l'appel)",
+    "Pour le doctorat : déclaration du directeur de thèse, selon l'école doctorale"
+   ],
+   "contact": "Page de contact : stipendiumhungaricum.hu/contacts ; bureau partenaire de ton pays : stipendiumhungaricum.hu/partners",
+   "selectionSteps": [
+    {
+     "title": "Candidature en ligne",
+     "detail": "Inscription et dépôt sur le système de la Tempus Public Foundation, gratuit. Les candidatures ne se font pas directement auprès des universités. Cycle 2026 : date limite le 15 janvier."
+    },
+    {
+     "title": "Premier point de sélection",
+     "detail": "Contrôle technique et nomination (28 février pour le cycle 2026)."
+    },
+    {
+     "title": "Admission dans l'établissement",
+     "detail": "Seconde étape avec examens d'admission de mars à mai ; second point de sélection le 23 mai (cycle 2026)."
+    },
+    {
+     "title": "Résultats et visa",
+     "detail": "Résultats le 30 juin, demande de visa avant le 15 août, arrivée en Hongrie avant le 30 septembre (cycle 2026)."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Dois-je payer pour candidater ?",
+     "answer": "Non. Le dépôt et les examens d'admission sont gratuits, et aucune agence ne doit être payée."
+    },
+    {
+     "question": "Puis-je candidater sans être nommé ?",
+     "answer": "Non. Seuls les candidats nommés par leur pays peuvent continuer. Chaque partenaire d'envoi peut avoir ses propres dates et exigences : contacte le bureau de ton pays."
+    },
+    {
+     "question": "Combien de candidatures par an ?",
+     "answer": "Une seule. Une candidature tardive doit attendre l'année suivante."
+    },
+    {
+     "question": "Faut-il parler hongrois ?",
+     "answer": "Seulement pour les formations en hongrois : niveau B2 ou une année préparatoire. Les cours de hongrois sont gratuits pour les étudiants de licence et de master à plein temps."
+    }
+   ],
+   "tips": "Contacte tôt l'autorité de nomination du Sénégal : elle peut fixer des dates plus précoces que le 15 janvier. Prépare le certificat médical sur le modèle officiel dès l'automne. Vérifie dans le Study Finder que ta formation est bien ouverte aux candidats sénégalais. Méfie-toi des agences qui demandent de l'argent.",
+   "resources": [
+    {
+     "label": "Site officiel Stipendium Hungaricum",
+     "url": "https://stipendiumhungaricum.hu"
+    },
+    {
+     "label": "Comment candidater",
+     "url": "https://stipendiumhungaricum.hu/apply/"
+    },
+    {
+     "label": "Bureaux partenaires par pays",
+     "url": "https://stipendiumhungaricum.hu/partners"
+    },
+    {
+     "label": "Contact",
+     "url": "https://stipendiumhungaricum.hu/contacts"
+    }
+   ]
+  },
+  {
+   "slug": "bourses-amci-maroc",
+   "details": "L'AMCI administre les bourses du Royaume du Maroc pour les étudiants internationaux de l'enseignement supérieur. Les étudiants retenus par l'AMCI peuvent être logés à la Cité Universitaire Internationale de Rabat. Un Centre International de Langues propose une préparation en français pour les non-francophones et des cours de darija. Pour le Sénégal, les critères et le calendrier de chaque session sont fixés par l'appel publié avec le ministère de l'Enseignement supérieur : lis l'appel de l'année en cours.",
+   "contact": "AMCI, Avenue des FAR, Hay Riad, BP 4190, Rabat, Maroc · +212 537 57 35 73 · contact@amci.ma",
+   "faq": [
+    {
+     "question": "Où dépose-t-on le dossier au Sénégal ?",
+     "answer": "À la Direction des bourses, à Dakar, selon l'appel de la session. Lors de la session 2026, une version numérique sur clé USB était aussi demandée."
+    },
+    {
+     "question": "Où trouver les conditions exactes ?",
+     "answer": "Dans l'appel annuel : série, mention, âge et filière varient d'une session à l'autre. Le site de l'AMCI ne les détaille pas ; pour toute question, écris à contact@amci.ma."
+    }
+   ],
+   "tips": "Surveille l'appel dès le mois de juin et prépare tes pièces avant sa publication. Dépose ton dossier bien avant la date limite. Les bourses sont gratuites : ne paie aucun intermédiaire.",
+   "resources": [
+    {
+     "label": "Site de l'AMCI",
+     "url": "https://www.amci.ma"
+    },
+    {
+     "label": "Coopération académique (AMCI)",
+     "url": "https://www.amci.ma/cooperation-academique"
+    }
+   ]
+  },
+  {
+   "slug": "bourses-erasmus-mundus",
+   "details": "Les masters conjoints Erasmus Mundus sont ouverts aux étudiants du monde entier. Il faut une licence, ou être en dernière année de licence et diplômé avant le début du master. Certains masters offrent des bourses complètes aux candidats les mieux classés ; tous n'en proposent pas, et certains ont épuisé leur financement. Chaque master publie ses conditions et ses démarches sur son propre site, avec ou sans bourse.",
+   "documents": [],
+   "contact": "Pas de contact central pour les candidatures : écris au consortium du master choisi, via son site officiel.",
+   "selectionSteps": [
+    {
+     "title": "Chercher un master",
+     "detail": "Consulte le catalogue officiel de l'EACEA et vérifie que la bourse est disponible pour l'appel visé."
+    },
+    {
+     "title": "Lire les conditions du master",
+     "detail": "Chaque site de master indique ses conditions d'entrée et sa procédure, avec et sans bourse."
+    },
+    {
+     "title": "Candidater au consortium",
+     "detail": "La candidature se fait directement auprès de l'établissement ou du consortium. Elle s'ouvre en général d'octobre à janvier pour la rentrée suivante."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Toutes les formations Erasmus Mundus ont-elles une bourse ?",
+     "answer": "Non. Certaines n'ont plus de financement ou ont seulement une autorisation temporaire d'utiliser le nom Erasmus Mundus. Vérifie sur le site du master."
+    },
+    {
+     "question": "Que couvre la bourse complète ?",
+     "answer": "Les frais de participation, le voyage, le visa et une allocation de subsistance, selon le site officiel Erasmus+."
+    },
+    {
+     "question": "Quand candidater ?",
+     "answer": "En général d'octobre à janvier pour une rentrée l'année suivante ; la date exacte dépend du master."
+    }
+   ],
+   "tips": "Commence par le catalogue officiel, puis ouvre le site de chaque master pour lire les conditions et la date limite. Ne passe par aucun intermédiaire payant. Prévois tes relevés, ton CV et tes certificats de langue tôt, car les pièces demandées varient selon le master.",
+   "resources": [
+    {
+     "label": "Catalogue Erasmus Mundus (EACEA)",
+     "url": "https://www.eacea.ec.europa.eu/scholarships/erasmus-mundus-catalogue_en"
+    },
+    {
+     "label": "Masters conjoints Erasmus Mundus (Erasmus+)",
+     "url": "https://erasmus-plus.ec.europa.eu/opportunities/individuals/students/erasmus-mundus-joint-masters"
+    }
+   ]
+  },
+  {
+   "slug": "bourse-mext-japon",
+   "details": "La bourse du gouvernement japonais (MEXT) comprend sept catégories : chercheurs (master, doctorat), formation d'enseignants, premier cycle, études japonaises, collège de technologie (KOSEN), collège de formation spécialisée et Young Leaders Program. Les limites d'âge varient : moins de 35 ans pour la recherche, moins de 25 ans pour le premier cycle, le KOSEN et la formation spécialisée. La durée va d'un an (recherche, formation spécialisée) à cinq ans maximum pour le premier cycle par recommandation de l'ambassade, avec plus pour médecine, dentaire, pharmacie et vétérinaire. Il existe aussi une voie par recommandation d'une université japonaise, mais l'appel au Sénégal passe par l'ambassade.",
+   "contact": "Pour la voie ambassade, contacter l'Ambassade du Japon au Sénégal. Page de contact de Study in Japan : studyinjapan.go.jp/en/contact/",
+   "selectionSteps": [
+    {
+     "title": "Appel de l'ambassade",
+     "detail": "L'ambassade du Japon recrute les candidats et fait la sélection initiale, avec examen des dossiers. Les ouvertures varient selon les pays."
+    },
+    {
+     "title": "Examens d'entrée",
+     "detail": "Des examens sont requis selon la catégorie (par exemple japonais, anglais, mathématiques, sciences)."
+    },
+    {
+     "title": "Entretien",
+     "detail": "Entretien avec les candidats présélectionnés."
+    },
+    {
+     "title": "Décision finale",
+     "detail": "Pour la voie ambassade, la décision finale revient au MEXT (ministère japonais)."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles sont les limites d'âge ?",
+     "answer": "Moins de 35 ans pour la recherche (master, doctorat), moins de 25 ans pour le premier cycle, le collège de technologie et la formation spécialisée, selon la page officielle."
+    },
+    {
+     "question": "Que couvre la bourse ?",
+     "answer": "La page officielle indique l'exonération des frais de scolarité, une allocation mensuelle et le billet d'avion aller-retour. Les montants dépendent de la catégorie : consulte le guide de l'année."
+    },
+    {
+     "question": "Quelle est la voie de candidature ?",
+     "answer": "L'Ambassade du Japon recrute et fait la sélection initiale dans ton pays. La voie par recommandation d'université ne concerne que des universités japonaises agréées."
+    }
+   ],
+   "tips": "Surveille le site de l'ambassade dès le printemps, car l'appel est publié une fois par an. Vérifie ta catégorie et ta limite d'âge avant toute chose. Prépare-toi aux épreuves écrites, qui varient selon la catégorie.",
+   "resources": [
+    {
+     "label": "Bourse MEXT (Study in Japan)",
+     "url": "https://www.studyinjapan.go.jp/en/planning/scholarships/mext-scholarships/"
+    },
+    {
+     "label": "Toutes les bourses (Study in Japan)",
+     "url": "https://www.studyinjapan.go.jp/en/planning/scholarships/"
+    }
+   ]
+  },
+  {
+   "slug": "stage-nations-unies",
+   "details": "Le programme de stages du Secrétariat de l'ONU est régi par l'instruction administrative ST/AI/2020/1. Son but est de permettre à des étudiants de divers horizons de découvrir le travail de l'ONU et d'enrichir leur formation, et d'apporter aux bureaux l'aide d'étudiants qualifiés. Le stage dure au minimum deux mois et peut aller jusqu'à six mois, à temps plein, sous la supervision d'un fonctionnaire. Des horaires flexibles sont possibles si l'entité d'accueil l'accepte par écrit, avec l'équivalent de deux mois à temps plein au minimum, sur six mois au plus. Les stagiaires ne sont pas des fonctionnaires. Le programme n'est pas proposé dans les lieux d'affectation sans famille.",
+   "benefits": "Expérience dans une entité du Secrétariat de l'ONU, sous supervision. Le stage n'est pas rémunéré : voyage, visa, logement et frais de vie sont à ta charge ou à celle de ton établissement. L'ONU aide seulement pour le visa G-4 aux États-Unis.",
+   "documents": [
+    "Preuve d'une assurance médicale valide pour toute la durée du stage, au lieu d'affectation",
+    "Certificat médical de bonne santé, avant le début du stage",
+    "Autres pièces : voir l'offre de stage concernée sur careers.un.org"
+   ],
+   "contact": "Pas de contact dédié : les offres sont publiées sur careers.un.org avec le bureau concerné.",
+   "selectionSteps": [
+    {
+     "title": "Vérifier l'éligibilité",
+     "detail": "À la date de candidature : être inscrit ou diplômé d'un programme de deuxième cycle (master ou plus), ou être inscrit ou avoir terminé la dernière année d'une licence (niveau bachelor minimum)."
+    },
+    {
+     "title": "Postuler à une offre",
+     "detail": "Les candidatures se font offre par offre sur le portail careers.un.org."
+    },
+    {
+     "title": "Sélection par l'entité",
+     "detail": "L'entité qui publie l'offre sélectionne ses stagiaires."
+    },
+    {
+     "title": "Avant le départ",
+     "detail": "Fournir la preuve d'assurance médicale et le certificat médical, et organiser voyage, visa et logement."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Le stage est-il payé ?",
+     "answer": "Non. L'instruction officielle précise que les stagiaires ne sont pas rémunérés. Tu dois financer voyage, visa, logement et vie courante, ou obtenir l'aide de ton établissement."
+    },
+    {
+     "question": "Combien de temps dure un stage ?",
+     "answer": "Au minimum deux mois, jusqu'à six mois au total en cas de prolongation."
+    },
+    {
+     "question": "Puis-je postuler à un poste de l'ONU juste après ?",
+     "answer": "Pas à un poste de la catégorie professionnelle ou supérieure pendant le stage et les six mois qui suivent."
+    },
+    {
+     "question": "Qui ne peut pas postuler ?",
+     "answer": "Les enfants et frères et soeurs d'un membre du personnel de l'ONU."
+    }
+   ],
+   "tips": "Commence par prévoir comment financer le séjour, car le stage n'est pas rémunéré. Cherche aussi un soutien de ton université ou d'un sponsor. Lis chaque offre en entier : les exigences varient selon le bureau. Prépare ton assurance médicale avant d'être sélectionné.",
+   "resources": [
+    {
+     "label": "Portail carrières de l'ONU",
+     "url": "https://careers.un.org"
+    },
+    {
+     "label": "Instruction administrative ST/AI/2020/1 (programme de stages)",
+     "url": "https://www.ungeneva.org/en/media/370"
+    }
+   ]
+  },
+  {
+   "slug": "bourse-turkiye-burslari",
+   "details": "Türkiye Bursları propose des bourses de licence, de master et de doctorat, ainsi que des bourses de recherche et des programmes de courte durée ou conjoints. La sélection est fondée sur le mérite. Conditions officielles : ne pas être citoyen turc, ne pas être déjà inscrit dans une université turque au même niveau ; moyenne minimale de 70 % (licence), 75 % (master, doctorat) ou 90 % (médecine, dentaire, pharmacie) ; âge de moins de 21 ans (licence), moins de 30 ans (master), moins de 35 ans (doctorat). De nombreux programmes sont enseignés en turc ; les programmes en anglais demandent un certificat de langue. Les boursiers sans certificat C1 de turc suivent une année de turc et doivent obtenir le C1 avant la fin de cette année.",
+   "documents": [
+    "Pièce d'identité ou passeport valide",
+    "Photo récente (moins d'un an)",
+    "Résultats d'examens nationaux, si applicable",
+    "Diplôme ou attestation provisoire de fin d'études",
+    "Relevé de notes",
+    "Résultats d'examens internationaux (GRE, GMAT, SAT), si le programme les exige",
+    "Certificat de langue (TOEFL, DELF…), si requis",
+    "Doctorat uniquement : sujet de recherche et exemple de travail de recherche écrit"
+   ],
+   "contact": "Page de contact : turkiyeburslari.gov.tr/about/contact",
+   "selectionSteps": [
+    {
+     "title": "Évaluation préliminaire",
+     "detail": "Contrôle des critères de base : résultats minimaux, âge selon le niveau, pièces requises."
+    },
+    {
+     "title": "Évaluation par des experts",
+     "detail": "Un comité examine le parcours, les objectifs de carrière et la lettre de motivation, puis fixe la liste des candidats convoqués."
+    },
+    {
+     "title": "Test (licence)",
+     "detail": "Les candidats de licence passent un test avant l'entretien : 30 questions en 60 minutes (mathématiques, géométrie, logique)."
+    },
+    {
+     "title": "Entretien",
+     "detail": "Entretien de 15 à 30 minutes devant un comité : vérification des documents, objectifs de la candidature, connaissances, projet professionnel. Apporte tes derniers diplômes."
+    },
+    {
+     "title": "Évaluation finale",
+     "detail": "Le comité de sélection établit la liste des boursiers."
+    }
+   ],
+   "faq": [
+    {
+     "question": "La candidature est-elle payante ?",
+     "answer": "Non, le dépôt sur le système en ligne est gratuit."
+    },
+    {
+     "question": "Quand candidater ?",
+     "answer": "Le calendrier publié indique une candidature du 10 janvier au 20 février, des entretiens d'avril à juin et les résultats début août. Ces dates ne sont pas rattachées à une année sur la page : vérifie le cycle en cours."
+    },
+    {
+     "question": "Quel âge maximal ?",
+     "answer": "Moins de 21 ans pour la licence, moins de 30 ans pour le master, moins de 35 ans pour le doctorat."
+    },
+    {
+     "question": "Dois-je parler turc ?",
+     "answer": "Pas forcément, mais sans C1 de turc tu suis une année de turc avant ton programme, quelle que soit la langue du cursus."
+    }
+   ],
+   "tips": "Vérifie ton âge et ta moyenne avant de commencer. Prépare tes diplômes et relevés en version numérique avant l'ouverture. Pour la licence, révise mathématiques, géométrie et logique. Ne candidate qu'une fois par cycle et ne paie personne : la candidature est gratuite.",
+   "resources": [
+    {
+     "label": "Türkiye Bursları",
+     "url": "https://www.turkiyeburslari.gov.tr/"
+    },
+    {
+     "label": "Critères et programmes",
+     "url": "https://www.turkiyeburslari.gov.tr/scholarshipsprograms"
+    },
+    {
+     "label": "Documents requis",
+     "url": "https://www.turkiyeburslari.gov.tr/applysteps"
+    },
+    {
+     "label": "Évaluation et sélection",
+     "url": "https://www.turkiyeburslari.gov.tr/evaluationandselectionprocess"
+    },
+    {
+     "label": "Calendrier",
+     "url": "https://www.turkiyeburslari.gov.tr/calendar"
+    }
+   ]
+  },
+  {
+   "slug": "bourse-gks-coree",
+   "details": "Le Global Korea Scholarship (GKS) est géré par le NIIED. Il comprend un volet licence (environ 280 places) et un volet master et doctorat (environ 1 600 places). Licence : une année de coréen puis 4 à 6 ans (2 à 3 ans pour un diplôme associé). Master : 2 ans ; doctorat : 3 ans. Conditions pour tous les volets : le candidat et ses deux parents doivent avoir une nationalité non coréenne. Licence : moins de 25 ans, bachelier ou en passe de l'être, moyenne d'au moins 80 % ou rang dans les 20 % premiers de la classe. Master et doctorat : moins de 40 ans, diplôme de licence ou de master, moyenne d'au moins 80 % sur le dernier cursus. Deux voies existent : la voie ambassade (candidature en ligne sur Study in Korea) et la voie université (candidature directement auprès d'une université GKS). Vérifie auprès de l'ambassade de Corée si ton pays est ouvert à la voie ambassade.",
+   "documents": [],
+   "applyMode": "Voie ambassade : candidature en ligne sur le site Study in Korea. Voie université : candidature directement auprès d'une université GKS. Le bouton « Apply » du site indique actuellement « It is not the application period » ; les guides détaillés sont dans les avis GKS (notices) de studyinkorea.go.kr.",
+   "contact": "Questions sur la licence : gksniied@korea.kr",
+   "selectionSteps": [
+    {
+     "title": "Lire l'avis GKS de l'année",
+     "detail": "Le guide officiel fixe les pays, quotas, pièces et dates ; en cas de divergence entre les versions, la version coréenne prévaut."
+    },
+    {
+     "title": "Candidater",
+     "detail": "Licence : annonce et candidature voie ambassade en septembre, voie université de septembre à novembre. Master, doctorat : annonce en février, candidatures de février à mars."
+    },
+    {
+     "title": "Examen des dossiers",
+     "detail": "Licence : octobre à décembre. Master, doctorat : avril à juin."
+    },
+    {
+     "title": "Résultats finaux",
+     "detail": "Décembre pour la licence, juin pour le master et le doctorat."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quel âge maximal ?",
+     "answer": "Moins de 25 ans pour la licence et moins de 40 ans pour le master et le doctorat, selon la page officielle."
+    },
+    {
+     "question": "Quelle moyenne faut-il ?",
+     "answer": "Au moins 80 % (ou un rang dans les 20 % premiers de la classe pour la licence)."
+    },
+    {
+     "question": "Que couvre la bourse en licence ?",
+     "answer": "Billet d'avion, frais de formation en coréen, frais de scolarité et allocations mensuelles, selon la page officielle. La page ne précise pas les avantages du volet master et doctorat."
+    },
+    {
+     "question": "Puis-je candidater maintenant ?",
+     "answer": "Au moment de la vérification, le site indiquait que ce n'était pas une période de candidature. Surveille les avis GKS."
+    }
+   ],
+   "tips": "Vérifie ton âge et tes notes avant tout : les limites sont strictes. Rassemble tes relevés de notes et diplômes à l'avance, car les candidatures sont courtes. Vérifie la nationalité de tes deux parents, qui doit être non coréenne. Consulte les avis GKS dès février pour le master et dès septembre pour la licence.",
+   "resources": [
+    {
+     "label": "Study in Korea - GKS",
+     "url": "https://www.studyinkorea.go.kr/ko/plan/scholarship.do?tab=gks-tab1"
+    },
+    {
+     "label": "Portail Study in Korea",
+     "url": "https://www.studyinkorea.go.kr/en/main.do"
+    }
+   ]
+  },
+  {
+   "slug": "admission-aims-senegal",
+   "details": "Le Master structuré en sciences mathématiques d'AIMS Sénégal dure trois semestres. Il comprend des cours fondamentaux de résolution de problèmes, des options et un projet de recherche final avec un rapport scientifique. Les candidats doivent montrer de solides compétences en mathématiques, en leadership et en engagement communautaire. Les femmes sont vivement encouragées à candidater. Le site liste aussi d'autres formations : master en coopération avec l'entreprise (science des données) et African Master's in Machine Intelligence.",
+   "documents": [],
+   "applyMode": "Candidature en ligne via le formulaire d'AIMS (applications.nexteinstein.org), lié depuis la page de candidature du master. Les pages de candidature affichent encore d'anciennes dates limites : confirme la date de la promotion visée auprès d'AIMS Sénégal avant de candidater.",
+   "contact": "AIMS Sénégal, Km2 route de Joal (Centre IRD), BP 1418, Mbour-Thiès. Formulaire : aims-senegal.org/contact-us/",
+   "selectionSteps": [
+    {
+     "title": "Vérifier le diplôme",
+     "detail": "Il faut un diplôme universitaire de 4 ans en mathématiques ou en sciences ou ingénierie avec une forte part de mathématiques, obtenu ou attendu avant le début de la formation."
+    },
+    {
+     "title": "Remplir le formulaire en ligne",
+     "detail": "Le dossier doit montrer ton niveau en mathématiques, ton leadership et ton engagement communautaire."
+    },
+    {
+     "title": "Décision d'AIMS",
+     "detail": "La page n'explique pas la procédure de sélection : renseigne-toi auprès d'AIMS Sénégal."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quel diplôme faut-il ?",
+     "answer": "Un diplôme universitaire de 4 ans en mathématiques, ou dans une autre discipline scientifique ou d'ingénierie comportant beaucoup de mathématiques, obtenu ou attendu au début de la formation."
+    },
+    {
+     "question": "Le financement couvre-t-il le billet d'avion ?",
+     "answer": "Pas forcément. La page actuelle du master indique des bourses totales ou partielles et recommande aux candidats retenus de chercher un soutien pour leur billet d'avion. Une autre page parle de frais de voyage sans préciser le billet. Demande confirmation à AIMS."
+    },
+    {
+     "question": "Peut-on candidater à plusieurs centres ?",
+     "answer": "Non : on ne peut pas candidater à deux centres AIMS à la fois (information déjà indiquée sur la fiche du club)."
+    }
+   ],
+   "tips": "Mets en avant ton niveau en mathématiques, mais aussi ton leadership et tes actions pour la communauté, que le site cite comme critères. Surveille le site d'AIMS Sénégal pour la date limite de la prochaine promotion. Ne paie personne : les candidats retenus n'ont pas de frais d'inscription selon la page officielle.",
+   "resources": [
+    {
+     "label": "AIMS Sénégal",
+     "url": "https://aims-senegal.org"
+    },
+    {
+     "label": "Candidature au master en sciences mathématiques",
+     "url": "https://aims-senegal.org/application/masters-in-mathematical-sciences-application/"
+    }
+   ]
+  },
+  {
+   "slug": "programme-mandela-washington-fellowship",
+   "details": "La Mandela Washington Fellowship est le programme d'échange phare de la Young African Leaders Initiative (YALI). Il est géré par le Bureau des affaires éducatives et culturelles du Département d'État des États-Unis, financé par le gouvernement américain et administré par IREX. Il réunit de jeunes Africains reconnus pour leur parcours d'innovation et d'impact dans leur communauté pour des Leadership Institutes de six semaines dans des établissements américains : cours, ateliers, mentorat et rencontres avec des responsables américains. Près de 7 800 jeunes leaders y ont participé depuis 2014. Les candidatures 2027 sont closes. Attention : l'appel « Reciprocal Exchange 2027 » annoncé sur le site est destiné aux citoyens américains, pas aux candidats sénégalais.",
+   "applyMode": "Candidature en ligne lors de l'appel annuel, publiée sur le site officiel ; les candidatures 2027 sont closes. Pour toute question sur l'éligibilité, la candidature ou le visa, le site renvoie à mwfellowship@irex.org.",
+   "contact": "mwfellowship@irex.org · formulaire : mandelawashingtonfellowship.org/contact-us/",
+   "faq": [
+    {
+     "question": "Quelle est la durée du programme ?",
+     "answer": "Les Leadership Institutes durent six semaines, dans des établissements américains."
+    },
+    {
+     "question": "Quel âge faut-il avoir ?",
+     "answer": "Les Fellows ont entre 25 et 35 ans, selon la page officielle. La fiche précise aussi que des candidats de 21 à 24 ans peuvent être retenus à titre exceptionnel."
+    },
+    {
+     "question": "Qui organise le programme ?",
+     "answer": "Le Département d'État des États-Unis le finance et IREX l'administre."
+    },
+    {
+     "question": "Où poser mes questions ?",
+     "answer": "Par e-mail à mwfellowship@irex.org, selon le site officiel."
+    }
+   ],
+   "tips": "Prépare ton dossier longtemps avant l'ouverture de l'appel : le parcours de leadership et l'impact dans ta communauté sont ce que le programme met en avant. Surveille le site officiel et l'ambassade des États-Unis au Sénégal pour la prochaine ouverture. N'écoute personne qui te promet une place contre de l'argent.",
+   "resources": [
+    {
+     "label": "Mandela Washington Fellowship (site officiel)",
+     "url": "https://www.mandelawashingtonfellowship.org"
+    },
+    {
+     "label": "À propos du programme",
+     "url": "https://www.mandelawashingtonfellowship.org/about/"
+    },
+    {
+     "label": "Leadership Institutes",
+     "url": "https://www.mandelawashingtonfellowship.org/leadership-institutes/"
+    },
+    {
+     "label": "Foire aux questions",
+     "url": "https://www.mandelawashingtonfellowship.org/frequently-asked-questions/"
+    }
+   ]
+  },
+  {
+   "slug": "admission-eismv",
+   "details": "L'EISMV est une école inter-États à vocation panafricaine, qui propose une expertise pluridisciplinaire en productions animales, santé animale et santé publique. Formation initiale : premier cycle vétérinaire, deuxième cycle vétérinaire, semestre d'approfondissement et thèse d'exercice. L'école propose aussi quatre masters (santé publique vétérinaire ; productions animales et développement durable ; gestion et surveillance sanitaire de la faune sauvage ; qualité des aliments de l'homme), une formation doctorale et de la formation continue. Entrée en première année (S1) : baccalauréat scientifique ou diplôme admis en équivalence. Entrée en troisième semestre (S3) : au moins 80 % des UE de S1 et S2 validées, ou une L2 en Sciences et Technologie ou en Sciences agronomiques et hydraulique validée, ou un diplôme admis en équivalence. Le concours d'entrée est ouvert aux candidats ayant au minimum un niveau BAC+2 dans les domaines scientifiques.",
+   "applyMode": "Les dossiers de pré-inscription se déposent uniquement via le lien eismv.jilms.bj/connexion-pedagogie, indiqué sur la page « Futurs étudiants » de l'école. Le détail des pièces et des dates est publié dans le communiqué de l'année.",
+   "contact": "EISMV, BP 5077, Dakar-Fann · (221) 33 865 10 08 · directiongenerale@eismv.org · contact@eismv.org",
+   "faq": [
+    {
+     "question": "Quel diplôme faut-il pour entrer en première année ?",
+     "answer": "Un baccalauréat scientifique, ou un diplôme admis en équivalence, selon la page « Futurs étudiants » de l'EISMV."
+    },
+    {
+     "question": "Peut-on entrer directement en troisième semestre ?",
+     "answer": "Oui, par trois voies : avoir validé au moins 80 % des UE de S1 et S2, avoir validé une L2 en Sciences et Technologie ou en Sciences agronomiques et hydraulique, ou avoir un diplôme admis en équivalence."
+    },
+    {
+     "question": "Comment s'entraîner au concours ?",
+     "answer": "L'école met à disposition des MOOC et des questions d'entraînement sur concours-mooc.eismv.org."
+    }
+   ],
+   "tips": "Lis le communiqué de l'année sur le site de l'école avant de préparer ton dossier : les pièces et les dates y sont fixées. Utilise les MOOC et les questions d'entraînement de l'école pour te préparer. Dépose ta pré-inscription uniquement par le lien officiel et ne paie personne pour obtenir une place.",
+   "resources": [
+    {
+     "label": "Site de l'EISMV",
+     "url": "https://www.eismv.org"
+    },
+    {
+     "label": "Futurs étudiants (conditions d'admission)",
+     "url": "https://www.eismv.org/futurs-etudiants/"
+    }
+   ]
+  },
+  {
+   "slug": "admission-igt-ucad",
+   "selectionSteps": [
+    {
+     "title": "Déposer le dossier",
+     "detail": "Dépôt à la scolarité de l'IGT, dans les locaux de l'ESEA (route de Ouakam, Dakar), pendant la période d'appel."
+    },
+    {
+     "title": "Sélection sur dossier",
+     "detail": "Les dossiers sont examinés ; 50 places sont ouvertes d'après le dernier appel connu (session 2024)."
+    },
+    {
+     "title": "Entretien",
+     "detail": "Les candidats retenus sur dossier passent un entretien."
+    }
+   ],
+   "faq": [
+    {
+     "question": "Quelles séries de bac sont admises ?",
+     "answer": "STEG, L et S d'après le dernier appel connu de la fiche. Vérifie l'appel en cours."
+    },
+    {
+     "question": "Combien coûte le dépôt ?",
+     "answer": "5 000 FCFA d'après le dernier appel connu (session 2024). Vérifie l'appel en cours auprès de l'IGT."
+    },
+    {
+     "question": "Quand déposer ?",
+     "answer": "Le dernier appel connu de la fiche couvre du 1er septembre au 12 octobre 2024. Les appels précédents de l'IGT ont été publiés en novembre (par exemple 1er au 25 novembre 2023, pour la 8e promotion). Écris à l'IGT pour connaître le calendrier en cours."
+    }
+   ],
+   "tips": "Prépare tes copies légalisées à l'avance : bac, relevés de Seconde, Première et Terminale, pièce d'identité. Écris à l'IGT (igt@ucad.edu.sn) pour connaître l'appel de l'année avant de te déplacer. Prépare l'entretien en connaissant les métiers de l'administration territoriale et du développement local.",
+   "resources": [
+    {
+     "label": "Page IGT sur le site de l'UCAD",
+     "url": "https://www.ucad.sn/igt-recrutement-licence-institut-de-gouvernance-territoriale-et-de-developpement-local"
+    },
+    {
+     "label": "Site de l'UCAD",
+     "url": "https://www.ucad.sn"
+    }
+   ]
+  }
+ ]
+}
