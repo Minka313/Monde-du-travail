@@ -11,13 +11,8 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
-set -a
-. ./.env
-set +a
-unset NODE_ENV
-
 DRY=""
 [ "${1:-}" = "--dry" ] && DRY="--dry"
 
-node src/scripts/import-opportunities.js $DRY
-node src/scripts/import-opportunities.js --enrich $DRY
+node -r ../scripts/prod-env.js src/scripts/import-opportunities.js $DRY
+node -r ../scripts/prod-env.js src/scripts/import-opportunities.js --enrich $DRY
