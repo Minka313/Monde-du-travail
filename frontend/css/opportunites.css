@@ -1,7 +1,11 @@
 /* Rubrique « Concours & opportunités » */
 
 .opp-hero {
-  background: linear-gradient(135deg, #0f2b46 0%, #091b2e 100%);
+  /* Photo sous un voile bleu nuit : le texte reste lisible, sans image = dégradé seul */
+  background:
+    linear-gradient(180deg, rgba(9, 27, 46, 0.78) 0%, rgba(15, 43, 70, 0.72) 55%, rgba(9, 27, 46, 0.92) 100%),
+    url('../images/orientation.webp') center 30% / cover no-repeat,
+    linear-gradient(135deg, #0f2b46 0%, #091b2e 100%);
   color: #fff;
   padding: var(--space-16) 0 var(--space-12);
   text-align: center;
