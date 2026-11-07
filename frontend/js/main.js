@@ -926,6 +926,7 @@
             ${isBureau ? '<a href="bureau.html" class="user-dropdown-item"><span>🏛️</span> Espace Bureau</a>' : ''}
             ${isMentor ? '<a href="mentor.html" class="user-dropdown-item"><span>🧑‍🏫</span> Espace Mentor</a>' : ''}
             <a href="formations.html" class="user-dropdown-item"><span>🎓</span> Mes Formations</a>
+            ${(user.role !== 'VISITOR' || adminRoles.length) ? '<a href="salon.html" class="user-dropdown-item"><span>🗨️</span> Salon des membres</a>' : ''}
             <a href="forum.html" class="user-dropdown-item"><span>💬</span> Forum Communautaire</a>
             <a href="guide.html" class="user-dropdown-item"><span>❓</span> Guide d'utilisation</a>
             ${isAdmin ? `<a href="${adminUrl}" class="user-dropdown-item user-dropdown-admin"><span>🛡️</span> Administration</a>` : ''}

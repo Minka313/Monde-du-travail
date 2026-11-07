@@ -246,6 +246,44 @@ class UserService {
     });
   }
 
+  /**
+   * Passe un compte de visiteur à adhérent (ou l'inverse). Réservé aux comptes de base VISITOR / MEMBER :
+   * les administrateurs et membres du bureau se gèrent par leurs rôles. Une demande d'adhésion en attente
+   * est clôturée quand on accepte le compte.
+   */
+  static async setMembership(id, isMember, requesterId) {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { id: true, email: true, role: true, isActive: true },
+    });
+    if (!user) throw new NotFoundError('Utilisateur non trouvé');
+    if (!['VISITOR', 'MEMBER'].includes(user.role)) {
+      throw new ForbiddenError('Ce compte a un rôle d\'administration : son rôle se gère depuis « Rôles »');
+    }
+    if (user.id === requesterId) throw new ForbiddenError('Tu ne peux pas changer ton propre rôle');
+
+    const target = isMember ? 'MEMBER' : 'VISITOR';
+    if (!isMember) {
+      const [adminRoles, positions] = await Promise.all([
+        prisma.userAdminRole.count({ where: { userId: id, isActive: true } }),
+        prisma.clubAssignment.count({ where: { userId: id, isActive: true } }),
+      ]);
+      if (adminRoles > 0 || positions > 0) {
+        throw new BadRequestError('Ce compte a un rôle d\'administration ou un poste au bureau : retire-le d\'abord');
+      }
+    }
+    if (user.role === target) return { ...user, changed: false };
+
+    const [updated] = await prisma.$transaction([
+      prisma.user.update({ where: { id }, data: { role: target }, select: { id: true, email: true, role: true, isActive: true } }),
+      ...(isMember ? [prisma.membershipRequest.updateMany({
+        where: { userId: id, status: 'PENDING' },
+        data: { status: 'APPROVED', reviewedBy: requesterId, reviewedAt: new Date() },
+      })] : []),
+    ]);
+    return { ...updated, previousRole: user.role, changed: true };
+  }
+
   // Vérifier un compte (permission users.verify)
   static async verifyUser(id) {
     await this.getUserById(id);

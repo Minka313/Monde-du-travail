@@ -350,6 +350,56 @@ model UserSavedData {
   @@map("user_saved_data")
 }
 
+// Salon des membres : espace de discussion réservé aux adhérents (visiteurs exclus)
+model ChatChannel {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  name          String
+  description   String?
+  icon          String        @default("💬")
+  // true : seuls le bureau et les administrateurs écrivent (salon d'annonces)
+  staffOnlyPost Boolean       @default(false)
+  position      Int           @default(0)
+  isArchived    Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  messages      ChatMessage[]
+  reads         ChatRead[]
+
+  @@map("chat_channels")
+}
+
+model ChatMessage {
+  id        String        @id @default(cuid())
+  channelId String
+  authorId  String
+  body      String
+  replyToId String?
+  createdAt DateTime      @default(now())
+  editedAt  DateTime?
+  deletedAt DateTime?
+  channel   ChatChannel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replyTo   ChatMessage?  @relation("ChatReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies   ChatMessage[] @relation("ChatReplies")
+
+  @@index([channelId, createdAt])
+  @@index([authorId])
+  @@map("chat_messages")
+}
+
+// Dernier passage d'un adhérent dans un salon (messages non lus)
+model ChatRead {
+  id         String      @id @default(cuid())
+  userId     String
+  channelId  String
+  lastReadAt DateTime    @default(now())
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel    ChatChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, channelId])
+  @@map("chat_reads")
+}
+
 // Discussions suivies : notification à chaque nouvelle réponse
 model TopicFollow {
   id        String   @id @default(cuid())
@@ -507,6 +557,8 @@ model User {
   endorsedReplies        Reply[]                 @relation("ReplyEndorser")
   topicFollows           TopicFollow[]           @relation("UserTopicFollows")
   savedData              UserSavedData[]
+  chatMessages           ChatMessage[]
+  chatReads              ChatRead[]
   topics                 Topic[]
   assignedRoles          UserAdminRole[]         @relation("AdminRoleAssignment")
   reviewedAdminRoles     UserAdminRole[]         @relation("AdminRoleReviewer")

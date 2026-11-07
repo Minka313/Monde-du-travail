@@ -40,7 +40,12 @@
     if (!E) return;
     renderIntro();
     const saved = store.get(STORE);
-    if (new URLSearchParams(location.search).has('resultat') && saved) showResults(saved);
+    const query = new URLSearchParams(location.search);
+    if (query.has('resultat') && saved) {
+      showResults(saved);
+      // Depuis le profil : « PDF » ouvre directement l'impression une fois le résultat affiché
+      if (query.has('pdf')) setTimeout(() => $('rxPdf')?.click(), 1200);
+    }
   });
 
   // ===================== Présentation =====================

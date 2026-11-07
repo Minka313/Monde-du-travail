@@ -472,6 +472,7 @@
       activate: (id) => apiRequestWithRefresh(`/users/${id}/activate`, { method: 'POST' }),
       deactivate: (id) => apiRequestWithRefresh(`/users/${id}/deactivate`, { method: 'POST' }),
       verify: (id) => apiRequestWithRefresh(`/users/${id}/verify`, { method: 'POST' }),
+      setMembership: (id, member) => apiRequestWithRefresh(`/users/${id}/membership`, { method: 'POST', body: JSON.stringify({ member }) }),
       remove: (id) => apiRequestWithRefresh(`/users/${id}`, { method: 'DELETE' }),
       resetTwoFactor: (id) => apiRequestWithRefresh(`/users/${encodeURIComponent(id)}/2fa/reset`, { method: 'POST' }),
     },

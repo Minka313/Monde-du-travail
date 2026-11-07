@@ -118,6 +118,33 @@ class UserController {
     }
   }
 
+  static async setMembership(req, res, next) {
+    try {
+      const isMember = Boolean(req.body.member);
+      const user = await userService.setMembership(req.params.id, isMember, req.user.id);
+      if (user.changed) {
+        await AuditService.log({
+          userId: req.user.id,
+          action: isMember ? 'users.grant_membership' : 'users.revoke_membership',
+          module: 'users',
+          resource: 'User',
+          resourceId: req.params.id,
+          result: user.role,
+          ipAddress: req.ip,
+          userAgent: req.get('user-agent'),
+          metadata: { email: user.email, from: user.previousRole, to: user.role },
+        });
+      }
+      res.json({
+        success: true,
+        message: !user.changed ? 'Aucun changement' : isMember ? 'Compte passé adhérent' : 'Compte repassé visiteur',
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async verifyUser(req, res, next) {
     try {
       const user = await userService.verifyUser(req.params.id);

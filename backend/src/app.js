@@ -30,6 +30,7 @@ const analyticsRoutes = require('./routes/analytics');
 const uploadRoutes = require('./routes/upload');
 const reportRoutes = require('./routes/reports');
 const mentoringRoutes = require('./routes/mentoring');
+const salonRoutes = require('./routes/salon');
 const meRoutes = require('./routes/me');
 const mentorApplicationRoutes = require('./routes/mentorApplications');
 const prisma = require('./config/database');
@@ -143,6 +144,7 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/mentoring', mentoringRoutes);
+app.use('/api/salon', salonRoutes);
 app.use('/api/me', meRoutes);
 app.use('/api/mentor-applications', mentorApplicationRoutes);
 

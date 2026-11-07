@@ -17,6 +17,7 @@
     <title>Mon Espace Membre — Le Monde du Travail</title>
     <link rel="icon" type="image/webp" href="logo.webp">
     <link rel="stylesheet" href="css/styles.min.css?v=20261024-4">
+    <link rel="stylesheet" href="css/profile-riasec.css?v=20261107-1">
     <script src="js/theme-engine.js"></script>
     <script src="js/wow-brand.js?v=20261024-1"></script>
 </head>
@@ -126,6 +127,15 @@
                         <a href="mentor.html" class="btn btn-primary btn-sm">Ouvrir mon espace mentor &rarr;</a>
                     </div>
 
+                    <!-- Salon des membres : réservé aux adhérents -->
+                    <div class="profile-box profile-bureau-box" id="profileSalonBox" hidden>
+                        <h2><span>💬</span> Salon des membres</h2>
+                        <p style="color: var(--color-gray-600); font-size: 0.95rem; margin: 0 0 1rem;">
+                            Discute avec les autres adhérents : annonces du bureau, projets du club, entraide sur l'orientation et les concours.
+                        </p>
+                        <a href="salon.html" class="btn btn-primary btn-sm">Ouvrir le salon &rarr;</a>
+                    </div>
+
                     <!-- Compte visiteur : rejoindre le club -->
                     <div class="profile-box profile-join-box" id="profileJoinBox" hidden>
                         <h2><span>🤝</span> Rejoindre le club</h2>
@@ -153,6 +163,12 @@
                                 <a href="formations.html" class="btn btn-primary btn-sm">Explorer le catalogue &rarr;</a>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Résultat du test d'orientation RIASEC -->
+                    <div class="profile-box" id="profileRiasecBox">
+                        <h2><span>🧭</span> Mon test d'orientation (RIASEC)</h2>
+                        <div id="profileRiasecBody"></div>
                     </div>
 
                     <!-- Métiers favoris -->
@@ -389,7 +405,7 @@
 <script defer src="js/frontend-api.js?v=20261029-4"></script>
 <script defer src="js/analytics-tracker.js"></script>
 <script defer src="js/layout.js"></script>
-<script defer src="js/main.js?v=20261028-3"></script>
+<script defer src="js/main.js?v=20261107-1"></script>
 <script>
   document.addEventListener('DOMContentLoaded', async () => {
     // 1. Auth Guard
@@ -629,6 +645,8 @@
         .map(p => `<span class="profile-status-pill profile-bureau-pill">🏛️ ${escapeHtml(p.title)}${p.memberRole === 'EQUIPE' ? ' · équipe' : ''}</span>`)
         .join(' ');
     }
+
+    if (!isVisitor) document.getElementById('profileSalonBox').hidden = false;
 
     if ((user.adminRoles || []).includes('MENTOR_EXPERT')) {
       document.getElementById('profileMentorBox').hidden = false;
@@ -1098,8 +1116,54 @@
     }
   });
 </script>
+<script>
+// Résultat du test RIASEC : affiché dans l'espace de la personne, téléchargeable sur son appareil
+document.addEventListener('DOMContentLoaded', function () {
+  var body = document.getElementById('profileRiasecBody');
+  var E = window.RiasecEngine;
+  if (!body || !E) return;
+  var esc = function (v) { return String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var result = null;
+  try { result = JSON.parse(localStorage.getItem('lmdt_riasec_result') || 'null'); } catch (_) { /* stockage indisponible */ }
+  if (!result || !result.code || !result.scores) {
+    body.innerHTML = '<div class="profile-empty-hint"><p>Tu n\'as pas encore passé le test d\'orientation. Il dure 4 à 8 minutes et révèle les métiers qui te ressemblent.</p><a href="test-riasec.html" class="btn btn-primary btn-sm">Passer le test &rarr;</a></div>';
+    return;
+  }
+  var date = result.date ? new Date(result.date).toLocaleDateString('fr-FR') : '';
+  var letters = result.code.split('');
+  var bars = E.ORDER.map(function (t) {
+    var info = E.TYPES[t], v = Math.round(result.scores[t] || 0);
+    return '<div class="rxp-row"><span class="rxp-name">' + info.icon + ' ' + esc(info.name) + '</span><span class="rxp-bar"><i style="width:' + v + '%;background:' + info.color + '"></i></span><b>' + v + '</b></div>';
+  }).join('');
+  body.innerHTML =
+    '<div class="rxp-head"><div class="rxp-code">' + letters.map(function (l) { return '<span style="background:' + E.TYPES[l].color + '">' + esc(l) + '</span>'; }).join('') + '</div>' +
+    '<div><strong>' + letters.map(function (l) { return esc(E.TYPES[l].name); }).join(' · ') + '</strong><br><small>Passé le ' + esc(date) + '</small></div></div>' +
+    '<div class="rxp-bars">' + bars + '</div>' +
+    '<div class="rxp-actions"><a class="btn btn-primary btn-sm" href="test-riasec.html?resultat=1">Voir le détail et les métiers</a>' +
+    '<a class="btn btn-outline btn-sm" href="test-riasec.html?resultat=1&pdf=1">⬇️ PDF</a>' +
+    '<button type="button" class="btn btn-outline btn-sm" id="rxpDownload">💾 Enregistrer sur mon appareil</button>' +
+    '<a class="btn btn-outline btn-sm" href="test-riasec.html">↺ Refaire le test</a></div>';
+  document.getElementById('rxpDownload').addEventListener('click', function () {
+    var data = {
+      test: 'RIASEC · Le Monde du Travail',
+      code: result.code,
+      date: result.date,
+      profil: E.ORDER.map(function (t) { return { lettre: t, type: E.TYPES[t].name, score: Math.round(result.scores[t] || 0) }; }),
+      classement: result.ranking,
+      indicateurs: result.indicators,
+    };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'profil-riasec-' + result.code + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+  });
+});
+</script>
 <script defer src="js/pwa.js?v=20261028-1"></script>
 <script defer src="js/guide-hint.js?v=20261029-4"></script>
+<script defer src="js/riasec-engine.js?v=20261024-1"></script>
 <script defer src="js/account-sync.js?v=20261029-1"></script>
 </body>
 </html>

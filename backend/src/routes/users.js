@@ -28,6 +28,7 @@ router.put('/:id', authorize('users.update'), validate(userUpdateSchema), userCo
 // Gestion du compte
 router.post('/:id/activate', authorize('users.suspend'), userController.activateUser);
 router.post('/:id/deactivate', authorize('users.suspend'), userController.deactivateUser);
+router.post('/:id/membership', authorize('users.update'), validate(z.object({ body: z.object({ member: z.boolean() }) })), userController.setMembership);
 router.post('/:id/verify', authorize('users.verify'), userController.verifyUser);
 
 // Suppression définitive : action critique (double confirmation par mot de passe)

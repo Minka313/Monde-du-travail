@@ -3690,6 +3690,8 @@
                       ${can('users.suspend') ? (u.isActive
                         ? `<button class="btn btn-warning btn-sm" data-user-action="deactivate" data-user-id="${u.id}">Désactiver</button>`
                         : `<button class="btn btn-success btn-sm" data-user-action="activate" data-user-id="${u.id}">Activer</button>`) : ''}
+                      ${can('users.update') && u.role === 'VISITOR' ? `<button class="btn btn-success btn-sm" data-user-action="make-member" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" title="Accepter comme adhérent du club">✓ Passer adhérent</button>` : ''}
+                      ${can('users.update') && u.role === 'MEMBER' && u.id !== user.id ? `<button class="btn btn-outline-danger btn-sm" data-user-action="make-visitor" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}" title="Repasser en visiteur (perd l'accès à l'espace membres)">Repasser visiteur</button>` : ''}
                       ${can('users.verify') && !u.isVerified ? `<button class="btn btn-sm" data-user-action="verify" data-user-id="${u.id}">Vérifier</button>` : ''}
                       ${can('admins.assign') ? `<button class="btn btn-sm" data-user-action="roles" data-user-id="${u.id}" data-user-name="${escapeHtml(u.firstName + ' ' + u.lastName)}">Rôles</button>` : ''}
                       ${can('admins.assign') ? (
@@ -7419,6 +7421,23 @@
 
           if (action === 'roles') {
             openUserRolesModal(userId, userName);
+            return;
+          }
+
+          if (action === 'make-member' || action === 'make-visitor') {
+            const toMember = action === 'make-member';
+            if (!confirm(toMember
+              ? `Accepter ${userName} comme adhérent du club ? Elle ou il aura accès à l'espace réservé aux membres.`
+              : `Repasser ${userName} en visiteur ? Elle ou il perdra l'accès à l'espace réservé aux membres.`)) return;
+            btn.disabled = true;
+            try {
+              const res = await window.AdminApi.users.setMembership(userId, toMember);
+              showToast(res.message || 'Rôle modifié', toMember ? 'success' : 'warning');
+              loadPage('users');
+            } catch (error) {
+              showToast(error.message, 'error');
+              btn.disabled = false;
+            }
             return;
           }
 
