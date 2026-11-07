@@ -14,6 +14,8 @@ describe('Salon des membres', () => {
   const get = (url, who) => request(app).get(`/api/salon${url}`).set(as(who));
   const send = (method, url, who, body) => request(app)[method](`/api/salon${url}`).set(as(who)).send(body || {});
   let general; let annonces;
+  // Remet à zéro le délai anti-rafale entre deux tests
+  const calm = () => prisma.chatMessage.updateMany({ where: { createdAt: { gt: new Date(Date.now() - 20000) } }, data: { createdAt: new Date(Date.now() - 60000) } });
 
   beforeAll(async () => {
     await cleanupTestUsers(EMAILS);
@@ -32,6 +34,7 @@ describe('Salon des membres', () => {
 
   afterAll(async () => {
     await prisma.chatMessage.deleteMany({ where: { author: { email: { in: EMAILS } } } });
+    await prisma.notification.deleteMany({ where: { userId: { in: Object.values(users).map((u) => u.id) } } });
     await prisma.chatChannel.deleteMany({ where: { name: { startsWith: TAG } } });
     await cleanupTestUsers(EMAILS);
     await prisma.clubPosition.deleteMany({ where: { title: { startsWith: TAG } } });
@@ -124,6 +127,96 @@ describe('Salon des membres', () => {
     expect((await send('patch', `/channels/${created.body.data.id}`, 'pres', { isArchived: true })).status).toBe(200);
     expect((await get('/channels', 'membre')).body.data.channels.map((c) => c.id)).not.toContain(created.body.data.id);
     expect((await send('post', `/channels/${created.body.data.id}/messages`, 'membre', { body: 'Ici ?' })).status).toBe(400);
+  });
+
+  describe('Groupes privés, mentions, notifications et fichiers', () => {
+    let group;
+    const people = async (who, channelId) => (await get(`/channels/${channelId}/people`, who)).body.data;
+
+    it('crée un groupe privé avec les personnes choisies, invisible des autres', async () => {
+      expect((await send('post', '/channels', 'bureau', { name: `${TAG} Privé`, isPrivate: true, memberIds: [users.membre.id] })).status).toBe(403);
+      expect((await send('post', '/channels', 'pres', { name: `${TAG} Privé`, isPrivate: true, memberIds: [] })).status).toBe(400);
+      // Un visiteur n'est jamais admis, même choisi
+      const res = await send('post', '/channels', 'pres', { name: `${TAG} Privé`, isPrivate: true, memberIds: [users.membre.id, users.visiteur.id] });
+      expect(res.status).toBe(201);
+      group = res.body.data;
+      expect((await get(`/channels/${group.id}/members`, 'pres')).body.data.map((m) => m.name)).toEqual(['Moussa Diallo']);
+      const listFor = async (who) => (await get('/channels', who)).body.data.channels.find((c) => c.id === group.id);
+      expect(await listFor('membre')).toMatchObject({ isPrivate: true, memberCount: 1, canPost: true });
+      expect(await listFor('autre')).toBeUndefined();
+      expect(await listFor('bureau')).toBeUndefined();
+      expect(await listFor('pres')).toBeTruthy();
+    });
+
+    it('rend le groupe introuvable à qui n\'en fait pas partie', async () => {
+      expect((await get(`/channels/${group.id}/messages`, 'autre')).status).toBe(404);
+      expect((await send('post', `/channels/${group.id}/messages`, 'autre', { body: 'Coucou' })).status).toBe(404);
+      expect((await get(`/channels/${group.id}/people`, 'autre')).status).toBe(404);
+      expect((await send('post', `/channels/${group.id}/messages`, 'membre', { body: 'Entre nous' })).status).toBe(201);
+      expect((await get(`/channels/${group.id}/messages`, 'pres')).body.data.messages.map((m) => m.body)).toContain('Entre nous');
+    });
+
+    it('permet à la Présidence d\'ajouter puis de retirer des membres', async () => {
+      expect((await send('put', `/channels/${group.id}/members`, 'bureau', { userIds: [users.autre.id] })).status).toBe(403);
+      expect((await send('put', `/channels/${group.id}/members`, 'pres', { userIds: [] })).status).toBe(400);
+      const added = await send('put', `/channels/${group.id}/members`, 'pres', { userIds: [users.membre.id, users.autre.id] });
+      expect(added.body.data.map((m) => m.name).sort()).toEqual(['Ibrahima Sow', 'Moussa Diallo']);
+      expect((await get(`/channels/${group.id}/messages`, 'autre')).status).toBe(200);
+      await send('put', `/channels/${group.id}/members`, 'pres', { userIds: [users.membre.id] });
+      expect((await get(`/channels/${group.id}/messages`, 'autre')).status).toBe(404);
+    });
+
+    it('propose les adhérents à la Présidence seulement', async () => {
+      expect((await get('/candidates', 'membre')).status).toBe(403);
+      const names = (await get('/candidates?search=sow', 'pres')).body.data.map((c) => c.name);
+      expect(names).toEqual(['Ibrahima Sow']);
+      expect((await get('/candidates', 'pres')).body.data.map((c) => c.id)).not.toContain(users.visiteur.id);
+    });
+
+    it('limite les mentions aux personnes qui ont accès au salon, et prévient les personnes mentionnées ou citées', async () => {
+      const ids = (await people('membre', general.id)).map((p) => p.id);
+      expect(ids).toContain(users.autre.id);
+      expect(ids).not.toContain(users.visiteur.id);
+      expect(ids).not.toContain(users.membre.id);
+      // Dans le groupe privé : seuls les membres (et la Présidence) sont proposés
+      const inGroup = (await people('membre', group.id)).map((p) => p.id);
+      expect(inGroup).not.toContain(users.autre.id);
+      expect(inGroup).toContain(users.pres.id);
+
+      await prisma.notification.deleteMany({ where: { userId: { in: [users.autre.id, users.pres.id] } } });
+      await calm();
+      const target = (await send('post', `/channels/${general.id}/messages`, 'pres', { body: 'Question pour le club' })).body.data;
+      const res = await send('post', `/channels/${general.id}/messages`, 'membre', {
+        body: '@Ibrahima Sow tu peux regarder ça ?', replyToId: target.id, mentionIds: [users.autre.id, users.visiteur.id, users.membre.id],
+      });
+      expect(res.status).toBe(201);
+      expect(res.body.data.mentions).toEqual([{ id: users.autre.id, name: 'Ibrahima Sow' }]);
+      const forAutre = await prisma.notification.findMany({ where: { userId: users.autre.id } });
+      expect(forAutre.map((n) => n.title)).toEqual([expect.stringContaining('t\'a mentionné')]);
+      expect(forAutre[0].url).toContain('salon.html?salon=general');
+      const forPres = await prisma.notification.findMany({ where: { userId: users.pres.id } });
+      expect(forPres.map((n) => n.title)).toEqual([expect.stringContaining('a répondu à ton message')]);
+      expect(await prisma.notification.count({ where: { userId: users.visiteur.id } })).toBe(0);
+    });
+
+    it('accepte des fichiers joints du stockage du club seulement', async () => {
+      const r2 = require('../src/services/r2StorageService');
+      const good = { url: `${r2.publicDomain}/salon/photo.png`, name: 'photo.png', mimeType: 'image/png', size: 1200 };
+      await calm();
+      const ok = await send('post', `/channels/${general.id}/messages`, 'membre', { body: '', attachments: [good] });
+      expect(ok.status).toBe(201);
+      expect(ok.body.data.attachments).toEqual([good]);
+      expect((await send('post', `/channels/${general.id}/messages`, 'membre', { body: 'x', attachments: [{ ...good, url: 'https://evil.example/x.png' }] })).status).toBe(400);
+      expect((await send('post', `/channels/${general.id}/messages`, 'membre', { body: 'x', attachments: [{ ...good, mimeType: 'text/html' }] })).status).toBe(400);
+      expect((await send('post', `/channels/${general.id}/messages`, 'membre', { body: '', attachments: [] })).status).toBe(400);
+    });
+
+    it('refuse un téléversement de visiteur ou d\'un format non autorisé', async () => {
+      const png = Buffer.from('89504e470d0a1a0a', 'hex');
+      const up = (who, name, type) => request(app).post('/api/salon/upload').set(as(who)).attach('file', png, { filename: name, contentType: type });
+      expect((await up('visiteur', 'a.png', 'image/png')).status).toBe(403);
+      expect((await up('membre', 'a.html', 'text/html')).status).toBe(400);
+    });
   });
 
   describe('Passer visiteur <-> adhérent', () => {

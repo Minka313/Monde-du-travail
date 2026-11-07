@@ -359,32 +359,52 @@ model ChatChannel {
   icon          String        @default("💬")
   // true : seuls le bureau et les administrateurs écrivent (salon d'annonces)
   staffOnlyPost Boolean       @default(false)
+  // true : groupe privé, visible et lisible uniquement par les personnes choisies par la Présidence (ChatMember)
+  isPrivate     Boolean       @default(false)
   position      Int           @default(0)
   isArchived    Boolean       @default(false)
   createdAt     DateTime      @default(now())
   messages      ChatMessage[]
   reads         ChatRead[]
+  members       ChatMember[]
 
   @@map("chat_channels")
 }
 
 model ChatMessage {
-  id        String        @id @default(cuid())
-  channelId String
-  authorId  String
-  body      String
-  replyToId String?
-  createdAt DateTime      @default(now())
-  editedAt  DateTime?
-  deletedAt DateTime?
-  channel   ChatChannel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
-  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  replyTo   ChatMessage?  @relation("ChatReplies", fields: [replyToId], references: [id], onDelete: SetNull)
-  replies   ChatMessage[] @relation("ChatReplies")
+  id          String        @id @default(cuid())
+  channelId   String
+  authorId    String
+  body        String
+  replyToId   String?
+  // Personnes mentionnées (@) et fichiers joints [{ url, name, mimeType, size }]
+  mentions    String[]      @default([])
+  attachments Json?
+  createdAt   DateTime      @default(now())
+  editedAt    DateTime?
+  deletedAt   DateTime?
+  channel     ChatChannel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  author      User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replyTo     ChatMessage?  @relation("ChatReplies", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies     ChatMessage[] @relation("ChatReplies")
 
   @@index([channelId, createdAt])
   @@index([authorId])
   @@map("chat_messages")
+}
+
+// Personnes admises dans un groupe privé du salon
+model ChatMember {
+  id        String      @id @default(cuid())
+  channelId String
+  userId    String
+  addedAt   DateTime    @default(now())
+  channel   ChatChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([channelId, userId])
+  @@index([userId])
+  @@map("chat_members")
 }
 
 // Dernier passage d'un adhérent dans un salon (messages non lus)
@@ -559,6 +579,7 @@ model User {
   savedData              UserSavedData[]
   chatMessages           ChatMessage[]
   chatReads              ChatRead[]
+  chatMemberships        ChatMember[]
   topics                 Topic[]
   assignedRoles          UserAdminRole[]         @relation("AdminRoleAssignment")
   reviewedAdminRoles     UserAdminRole[]         @relation("AdminRoleReviewer")

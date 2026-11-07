@@ -93,6 +93,7 @@ app.use('/api/', limiter);
 // Les rapports du bureau (tableaux de trésorerie, PV) dépassent la limite générale
 app.use('/api/reports', express.json({ limit: '300kb' }));
 app.use('/api/mentoring', express.json({ limit: '300kb' }));
+app.use('/api/salon', express.json({ limit: '60kb' }));
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());

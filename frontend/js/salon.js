@@ -33,7 +33,7 @@
   function mount(root) {
     const api = (path, options) => window.Api.request(`/salon${path}`, options);
     const json = (method, body) => ({ method, body: JSON.stringify(body || {}) });
-    const state = { channels: [], isStaff: false, isPresident: false, current: null, messages: [], cursor: null, hasMore: false, replyTo: null, editing: null, sending: false, pollTimer: null, listTimer: null, stick: true };
+    const state = { channels: [], isStaff: false, isPresident: false, current: null, messages: [], cursor: null, hasMore: false, replyTo: null, editing: null, sending: false, meId: null, people: [], mentionMap: new Map(), files: [], uploading: 0, pollTimer: null, listTimer: null, stick: true };
 
     function toast(message, type) {
       const el = document.createElement('div');
@@ -47,23 +47,18 @@
 
     // ===== Accès =====
 
-    function locked(user) {
-      root.innerHTML = `<div class="sl-locked">
-        <div class="sl-locked-icon">🔒</div>
-        <h2>Le salon est réservé aux adhérents</h2>
-        <p>${user ? `Bonjour ${esc(user.firstName || '')}, ton compte est celui d'un visiteur.` : ''} Dès que la Présidence aura accepté ta demande, tu pourras discuter avec les autres membres du club.</p>
-        <a class="btn btn-primary" href="profile.html">Faire ma demande d'adhésion</a>
-      </div>`;
-    }
+    // Le salon n'existe que pour les adhérents : les autres sont renvoyés vers leur espace sans explication
+    const leave = () => { window.location.replace('profile.html'); };
 
     async function start() {
       let user = null;
       try { user = (await window.Api.auth.me()).data; } catch (error) {
         if (error.status === 401) { window.location.href = `login.html?redirect=${encodeURIComponent('salon.html')}`; return; }
       }
-      if (user && user.role === 'VISITOR' && !(user.adminRoles || []).length) { locked(user); return; }
+      state.meId = user?.id || null;
+      if (user && user.role === 'VISITOR' && !(user.adminRoles || []).length) { leave(); return; }
       try { await loadChannels(); } catch (error) {
-        if (error.status === 403) { locked(user); return; }
+        if (error.status === 403) { leave(); return; }
         root.innerHTML = `<p class="sl-error">${esc(error.message || 'Salon momentanément indisponible')}</p>`;
         return;
       }
@@ -117,7 +112,7 @@
       if (!box) return;
       box.innerHTML = state.channels.map((c) => `<button type="button" class="sl-channel${state.current?.id === c.id ? ' is-active' : ''}" data-id="${esc(c.id)}">
         <span class="sl-ch-icon" aria-hidden="true">${esc(c.icon)}</span>
-        <span class="sl-ch-name">${esc(c.name)}</span>
+        <span class="sl-ch-name">${esc(c.name)}</span>${c.isPrivate ? '<span class="sl-lock" title="Groupe privé" aria-label="Groupe privé">🔒</span>' : ''}
         ${c.unread ? `<span class="sl-badge" aria-label="${c.unread} non lus">${c.unread > 99 ? '99+' : c.unread}</span>` : ''}
       </button>`).join('');
       box.querySelectorAll('[data-id]').forEach((b) => b.addEventListener('click', () => openChannel(b.dataset.id)));
@@ -125,17 +120,100 @@
       document.title = `${total ? `(${total}) ` : ''}Salon des membres — Le Monde du Travail`;
     }
 
+    // ----- Fenêtres (création de salon, membres d'un groupe privé) -----
+    function modal(html, label) {
+      document.getElementById('slModal')?.remove();
+      const overlay = document.createElement('div');
+      overlay.className = 'sl-overlay';
+      overlay.id = 'slModal';
+      overlay.innerHTML = `<div class="sl-modal" role="dialog" aria-modal="true" aria-label="${esc(label)}"><button type="button" class="sl-modal-close" data-close aria-label="Fermer">&times;</button>${html}</div>`;
+      document.body.appendChild(overlay);
+      overlay.addEventListener('click', (e) => { if (e.target === overlay || e.target.closest('[data-close]')) overlay.remove(); });
+      return overlay;
+    }
+
+    // Liste cochable d'adhérents avec recherche ; renvoie un objet pour lire la sélection
+    function picker(box, candidates, selected) {
+      const chosen = new Set(selected);
+      box.innerHTML = `<input type="search" class="sl-search" placeholder="Rechercher un adhérent…" aria-label="Rechercher un adhérent"><div class="sl-pick-count"></div><div class="sl-pick-list"></div>`;
+      const list = box.querySelector('.sl-pick-list');
+      const count = box.querySelector('.sl-pick-count');
+      const draw = () => {
+        const term = box.querySelector('.sl-search').value.trim().toLowerCase();
+        const rows = candidates.filter((c) => !term || c.name.toLowerCase().includes(term));
+        list.innerHTML = rows.length ? rows.map((c) => `<label class="sl-pick"><input type="checkbox" value="${esc(c.id)}" ${chosen.has(c.id) ? 'checked' : ''}><span class="sl-avatar" style="--h:${hue(c.name)}">${esc(initials(c.name))}</span><span>${esc(c.name)}</span></label>`).join('') : '<p class="sl-hint">Aucun adhérent trouvé.</p>';
+        count.textContent = `${chosen.size} personne${chosen.size > 1 ? 's' : ''} choisie${chosen.size > 1 ? 's' : ''}`;
+      };
+      list.addEventListener('change', (e) => { if (e.target.matches('input[type=checkbox]')) { e.target.checked ? chosen.add(e.target.value) : chosen.delete(e.target.value); draw(); } });
+      box.querySelector('.sl-search').addEventListener('input', draw);
+      draw();
+      return { ids: () => [...chosen] };
+    }
+
     async function createChannel() {
-      const name = prompt('Nom du nouveau salon :');
-      if (!name || !name.trim()) return;
-      const staffOnlyPost = confirm('Réserver ce salon au bureau (annonces) ?\n\nOK = seul le bureau écrit · Annuler = tous les adhérents écrivent');
+      let candidates = [];
+      try { candidates = (await api('/candidates')).data; } catch (error) { toast(error.message, 'error'); return; }
+      const overlay = modal(`<h3>Nouveau salon</h3>
+        <form id="slCreate" class="sl-create">
+          <label>Nom du salon<input name="name" maxlength="60" required placeholder="Ex. : Équipe Agrinova"></label>
+          <label>Description <small>(facultatif)</small><input name="description" maxlength="200" placeholder="À quoi sert ce salon ?"></label>
+          <fieldset class="sl-kinds">
+            <legend>Qui peut y accéder ?</legend>
+            <label class="sl-kind"><input type="radio" name="kind" value="open" checked><span><strong>Tous les adhérents</strong><small>Tout le monde lit et écrit.</small></span></label>
+            <label class="sl-kind"><input type="radio" name="kind" value="news"><span><strong>Annonces du bureau</strong><small>Tous lisent, seul le bureau écrit.</small></span></label>
+            <label class="sl-kind"><input type="radio" name="kind" value="private"><span><strong>🔒 Groupe privé</strong><small>Invisible pour les autres : seules les personnes que tu choisis y accèdent.</small></span></label>
+          </fieldset>
+          <div id="slPickBox" hidden></div>
+          <div class="sl-modal-actions"><button type="button" class="btn btn-outline" data-close>Annuler</button><button type="submit" class="btn btn-primary">Créer le salon</button></div>
+        </form>`, 'Nouveau salon');
+      const form = overlay.querySelector('#slCreate');
+      const pickBox = overlay.querySelector('#slPickBox');
+      const pick = picker(pickBox, candidates, []);
+      form.addEventListener('change', (e) => { if (e.target.name === 'kind') pickBox.hidden = e.target.value !== 'private'; });
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const f = new FormData(form);
+        const kind = f.get('kind');
+        const payload = { name: String(f.get('name')).trim(), isPrivate: kind === 'private', staffOnlyPost: kind === 'news' };
+        if (String(f.get('description')).trim()) payload.description = String(f.get('description')).trim();
+        if (kind === 'private') {
+          payload.memberIds = pick.ids();
+          if (!payload.memberIds.length) { toast('Choisis au moins une personne pour le groupe privé', 'error'); return; }
+        }
+        try {
+          const { data } = await api('/channels', json('POST', payload));
+          overlay.remove();
+          await loadChannels();
+          renderChannels();
+          await openChannel(data.id);
+          toast(kind === 'private' ? 'Groupe privé créé' : 'Salon créé');
+        } catch (error) { toast(error.message, 'error'); }
+      });
+    }
+
+    async function editMembers() {
+      const channel = state.current;
+      let candidates = []; let current = [];
       try {
-        const { data } = await api('/channels', json('POST', { name: name.trim(), staffOnlyPost }));
-        await loadChannels();
-        renderChannels();
-        await openChannel(data.id);
-        toast('Salon créé');
-      } catch (error) { toast(error.message, 'error'); }
+        [candidates, current] = await Promise.all([api('/candidates').then((r) => r.data), api(`/channels/${encodeURIComponent(channel.id)}/members`).then((r) => r.data)]);
+      } catch (error) { toast(error.message, 'error'); return; }
+      // Les membres déjà dans le groupe restent proposés même s'ils ne sont plus dans la liste (ex. compte désactivé)
+      const known = new Set(candidates.map((c) => c.id));
+      current.forEach((m) => { if (!known.has(m.id)) candidates.push(m); });
+      const overlay = modal(`<h3>Membres de « ${esc(channel.name)} »</h3><p class="sl-hint">Coche les personnes qui ont accès à ce groupe. Celles que tu retires ne le voient plus ; leurs messages restent.</p><div id="slPickBox"></div><div class="sl-modal-actions"><button type="button" class="btn btn-outline" data-close>Annuler</button><button type="button" class="btn btn-primary" id="slSaveMembers">Enregistrer</button></div>`, 'Membres du groupe');
+      const pick = picker(overlay.querySelector('#slPickBox'), candidates, current.map((m) => m.id));
+      overlay.querySelector('#slSaveMembers').addEventListener('click', async () => {
+        const ids = pick.ids();
+        if (!ids.length) { toast('Un groupe privé garde au moins une personne', 'error'); return; }
+        try {
+          await api(`/channels/${encodeURIComponent(channel.id)}/members`, json('PUT', { userIds: ids }));
+          overlay.remove();
+          await refreshChannels();
+          state.current = state.channels.find((c) => c.id === channel.id) || state.current;
+          renderHead();
+          toast('Membres mis à jour');
+        } catch (error) { toast(error.message, 'error'); }
+      });
     }
 
     // ===== Salon ouvert =====
@@ -150,8 +228,12 @@
       state.replyTo = null;
       state.editing = null;
       state.stick = true;
+      state.people = [];
+      state.mentionMap = new Map();
+      state.files = [];
+      api(`/channels/${encodeURIComponent(id)}/people`).then((r) => { if (state.current?.id === id) state.people = r.data; }).catch(() => {});
       safeStore.set(LAST_KEY, channel.slug);
-      root.querySelector('#slHead').innerHTML = `<span class="sl-head-icon">${esc(channel.icon)}</span><div><h2>${esc(channel.name)}</h2>${channel.description ? `<p>${esc(channel.description)}</p>` : ''}</div>${channel.staffOnlyPost ? '<span class="sl-pill">Annonces du bureau</span>' : ''}`;
+      renderHead();
       renderChannels();
       renderComposer();
       root.querySelector('#slScroll').innerHTML = '<p class="sl-loading">Chargement des messages…</p>';
@@ -167,6 +249,15 @@
         root.querySelector('#slScroll').innerHTML = `<p class="sl-error">${esc(error.message || 'Messages indisponibles')}</p>`;
       }
       schedulePoll();
+    }
+
+    function renderHead() {
+      const c = state.current;
+      root.querySelector('#slHead').innerHTML = `<span class="sl-head-icon">${esc(c.icon)}</span><div><h2>${esc(c.name)}</h2>${c.description ? `<p>${esc(c.description)}</p>` : ''}</div>
+        ${c.isPrivate ? `<span class="sl-pill">🔒 Groupe privé · ${c.memberCount} membre${c.memberCount > 1 ? 's' : ''}</span>` : ''}
+        ${c.staffOnlyPost ? '<span class="sl-pill">Annonces du bureau</span>' : ''}
+        ${c.isPrivate && state.isPresident ? '<button type="button" class="sl-members-btn" id="slMembers">👥 Gérer les membres</button>' : ''}`;
+      root.querySelector('#slMembers')?.addEventListener('click', editMembers);
     }
 
     function schedulePoll() {
@@ -219,6 +310,24 @@
 
     // ===== Messages =====
 
+    // Texte du message : liens cliquables, @mentions en relief (celles qui me concernent plus marquées)
+    function textHtml(m) {
+      let html = linkify(m.body);
+      (m.mentions || []).forEach((p) => {
+        const name = esc(`@${p.name}`);
+        html = html.split(name).join(`<span class="sl-mention${p.id === state.meId ? ' is-me' : ''}">${name}</span>`);
+      });
+      return html;
+    }
+
+    const sizeLabel = (n) => (n >= 1048576 ? `${(n / 1048576).toFixed(1)} Mo` : `${Math.max(1, Math.round(n / 1024))} Ko`);
+    function attachmentsHtml(m) {
+      if (!m.attachments?.length) return '';
+      return `<div class="sl-files">${m.attachments.map((a) => (a.mimeType.startsWith('image/')
+        ? `<a class="sl-img" href="${esc(a.url)}" target="_blank" rel="noopener noreferrer"><img src="${esc(a.url)}" alt="${esc(a.name)}" loading="lazy"></a>`
+        : `<a class="sl-file" href="${esc(a.url)}" target="_blank" rel="noopener noreferrer"><span>📄</span><span><strong>${esc(a.name)}</strong><small>${sizeLabel(a.size || 0)}</small></span></a>`)).join('')}</div>`;
+    }
+
     function messageHtml(m, grouped) {
       const date = new Date(m.createdAt);
       if (m.deleted) return `<div class="sl-msg sl-msg-deleted${grouped ? ' is-grouped' : ''}" data-id="${esc(m.id)}"><span class="sl-avatar sl-avatar-ghost"></span><div class="sl-bubble"><em>Message supprimé</em></div></div>`;
@@ -233,7 +342,7 @@
         m.canDelete ? `<button type="button" data-act="delete" title="Supprimer">🗑</button>` : '',
       ].join('');
       return `<div class="sl-msg${m.mine ? ' is-mine' : ''}${grouped ? ' is-grouped' : ''}" data-id="${esc(m.id)}">${avatar}
-        <div class="sl-bubble">${head}${reply}<div class="sl-text">${linkify(m.body)}${m.editedAt ? ' <span class="sl-edited">(modifié)</span>' : ''}</div>
+        <div class="sl-bubble">${head}${reply}${m.body ? `<div class="sl-text">${textHtml(m)}${m.editedAt ? ' <span class="sl-edited">(modifié)</span>' : ''}</div>` : ''}${attachmentsHtml(m)}
         ${actions ? `<div class="sl-actions">${actions}</div>` : ''}</div></div>`;
     }
 
@@ -306,36 +415,115 @@
         return;
       }
       const draft = box.querySelector('#slInput')?.value || '';
-      box.innerHTML = `${state.replyTo ? `<div class="sl-replying"><span>↩ Réponse à <strong>${esc(state.replyTo.author.name)}</strong> : ${esc(state.replyTo.body.slice(0, 90))}</span><button type="button" id="slCancelReply" aria-label="Annuler la réponse">&times;</button></div>` : ''}
+      box.innerHTML = `${state.replyTo ? `<div class="sl-replying"><span>↩ Réponse à <strong>${esc(state.replyTo.author.name)}</strong> : ${esc((state.replyTo.body || 'Fichier').slice(0, 90))}</span><button type="button" id="slCancelReply" aria-label="Annuler la réponse">&times;</button></div>` : ''}
+        <div class="sl-pending" id="slPending"></div>
+        <div class="sl-mention-box" id="slMentionBox" hidden role="listbox" aria-label="Mentionner un adhérent"></div>
         <form class="sl-form" id="slForm">
           <label class="sl-sr" for="slInput">Ton message</label>
+          <button type="button" class="sl-attach" id="slAttach" title="Joindre une image ou un PDF (5 Mo max)" aria-label="Joindre un fichier">📎</button>
+          <input type="file" id="slFile" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" multiple hidden>
           <textarea id="slInput" rows="1" maxlength="2000" placeholder="Écris un message pour ${esc(state.current.name)}…" autocomplete="off"></textarea>
           <button type="submit" class="sl-send" id="slSend" aria-label="Envoyer">Envoyer</button>
         </form>
-        <p class="sl-tip">Entrée pour envoyer · Maj + Entrée pour aller à la ligne. Reste respectueux : le bureau peut retirer un message.</p>`;
+        <p class="sl-tip">Entrée pour envoyer · Maj + Entrée pour aller à la ligne · @ pour mentionner quelqu'un. Reste respectueux : le bureau peut retirer un message.</p>`;
       const input = box.querySelector('#slInput');
       input.value = draft;
       const grow = () => { input.style.height = 'auto'; input.style.height = `${Math.min(input.scrollHeight, 160)}px`; };
-      input.addEventListener('input', grow);
+      input.addEventListener('input', () => { grow(); suggestMentions(); });
       input.addEventListener('keydown', (e) => {
+        const open = !box.querySelector('#slMentionBox').hidden;
+        if (open && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) { e.preventDefault(); moveMention(e.key === 'ArrowDown' ? 1 : -1); return; }
+        if (open && (e.key === 'Enter' || e.key === 'Tab')) { e.preventDefault(); pickMention(); return; }
+        if (open && e.key === 'Escape') { box.querySelector('#slMentionBox').hidden = true; return; }
         if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); box.querySelector('#slForm').requestSubmit(); }
       });
       box.querySelector('#slCancelReply')?.addEventListener('click', () => { state.replyTo = null; renderComposer(); });
       box.querySelector('#slForm').addEventListener('submit', send);
+      box.querySelector('#slAttach').addEventListener('click', () => box.querySelector('#slFile').click());
+      box.querySelector('#slFile').addEventListener('change', (e) => { uploadFiles([...e.target.files]); e.target.value = ''; });
+      renderPending();
       grow();
+    }
+
+    // ----- Fichiers joints -----
+    const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
+    function renderPending() {
+      const el = root.querySelector('#slPending');
+      if (!el) return;
+      el.innerHTML = state.files.map((f, i) => `<span class="sl-chip">${f.mimeType.startsWith('image/') ? '🖼️' : '📄'} ${esc(f.name)} <button type="button" data-rm="${i}" aria-label="Retirer ${esc(f.name)}">&times;</button></span>`).join('')
+        + (state.uploading ? '<span class="sl-chip sl-chip-wait">Envoi du fichier…</span>' : '');
+      el.querySelectorAll('[data-rm]').forEach((b) => b.addEventListener('click', () => { state.files.splice(Number(b.dataset.rm), 1); renderPending(); }));
+    }
+
+    async function uploadFiles(files) {
+      for (const file of files) {
+        if (state.files.length + state.uploading >= 4) { toast('4 fichiers maximum par message', 'error'); break; }
+        if (!ALLOWED.includes(file.type)) { toast(`« ${file.name} » : seuls les images (JPEG, PNG, WebP, GIF) et les PDF sont acceptés`, 'error'); continue; }
+        if (file.size > 5 * 1024 * 1024) { toast(`« ${file.name} » dépasse 5 Mo`, 'error'); continue; }
+        state.uploading += 1;
+        renderPending();
+        try {
+          const form = new FormData();
+          form.append('file', file);
+          const { data } = await api('/upload', { method: 'POST', body: form });
+          state.files.push(data);
+        } catch (error) { toast(error.message || 'Fichier non envoyé', 'error'); }
+        state.uploading -= 1;
+        renderPending();
+      }
+    }
+
+    // ----- Mentions (@) -----
+    let mentionIndex = 0;
+    let mentionMatches = [];
+    function suggestMentions() {
+      const input = root.querySelector('#slInput');
+      const box = root.querySelector('#slMentionBox');
+      if (!input || !box) return;
+      const before = input.value.slice(0, input.selectionStart);
+      const match = before.match(/(?:^|\s)@([^\s@]{0,30})$/);
+      if (!match) { box.hidden = true; return; }
+      const term = match[1].toLowerCase();
+      mentionMatches = state.people.filter((p) => p.name.toLowerCase().includes(term)).slice(0, 6);
+      if (!mentionMatches.length) { box.hidden = true; return; }
+      mentionIndex = 0;
+      box.hidden = false;
+      box.innerHTML = mentionMatches.map((p, i) => `<button type="button" role="option" class="sl-mention-item${i === 0 ? ' is-on' : ''}" data-i="${i}"><span class="sl-avatar" style="--h:${hue(p.name)}">${esc(initials(p.name))}</span>${esc(p.name)}</button>`).join('');
+      box.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('mousedown', (e) => { e.preventDefault(); mentionIndex = Number(b.dataset.i); pickMention(); }));
+    }
+    function moveMention(step) {
+      mentionIndex = (mentionIndex + step + mentionMatches.length) % mentionMatches.length;
+      root.querySelectorAll('.sl-mention-item').forEach((el, i) => el.classList.toggle('is-on', i === mentionIndex));
+    }
+    function pickMention() {
+      const person = mentionMatches[mentionIndex];
+      const input = root.querySelector('#slInput');
+      if (!person || !input) return;
+      const pos = input.selectionStart;
+      const before = input.value.slice(0, pos).replace(/@[^\s@]{0,30}$/, `@${person.name} `);
+      input.value = before + input.value.slice(pos);
+      input.setSelectionRange(before.length, before.length);
+      state.mentionMap.set(person.name, person.id);
+      root.querySelector('#slMentionBox').hidden = true;
+      input.focus({ preventScroll: true });
     }
 
     async function send(event) {
       event.preventDefault();
       if (state.sending) return;
+      if (state.uploading) { toast('Patiente : un fichier est en cours d\'envoi', 'error'); return; }
       const input = root.querySelector('#slInput');
       const body = input.value.trim();
-      if (!body) return;
+      if (!body && !state.files.length) return;
+      // Seules les personnes dont le @nom est encore dans le texte sont mentionnées
+      const mentionIds = [...state.mentionMap].filter(([name]) => body.includes(`@${name}`)).map(([, id]) => id);
       state.sending = true;
       root.querySelector('#slSend').disabled = true;
       try {
-        const { data } = await api(`/channels/${encodeURIComponent(state.current.id)}/messages`, json('POST', { body, replyToId: state.replyTo?.id || null }));
+        const { data } = await api(`/channels/${encodeURIComponent(state.current.id)}/messages`, json('POST', { body, replyToId: state.replyTo?.id || null, mentionIds, attachments: state.files }));
         state.replyTo = null;
+        state.files = [];
+        state.mentionMap = new Map();
         state.stick = true;
         input.value = '';
         mergeMessages([data]);
