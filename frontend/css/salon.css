@@ -157,3 +157,9 @@
 .sl-mention-item { display: flex; align-items: center; gap: .6rem; padding: .4rem .6rem; border: 0; border-radius: 8px; background: transparent; color: var(--sl-text); font: inherit; font-size: .9rem; text-align: left; cursor: pointer; }
 .sl-mention-item.is-on, .sl-mention-item:hover { background: rgba(245, 166, 35, .2); }
 .sl-mention-item .sl-avatar { width: 1.7rem; height: 1.7rem; font-size: .65rem; }
+
+.sl-bell { margin-left: auto; padding: .4rem .8rem; border: 1px solid var(--sl-border); border-radius: 10px; background: var(--sl-surface); color: var(--sl-text); font: inherit; font-size: .82rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.sl-bell.is-muted { color: var(--sl-muted); background: var(--sl-soft); }
+.sl-pill ~ .sl-bell, .sl-head > div ~ .sl-bell { margin-left: auto; }
+.sl-bell + .sl-members-btn { margin-left: .5rem; }
+.sl-pill + .sl-bell { margin-left: .5rem; }

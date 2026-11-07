@@ -413,6 +413,8 @@ model ChatRead {
   userId     String
   channelId  String
   lastReadAt DateTime    @default(now())
+  // true : plus de notification pour ce salon (les mentions et réponses restent signalées)
+  muted      Boolean     @default(false)
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   channel    ChatChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
 

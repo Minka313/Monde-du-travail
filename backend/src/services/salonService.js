@@ -154,6 +154,7 @@ class SalonService {
     });
     const reads = await prisma.chatRead.findMany({ where: { userId: user.id } });
     const lastRead = new Map(reads.map((r) => [r.channelId, r.lastReadAt]));
+    const mutedSet = new Set(reads.filter((r) => r.muted).map((r) => r.channelId));
     const viewerStaff = (await staffIds([user.id])).has(user.id);
     const rows = await Promise.all(channels.map(async (c) => {
       // Un salon jamais ouvert n'affiche pas tout son historique comme « non lu »
@@ -165,7 +166,7 @@ class SalonService {
       return {
         id: c.id, slug: c.slug, name: c.name, icon: c.icon, description: c.description,
         staffOnlyPost: c.staffOnlyPost, isPrivate: c.isPrivate, memberCount: c.isPrivate ? c._count.members : null,
-        canPost: !c.staffOnlyPost || viewerStaff,
+        canPost: !c.staffOnlyPost || viewerStaff, muted: mutedSet.has(c.id),
         unread, lastMessageAt: last?.createdAt || null,
       };
     }));
@@ -252,6 +253,27 @@ class SalonService {
         dedupeKey: `salon:${message.id}:${userId}`,
       }));
       await Promise.allSettled(jobs);
+
+      // Tous les autres membres du salon : une seule alerte par salon dans la cloche (remise à jour à chaque
+      // message), et une notification poussée par message. Les salons en sourdine sont ignorés.
+      const [people, muted] = await Promise.all([
+        peopleOf(channel),
+        prisma.chatRead.findMany({ where: { channelId: channel.id, muted: true }, select: { userId: true } }),
+      ]);
+      const mutedIds = new Set(muted.map((m) => m.userId));
+      const recipients = people.map((p) => p.id).filter((id) => id !== user.id && !targets.has(id) && !mutedIds.has(id));
+      const text = `${author} : ${excerpt}`;
+      const title = `💬 ${channel.isPrivate ? 'Groupe' : 'Salon'} « ${channel.name} »`;
+      for (let i = 0; i < recipients.length; i += 25) {
+        await Promise.allSettled(recipients.slice(i, i + 25).map(async (userId) => {
+          const key = `salon-chan:${channel.id}:${userId}`;
+          const data = { title, message: text, url, isRead: false, readAt: null, createdAt: new Date() };
+          const notification = await prisma.notification.upsert({
+            where: { dedupeKey: key }, update: data, create: { userId, type: 'SYSTEM', dedupeKey: key, ...data },
+          });
+          await notificationService.sendPushNotification({ userId, notification }).catch(() => {});
+        }));
+      }
     } catch (error) {
       logger.warn(`[Salon] notification non envoyée : ${error.message}`);
     }
@@ -306,7 +328,22 @@ class SalonService {
       update: { lastReadAt: new Date() },
       create: { userId: user.id, channelId },
     });
+    await prisma.notification.updateMany({
+      where: { userId: user.id, dedupeKey: `salon-chan:${channelId}:${user.id}`, isRead: false },
+      data: { isRead: true, readAt: new Date() },
+    }).catch(() => {});
     return { ok: true };
+  }
+
+  static async setMuted(user, channelId, muted) {
+    await requireAdherent(user);
+    await getChannel(channelId, user);
+    await prisma.chatRead.upsert({
+      where: { userId_channelId: { userId: user.id, channelId } },
+      update: { muted: Boolean(muted) },
+      create: { userId: user.id, channelId, muted: Boolean(muted) },
+    });
+    return { muted: Boolean(muted) };
   }
 
   /** Total de messages non lus (pastille du menu) */

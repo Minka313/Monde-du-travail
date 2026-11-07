@@ -11,7 +11,7 @@ const Salon = require('../services/salonService');
 const { BadRequestError } = require('../utils/errors');
 
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024, files: 1 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 4 * 1024 * 1024, files: 1 } });
 router.use(authenticate);
 
 const wrap = (fn, status = 200) => async (req, res, next) => {
@@ -27,7 +27,7 @@ router.get('/unread', wrap((req) => Salon.unreadTotal(req.user)));
 router.get('/channels', wrap((req) => Salon.listChannels(req.user)));
 router.post('/upload', (req, res, next) => {
   upload.single('file')(req, res, (err) => {
-    if (err) return next(err.code === 'LIMIT_FILE_SIZE' ? new BadRequestError('Fichier trop lourd (5 Mo maximum)') : err);
+    if (err) return next(err.code === 'LIMIT_FILE_SIZE' ? new BadRequestError('Fichier trop lourd (4 Mo maximum)') : err);
     next();
   });
 }, wrap((req) => Salon.upload(req.user, req.file), 201));
@@ -60,6 +60,7 @@ router.post('/channels/:id/messages', bodySchema({
     url: z.string().max(1000), name: z.string().max(200), mimeType: z.string().max(100), size: z.number().optional(),
   }).strict()).max(4).optional(),
 }), wrap((req) => Salon.post(req.user, req.params.id, req.body), 201));
+router.post('/channels/:id/mute', bodySchema({ muted: z.boolean() }), wrap((req) => Salon.setMuted(req.user, req.params.id, req.body.muted)));
 router.post('/channels/:id/read', wrap((req) => Salon.markRead(req.user, req.params.id)));
 
 router.patch('/messages/:id', bodySchema({ body: z.string().max(5000) }), wrap((req) => Salon.edit(req.user, req.params.id, req.body.body)));

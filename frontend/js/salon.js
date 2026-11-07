@@ -256,8 +256,20 @@
       root.querySelector('#slHead').innerHTML = `<span class="sl-head-icon">${esc(c.icon)}</span><div><h2>${esc(c.name)}</h2>${c.description ? `<p>${esc(c.description)}</p>` : ''}</div>
         ${c.isPrivate ? `<span class="sl-pill">🔒 Groupe privé · ${c.memberCount} membre${c.memberCount > 1 ? 's' : ''}</span>` : ''}
         ${c.staffOnlyPost ? '<span class="sl-pill">Annonces du bureau</span>' : ''}
+        <button type="button" class="sl-bell${c.muted ? ' is-muted' : ''}" id="slBell" title="${c.muted ? 'Réactiver les notifications de ce salon' : 'Couper les notifications de ce salon'}" aria-pressed="${c.muted ? 'true' : 'false'}">${c.muted ? '🔕 Sourdine' : '🔔 Notifications'}</button>
         ${c.isPrivate && state.isPresident ? '<button type="button" class="sl-members-btn" id="slMembers">👥 Gérer les membres</button>' : ''}`;
       root.querySelector('#slMembers')?.addEventListener('click', editMembers);
+      root.querySelector('#slBell').addEventListener('click', toggleMute);
+    }
+
+    async function toggleMute() {
+      const c = state.current;
+      try {
+        await api(`/channels/${encodeURIComponent(c.id)}/mute`, json('POST', { muted: !c.muted }));
+        c.muted = !c.muted;
+        renderHead();
+        toast(c.muted ? 'Notifications coupées pour ce salon (les @mentions te sont toujours signalées)' : 'Notifications réactivées');
+      } catch (error) { toast(error.message, 'error'); }
     }
 
     function schedulePoll() {
@@ -420,7 +432,7 @@
         <div class="sl-mention-box" id="slMentionBox" hidden role="listbox" aria-label="Mentionner un adhérent"></div>
         <form class="sl-form" id="slForm">
           <label class="sl-sr" for="slInput">Ton message</label>
-          <button type="button" class="sl-attach" id="slAttach" title="Joindre une image ou un PDF (5 Mo max)" aria-label="Joindre un fichier">📎</button>
+          <button type="button" class="sl-attach" id="slAttach" title="Joindre une image ou un PDF (4 Mo max, les photos sont réduites automatiquement)" aria-label="Joindre un fichier">📎</button>
           <input type="file" id="slFile" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" multiple hidden>
           <textarea id="slInput" rows="1" maxlength="2000" placeholder="Écris un message pour ${esc(state.current.name)}…" autocomplete="off"></textarea>
           <button type="submit" class="sl-send" id="slSend" aria-label="Envoyer">Envoyer</button>
@@ -446,7 +458,11 @@
     }
 
     // ----- Fichiers joints -----
-    const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
+    // Le site n'accepte pas plus de ~4 Mo par envoi : les photos sont réduites avant l'envoi (qualité d'écran, pas d'impression)
+    const MAX_BYTES = 4 * 1024 * 1024;
+    const EXT_TYPES = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp', gif: 'image/gif', pdf: 'application/pdf' };
+    const typeOf = (file) => file.type || EXT_TYPES[(file.name.split('.').pop() || '').toLowerCase()] || '';
+
     function renderPending() {
       const el = root.querySelector('#slPending');
       if (!el) return;
@@ -455,19 +471,56 @@
       el.querySelectorAll('[data-rm]').forEach((b) => b.addEventListener('click', () => { state.files.splice(Number(b.dataset.rm), 1); renderPending(); }));
     }
 
+    function shrinkImage(file, type) {
+      return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file);
+        const img = new Image();
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          const scale = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+          canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Image illisible'))), 'image/jpeg', 0.82);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error(`« ${file.name} » : format d'image non pris en charge (envoie plutôt un JPEG ou un PNG)`)); };
+        img.src = url;
+      });
+    }
+
+    async function prepare(file) {
+      const type = typeOf(file);
+      if (!Object.values(EXT_TYPES).includes(type)) throw new Error(`« ${file.name} » : seuls les images (JPEG, PNG, WebP, GIF) et les PDF sont acceptés`);
+      if (type === 'application/pdf') {
+        if (file.size > MAX_BYTES) throw new Error(`« ${file.name} » pèse ${(file.size / 1048576).toFixed(1)} Mo : les PDF sont limités à 4 Mo`);
+        return { blob: file, name: file.name, type };
+      }
+      // Les GIF animés restent tels quels s'ils sont assez légers ; le reste est réduit et recompressé
+      if (type === 'image/gif' && file.size <= MAX_BYTES) return { blob: file, name: file.name, type };
+      if (type !== 'image/gif' && file.size <= 600 * 1024) return { blob: file, name: file.name, type };
+      const blob = await shrinkImage(file, type);
+      if (blob.size > MAX_BYTES) throw new Error(`« ${file.name} » est trop lourd même après réduction`);
+      return { blob, name: file.name.replace(/\.[^.]+$/, '') + '.jpg', type: 'image/jpeg' };
+    }
+
     async function uploadFiles(files) {
       for (const file of files) {
         if (state.files.length + state.uploading >= 4) { toast('4 fichiers maximum par message', 'error'); break; }
-        if (!ALLOWED.includes(file.type)) { toast(`« ${file.name} » : seuls les images (JPEG, PNG, WebP, GIF) et les PDF sont acceptés`, 'error'); continue; }
-        if (file.size > 5 * 1024 * 1024) { toast(`« ${file.name} » dépasse 5 Mo`, 'error'); continue; }
         state.uploading += 1;
         renderPending();
         try {
+          const ready = await prepare(file);
           const form = new FormData();
-          form.append('file', file);
+          form.append('file', new File([ready.blob], ready.name, { type: ready.type }));
           const { data } = await api('/upload', { method: 'POST', body: form });
           state.files.push(data);
-        } catch (error) { toast(error.message || 'Fichier non envoyé', 'error'); }
+        } catch (error) {
+          toast(error.message || 'Fichier non envoyé : vérifie ta connexion et réessaie', 'error');
+        }
         state.uploading -= 1;
         renderPending();
       }

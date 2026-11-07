@@ -192,11 +192,44 @@ describe('Salon des membres', () => {
       expect(res.status).toBe(201);
       expect(res.body.data.mentions).toEqual([{ id: users.autre.id, name: 'Ibrahima Sow' }]);
       const forAutre = await prisma.notification.findMany({ where: { userId: users.autre.id } });
-      expect(forAutre.map((n) => n.title)).toEqual([expect.stringContaining('t\'a mentionné')]);
-      expect(forAutre[0].url).toContain('salon.html?salon=general');
+      // Un message du salon la prévient aussi (alerte générale) ; la mention a sa propre alerte, une seule
+      const mentioned = forAutre.filter((n) => n.title.includes('t\'a mentionné'));
+      expect(mentioned).toHaveLength(1);
+      expect(mentioned[0].url).toContain('salon.html?salon=general');
       const forPres = await prisma.notification.findMany({ where: { userId: users.pres.id } });
-      expect(forPres.map((n) => n.title)).toEqual([expect.stringContaining('a répondu à ton message')]);
+      expect(forPres.filter((n) => n.title.includes('a répondu à ton message'))).toHaveLength(1);
+      // La personne citée et la personne mentionnée ne reçoivent pas en plus l'alerte générale pour le même message
+      expect(forPres.filter((n) => n.message.includes('tu peux regarder ça'))).toHaveLength(1);
       expect(await prisma.notification.count({ where: { userId: users.visiteur.id } })).toBe(0);
+    });
+
+    it('prévient tous les membres du salon à chaque message, une alerte par salon, sauf en sourdine', async () => {
+      await prisma.notification.deleteMany({ where: { userId: { in: [users.bureau.id, users.autre.id, users.membre.id] } } });
+      await calm();
+      await send('post', `/channels/${general.id}/mute`, 'autre', { muted: true });
+      expect((await get('/channels', 'autre')).body.data.channels.find((c) => c.slug === 'general').muted).toBe(true);
+      await send('post', `/channels/${general.id}/messages`, 'pres', { body: 'Premier message' });
+      await send('post', `/channels/${general.id}/messages`, 'pres', { body: 'Deuxième message' });
+      const bureau = await prisma.notification.findMany({ where: { userId: users.bureau.id } });
+      expect(bureau).toHaveLength(1);
+      expect(bureau[0]).toMatchObject({ isRead: false, url: 'salon.html?salon=general' });
+      expect(bureau[0].message).toContain('Awa');
+      expect(bureau[0].message).toContain('Deuxième message');
+      expect(await prisma.notification.count({ where: { userId: users.autre.id } })).toBe(0);
+      expect(await prisma.notification.count({ where: { userId: users.pres.id, message: { contains: 'Premier message' } } })).toBe(0);
+      expect(await prisma.notification.count({ where: { userId: users.visiteur.id } })).toBe(0);
+      // Ouvrir le salon lit l'alerte
+      await send('post', `/channels/${general.id}/read`, 'bureau');
+      expect((await prisma.notification.findMany({ where: { userId: users.bureau.id } }))[0].isRead).toBe(true);
+      await send('post', `/channels/${general.id}/mute`, 'autre', { muted: false });
+    });
+
+    it('ne prévient que les membres d\'un groupe privé', async () => {
+      await calm();
+      await prisma.notification.deleteMany({ where: { userId: { in: [users.bureau.id, users.membre.id, users.pres.id] } } });
+      await send('post', `/channels/${group.id}/messages`, 'membre', { body: 'Entre membres' });
+      expect(await prisma.notification.count({ where: { userId: users.bureau.id } })).toBe(0);
+      expect(await prisma.notification.count({ where: { userId: users.pres.id, message: { contains: 'Entre membres' } } })).toBe(1);
     });
 
     it('accepte des fichiers joints du stockage du club seulement', async () => {
