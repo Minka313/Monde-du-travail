@@ -63,6 +63,7 @@ const settingsSchema = z.object({
   body: z.object({
     reportFrequency: z.enum(ReportService.FREQUENCIES).optional(),
     reportDueDays: z.number().int().min(0).max(90).optional(),
+    reportObligation: z.enum(['REQUIRED', 'OPTIONAL']).optional(),
     reportTemplate: z.string().max(50).nullable().optional(),
     seesAllReports: z.boolean().optional(),
     reportsToId: z.string().nullable().optional(),
@@ -108,6 +109,13 @@ router.post('/club-document/restore', authorizeUltraAdmin, async (req, res, next
 router.get('/context', ReportController.getContext);
 router.get('/templates', ReportController.getTemplates);
 router.get('/summary', ReportController.getSummary);
+router.post('/requests', authorizeUltraAdmin, validate(z.object({ body: z.object({
+  positionId: z.string().max(40),
+  periodKey: z.string().max(20).nullable().optional(),
+  message: z.string().max(500).nullable().optional(),
+  dueDays: z.number().int().min(1).max(60).optional(),
+}) })), ReportController.requestReport);
+router.delete('/requests/:id', authorizeUltraAdmin, ReportController.cancelRequest);
 router.put('/positions/:id/settings', authorizeUltraAdmin, validate(settingsSchema), ReportController.updatePositionSettings);
 
 router.post('/attachments', requireBureauMember, (req, res, next) => {

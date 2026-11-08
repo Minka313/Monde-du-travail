@@ -387,6 +387,8 @@
       }),
       templates: () => apiRequestWithRefresh('/reports/templates'),
       summary: (year) => apiRequestWithRefresh(`/reports/summary${year ? `?year=${encodeURIComponent(year)}` : ''}`),
+      requestReport: (data) => apiRequestWithRefresh('/reports/requests', { method: 'POST', body: JSON.stringify(data) }),
+      cancelRequest: (id) => apiRequestWithRefresh(`/reports/requests/${encodeURIComponent(id)}`, { method: 'DELETE' }),
       updateSettings: (positionId, data) => apiRequestWithRefresh(`/reports/positions/${encodeURIComponent(positionId)}/settings`, {
         method: 'PUT',
         body: JSON.stringify(data),

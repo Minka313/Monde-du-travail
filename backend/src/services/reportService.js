@@ -130,6 +130,46 @@ function computeDeadlines(position, since, renderedKeys, now = new Date()) {
   };
 }
 
+const OBLIGATIONS = ['REQUIRED', 'OPTIONAL'];
+
+/**
+ * Demandes de rapport de la Présidence encore ouvertes pour ces postes. Une demande est honorée dès qu'un rapport
+ * (hors brouillon) est remis pour le poste après sa date, sur la période demandée s'il y en a une.
+ */
+async function openRequestsFor(positionIds, now = new Date()) {
+  if (!positionIds.length) return new Map();
+  const [requests, reports] = await Promise.all([
+    prisma.positionReportRequest.findMany({ where: { positionId: { in: positionIds }, canceledAt: null }, orderBy: { createdAt: 'asc' } }),
+    prisma.positionReport.findMany({
+      where: { positionId: { in: positionIds }, status: { not: 'DRAFT' }, submittedAt: { not: null } },
+      select: { positionId: true, periodKey: true, submittedAt: true },
+    }),
+  ]);
+  const byPosition = new Map();
+  requests.forEach((r) => {
+    const honored = reports.some((rep) => rep.positionId === r.positionId && rep.submittedAt >= r.createdAt && (!r.periodKey || rep.periodKey === r.periodKey));
+    if (honored) return;
+    const list = byPosition.get(r.positionId) || [];
+    list.push({ ...r, status: r.dueAt < now ? 'LATE' : 'DUE' });
+    byPosition.set(r.positionId, list);
+  });
+  return byPosition;
+}
+
+/** Échéances d'un poste à rapport facultatif : seulement les demandes ouvertes de la Présidence */
+function deadlinesFromRequests(requests) {
+  if (!requests?.length) return null;
+  const periods = requests.map((r) => ({
+    key: r.periodKey || `demande-${r.id}`,
+    label: r.periodKey ? parsePeriod(r.periodKey).label : 'Demande de la Présidence',
+    dueDate: r.dueAt,
+    status: r.status,
+    requestId: r.id,
+    message: r.message || null,
+  }));
+  return { frequency: 'REQUEST', periods, late: periods.filter((p) => p.status === 'LATE'), next: periods.find((p) => p.status === 'DUE') || null, requested: true };
+}
+
 // ===== Contenu =====
 
 const MAX_TEXT = { text: 300, textarea: 8000, select: 100 };
@@ -361,6 +401,7 @@ class ReportService {
       })
       : [];
 
+    const requestsByPosition = await openRequestsFor(positionIds, now);
     const positions = scope.assignments.map((a) => {
       const keys = new Set(rendered.filter((r) => r.positionId === a.positionId).map((r) => r.periodKey));
       return {
@@ -374,10 +415,15 @@ class ReportService {
           templateKey: templateKeyFor(a.position),
           reportFrequency: a.position.reportFrequency,
           reportDueDays: a.position.reportDueDays,
+          reportObligation: a.position.reportObligation,
         },
         periods: periodOptions(a.position.reportFrequency, now),
         // Les échéances incombent aux titulaires, pas aux membres d'équipe
-        deadlines: a.memberRole === 'EQUIPE' ? null : computeDeadlines(a.position, a.startDate, keys, now),
+        // Postes à rapport facultatif (adjoints) : aucune échéance, sauf une demande de la Présidence
+        deadlines: a.memberRole === 'EQUIPE' ? null
+          : a.position.reportObligation === 'OPTIONAL'
+            ? deadlinesFromRequests(requestsByPosition.get(a.positionId))
+            : computeDeadlines(a.position, a.startDate, keys, now),
       };
     });
 
@@ -643,13 +689,16 @@ class ReportService {
       }),
     ]);
 
+    const requestsByPosition = await openRequestsFor(positions.map((p) => p.id), now);
     const rows = positions.map((position) => {
       const holders = position.assignments.filter((a) => a.memberRole !== 'EQUIPE');
       const own = reports.filter((r) => r.positionId === position.id);
       const since = holders.reduce((min, a) => (!min || a.startDate < min ? a.startDate : min), null);
-      const deadlines = holders.length
-        ? computeDeadlines(position, since, new Set(own.filter((r) => r.periodKey).map((r) => r.periodKey)), now)
-        : null;
+      const optional = position.reportObligation === 'OPTIONAL';
+      const deadlines = !holders.length ? null
+        : optional
+          ? deadlinesFromRequests(requestsByPosition.get(position.id))
+          : computeDeadlines(position, since, new Set(own.filter((r) => r.periodKey).map((r) => r.periodKey)), now);
       return {
         id: position.id,
         title: position.title,
@@ -658,6 +707,8 @@ class ReportService {
         reportTemplate: position.reportTemplate,
         reportFrequency: position.reportFrequency,
         reportDueDays: position.reportDueDays,
+        reportObligation: position.reportObligation,
+        requests: (requestsByPosition.get(position.id) || []).map((r) => ({ id: r.id, periodKey: r.periodKey, message: r.message, dueAt: r.dueAt, createdAt: r.createdAt, status: r.status })),
         seesAllReports: position.seesAllReports,
         reportsTo: position.reportsTo,
         holders: holders.map((a) => ({ userId: a.user.id, fullName: fullName(a.user) })),
@@ -706,6 +757,44 @@ class ReportService {
     };
   }
 
+  /** La Présidence demande un rapport à un poste (surtout les adjoints, dont les rapports sont facultatifs) */
+  static async requestReport(user, { positionId, periodKey, message, dueDays }, meta = {}) {
+    if (user.role !== 'ULTRA_ADMIN') throw new ForbiddenError('Seule la Présidence peut demander un rapport');
+    const position = await prisma.clubPosition.findUnique({
+      where: { id: positionId },
+      include: { assignments: { where: { isActive: true, memberRole: { not: 'EQUIPE' } }, select: { userId: true } } },
+    });
+    if (!position) throw new NotFoundError('Poste introuvable');
+    if (!position.assignments.length) throw new BadRequestError('Ce poste n\'a pas de titulaire à qui demander un rapport');
+    if (periodKey && !parsePeriod(periodKey)) throw new BadRequestError('Période invalide');
+    const days = Number.isInteger(dueDays) ? Math.min(60, Math.max(1, dueDays)) : 7;
+    const note = String(message || '').trim().slice(0, 500) || null;
+    const request = await prisma.positionReportRequest.create({
+      data: { positionId, periodKey: periodKey || null, message: note, dueAt: new Date(Date.now() + days * DAY_MS), requestedById: user.id },
+    });
+    await AuditService.log({
+      userId: user.id, action: 'report.request', module: 'organization', resource: 'PositionReportRequest', resourceId: request.id,
+      metadata: { position: position.title, periodKey: periodKey || null, dueDays: days }, ...meta,
+    });
+    const when = request.dueAt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    await notify(position.assignments.map((a) => a.userId), {
+      title: `📄 La Présidence te demande un rapport : ${position.title}`,
+      message: `${periodKey ? `Période : ${parsePeriod(periodKey).label}. ` : ''}À remettre avant le ${when}.${note ? ` « ${note} »` : ''}`.slice(0, 250),
+      url: '/bureau.html',
+      dedupeKey: `report-request:${request.id}`,
+    });
+    return { id: request.id, positionId, periodKey: request.periodKey, message: request.message, dueAt: request.dueAt };
+  }
+
+  static async cancelRequest(user, id, meta = {}) {
+    if (user.role !== 'ULTRA_ADMIN') throw new ForbiddenError('Seule la Présidence peut retirer une demande');
+    const request = await prisma.positionReportRequest.findUnique({ where: { id } });
+    if (!request) throw new NotFoundError('Demande introuvable');
+    await prisma.positionReportRequest.update({ where: { id }, data: { canceledAt: request.canceledAt || new Date() } });
+    await AuditService.log({ userId: user.id, action: 'report.request_cancel', module: 'organization', resource: 'PositionReportRequest', resourceId: id, ...meta });
+    return { id };
+  }
+
   static async updatePositionSettings(user, id, data, meta = {}) {
     const position = await prisma.clubPosition.findUnique({ where: { id } });
     if (!position) throw new NotFoundError('Poste introuvable');
@@ -713,6 +802,10 @@ class ReportService {
     const update = {};
     if (data.reportFrequency !== undefined) update.reportFrequency = data.reportFrequency;
     if (data.reportDueDays !== undefined) update.reportDueDays = data.reportDueDays;
+    if (data.reportObligation !== undefined) {
+      if (!OBLIGATIONS.includes(data.reportObligation)) throw new BadRequestError('Obligation de rapport inconnue');
+      update.reportObligation = data.reportObligation;
+    }
     if (data.seesAllReports !== undefined) update.seesAllReports = data.seesAllReports;
     if (data.reportTemplate !== undefined) {
       if (data.reportTemplate && !REPORT_TEMPLATES[data.reportTemplate]) throw new BadRequestError('Modèle de rapport inconnu');

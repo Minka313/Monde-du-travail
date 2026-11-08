@@ -582,6 +582,7 @@ model User {
   chatMessages           ChatMessage[]
   chatReads              ChatRead[]
   chatMemberships        ChatMember[]
+  reportRequestsMade     PositionReportRequest[] @relation("ReportRequestAuthor")
   mentorInvitations      MentorInvitation[]      @relation("MentorInvitationCreator")
   topics                 Topic[]
   assignedRoles          UserAdminRole[]         @relation("AdminRoleAssignment")
@@ -625,27 +626,30 @@ model User {
 }
 
 model ClubPosition {
-  id              String           @id @default(cuid())
-  title           String           @unique
-  description     String?
-  category        String           @default("BUREAU_EXECUTIF")
-  order           Int              @default(0)
-  isSystem        Boolean          @default(false)
+  id               String                  @id @default(cuid())
+  title            String                  @unique
+  description      String?
+  category         String                  @default("BUREAU_EXECUTIF")
+  order            Int                     @default(0)
+  isSystem         Boolean                 @default(false)
   // Rapports d'activité : modèle utilisé, rythme attendu et délai de remise
   // (en jours après la fin de la période)
-  reportTemplate  String?
-  reportFrequency String           @default("MONTHLY")
-  reportDueDays   Int              @default(7)
+  reportTemplate   String?
+  reportFrequency  String                  @default("MONTHLY")
+  reportDueDays    Int                     @default(7)
+  // REQUIRED : le titulaire remet ses rapports aux échéances ; OPTIONAL (adjoints) : facultatif, ou à la demande de la Présidence
+  reportObligation String                  @default("REQUIRED")
   // Lecture de tous les rapports soumis (Présidence, Vice-Présidence)
-  seesAllReports  Boolean          @default(false)
+  seesAllReports   Boolean                 @default(false)
   // Poste supérieur qui lit les rapports de ce poste (ex. adjoint -> titulaire)
-  reportsToId     String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  assignments     ClubAssignment[]
-  reportsTo       ClubPosition?    @relation("PositionHierarchy", fields: [reportsToId], references: [id], onDelete: SetNull)
-  subordinates    ClubPosition[]   @relation("PositionHierarchy")
-  reports         PositionReport[]
+  reportsToId      String?
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+  assignments      ClubAssignment[]
+  reportsTo        ClubPosition?           @relation("PositionHierarchy", fields: [reportsToId], references: [id], onDelete: SetNull)
+  subordinates     ClubPosition[]          @relation("PositionHierarchy")
+  reports          PositionReport[]
+  reportRequests   PositionReportRequest[]
 
   @@index([order])
   @@index([category])
@@ -714,6 +718,25 @@ model PositionReport {
 }
 
 // Historique d'un rapport : soumissions, validations, demandes de correction
+// Rapport demandé par la Présidence à un poste dont les rapports sont facultatifs (adjoint)
+model PositionReportRequest {
+  id            String       @id @default(cuid())
+  positionId    String
+  // Période à couvrir (même format que PositionReport.periodKey), ou aucune : rapport libre
+  periodKey     String?
+  message       String?
+  dueAt         DateTime
+  requestedById String?
+  createdAt     DateTime     @default(now())
+  // Demande retirée par la Présidence (une demande honorée se détecte au rapport soumis)
+  canceledAt    DateTime?
+  position      ClubPosition @relation(fields: [positionId], references: [id], onDelete: Cascade)
+  requestedBy   User?        @relation("ReportRequestAuthor", fields: [requestedById], references: [id], onDelete: SetNull)
+
+  @@index([positionId, createdAt])
+  @@map("position_report_requests")
+}
+
 model PositionReportEvent {
   id        String         @id @default(cuid())
   reportId  String

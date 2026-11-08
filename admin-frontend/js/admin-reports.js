@@ -59,18 +59,22 @@
           <tbody>
             ${positions.map((p) => {
               const tpl = state.templates[p.templateKey] || {};
+              const optional = p.reportObligation === 'OPTIONAL';
+              const asked = (p.requests || []).map((r) => `<div class="ar-sub">📨 Demandé${r.periodKey ? ` (${esc(r.periodKey)})` : ''} · avant le ${esc(RV.frDate(r.dueAt))} <button type="button" class="btn btn-sm btn-ghost" data-ar-action="cancel-request" data-id="${esc(r.id)}" title="Retirer la demande">✕</button></div>`).join('');
               const late = p.late.length
-                ? `<span class="badge badge-danger">${p.late.length} en retard</span><div class="ar-sub">${esc(p.late.map((l) => l.label).join(', '))}</div>`
-                : (p.holders.length && p.reportFrequency !== 'NONE' ? '<span class="badge badge-success">À jour</span>' : '<span class="ar-sub">—</span>');
+                ? `<span class="badge badge-danger">${p.late.length} en retard</span><div class="ar-sub">${esc(p.late.map((l) => l.label).join(', '))}</div>${asked}`
+                : optional
+                  ? (p.requests?.length ? `<span class="badge badge-warning">Demandé</span>${asked}` : '<span class="badge badge-muted">Facultatif</span>')
+                  : (p.holders.length && p.reportFrequency !== 'NONE' ? '<span class="badge badge-success">À jour</span>' : '<span class="ar-sub">—</span>');
               return `
                 <tr>
                   <td><div style="font-weight:600;">${esc(p.title)}</div>${p.reportsTo ? `<div class="ar-sub">Rend compte à : ${esc(p.reportsTo.title)}</div>` : ''}${p.seesAllReports ? '<div class="ar-sub">👁️ Lit tous les rapports</div>' : ''}</td>
                   <td>${p.holders.length ? esc(p.holders.map((h) => h.fullName).join(', ')) : '<span class="ar-sub">Vacant</span>'}${p.teamCount ? `<div class="ar-sub">+ ${p.teamCount} en équipe</div>` : ''}</td>
                   <td>${esc(tpl.icon || '')} ${esc(tpl.label || '')}</td>
-                  <td>${esc(RV.FREQUENCY_LABELS[p.reportFrequency] || '')}${p.reportFrequency !== 'NONE' ? `<div class="ar-sub">délai ${p.reportDueDays} j</div>` : ''}</td>
+                  <td>${optional ? '<span class="badge badge-muted">Facultatif</span><div class="ar-sub">ou sur demande</div>' : `${esc(RV.FREQUENCY_LABELS[p.reportFrequency] || '')}${p.reportFrequency !== 'NONE' ? `<div class="ar-sub">délai ${p.reportDueDays} j</div>` : ''}`}</td>
                   <td><span title="Validés">✅ ${p.counts.validated}</span> · <span title="À examiner">📨 ${p.counts.submitted}</span> · <span title="En correction">↩️ ${p.counts.needsChanges}</span></td>
                   <td>${late}${p.next ? `<div class="ar-sub">Prochaine : ${esc(p.next.label)} (${esc(RV.frDate(p.next.dueDate))})</div>` : ''}</td>
-                  <td><button class="btn btn-sm btn-ghost" data-ar-action="settings" data-id="${esc(p.id)}">⚙️ Paramétrer</button></td>
+                  <td><button class="btn btn-sm btn-ghost" data-ar-action="settings" data-id="${esc(p.id)}">⚙️ Paramétrer</button>${p.holders.length ? ` <button class="btn btn-sm btn-ghost" data-ar-action="request-report" data-id="${esc(p.id)}" title="Demander un rapport au titulaire de ce poste">📨 Demander un rapport</button>` : ''}</td>
                 </tr>`;
             }).join('')}
           </tbody>
@@ -277,6 +281,49 @@
     });
   }
 
+  function openRequest(positionId) {
+    const p = state.summary.positions.find((x) => x.id === positionId);
+    if (!p) return;
+    const now = new Date();
+    const month = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
+    const el = overlay(`
+      <h3 style="margin:0 0 0.25rem;">📨 Demander un rapport</h3>
+      <p class="ar-sub" style="margin:0 0 1rem;">${esc(p.title)} · ${p.holders.length ? esc(p.holders.map((h) => h.fullName).join(', ')) : ''}. Le titulaire reçoit une alerte et voit l'échéance dans son espace bureau.</p>
+      <form id="ar-request-form" class="ar-form">
+        <label>Période à couvrir <small>(facultatif)</small>
+          <input type="month" name="period" value="${month}">
+        </label>
+        <label>Message <small>(facultatif)</small>
+          <textarea name="message" rows="3" maxlength="500" placeholder="Ex. : Peux-tu faire le point sur les activités du mois et les difficultés rencontrées ?"></textarea>
+        </label>
+        <label>À remettre sous (jours)
+          <input type="number" name="dueDays" min="1" max="60" value="7">
+        </label>
+        <div class="ar-modal-foot">
+          <span style="flex:1;"></span>
+          <button type="button" class="btn btn-secondary" data-ar-close>Annuler</button>
+          <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+        </div>
+      </form>`, `Demande de rapport ${p.title}`);
+    el.querySelector('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      try {
+        await window.AdminApi.reports.requestReport({
+          positionId: p.id,
+          periodKey: f.period.value || null,
+          message: f.message.value.trim() || null,
+          dueDays: Number(f.dueDays.value) || 7,
+        });
+        toast('Demande envoyée', 'success');
+        el.remove();
+        reload();
+      } catch (error) {
+        toast(error.message, 'error');
+      }
+    });
+  }
+
   function openSettings(positionId) {
     const p = state.summary.positions.find((x) => x.id === positionId);
     if (!p) return;
@@ -288,6 +335,12 @@
           <select name="reportTemplate">
             <option value="">Automatique (d'après l'intitulé : ${esc(state.templates[p.templateKey]?.label || '')})</option>
             ${Object.entries(state.templates).map(([k, t]) => `<option value="${k}" ${p.reportTemplate === k ? 'selected' : ''}>${esc(t.icon)} ${esc(t.label)}</option>`).join('')}
+          </select>
+        </label>
+        <label>Rapports de ce poste
+          <select name="reportObligation">
+            <option value="REQUIRED" ${p.reportObligation !== 'OPTIONAL' ? 'selected' : ''}>Obligatoires — le titulaire les remet à chaque échéance (titulaires)</option>
+            <option value="OPTIONAL" ${p.reportObligation === 'OPTIONAL' ? 'selected' : ''}>Facultatifs — sans échéance, sauf si la Présidence en demande un (adjoints)</option>
           </select>
         </label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
@@ -320,6 +373,7 @@
           reportTemplate: f.reportTemplate.value || null,
           reportFrequency: f.reportFrequency.value,
           reportDueDays: Number(f.reportDueDays.value) || 0,
+          reportObligation: f.reportObligation.value,
           reportsToId: f.reportsToId.value || null,
           seesAllReports: f.seesAllReports.checked,
         });
@@ -382,6 +436,11 @@
         const { arAction, id } = button.dataset;
         if (arAction === 'view') openReport(id);
         if (arAction === 'settings') openSettings(id);
+        if (arAction === 'request-report') openRequest(id);
+        if (arAction === 'cancel-request') {
+          if (!window.confirm('Retirer cette demande de rapport ?')) return;
+          try { await window.AdminApi.reports.cancelRequest(id); toast('Demande retirée', 'success'); reload(); } catch (error) { toast(error.message, 'error'); }
+        }
         if (arAction === 'pdf') {
           try {
             printReports([(await window.AdminApi.reports.get(id)).data]);

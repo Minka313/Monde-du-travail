@@ -325,4 +325,67 @@ describe('Rapports du bureau', () => {
       expect(ids(await api('get', '/?scope=bureau', 'president'))).toContain(validated.id);
     });
   });
+
+  describe('Rapports obligatoires (titulaires) et facultatifs (adjoints)', () => {
+    const adjRow = async () => (await api('get', '/summary', 'president')).body.data.positions.find((p) => p.id === positions.adj.id);
+
+    it('exige les rapports du titulaire mais pas ceux de l\'adjoint', async () => {
+      await api('put', `/positions/${positions.adj.id}/settings`, 'president').send({ reportObligation: 'OPTIONAL' }).expect(200);
+      expect((await api('put', `/positions/${positions.adj.id}/settings`, 'tresorier').send({ reportObligation: 'REQUIRED' })).status).toBe(403);
+      const tit = (await api('get', '/context', 'tresorier')).body.data.positions[0];
+      expect(tit.position.reportObligation).toBe('REQUIRED');
+      expect(tit.deadlines.periods.length).toBeGreaterThan(0);
+      const adj = (await api('get', '/context', 'adjoint')).body.data.positions[0];
+      expect(adj.position.reportObligation).toBe('OPTIONAL');
+      expect(adj.deadlines).toBeNull();
+      const row = await adjRow();
+      expect(row).toMatchObject({ reportObligation: 'OPTIONAL', late: [], next: null, requests: [] });
+    });
+
+    it('permet à l\'adjoint de rédiger quand même un rapport s\'il le souhaite', async () => {
+      const draft = await api('post', '/', 'adjoint').send({ positionId: positions.adj.id, periodKey: currentMonth, content: { soldeInitial: 0 } });
+      expect(draft.status).toBe(201);
+      await api('delete', `/${draft.body.data.id}`, 'adjoint').expect(200);
+    });
+
+    it('permet à la Présidence de demander un rapport à un adjoint, avec une échéance et une alerte', async () => {
+      const body = { positionId: positions.adj.id, periodKey: currentMonth, message: 'Peux-tu faire le point sur la caisse ?', dueDays: 5 };
+      expect((await api('post', '/requests', 'tresorier').send(body)).status).toBe(403);
+      expect((await api('post', '/requests', 'president').send({ ...body, periodKey: '2026-13' })).status).toBe(400);
+      const res = await api('post', '/requests', 'president').send(body);
+      expect(res.status).toBe(201);
+      const adj = (await api('get', '/context', 'adjoint')).body.data.positions[0];
+      expect(adj.deadlines.requested).toBe(true);
+      expect(adj.deadlines.periods[0]).toMatchObject({ key: currentMonth, status: 'DUE', message: 'Peux-tu faire le point sur la caisse ?' });
+      const alert = await prisma.notification.findFirst({ where: { userId: adjoint.id, title: { contains: 'te demande un rapport' } } });
+      expect(alert).toBeTruthy();
+      expect((await adjRow()).requests).toHaveLength(1);
+    });
+
+    it('signale en retard une demande dont l\'échéance est passée', async () => {
+      const row = await adjRow();
+      await prisma.positionReportRequest.update({ where: { id: row.requests[0].id }, data: { dueAt: new Date(Date.now() - 86400000) } });
+      expect((await adjRow()).late).toHaveLength(1);
+      expect((await api('get', '/context', 'adjoint')).body.data.positions[0].deadlines.late).toHaveLength(1);
+    });
+
+    it('considère la demande honorée dès que l\'adjoint remet son rapport', async () => {
+      const draft = await api('post', '/', 'adjoint').send({ positionId: positions.adj.id, periodKey: currentMonth, content: { soldeInitial: 0 } });
+      await api('post', `/${draft.body.data.id}/submit`, 'adjoint').expect(200);
+      expect((await adjRow()).requests).toEqual([]);
+      expect((await api('get', '/context', 'adjoint')).body.data.positions[0].deadlines).toBeNull();
+    });
+
+    it('permet de retirer une demande', async () => {
+      const created = (await api('post', '/requests', 'president').send({ positionId: positions.adj.id, periodKey: shiftPeriod(currentMonth, 1), dueDays: 3 })).body.data;
+      expect((await api('delete', `/requests/${created.id}`, 'tresorier')).status).toBe(403);
+      expect((await api('delete', `/requests/${created.id}`, 'president')).status).toBe(200);
+      expect((await adjRow()).requests).toEqual([]);
+    });
+
+    it('refuse de demander un rapport à un poste sans titulaire', async () => {
+      const empty = await prisma.clubPosition.create({ data: { title: `${TAG} Poste vacant` } });
+      expect((await api('post', '/requests', 'president').send({ positionId: empty.id })).status).toBe(400);
+    });
+  });
 });

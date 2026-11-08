@@ -107,6 +107,24 @@ class ReportController {
     }
   }
 
+  static async requestReport(req, res, next) {
+    try {
+      const data = await ReportService.requestReport(req.user, req.body, meta(req));
+      res.status(201).json({ success: true, message: 'Demande envoyée : le titulaire du poste est prévenu', data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async cancelRequest(req, res, next) {
+    try {
+      const data = await ReportService.cancelRequest(req.user, req.params.id, meta(req));
+      res.json({ success: true, message: 'Demande retirée', data });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async updatePositionSettings(req, res, next) {
     try {
       const data = await ReportService.updatePositionSettings(req.user, req.params.id, req.body, meta(req));

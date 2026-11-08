@@ -187,10 +187,14 @@
 
   // ===== Onglets =====
 
-  function deadlineStrip(deadlines) {
+  function deadlineStrip(deadlines, position = {}) {
+    if (!deadlines && position.reportObligation === 'OPTIONAL') {
+      return '<p class="bx-muted">Pour ce poste, le rapport est <strong>facultatif</strong> : rédige-en un quand tu as quelque chose à signaler. Si la Présidence t\'en demande un, tu es prévenu(e) et l\'échéance s\'affiche ici.</p>';
+    }
     if (!deadlines) return '<p class="bx-muted">Aucune échéance fixée pour ce poste : rédige un rapport quand c\'est utile.</p>';
     const label = { DONE: 'Rendu', LATE: 'En retard', DUE: 'À rendre' };
-    return `
+    const asks = deadlines.requested ? deadlines.periods.filter((p) => p.message).map((p) => `<p class="bx-card-note">📨 La Présidence te demande un rapport${p.message ? ` : « ${esc(p.message)} »` : ''}</p>`).join('') : '';
+    return `${asks}
       <div class="bx-deadlines" aria-label="Échéances">
         ${deadlines.periods.map((p) => `
           <div class="bx-deadline bx-deadline-${p.status.toLowerCase()}" title="${esc(label[p.status])} — avant le ${esc(RV.frDate(p.dueDate))}">
@@ -212,13 +216,13 @@
               <span class="bx-panel-icon" aria-hidden="true">${esc(tpl.icon)}</span>
               <div>
                 <h2>${esc(p.position.title)}</h2>
-                <p>${esc(tpl.label)} · ${esc(RV.FREQUENCY_LABELS[p.position.reportFrequency] || '')}${p.position.reportFrequency !== 'NONE' ? ` · à remettre sous ${p.position.reportDueDays} jours après la période` : ''}</p>
+                <p>${esc(tpl.label)} · ${esc(RV.FREQUENCY_LABELS[p.position.reportFrequency] || '')}${p.position.reportObligation === 'OPTIONAL' ? ' · rapport facultatif' : (p.position.reportFrequency !== 'NONE' ? ` · obligatoire, à remettre sous ${p.position.reportDueDays} jours après la période` : '')}</p>
               </div>
             </div>
             <button type="button" class="bx-btn bx-btn-gold" data-action="new" data-position="${esc(p.position.id)}">+ Nouveau rapport</button>
           </header>
           <p class="bx-panel-desc">${esc(tpl.description)}</p>
-          ${p.memberRole === 'EQUIPE' ? '<p class="bx-muted">Tu fais partie de l\'équipe de ce poste : tes rapports sont lus par le ou la responsable et par la Présidence.</p>' : deadlineStrip(p.deadlines)}
+          ${p.memberRole === 'EQUIPE' ? '<p class="bx-muted">Tu fais partie de l\'équipe de ce poste : tes rapports sont lus par le ou la responsable et par la Présidence.</p>' : deadlineStrip(p.deadlines, p.position)}
           <div class="bx-list">
             ${mine.length ? mine.map((r) => reportCard(r, { showAuthor: false })).join('') : emptyState('📝', 'Aucun rapport pour l\'instant', 'Commence par un brouillon : tu pourras le compléter avant de le soumettre.')}
           </div>
@@ -272,13 +276,14 @@
       const holders = p.holders.map((h) => esc(h.fullName)).join(', ') || '<span class="bx-muted">Vacant</span>';
       const status = !p.holders.length ? '<span class="bx-muted">—</span>'
         : p.late.length ? `<span class="bx-pill bx-pill-late">${p.late.length} en retard</span>`
-          : p.reportFrequency === 'NONE' ? '<span class="bx-pill">Libre</span>'
-            : '<span class="bx-pill bx-pill-ok">À jour</span>';
+          : p.reportObligation === 'OPTIONAL' ? (p.requests?.length ? '<span class="bx-pill bx-pill-info">Demandé</span>' : '<span class="bx-pill">Facultatif</span>')
+            : p.reportFrequency === 'NONE' ? '<span class="bx-pill">Libre</span>'
+              : '<span class="bx-pill bx-pill-ok">À jour</span>';
       return `
         <tr>
           <td><strong>${esc(p.title)}</strong><br><span class="bx-muted">${esc(templates()[p.templateKey]?.label || '')}</span></td>
           <td>${holders}${p.teamCount ? `<br><span class="bx-muted">+ ${p.teamCount} en équipe</span>` : ''}</td>
-          <td>${esc(RV.FREQUENCY_LABELS[p.reportFrequency] || '')}</td>
+          <td>${p.reportObligation === 'OPTIONAL' ? 'Facultatif (ou sur demande)' : esc(RV.FREQUENCY_LABELS[p.reportFrequency] || '')}</td>
           <td>${p.lastReport ? `${esc(p.lastReport.title)}<br><span class="bx-muted">${esc(RV.frDate(p.lastReport.submittedAt))}</span>` : '<span class="bx-muted">Aucun</span>'}</td>
           <td>${p.counts.submitted ? `<span class="bx-pill bx-pill-info">${p.counts.submitted} à examiner</span> ` : ''}${status}</td>
           <td>${p.next ? `${esc(p.next.label)}<br><span class="bx-muted">avant le ${esc(RV.frDate(p.next.dueDate))}</span>` : '—'}</td>
