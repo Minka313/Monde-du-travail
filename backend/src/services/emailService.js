@@ -677,6 +677,22 @@ class EmailService {
     return this.sendMail({ to, subject: `Rappel : séance de mentorat ${when}`, html });
   }
 
+  static async sendMentorInvitation({ to, name, message, invitedBy, link, expiresAt }) {
+    const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    const until = new Date(expiresAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const html = this.opportunityMail({
+      kicker: 'Invitation',
+      heading: `${name ? `${esc(name)}, ` : ''}le Monde du Travail t'invite à devenir mentor`,
+      body: `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0 0 10px;">${esc(invitedBy)} te propose de rejoindre les mentors du club « Le Monde du Travail » : partager ton expérience avec des jeunes qui préparent leur orientation et leur entrée dans le monde professionnel, quelques heures par mois.</p>
+        ${message ? `<p style="color:#0f2b46;font-size:0.95rem;line-height:1.6;margin:0 0 10px;padding:10px 14px;background:#fff6e0;border-left:3px solid #f5a623;border-radius:6px;">${esc(message).replace(/\n/g, '<br>')}</p>` : ''}
+        <p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0;">Il te suffit de remplir le formulaire de ta page personnelle (3 minutes) : coordonnées, métier, domaines d'expertise et disponibilités. Le lien est valable jusqu'au ${until}.</p>`,
+      ctaLabel: 'Remplir mes informations',
+      ctaUrl: link,
+      footer: 'Le Monde du Travail · WOW — « Demain se prépare aujourd’hui »',
+    });
+    return this.sendMail({ to, subject: 'Invitation à devenir mentor du club Le Monde du Travail', html });
+  }
+
   static async notifyMentorApplicationDecision({ to, fullName, accepted, response, hasAccount }) {
     const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const base = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');

@@ -130,3 +130,12 @@
 .ms-session-actions { display: flex; gap: 0.3rem; flex-wrap: wrap; }
 .ms-kpi small { display: block; margin-top: 0.15rem; font-size: 0.78rem; color: var(--ms-muted); }
 .ms-watch { margin-bottom: 1.2rem; border-left: 4px solid #f59e0b; }
+
+/* Invitations de mentors */
+.ms-invited { color: #9a6512 !important; font-weight: 700; }
+.ms-invite-new { border-color: #f5a623; box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.18); }
+.ms-invite-link { margin: 0.7rem 0 0.5rem; }
+.ms-invite-link input { width: 100%; box-sizing: border-box; padding: 0.6rem 0.75rem; border: 1px dashed var(--ms-border); border-radius: 10px; background: var(--ms-soft); color: var(--ms-text); font: inherit; font-size: 0.85rem; }
+.ms-check { display: flex !important; flex-direction: row !important; align-items: center; gap: 0.5rem; font-weight: 500 !important; }
+.ms-check input { width: auto !important; }
+a.ms-btn { text-decoration: none; display: inline-flex; align-items: center; }

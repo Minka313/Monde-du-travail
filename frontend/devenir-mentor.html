@@ -34,6 +34,19 @@
     <style>.legal-table{overflow-x:auto;margin:.75rem 0}.legal-table table{width:100%;border-collapse:collapse;font-size:.9rem}.legal-table th,.legal-table td{padding:.6rem .7rem;border:1px solid var(--border-subtle);text-align:left;vertical-align:top;color:var(--text-secondary);line-height:1.55}.legal-table th{background:var(--surface-soft);color:var(--text-primary);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}</style>
     <style>
         .mentor-apply-list { margin: 0; padding-left: 1.1rem; display: grid; gap: 0.55rem; font-size: 0.92rem; line-height: 1.55; }
+        .mentor-invite { margin: 0 0 1.2rem; padding: 1rem 1.2rem; border-radius: 14px; background: #fff6e0; border: 1px solid #f5d9a0; color: #0f2b46; line-height: 1.55; }
+        .mentor-invite strong.mi-title { display: block; font-size: 1.05rem; margin-bottom: 0.3rem; }
+        .mentor-invite blockquote { margin: 0.6rem 0 0; padding: 0.5rem 0.9rem; border-left: 3px solid #f5a623; background: rgba(255,255,255,0.6); border-radius: 0 8px 8px 0; white-space: pre-line; }
+        .mentor-invite.is-problem { background: #fef2f2; border-color: #fecaca; color: #7f1d1d; }
+        [data-theme="dark"] .mentor-invite { background: #2a2110; border-color: #5b4519; color: #f3e6c8; }
+        [data-theme="dark"] .mentor-invite.is-problem { background: #2a1414; border-color: #6b2222; color: #fecaca; }
+        .mentor-account { margin-top: 1.2rem; padding: 1.1rem 1.2rem; border-radius: 14px; border: 1px solid var(--color-gray-200, #e2e8f0); background: var(--color-gray-50, #f8fafc); }
+        .mentor-account h3 { margin: 0 0 0.3rem; font-size: 1.05rem; }
+        .mentor-account p { margin: 0 0 0.7rem; font-size: 0.92rem; line-height: 1.55; color: var(--color-gray-700, #334155); }
+        .mentor-account form { display: grid; gap: 0.6rem; max-width: 420px; }
+        .mentor-account input { font: inherit; padding: 0.6rem 0.8rem; border: 1px solid #cbd5e1; border-radius: 10px; width: 100%; box-sizing: border-box; background: transparent; color: inherit; }
+        .mentor-account .ma-msg { min-height: 1.2em; font-size: 0.9rem; margin: 0; }
+        .mentor-account .ma-msg.is-error { color: #b91c1c; } .mentor-account .ma-msg.is-ok { color: #15803d; }
         .mentor-apply-form { display: grid; gap: 0.9rem; }
         .mentor-apply-form label { display: grid; gap: 0.3rem; font-weight: 600; font-size: 0.9rem; }
         .mentor-apply-form input:not([type=checkbox]), .mentor-apply-form textarea { font: inherit; font-weight: 400; padding: 0.65rem 0.8rem; border-radius: 10px; border: 1px solid var(--border-subtle, #e2e8f0); background: var(--surface-raised, #fff); color: inherit; width: 100%; box-sizing: border-box; }
@@ -128,6 +141,7 @@
 
             <article class="guide-content">
                 <section class="guide-sec mentor-apply-card" id="candidature">
+                    <div class="mentor-invite" id="mentorInvite" hidden></div>
                     <h2>🌟 Ma candidature</h2>
                     <form id="mentorApplyForm" class="mentor-apply-form" novalidate>
                         <div class="mentor-apply-grid">
@@ -148,6 +162,7 @@
                         <p class="mentor-apply-status" id="mentorApplyStatus" role="status" aria-live="polite"></p>
                         <button type="submit" class="btn btn-primary" id="mentorApplySubmit">Envoyer ma candidature</button>
                     </form>
+                    <div class="mentor-account" id="mentorAccount" hidden></div>
                 </section>
             </article>
         </div>
@@ -266,10 +281,77 @@
     const form = document.getElementById('mentorApplyForm');
     const status = document.getElementById('mentorApplyStatus');
     const btn = document.getElementById('mentorApplySubmit');
-    try {
-      const u = JSON.parse(localStorage.getItem('currentUser') || 'null');
-      if (u) { form.fullName.value = `${u.firstName || ''} ${u.lastName || ''}`.trim(); form.email.value = u.email || ''; }
-    } catch (_) { /* invité */ }
+    // Lien d'invitation de la Présidence : message d'accueil, formulaire prérempli, jeton envoyé avec la candidature
+    const invitation = new URLSearchParams(location.search).get('invitation');
+    const box = document.getElementById('mentorInvite');
+    let invitationToken = null;
+    const escHtml = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    async function loadInvitation() {
+      if (!invitation) return false;
+      try {
+        const res = await window.Api.request(`/mentor-applications/invitation/${encodeURIComponent(invitation)}`);
+        const d = res.data;
+        invitationToken = invitation;
+        if (d.inviteeName) form.fullName.value = d.inviteeName;
+        if (d.inviteeEmail) form.email.value = d.inviteeEmail;
+        box.innerHTML = `<strong class="mi-title">👋 ${d.inviteeName ? `${escHtml(d.inviteeName)}, ` : ''}${escHtml(d.invitedBy || 'la Présidence')} t'invite à devenir mentor du club</strong>Il te suffit de renseigner tes informations ci-dessous : elles sont transmises directement à la Présidence, sans création de compte.${d.message ? `<blockquote>${escHtml(d.message)}</blockquote>` : ''}`;
+        box.hidden = false;
+        return true;
+      } catch (error) {
+        box.className = 'mentor-invite is-problem';
+        box.textContent = `${error.message || 'Ce lien d\'invitation n\'est pas valable.'} Tu peux tout de même déposer une candidature avec le formulaire ci-dessous.`;
+        box.hidden = false;
+        return false;
+      }
+    }
+    loadInvitation().then((invited) => {
+      if (invited) return;
+      try {
+        const u = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        if (u) { form.fullName.value = `${u.firstName || ''} ${u.lastName || ''}`.trim(); form.email.value = u.email || ''; }
+      } catch (_) { /* invité */ }
+    });
+    // Après la candidature : création de compte en une minute (e-mail déjà connu) pour que l'Espace mentor s'ouvre à l'acceptation
+    function offerAccount(applied) {
+      const box = document.getElementById('mentorAccount');
+      if (!box || (window.Api.getToken && window.Api.getToken())) return;
+      const parts = applied.fullName.split(/\s+/).filter(Boolean);
+      const firstName = parts[0] || applied.fullName;
+      const lastName = parts.slice(1).join(' ') || firstName;
+      box.innerHTML = `<h3>🔑 Crée ton compte en 1 minute</h3>
+        <p>Pour retrouver ton <strong>Espace mentor</strong> dès que la Présidence aura accepté ta candidature, crée ton compte avec l'adresse que tu viens de renseigner. Il ne te reste qu'à choisir un mot de passe.</p>
+        <form id="mentorAccountForm" novalidate>
+          <input type="email" value="${escHtml(applied.email)}" readonly aria-label="Adresse e-mail">
+          <input type="password" name="password" minlength="8" autocomplete="new-password" placeholder="Choisis un mot de passe (8 caractères, 1 lettre, 1 chiffre)" aria-label="Mot de passe" required>
+          <button type="submit" class="btn btn-primary">Créer mon compte</button>
+          <p class="ma-msg" role="status" aria-live="polite"></p>
+        </form>`;
+      box.hidden = false;
+      const f = box.querySelector('#mentorAccountForm');
+      const msg = f.querySelector('.ma-msg');
+      f.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        msg.className = 'ma-msg';
+        const password = f.password.value;
+        if (password.length < 8 || !/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) { msg.classList.add('is-error'); msg.textContent = 'Le mot de passe doit avoir au moins 8 caractères, une lettre et un chiffre.'; return; }
+        const submit = f.querySelector('button');
+        submit.disabled = true;
+        msg.textContent = 'Création du compte…';
+        try {
+          await window.Api.auth.registerVisitor({ email: applied.email, password, firstName, lastName });
+          try { window.AnalyticsTracker?.track?.('account_created', 'account', 'visitor', {}); } catch (_) { /* suivi facultatif */ }
+          box.innerHTML = '<h3>✅ Compte créé</h3><p>Un e-mail de confirmation vient de t\'être envoyé : clique sur son lien pour activer ton compte. Quand la Présidence aura accepté ta candidature, ton Espace mentor s\'ouvrira automatiquement.</p>';
+        } catch (error) {
+          msg.classList.add('is-error');
+          if (error.status === 409 || /déjà utilisé/i.test(error.message || '')) {
+            msg.innerHTML = 'Cette adresse a déjà un compte : <a href="login.html">connecte-toi</a>. Ton Espace mentor s\'ouvrira à l\'acceptation de ta candidature.';
+          } else {
+            msg.textContent = error.message || 'Création impossible pour le moment.';
+          }
+          submit.disabled = false;
+        }
+      });
+    }
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       status.className = 'mentor-apply-status';
@@ -279,6 +361,7 @@
         fullName: d.fullName.trim(), email: d.email.trim(), phone: d.phone.trim() || null, profession: d.profession.trim(),
         organization: d.organization.trim() || null, domains: d.domains.trim(), experience: d.experience.trim() || null,
         motivation: d.motivation.trim(), availability: d.availability.trim() || null, linkedinUrl: d.linkedinUrl.trim() || null, consent: true,
+        ...(invitationToken ? { invitation: invitationToken } : {}),
       };
       btn.disabled = true;
       status.textContent = 'Envoi…';
@@ -288,6 +371,7 @@
         status.textContent = (res && res.message) || 'Merci ! Ta candidature est transmise.';
         form.querySelectorAll('input, textarea, button').forEach((el) => { el.disabled = true; });
         try { window.AnalyticsTracker?.track?.('mentor_application', 'mentoring', 'application', {}); } catch (_) { /* suivi facultatif */ }
+        offerAccount(body);
       } catch (error) {
         status.classList.add('is-error');
         status.textContent = error.message || 'Envoi impossible pour le moment.';

@@ -84,6 +84,7 @@
         list.push({ key: 'trainings', icon: '🎓', label: 'Formations' });
         list.push({ key: 'review', icon: '📥', label: 'Comptes rendus', count: c.pendingReview });
         list.push({ key: 'requests', icon: '🙋', label: 'Demandes de mentor', count: c.pendingRequests });
+        list.push({ key: 'invitations', icon: '✉️', label: 'Inviter un pro' });
         list.push({ key: 'applications', icon: '🌟', label: 'Candidatures', count: c.pendingApplications });
         list.push({ key: 'concerns', icon: '🔒', label: 'Signalements', count: c.stats?.openConcerns });
       }
@@ -402,6 +403,60 @@
         </article>`).join('')}</div>`;
     }
 
+    // ===== Invitations : envoyer un lien personnel à un professionnel (Présidence) =====
+
+    const INV_STATUS = { PENDING: ['En attente', 'warning'], USED: ['Réponse reçue', 'success'], EXPIRED: ['Expirée', 'muted'], REVOKED: ['Retirée', 'muted'] };
+
+    function invitationCard(i, { highlight = false } = {}) {
+      const active = i.status === 'PENDING';
+      return `<article class="ms-card${highlight ? ' ms-invite-new' : ''}">
+        <div class="ms-card-head"><span class="ms-avatar">${esc((i.inviteeName || '✉')[0])}</span><div><strong>${esc(i.inviteeName || 'Invitation sans nom')}</strong><span>${i.inviteeEmail ? esc(i.inviteeEmail) : 'Lien à envoyer toi-même'}</span></div>${pill(INV_STATUS[i.status] || [i.status, 'muted'])}</div>
+        ${active ? `<div class="ms-invite-link"><input type="text" readonly value="${esc(i.link)}" aria-label="Lien d'invitation" onclick="this.select()"></div>
+          <div class="ms-actions">
+            <button type="button" class="ms-btn ms-btn-primary" data-act="invitation-copy" data-id="${esc(i.id)}">📋 Copier le lien</button>
+            ${i.inviteeEmail ? `<button type="button" class="ms-btn ms-btn-ghost" data-act="invitation-email" data-id="${esc(i.id)}">✉️ ${i.emailedAt ? 'Renvoyer' : 'Envoyer'} par e-mail</button>` : ''}
+            <a class="ms-btn ms-btn-ghost" href="https://wa.me/?text=${encodeURIComponent(`Bonjour${i.inviteeName ? ` ${i.inviteeName}` : ''}, le club Le Monde du Travail t'invite à devenir mentor. Remplis tes informations ici : ${i.link}`)}" target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+            <button type="button" class="ms-btn ms-btn-ghost" data-act="invitation-revoke" data-id="${esc(i.id)}">Retirer</button>
+          </div>` : ''}
+        <p class="ms-meta">Créée le ${esc(frDate(i.createdAt))}${i.emailedAt ? ` · e-mail envoyé le ${esc(frDate(i.emailedAt))}` : ''}${active ? ` · valable jusqu'au ${esc(frDate(i.expiresAt))}` : ''}${i.usedAt ? ` · remplie le ${esc(frDate(i.usedAt))} (voir « Candidatures »)` : ''}</p>
+      </article>`;
+    }
+
+    async function viewInvitations() {
+      state.invitations = (await api('/invitations')).data;
+      const fresh = state.lastInvitation ? state.invitations.find((i) => i.id === state.lastInvitation) : null;
+      const others = state.invitations.filter((i) => !fresh || i.id !== fresh.id);
+      return `
+        <section class="ms-card">
+          <h3 style="margin:0 0 0.35rem;">✉️ Inviter un professionnel à devenir mentor</h3>
+          <p class="ms-hint" style="margin:0 0 0.75rem;">Crée un lien personnel : le professionnel l'ouvre, saisit lui-même ses coordonnées, son métier et ses disponibilités, sans créer de compte. Sa réponse arrive dans « Candidatures » et tu décides ensuite. Tu peux copier le lien, l'envoyer par WhatsApp, ou le faire partir par e-mail depuis le site.</p>
+          <form class="ms-form" data-form="invitation">
+            <div class="ms-form-2">
+              <label>Nom du professionnel <small>(facultatif)</small><input name="inviteeName" maxlength="150" placeholder="Ex. : Mamadou Diop"></label>
+              <label>Adresse e-mail <small>(facultatif)</small><input name="inviteeEmail" type="email" maxlength="200" placeholder="pour l'envoi par e-mail"></label>
+            </div>
+            <label>Un mot personnel <small>(facultatif, affiché sur sa page et dans l'e-mail)</small><textarea name="message" rows="3" maxlength="800" placeholder="Ex. : Ton parcours dans le BTP intéresserait beaucoup nos jeunes de terminale…"></textarea></label>
+            <label class="ms-check"><input type="checkbox" name="sendEmail" checked> <span>Envoyer aussi l'invitation par e-mail (si une adresse est indiquée)</span></label>
+            <div class="ms-actions"><button type="submit" class="ms-btn ms-btn-primary">Créer le lien d'invitation</button></div>
+          </form>
+        </section>
+        ${fresh ? `<h3 class="ms-h3">Ton nouveau lien</h3><div class="ms-grid">${invitationCard(fresh, { highlight: true })}</div>` : ''}
+        <h3 class="ms-h3">Invitations envoyées</h3>
+        ${others.length ? `<div class="ms-grid">${others.map((i) => invitationCard(i)).join('')}</div>` : empty('✉️', 'Aucune autre invitation', 'Les liens que tu crées apparaissent ici, avec leur état.')}`;
+    }
+
+    async function copyText(text) {
+      try { await navigator.clipboard.writeText(text); return true; } catch (_) {
+        const area = document.createElement('textarea');
+        area.value = text; area.style.position = 'fixed'; area.style.opacity = '0';
+        document.body.appendChild(area); area.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (_e) { ok = false; }
+        area.remove();
+        return ok;
+      }
+    }
+
     // ===== Candidatures « Devenir mentor » (Présidence) =====
 
     const APP_STATUS = { PENDING: ['En attente', 'warning'], ACCEPTED: ['Acceptée', 'success'], DECLINED: ['Non retenue', 'muted'] };
@@ -411,7 +466,7 @@
       if (!state.applications.length) return empty('🌟', 'Aucune candidature', 'Les candidatures déposées sur la page « Devenir mentor » du site arrivent ici.');
       return `<div class="ms-grid">${state.applications.map((a) => `
         <article class="ms-card">
-          <div class="ms-card-head"><span class="ms-avatar">${esc((a.fullName || '?')[0])}</span><div><strong>${esc(a.fullName)}</strong><span>${esc(a.profession)}${a.organization ? ` · ${esc(a.organization)}` : ''}</span></div>${pill(APP_STATUS[a.status] || [a.status, 'muted'])}</div>
+          <div class="ms-card-head"><span class="ms-avatar">${esc((a.fullName || '?')[0])}</span><div><strong>${esc(a.fullName)}</strong><span>${esc(a.profession)}${a.organization ? ` · ${esc(a.organization)}` : ''}</span>${a.invited ? '<span class="ms-invited">✉️ Invité par la Présidence</span>' : ''}</div>${pill(APP_STATUS[a.status] || [a.status, 'muted'])}</div>
           <p class="ms-meta"><strong>Domaines :</strong> ${esc(a.domains)}</p>
           ${a.experience ? `<p class="ms-meta"><strong>Parcours :</strong> ${esc(a.experience)}</p>` : ''}
           <p class="ms-goals">${esc(a.motivation)}</p>
@@ -575,7 +630,7 @@
     }
 
     const VIEWS = {
-      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview, requests: viewRequests, applications: viewApplications, concerns: viewConcerns, myProfile: viewMyProfile,
+      overview: viewOverview, pairs: viewPairs, trainings: viewTrainings, review: viewReview, requests: viewRequests, applications: viewApplications, invitations: viewInvitations, concerns: viewConcerns, myProfile: viewMyProfile,
       forumQueue: viewForumQueue, suggestions: viewSuggestions, mentees: viewMentees, myTrainings: viewMyTrainings, myReports: viewMyReports, messages: viewMessages,
     };
 
@@ -895,6 +950,16 @@
           if (await run(btn, () => api(`/sessions/${id}`, json('PUT', { status: cancel ? 'CANCELLED' : 'DONE' })), cancel ? 'Séance annulée' : 'Séance marquée comme faite')) refresh();
         }
       }
+      if (act === 'invitation-copy') {
+        const inv = (state.invitations || []).find((x) => x.id === id);
+        if (inv) toast((await copyText(inv.link)) ? 'Lien copié : colle-le dans un message' : 'Copie impossible : sélectionne le lien et copie-le à la main', 'success');
+      }
+      if (act === 'invitation-email') {
+        if (await run(btn, () => api(`/invitations/${id}/resend`, json('POST')), 'E-mail envoyé')) refresh();
+      }
+      if (act === 'invitation-revoke' && window.confirm('Retirer cette invitation ? Le lien ne fonctionnera plus.')) {
+        if (await run(btn, () => api(`/invitations/${id}`, { method: 'DELETE' }), 'Invitation retirée')) refresh();
+      }
       if (act === 'application-accept' && window.confirm('Accepter cette personne comme mentor du club ? Elle recevra son accès à l\'Espace mentor.')) {
         const response = window.prompt('Un mot de bienvenue (facultatif) :', '') ?? '';
         if (await run(btn, () => api(`/applications/${id}/decision`, json('POST', { decision: 'ACCEPTED', response: response.trim() || null })), 'Candidature acceptée')) refresh();
@@ -926,6 +991,23 @@
         const body = Object.fromEntries(['headline', 'organization', 'domains', 'bio', 'experience', 'city', 'languages', 'linkedinUrl'].map((k) => [k, profileForm[k].value.trim() || null]));
         if (!body.headline || !body.domains || !body.bio) { toast('Indique au moins ton métier, tes domaines et une présentation', 'error'); return; }
         if (await run(profileForm.querySelector('button[type=submit]'), () => api('/profile', json('PUT', body)), 'Profil de mentor enregistré')) refresh();
+        return;
+      }
+      const inviteForm = e.target.closest('[data-form="invitation"]');
+      if (inviteForm) {
+        e.preventDefault();
+        const body = {
+          inviteeName: inviteForm.inviteeName.value.trim() || null,
+          inviteeEmail: inviteForm.inviteeEmail.value.trim() || null,
+          message: inviteForm.message.value.trim() || null,
+          sendEmail: Boolean(inviteForm.sendEmail.checked && inviteForm.inviteeEmail.value.trim()),
+        };
+        const res = await run(inviteForm.querySelector('button[type=submit]'), () => api('/invitations', json('POST', body)));
+        if (res) {
+          state.lastInvitation = res.data.id;
+          toast(body.sendEmail ? (res.data.emailSent ? 'Invitation envoyée par e-mail : le lien est aussi ci-dessous' : 'Lien créé, mais l\'e-mail n\'a pas pu partir : copie le lien ci-dessous') : 'Lien créé : copie-le ci-dessous');
+          refresh();
+        }
         return;
       }
       const sugForm = e.target.closest('[data-form="suggestion"]');

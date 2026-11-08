@@ -63,6 +63,14 @@ const schemas = {
   feedback: z.object({ body: z.object({ rating: z.number().int().min(1).max(5), comment: z.string().trim().max(1500).nullable().optional() }).strict() }),
   concern: z.object({ body: z.object({ message: z.string().trim().min(10, 'Explique la situation en quelques mots (10 caractères minimum)').max(3000) }).strict() }),
   concernResolve: z.object({ body: z.object({ resolution: z.string().trim().min(5, 'Note ce qui a été fait').max(1500) }).strict() }),
+  invitation: z.object({
+    body: z.object({
+      inviteeName: z.string().trim().max(150).nullable().optional(),
+      inviteeEmail: z.string().trim().email('Adresse e-mail invalide').max(200).nullable().optional().or(z.literal('')),
+      message: z.string().trim().max(800).nullable().optional(),
+      sendEmail: z.boolean().optional(),
+    }).strict(),
+  }),
   applicationDecision: z.object({ body: z.object({ decision: z.enum(['ACCEPTED', 'DECLINED']), response: z.string().trim().max(1500).nullable().optional() }).strict() }),
   declineRequest: z.object({ body: z.object({ response: z.string().trim().min(5, 'Explique ta réponse').max(1500) }).strict() }),
   suggestion: z.object({
@@ -176,6 +184,10 @@ router.get('/concerns', C.listConcerns);
 router.post('/concerns/:id/resolve', validate(schemas.concernResolve), C.resolveConcern);
 
 // Candidatures « Devenir mentor » (Présidence) ; le dépôt est public : routes/mentorApplications.js
+router.get('/invitations', C.listInvitations);
+router.post('/invitations', validate(schemas.invitation), C.createInvitation);
+router.post('/invitations/:id/resend', C.resendInvitation);
+router.delete('/invitations/:id', C.revokeInvitation);
 router.get('/applications', C.listApplications);
 router.post('/applications/:id/decision', validate(schemas.applicationDecision), C.decideApplication);
 

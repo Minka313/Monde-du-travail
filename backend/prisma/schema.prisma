@@ -582,6 +582,7 @@ model User {
   chatMessages           ChatMessage[]
   chatReads              ChatRead[]
   chatMemberships        ChatMember[]
+  mentorInvitations      MentorInvitation[]      @relation("MentorInvitationCreator")
   topics                 Topic[]
   assignedRoles          UserAdminRole[]         @relation("AdminRoleAssignment")
   reviewedAdminRoles     UserAdminRole[]         @relation("AdminRoleReviewer")
@@ -864,8 +865,29 @@ model MentorshipConcern {
 }
 
 // Candidature d'un professionnel ou d'un étudiant avancé pour devenir mentor du club
+// Invitation envoyée par la Présidence à un professionnel : lien personnel vers le formulaire « Devenir mentor »
+model MentorInvitation {
+  id           String              @id @default(cuid())
+  token        String              @unique
+  createdById  String
+  inviteeName  String?
+  inviteeEmail String?
+  // Mot personnel de la Présidence, affiché sur la page d'invitation et dans l'e-mail
+  message      String?
+  expiresAt    DateTime
+  emailedAt    DateTime?
+  revokedAt    DateTime?
+  usedAt       DateTime?
+  createdAt    DateTime            @default(now())
+  createdBy    User                @relation("MentorInvitationCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  applications MentorApplication[]
+
+  @@index([createdById, createdAt])
+  @@map("mentor_invitations")
+}
+
 model MentorApplication {
-  id            String    @id @default(cuid())
+  id            String            @id @default(cuid())
   userId        String?
   fullName      String
   email         String
@@ -878,16 +900,19 @@ model MentorApplication {
   availability  String?
   linkedinUrl   String?
   // PENDING, ACCEPTED, DECLINED
-  status        String    @default("PENDING")
+  status        String            @default("PENDING")
   response      String?
   // Rôle mentor attribué au compte (immédiatement, ou à la première connexion avec cet e-mail)
   roleGrantedAt DateTime?
   handledById   String?
   handledAt     DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  user          User?     @relation("MentorApplicationUser", fields: [userId], references: [id], onDelete: SetNull)
-  handledBy     User?     @relation("MentorApplicationHandler", fields: [handledById], references: [id], onDelete: SetNull)
+  // Candidature déposée depuis un lien d'invitation de la Présidence
+  invitationId  String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  invitation    MentorInvitation? @relation(fields: [invitationId], references: [id], onDelete: SetNull)
+  user          User?             @relation("MentorApplicationUser", fields: [userId], references: [id], onDelete: SetNull)
+  handledBy     User?             @relation("MentorApplicationHandler", fields: [handledById], references: [id], onDelete: SetNull)
 
   @@index([status, createdAt])
   @@index([email])

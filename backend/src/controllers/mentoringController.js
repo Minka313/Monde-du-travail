@@ -52,6 +52,10 @@ const MentoringController = {
   listConcerns: handle((req) => MentoringService.listConcerns(req.user)),
   resolveConcern: handle((req) => MentoringService.resolveConcern(req.user, req.params.id, req.body.resolution, meta(req)), { message: 'Signalement traité' }),
 
+  listInvitations: handle((req) => MentorApplicationService.listInvitations(req.user)),
+  createInvitation: handle((req) => MentorApplicationService.createInvitation(req.user, req.body, meta(req)), { status: 201, message: 'Invitation créée' }),
+  resendInvitation: handle((req) => MentorApplicationService.resendInvitation(req.user, req.params.id), { message: 'E-mail renvoyé' }),
+  revokeInvitation: handle((req) => MentorApplicationService.revokeInvitation(req.user, req.params.id, meta(req)), { message: 'Invitation retirée' }),
   listApplications: handle((req) => MentorApplicationService.list(req.user)),
   decideApplication: handle((req) => MentorApplicationService.decide(req.user, req.params.id, req.body, meta(req)), { message: 'Décision enregistrée : le candidat est prévenu par e-mail' }),
 

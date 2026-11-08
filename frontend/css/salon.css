@@ -164,3 +164,6 @@
 .sl-bell + .sl-members-btn { margin-left: .5rem; }
 .sl-pill + .sl-bell { margin-left: .5rem; }
 .sl-mention-count { padding: .3rem .6rem; font-size: .72rem; color: var(--sl-muted); border-top: 1px solid var(--sl-border); position: sticky; bottom: 0; background: var(--sl-surface); }
+
+/* Marges latérales (le conteneur du site n'en a pas sur cette page) */
+.sl-hero .container, .sl-body .container { padding-left: 1.25rem; padding-right: 1.25rem; box-sizing: border-box; }
