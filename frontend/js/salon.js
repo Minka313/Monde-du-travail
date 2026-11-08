@@ -229,6 +229,7 @@
       state.editing = null;
       state.stick = true;
       state.people = [];
+      peopleRetry = 0;
       state.mentionMap = new Map();
       state.files = [];
       api(`/channels/${encodeURIComponent(id)}/people`).then((r) => { if (state.current?.id === id) state.people = r.data; }).catch(() => {});
@@ -529,31 +530,46 @@
     // ----- Mentions (@) -----
     let mentionIndex = 0;
     let mentionMatches = [];
+    const MENTION_RE = /(?:^|\s)@([^\s@]{0,30}(?: [^\s@]{0,30})?)$/;
+    const plain = (v) => String(v).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    let peopleRetry = 0;
+
     function suggestMentions() {
       const input = root.querySelector('#slInput');
       const box = root.querySelector('#slMentionBox');
       if (!input || !box) return;
       const before = input.value.slice(0, input.selectionStart);
-      const match = before.match(/(?:^|\s)@([^\s@]{0,30})$/);
+      const match = before.match(MENTION_RE);
       if (!match) { box.hidden = true; return; }
-      const term = match[1].toLowerCase();
-      mentionMatches = state.people.filter((p) => p.name.toLowerCase().includes(term)).slice(0, 6);
+      // La liste n'a pas pu se charger (réseau lent) : nouvel essai à la volée
+      if (!state.people.length && peopleRetry < 3 && state.current) {
+        const id = state.current.id;
+        peopleRetry += 1;
+        api(`/channels/${encodeURIComponent(id)}/people`).then((r) => { if (state.current?.id === id) { state.people = r.data; suggestMentions(); } }).catch(() => {});
+      }
+      const terms = plain(match[1]).split(' ').filter(Boolean);
+      // Toutes les personnes qui correspondent (sans accent ni majuscule, prénom ou nom), pas seulement les premières
+      mentionMatches = state.people.filter((p) => { const n = plain(p.name); return terms.every((t) => n.includes(t)); });
       if (!mentionMatches.length) { box.hidden = true; return; }
       mentionIndex = 0;
       box.hidden = false;
-      box.innerHTML = mentionMatches.map((p, i) => `<button type="button" role="option" class="sl-mention-item${i === 0 ? ' is-on' : ''}" data-i="${i}"><span class="sl-avatar" style="--h:${hue(p.name)}">${esc(initials(p.name))}</span>${esc(p.name)}</button>`).join('');
+      box.innerHTML = mentionMatches.map((p, i) => `<button type="button" role="option" class="sl-mention-item${i === 0 ? ' is-on' : ''}" data-i="${i}"><span class="sl-avatar" style="--h:${hue(p.name)}">${esc(initials(p.name))}</span>${esc(p.name)}</button>`).join('')
+        + `<div class="sl-mention-count">${mentionMatches.length} personne${mentionMatches.length > 1 ? 's' : ''}</div>`;
       box.querySelectorAll('[data-i]').forEach((b) => b.addEventListener('mousedown', (e) => { e.preventDefault(); mentionIndex = Number(b.dataset.i); pickMention(); }));
     }
     function moveMention(step) {
       mentionIndex = (mentionIndex + step + mentionMatches.length) % mentionMatches.length;
-      root.querySelectorAll('.sl-mention-item').forEach((el, i) => el.classList.toggle('is-on', i === mentionIndex));
+      root.querySelectorAll('.sl-mention-item').forEach((el, i) => {
+        el.classList.toggle('is-on', i === mentionIndex);
+        if (i === mentionIndex) el.scrollIntoView({ block: 'nearest' });
+      });
     }
     function pickMention() {
       const person = mentionMatches[mentionIndex];
       const input = root.querySelector('#slInput');
       if (!person || !input) return;
       const pos = input.selectionStart;
-      const before = input.value.slice(0, pos).replace(/@[^\s@]{0,30}$/, `@${person.name} `);
+      const before = input.value.slice(0, pos).replace(/@[^\s@]{0,30}(?: [^\s@]{0,30})?$/, `@${person.name} `);
       input.value = before + input.value.slice(pos);
       input.setSelectionRange(before.length, before.length);
       state.mentionMap.set(person.name, person.id);
