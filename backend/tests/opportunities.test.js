@@ -248,7 +248,10 @@ describe('Concours & opportunités', () => {
       const { items, errors } = loadItems();
       expect(errors).toEqual([]);
       expect(items.length).toBeGreaterThanOrEqual(40);
-      expect(items.every((i) => i.officialUrl && i.summary && i.sourceNote)).toBe(true);
+      // Toutes les fiches ont un résumé et une note de source ; celles qui peuvent être publiées ont aussi leur lien officiel
+      // (les brouillons à compléter peuvent encore en manquer : l'import ne les publie jamais)
+      expect(items.every((i) => i.summary && i.sourceNote)).toBe(true);
+      expect(items.filter((i) => i.linkChecked).every((i) => i.officialUrl)).toBe(true);
     });
 
     it('crée les annonces une seule fois et conserve les corrections faites dans l\'admin', async () => {
