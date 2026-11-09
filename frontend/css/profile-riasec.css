@@ -10,3 +10,5 @@
 .rxp-row b { text-align: right; color: var(--color-gray-700); }
 .rxp-actions { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .5rem; }
 @media (max-width: 480px) { .rxp-row { grid-template-columns: 7.5rem 1fr 1.8rem; font-size: .8rem; } }
+.rxp-advice { margin: 0.9rem 0 0; padding: 0.6rem 0.85rem; border-left: 4px solid #f5a623; border-radius: 0 10px 10px 0; background: #fff6e0; color: #0f2b46; font-size: 0.85rem; font-weight: 600; line-height: 1.5; }
+[data-theme="dark"] .rxp-advice { background: #2a2110; color: #f3e6c8; }

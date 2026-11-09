@@ -227,7 +227,7 @@
     $('rxReveal').hidden = true;
     const root = $('rxResults');
     root.hidden = false;
-    root.innerHTML = `<div class="container">${heroHtml(result)}${chartHtml(result)}${indicatorsHtml(result)}${typesHtml(result)}
+    root.innerHTML = `<div class="container">${heroHtml(result)}<p class="rx-advice">${ADVICE}</p>${chartHtml(result)}${indicatorsHtml(result)}${typesHtml(result)}
       <section class="rx-section" id="rxJobsSection"><h2>Métiers qui te correspondent</h2>
         <p class="rx-sub">Classés par affinité entre ton profil et le code RIASEC de chacun des métiers du catalogue.</p>
         <div class="rx-filters" role="group" aria-label="Niveau d'études visé">${LEVELS.map((l) => `<button type="button" class="rx-filter" data-level="${l.key}" aria-pressed="${l.key === state.level}">${esc(l.label)}</button>`).join('')}</div>
@@ -237,6 +237,7 @@
       </section>
       <section class="rx-section"><h2>Formations du club pour progresser</h2><p class="rx-sub">Des compétences utiles aux métiers de ton profil.</p><div class="rx-forms" id="rxForms"></div></section>
       ${methodHtml()}
+      <p class="rx-advice">${ADVICE}</p>
       <div class="rx-actions">
         <button type="button" class="rx-btn rx-btn-primary" id="rxPdf">⬇️ Télécharger mon profil (PDF signé WOW)</button>
         <button type="button" class="rx-btn rx-btn-navy" id="rxShare">🔗 Partager mon code</button>
@@ -275,6 +276,8 @@
 
   const typeName = (t) => E.TYPES[t].name;
   const list = (items) => (items.length > 1 ? `${items.slice(0, -1).join(', ')} et ${items[items.length - 1]}` : items[0] || '');
+
+  const ADVICE = '💡 Le test est une aide à la réflexion, pas un verdict. Croise-le avec tes résultats scolaires et les échanges avec les mentors.';
 
   function heroHtml(r) {
     const [a, b, c] = r.ranking;
