@@ -146,6 +146,7 @@ router.get('/context', C.getContext);
 
 router.get('/mentors', C.listMentors);
 router.get('/mentors/pending', C.listPendingMentors);
+router.post('/mentors/pending/:id/activate', C.activatePendingMentor);
 router.get('/members', C.searchMembers);
 router.post('/mentorships', validate(schemas.mentorship), C.createMentorship);
 router.put('/mentorships/:id', validate(schemas.mentorshipUpdate), C.updateMentorship);

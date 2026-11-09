@@ -192,6 +192,36 @@ class MentorApplicationService {
     return { hasAccount: Boolean(account), accountCreated: Boolean(account?.created) };
   }
 
+  /**
+   * Mentor accepté auparavant, resté sans compte ou sans rôle : crée le compte (ou active l'existant), attribue le rôle
+   * mentor et envoie l'e-mail de bienvenue. Même résultat qu'une acceptation faite aujourd'hui.
+   */
+  static async activatePendingMentor(user, id, meta = {}) {
+    requirePresident(user);
+    const application = await prisma.mentorApplication.findUnique({ where: { id } });
+    if (!application) throw new NotFoundError('Candidature introuvable');
+    if (application.status !== 'ACCEPTED' || application.roleGrantedAt) throw new BadRequestError('Ce mentor a déjà son Espace mentor');
+    const account = await MentorApplicationService.ensureAccount(application);
+    if (!account) throw new BadRequestError('Le compte de cette personne est désactivé : réactive-le d\'abord depuis l\'administration (Utilisateurs)');
+    await grantMentorRole(account.id, user.id);
+    await seedProfile(account.id, application);
+    await prisma.mentorApplication.update({ where: { id }, data: { userId: account.id, roleGrantedAt: new Date() } });
+    await EmailService.notifyMentorApplicationDecision({
+      to: application.email, fullName: application.fullName, accepted: true, response: null, hasAccount: true, setupUrl: account.setupUrl || null,
+    }).catch((err) => logger.warn('E-mail d\'acceptation non envoyé', { error: err.message }));
+    if (!account.created) {
+      await NotificationService.createNotification({
+        userId: account.id, type: 'SYSTEM', title: '🌟 Bienvenue parmi les mentors',
+        message: 'Ton Espace mentor est ouvert.', url: '/mentor.html',
+      }).catch(() => {});
+    }
+    await AuditService.log({
+      userId: user.id, action: 'mentoring.application.activate', module: 'mentoring', resource: 'MentorApplication', resourceId: id,
+      metadata: { email: application.email, accountCreated: Boolean(account.created) }, ...meta,
+    });
+    return { id, accountCreated: Boolean(account.created) };
+  }
+
   // ===== Invitations : la Présidence envoie un lien personnel à un professionnel =====
 
   static invitationLink(token) {

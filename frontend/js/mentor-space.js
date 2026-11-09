@@ -157,9 +157,9 @@
       const signup = `${window.location.origin}/login.html#register`;
       return `<section class="ms-card ms-watch">
         <h3 style="margin:0 0 0.4rem;">⏳ Mentors acceptés, en attente de leur compte (${list.length})</h3>
-        <p class="ms-hint" style="margin:0 0 0.75rem;">Ces personnes sont acceptées, mais leur Espace mentor s'ouvre seulement quand elles ont un compte actif sur le site <strong>avec l'adresse e-mail de leur candidature</strong>. Dès qu'elles le confirment, elles apparaissent dans la liste des mentors ci-dessous.</p>
+        <p class="ms-hint" style="margin:0 0 0.75rem;">Ces personnes sont acceptées mais n'ont pas encore leur Espace mentor. <strong>« Créer son compte maintenant »</strong> ouvre son compte avec l'adresse e-mail de sa candidature et lui envoie un e-mail pour choisir son mot de passe : elle apparaît aussitôt dans la liste des mentors.</p>
         <ul class="ms-sessions">${list.map((m) => `<li><span><strong>${esc(m.fullName)}</strong> · ${esc(m.profession)}${m.invited ? ' · ✉️ invité' : ''}<br><em>${esc(m.email)} — ${esc(STATE[m.accountState] || m.accountState)}</em></span>
-          <span class="ms-actions"><button type="button" class="ms-btn ms-btn-ghost" data-act="pending-copy" data-link="${esc(signup)}">📋 Copier le lien de création de compte</button><a class="ms-btn ms-btn-ghost" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('Ton Espace mentor — Le Monde du Travail')}&body=${encodeURIComponent(`Bonjour ${m.fullName},\n\nTu es accepté(e) comme mentor du club. Pour ouvrir ton Espace mentor, crée ton compte avec cette adresse e-mail (${m.email}) : ${signup}\n\nÀ bientôt !`)}">✉️ Lui écrire</a></span></li>`).join('')}</ul></section>`;
+          <span class="ms-actions"><button type="button" class="ms-btn ms-btn-primary" data-act="pending-activate" data-id="${esc(m.id)}">✅ Créer son compte maintenant</button><button type="button" class="ms-btn ms-btn-ghost" data-act="pending-copy" data-link="${esc(signup)}">📋 Copier le lien de création de compte</button><a class="ms-btn ms-btn-ghost" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('Ton Espace mentor — Le Monde du Travail')}&body=${encodeURIComponent(`Bonjour ${m.fullName},\n\nTu es accepté(e) comme mentor du club. Pour ouvrir ton Espace mentor, crée ton compte avec cette adresse e-mail (${m.email}) : ${signup}\n\nÀ bientôt !`)}">✉️ Lui écrire</a></span></li>`).join('')}</ul></section>`;
     }
 
     async function viewOverview() {
@@ -964,6 +964,10 @@
         if (!cancel || window.confirm('Annuler cette séance ? Ton mentoré sera prévenu.')) {
           if (await run(btn, () => api(`/sessions/${id}`, json('PUT', { status: cancel ? 'CANCELLED' : 'DONE' })), cancel ? 'Séance annulée' : 'Séance marquée comme faite')) refresh();
         }
+      }
+      if (act === 'pending-activate' && window.confirm('Créer le compte de cette personne et ouvrir son Espace mentor ? Elle recevra un e-mail pour choisir son mot de passe.')) {
+        const res = await run(btn, () => api(`/mentors/pending/${id}/activate`, json('POST')));
+        if (res) { toast(res.data?.accountCreated ? 'Compte créé : un e-mail lui est envoyé pour choisir son mot de passe' : 'Espace mentor ouvert'); refresh(); }
       }
       if (act === 'pending-copy') toast((await copyText(btn.dataset.link)) ? 'Lien copié : envoie-le à la personne' : 'Copie impossible', 'success');
       if (act === 'invitation-copy') {

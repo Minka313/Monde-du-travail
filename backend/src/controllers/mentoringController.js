@@ -18,6 +18,7 @@ const MentoringController = {
   getContext: handle((req) => MentoringService.getContext(req.user)),
 
   listMentors: handle((req) => MentoringService.listMentors(req.user)),
+  activatePendingMentor: handle((req) => MentorApplicationService.activatePendingMentor(req.user, req.params.id, meta(req)), { message: 'Espace mentor ouvert' }),
   listPendingMentors: handle((req) => MentoringService.listPendingMentors(req.user)),
   searchMembers: handle((req) => MentoringService.searchMembers(req.user, req.query.q)),
   createMentorship: handle((req) => MentoringService.createMentorship(req.user, req.body, meta(req)), { status: 201, message: 'Binôme créé' }),

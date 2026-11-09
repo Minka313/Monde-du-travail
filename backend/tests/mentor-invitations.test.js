@@ -143,6 +143,28 @@ describe('Invitations de mentors', () => {
     await cleanupTestUsers([mail]);
   });
 
+  it('ouvre d\'un clic le compte d\'un mentor accepté auparavant sans compte', async () => {
+    const mail = 'ancien.accepte@inv.test.com';
+    await cleanupTestUsers([mail]);
+    const old = await prisma.mentorApplication.create({
+      data: { fullName: 'Ancien Accepté', email: mail, profession: 'Enseignant', domains: 'Maths', motivation: 'x'.repeat(40), status: 'ACCEPTED', handledAt: new Date() },
+    });
+    try {
+      const waiting = (await request(app).get('/api/mentoring/mentors/pending').set(as('pres'))).body.data;
+      expect(waiting.find((m) => m.id === old.id)).toMatchObject({ accountState: 'NONE' });
+      expect((await request(app).post(`/api/mentoring/mentors/pending/${old.id}/activate`).set(as('membre'))).status).toBe(403);
+      const res = await request(app).post(`/api/mentoring/mentors/pending/${old.id}/activate`).set(as('pres'));
+      expect(res.status).toBe(200);
+      expect(res.body.data.accountCreated).toBe(true);
+      expect((await request(app).get('/api/mentoring/mentors').set(as('pres'))).body.data.map((m) => m.email)).toContain(mail);
+      expect((await request(app).get('/api/mentoring/mentors/pending').set(as('pres'))).body.data.map((m) => m.id)).not.toContain(old.id);
+      expect((await request(app).post(`/api/mentoring/mentors/pending/${old.id}/activate`).set(as('pres'))).status).toBe(400);
+    } finally {
+      await prisma.mentorApplication.deleteMany({ where: { email: mail } });
+      await cleanupTestUsers([mail]);
+    }
+  });
+
   it('garde la candidature ouverte à tous sans invitation', async () => {
     await prisma.mentorApplication.deleteMany({ where: { email: INVITEE } });
     await cleanupTestUsers([INVITEE]);
