@@ -68,35 +68,94 @@ class MentorApplicationService {
     }
     const email = normalizeEmail(user?.email || data.email);
     const pending = await prisma.mentorApplication.findFirst({ where: { email, status: 'PENDING' } });
-    if (pending) return { status: 'PENDING', alreadyPending: true };
+    if (pending && !invitation) return { status: 'PENDING', alreadyPending: true };
     if (user && (user.adminRoles || []).includes(MENTOR_ROLE)) throw new BadRequestError('Tu es déjà mentor du club.');
-    const application = await prisma.mentorApplication.create({
-      data: {
-        userId: user?.id || null,
-        fullName: user ? fullName(user) : data.fullName.trim(),
-        email,
-        phone: data.phone?.trim() || null,
-        profession: data.profession.trim(),
-        organization: data.organization?.trim() || null,
-        domains: data.domains.trim(),
-        experience: data.experience?.trim() || null,
-        motivation: data.motivation.trim(),
-        availability: data.availability?.trim() || null,
-        linkedinUrl: data.linkedinUrl?.trim() || null,
-        invitationId: invitation?.id || null,
-      },
-    });
-    if (invitation) await prisma.mentorInvitation.update({ where: { id: invitation.id }, data: { usedAt: new Date() } });
+    const fields = {
+      userId: user?.id || null,
+      fullName: user ? fullName(user) : data.fullName.trim(),
+      email,
+      phone: data.phone?.trim() || null,
+      profession: data.profession.trim(),
+      organization: data.organization?.trim() || null,
+      domains: data.domains.trim(),
+      experience: data.experience?.trim() || null,
+      motivation: data.motivation.trim(),
+      availability: data.availability?.trim() || null,
+      linkedinUrl: data.linkedinUrl?.trim() || null,
+      invitationId: invitation?.id || null,
+    };
+    // Une candidature déjà en attente de la même personne est complétée, pas dupliquée
+    const application = pending
+      ? await prisma.mentorApplication.update({ where: { id: pending.id }, data: fields })
+      : await prisma.mentorApplication.create({ data: fields });
+
+    if (invitation) {
+      await prisma.mentorInvitation.update({ where: { id: invitation.id }, data: { usedAt: new Date() } });
+      // Invité par la Présidence : accepté d'office, la Présidence en est avertie
+      const result = await MentorApplicationService.acceptInvited(application, invitation);
+      return { status: 'ACCEPTED', alreadyPending: false, accepted: true, hasAccount: result.hasAccount };
+    }
+
     const presidents = await prisma.user.findMany({ where: { role: 'ULTRA_ADMIN', isActive: true }, select: { id: true } });
     await Promise.allSettled(presidents.map((p) => NotificationService.createNotification({
       userId: p.id,
       type: 'SYSTEM',
-      title: invitation ? '🌟 Un professionnel invité a répondu' : '🌟 Candidature de mentor',
+      title: '🌟 Candidature de mentor',
       message: `${application.fullName} · ${application.profession} · ${application.domains}`.slice(0, 200),
       url: '/mentor.html?tab=applications',
       dedupeKey: `MENTOR_APPLICATION:${application.id}:${p.id}`,
     })));
     return { status: 'PENDING', alreadyPending: false };
+  }
+
+  /** Compte actif qui porte l'adresse e-mail de la candidature (ou celui déjà lié) */
+  static async accountFor(application) {
+    return application.userId
+      ? prisma.user.findUnique({ where: { id: application.userId }, select: { id: true } })
+      : prisma.user.findFirst({ where: { email: { equals: application.email, mode: 'insensitive' }, isActive: true }, select: { id: true } });
+  }
+
+  /**
+   * Accepte d'office la réponse d'un professionnel invité : rôle mentor tout de suite s'il a un compte, sinon à la
+   * création de son compte avec cette adresse. La Présidence est prévenue (cloche + alerte), le professionnel par e-mail.
+   */
+  static async acceptInvited(application, invitation) {
+    const account = await MentorApplicationService.accountFor(application);
+    if (account) {
+      await grantMentorRole(account.id, invitation.createdById);
+      await seedProfile(account.id, application);
+    }
+    await prisma.mentorApplication.update({
+      where: { id: application.id },
+      data: {
+        status: 'ACCEPTED', handledById: invitation.createdById, handledAt: new Date(),
+        response: 'Accepté d\'office : invité par la Présidence',
+        ...(account ? { userId: account.id, roleGrantedAt: new Date() } : {}),
+      },
+    });
+    const presidents = await prisma.user.findMany({ where: { role: 'ULTRA_ADMIN', isActive: true }, select: { id: true } });
+    await Promise.allSettled(presidents.map((p) => NotificationService.createNotification({
+      userId: p.id,
+      type: 'SYSTEM',
+      title: `🌟 ${application.fullName} rejoint les mentors`,
+      message: `${application.fullName} (${application.profession}) a répondu à ton invitation et est accepté d'office.${account ? ' Son Espace mentor est ouvert.' : ' Il doit créer son compte avec cette adresse pour ouvrir son Espace mentor.'}`.slice(0, 250),
+      url: '/mentor.html?tab=overview',
+      dedupeKey: `MENTOR_INVITED_ACCEPTED:${application.id}:${p.id}`,
+    })));
+    await EmailService.notifyMentorApplicationDecision({
+      to: application.email, fullName: application.fullName, accepted: true, response: null, hasAccount: Boolean(account),
+    }).catch((err) => logger.warn('E-mail d\'acceptation non envoyé', { error: err.message }));
+    if (account) {
+      await NotificationService.createNotification({
+        userId: account.id, type: 'SYSTEM', title: '🌟 Bienvenue parmi les mentors',
+        message: 'Tu es accepté comme mentor : ton Espace mentor est ouvert.', url: '/mentor.html',
+      }).catch(() => {});
+    }
+    await AuditService.log({
+      userId: invitation.createdById, action: 'mentoring.application.accept_invited', module: 'mentoring',
+      resource: 'MentorApplication', resourceId: application.id, metadata: { email: application.email, roleGranted: Boolean(account) },
+    }).catch(() => {});
+    return { hasAccount: Boolean(account) };
   }
 
   // ===== Invitations : la Présidence envoie un lien personnel à un professionnel =====
@@ -221,9 +280,7 @@ class MentorApplicationService {
 
     let account = null;
     if (decision === 'ACCEPTED') {
-      account = application.userId
-        ? await prisma.user.findUnique({ where: { id: application.userId }, select: { id: true } })
-        : await prisma.user.findFirst({ where: { email: { equals: application.email, mode: 'insensitive' }, isActive: true }, select: { id: true } });
+      account = await MentorApplicationService.accountFor(application);
       if (account) {
         await grantMentorRole(account.id, user.id);
         await seedProfile(account.id, application);

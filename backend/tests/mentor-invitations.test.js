@@ -64,13 +64,38 @@ describe('Invitations de mentors', () => {
     const sent = await request(app).post('/api/mentor-applications').send(form({ invitation: token }));
     expect(sent.status).toBe(201);
     const applications = (await request(app).get('/api/mentoring/applications').set(as('pres'))).body.data;
-    expect(applications.find((a) => a.email === INVITEE)).toMatchObject({ invited: true, status: 'PENDING', profession: 'Ingénieur agronome' });
+    // Invité : accepté d'office, sans attendre la décision de la Présidence
+    expect(sent.body.data).toMatchObject({ status: 'ACCEPTED', accepted: true, hasAccount: false });
+    expect(applications.find((a) => a.email === INVITEE)).toMatchObject({ invited: true, status: 'ACCEPTED', profession: 'Ingénieur agronome' });
+    const alert = await prisma.notification.findFirst({ where: { user: { email: EMAILS[0] }, title: { contains: 'rejoint les mentors' } } });
+    expect(alert).toBeTruthy();
+    expect(alert.message).toContain('créer son compte');
+    // Sans compte : il est signalé à la Présidence comme mentor accepté en attente de compte
+    const pendingMentors = (await request(app).get('/api/mentoring/mentors/pending').set(as('pres'))).body.data;
+    expect(pendingMentors.find((m) => m.email === INVITEE)).toMatchObject({ accountState: 'NONE', invited: true });
+    expect((await request(app).get('/api/mentoring/mentors/pending').set(as('membre'))).status).toBe(403);
     const list = (await request(app).get('/api/mentoring/invitations').set(as('pres'))).body.data;
     expect(list.find((i) => i.id === created.id).status).toBe('USED');
     // Le lien ne sert qu'une fois
     expect((await request(app).get(`/api/mentor-applications/invitation/${token}`)).status).toBe(400);
     expect((await request(app).post('/api/mentor-applications').send(form({ invitation: token, email: 'autre@inv.test.com' }))).status).toBe(400);
     expect((await request(app).post('/api/mentoring/invitations/' + created.id + '/resend').set(as('pres'))).status).toBe(400);
+  });
+
+  it('ouvre tout de suite le rôle de mentor si le professionnel invité a déjà un compte', async () => {
+    const pro = await createTestUser({ email: 'compte.pro@inv.test.com', firstName: 'Compte', lastName: 'Pro' });
+    try {
+      const created = (await request(app).post('/api/mentoring/invitations').set(as('pres')).send({ inviteeEmail: pro.email })).body.data;
+      const sent = await request(app).post('/api/mentor-applications').send(form({ invitation: tokenOf(created.link), email: pro.email, fullName: 'Compte Pro' }));
+      expect(sent.body.data).toMatchObject({ accepted: true, hasAccount: true });
+      const mentors = (await request(app).get('/api/mentoring/mentors').set(as('pres'))).body.data;
+      expect(mentors.map((m) => m.email)).toContain(pro.email);
+      const pending = (await request(app).get('/api/mentoring/mentors/pending').set(as('pres'))).body.data;
+      expect(pending.map((m) => m.email)).not.toContain(pro.email);
+    } finally {
+      await prisma.mentorApplication.deleteMany({ where: { email: 'compte.pro@inv.test.com' } });
+      await cleanupTestUsers(['compte.pro@inv.test.com']);
+    }
   });
 
   it('retire une invitation : le lien ne fonctionne plus', async () => {

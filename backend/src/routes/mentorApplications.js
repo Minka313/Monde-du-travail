@@ -54,9 +54,11 @@ router.post('/', applyLimiter, optionalAuth, validate(schema), async (req, res, 
     const result = await MentorApplicationService.submit(data, user, invitation || null);
     res.status(result.alreadyPending ? 200 : 201).json({
       success: true,
-      message: result.alreadyPending
-        ? 'Ta candidature est déjà en cours d\'examen : la Présidence te répondra par e-mail.'
-        : 'Merci ! Ta candidature est transmise à la Présidence du club, qui te répondra par e-mail.',
+      message: result.accepted
+        ? 'Merci et bienvenue parmi les mentors du club ! Ta candidature est acceptée : la Présidence en est prévenue et tu reçois un e-mail de confirmation.'
+        : result.alreadyPending
+          ? 'Ta candidature est déjà en cours d\'examen : la Présidence te répondra par e-mail.'
+          : 'Merci ! Ta candidature est transmise à la Présidence du club, qui te répondra par e-mail.',
       data: result,
     });
   } catch (error) {

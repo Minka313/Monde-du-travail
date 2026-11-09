@@ -163,6 +163,9 @@ class AuthService {
     if (user.role === 'VISITOR' && !user.isVerified) {
       await prisma.user.update({ where: { id: user.id }, data: { isActive: true, isVerified: true } });
       await AuthService.notifyNewVisitorAccount(user);
+      // Mentor accepté avant la création du compte : son Espace mentor s'ouvre dès la confirmation de l'adresse
+      const confirmed = await prisma.user.findUnique({ where: { id: user.id }, select: { id: true, email: true } });
+      await require('./mentorApplicationService').grantPendingRole(confirmed).catch(() => false);
     }
     return { verified: true };
   }

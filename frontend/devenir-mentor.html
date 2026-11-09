@@ -294,7 +294,7 @@
         invitationToken = invitation;
         if (d.inviteeName) form.fullName.value = d.inviteeName;
         if (d.inviteeEmail) form.email.value = d.inviteeEmail;
-        box.innerHTML = `<strong class="mi-title">👋 ${d.inviteeName ? `${escHtml(d.inviteeName)}, ` : ''}${escHtml(d.invitedBy || 'la Présidence')} t'invite à devenir mentor du club</strong>Il te suffit de renseigner tes informations ci-dessous : elles sont transmises directement à la Présidence, sans création de compte.${d.message ? `<blockquote>${escHtml(d.message)}</blockquote>` : ''}`;
+        box.innerHTML = `<strong class="mi-title">👋 ${d.inviteeName ? `${escHtml(d.inviteeName)}, ` : ''}${escHtml(d.invitedBy || 'la Présidence')} t'invite à devenir mentor du club</strong>Il te suffit de renseigner tes informations ci-dessous : elles sont transmises directement à la Présidence et ton invitation est acceptée dès l'envoi, sans création de compte obligatoire.${d.message ? `<blockquote>${escHtml(d.message)}</blockquote>` : ''}`;
         box.hidden = false;
         return true;
       } catch (error) {
@@ -312,14 +312,14 @@
       } catch (_) { /* invité */ }
     });
     // Après la candidature : création de compte en une minute (e-mail déjà connu) pour que l'Espace mentor s'ouvre à l'acceptation
-    function offerAccount(applied) {
+    function offerAccount(applied, accepted) {
       const box = document.getElementById('mentorAccount');
       if (!box || (window.Api.getToken && window.Api.getToken())) return;
       const parts = applied.fullName.split(/\s+/).filter(Boolean);
       const firstName = parts[0] || applied.fullName;
       const lastName = parts.slice(1).join(' ') || firstName;
       box.innerHTML = `<h3>🔑 Crée ton compte en 1 minute</h3>
-        <p>Pour retrouver ton <strong>Espace mentor</strong> dès que la Présidence aura accepté ta candidature, crée ton compte avec l'adresse que tu viens de renseigner. Il ne te reste qu'à choisir un mot de passe.</p>
+        <p>${accepted ? 'Tu es accepté(e) comme mentor ! Pour ouvrir ton <strong>Espace mentor</strong>, crée ton compte' : 'Pour retrouver ton <strong>Espace mentor</strong> dès que la Présidence aura accepté ta candidature, crée ton compte'} avec l'adresse que tu viens de renseigner. Il ne te reste qu'à choisir un mot de passe.</p>
         <form id="mentorAccountForm" novalidate>
           <input type="email" value="${escHtml(applied.email)}" readonly aria-label="Adresse e-mail">
           <input type="password" name="password" minlength="8" autocomplete="new-password" placeholder="Choisis un mot de passe (8 caractères, 1 lettre, 1 chiffre)" aria-label="Mot de passe" required>
@@ -340,7 +340,7 @@
         try {
           await window.Api.auth.registerVisitor({ email: applied.email, password, firstName, lastName });
           try { window.AnalyticsTracker?.track?.('account_created', 'account', 'visitor', {}); } catch (_) { /* suivi facultatif */ }
-          box.innerHTML = '<h3>✅ Compte créé</h3><p>Un e-mail de confirmation vient de t\'être envoyé : clique sur son lien pour activer ton compte. Quand la Présidence aura accepté ta candidature, ton Espace mentor s\'ouvrira automatiquement.</p>';
+          box.innerHTML = `<h3>✅ Compte créé</h3><p>Un e-mail de confirmation vient de t'être envoyé : clique sur son lien pour activer ton compte. ${accepted ? 'Ton Espace mentor s\'ouvrira automatiquement dès que tu auras confirmé ton adresse.' : 'Quand la Présidence aura accepté ta candidature, ton Espace mentor s\'ouvrira automatiquement.'}</p>`;
         } catch (error) {
           msg.classList.add('is-error');
           if (error.status === 409 || /déjà utilisé/i.test(error.message || '')) {
@@ -371,7 +371,7 @@
         status.textContent = (res && res.message) || 'Merci ! Ta candidature est transmise.';
         form.querySelectorAll('input, textarea, button').forEach((el) => { el.disabled = true; });
         try { window.AnalyticsTracker?.track?.('mentor_application', 'mentoring', 'application', {}); } catch (_) { /* suivi facultatif */ }
-        offerAccount(body);
+        offerAccount(body, Boolean(res && res.data && res.data.accepted));
       } catch (error) {
         status.classList.add('is-error');
         status.textContent = error.message || 'Envoi impossible pour le moment.';

@@ -289,6 +289,30 @@ class MentoringService {
     }));
   }
 
+  /**
+   * Mentors acceptés qui ne sont pas encore dans la liste : leur rôle s'attribue au compte qui porte l'adresse e-mail de la
+   * candidature, donc tant que ce compte n'existe pas (ou est inactif), ils n'apparaissent pas parmi les mentors.
+   */
+  static async listPendingMentors(user) {
+    requirePresident(user);
+    const rows = await prisma.mentorApplication.findMany({
+      where: { status: 'ACCEPTED', roleGrantedAt: null },
+      orderBy: { handledAt: 'desc' },
+    });
+    const emails = rows.map((r) => r.email);
+    const accounts = emails.length
+      ? await prisma.user.findMany({ where: { email: { in: emails, mode: 'insensitive' } }, select: { email: true, isActive: true, isVerified: true } })
+      : [];
+    return rows.map((r) => {
+      const account = accounts.find((a) => a.email.toLowerCase() === r.email.toLowerCase());
+      return {
+        id: r.id, fullName: r.fullName, email: r.email, phone: r.phone, profession: r.profession, organization: r.organization,
+        domains: r.domains, acceptedAt: r.handledAt, invited: Boolean(r.invitationId),
+        accountState: !account ? 'NONE' : (account.isActive ? 'ACTIVE' : 'UNCONFIRMED'),
+      };
+    });
+  }
+
   static async searchMembers(user, q) {
     requirePresident(user);
     const query = String(q || '').trim();

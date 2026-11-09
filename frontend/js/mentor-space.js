@@ -150,10 +150,24 @@
 
     // ===== Vues Présidence =====
 
+    // Mentors acceptés dont le compte n'est pas encore prêt : ils n'ont pas encore le rôle, donc pas de carte de mentor
+    function pendingMentorsHtml(list) {
+      if (!list.length) return '';
+      const STATE = { NONE: 'Pas encore de compte sur le site', UNCONFIRMED: 'Compte créé, adresse e-mail pas encore confirmée' };
+      const signup = `${window.location.origin}/login.html#register`;
+      return `<section class="ms-card ms-watch">
+        <h3 style="margin:0 0 0.4rem;">⏳ Mentors acceptés, en attente de leur compte (${list.length})</h3>
+        <p class="ms-hint" style="margin:0 0 0.75rem;">Ces personnes sont acceptées, mais leur Espace mentor s'ouvre seulement quand elles ont un compte actif sur le site <strong>avec l'adresse e-mail de leur candidature</strong>. Dès qu'elles le confirment, elles apparaissent dans la liste des mentors ci-dessous.</p>
+        <ul class="ms-sessions">${list.map((m) => `<li><span><strong>${esc(m.fullName)}</strong> · ${esc(m.profession)}${m.invited ? ' · ✉️ invité' : ''}<br><em>${esc(m.email)} — ${esc(STATE[m.accountState] || m.accountState)}</em></span>
+          <span class="ms-actions"><button type="button" class="ms-btn ms-btn-ghost" data-act="pending-copy" data-link="${esc(signup)}">📋 Copier le lien de création de compte</button><a class="ms-btn ms-btn-ghost" href="mailto:${esc(m.email)}?subject=${encodeURIComponent('Ton Espace mentor — Le Monde du Travail')}&body=${encodeURIComponent(`Bonjour ${m.fullName},\n\nTu es accepté(e) comme mentor du club. Pour ouvrir ton Espace mentor, crée ton compte avec cette adresse e-mail (${m.email}) : ${signup}\n\nÀ bientôt !`)}">✉️ Lui écrire</a></span></li>`).join('')}</ul></section>`;
+    }
+
     async function viewOverview() {
-      state.mentors = (await api('/mentors')).data;
+      const [mentorsRes, pendingRes] = await Promise.all([api('/mentors'), api('/mentors/pending').catch(() => ({ data: [] }))]);
+      state.mentors = mentorsRes.data;
+      const pendingHtml = pendingMentorsHtml(pendingRes.data || []);
       if (!state.mentors.length) {
-        return empty('🧑‍🏫', 'Aucun mentor pour l\'instant', 'Nommez des mentors depuis l\'administration (Administrateurs › Mentors) : ils apparaîtront ici.');
+        return pendingHtml + empty('🧑‍🏫', 'Aucun mentor actif pour l\'instant', pendingHtml ? 'Les mentors acceptés apparaîtront ici dès que leur compte sera actif.' : 'Nommez des mentors depuis l\'administration (Administrateurs › Mentors) ou acceptez une candidature : ils apparaîtront ici.');
       }
       const c = state.ctx;
       const st = c.stats || {};
@@ -169,6 +183,7 @@
           <div class="ms-kpi ms-kpi-warn"><span>Signalements ouverts</span><strong>${nf(st.openConcerns)}</strong></div>
           <div class="ms-kpi ms-kpi-warn"><span>Binômes sans séance (45 j)</span><strong>${nf(st.quietPairs)}</strong></div>
         </div>
+        ${pendingHtml}
         ${(st.toWatch || []).length ? `<section class="ms-card ms-watch"><h3 style="margin:0 0 0.5rem;">⚠️ Mentorés à suivre</h3>
           <p class="ms-hint" style="margin:0 0 0.5rem;">D'après le dernier compte rendu de leur mentor.</p>
           <ul class="ms-sessions">${st.toWatch.map((w) => `<li><span><strong>${esc(w.menteeName)}</strong> · mentor : ${esc(w.mentor)}<br><em>${esc(w.progression)} · ${esc(frDate(w.at))}</em></span></li>`).join('')}</ul></section>` : ''}
@@ -950,6 +965,7 @@
           if (await run(btn, () => api(`/sessions/${id}`, json('PUT', { status: cancel ? 'CANCELLED' : 'DONE' })), cancel ? 'Séance annulée' : 'Séance marquée comme faite')) refresh();
         }
       }
+      if (act === 'pending-copy') toast((await copyText(btn.dataset.link)) ? 'Lien copié : envoie-le à la personne' : 'Copie impossible', 'success');
       if (act === 'invitation-copy') {
         const inv = (state.invitations || []).find((x) => x.id === id);
         if (inv) toast((await copyText(inv.link)) ? 'Lien copié : colle-le dans un message' : 'Copie impossible : sélectionne le lien et copie-le à la main', 'success');
