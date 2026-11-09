@@ -582,6 +582,8 @@ model User {
   chatMessages           ChatMessage[]
   chatReads              ChatRead[]
   chatMemberships        ChatMember[]
+  meetingsCreated        Meeting[]               @relation("MeetingCreator")
+  meetingInvitations     MeetingInvitee[]        @relation("MeetingInvitees")
   mentorNote             MentorNote?             @relation("MentorNoteSubject")
   reportRequestsMade     PositionReportRequest[] @relation("ReportRequestAuthor")
   mentorInvitations      MentorInvitation[]      @relation("MentorInvitationCreator")
@@ -823,6 +825,41 @@ model MentorRequest {
 
 // Profil du mentor, présenté à ses mentorés et à la Présidence (jamais ses coordonnées)
 // Notes privées de la Présidence sur un mentor (jamais visibles du mentor)
+// Réunion en visio du club (bureau, mentors, adhérents ou personnes choisies) : salle ouverte par l'organisateur
+model Meeting {
+  id              String           @id @default(cuid())
+  title           String
+  description     String?
+  startsAt        DateTime
+  durationMinutes Int              @default(60)
+  // Groupes invités : BUREAU, MENTORS, MEMBERS (tous les adhérents)
+  audiences       String[]         @default([])
+  createdById     String
+  visioStatus     String           @default("CLOSED")
+  visioRoomId     String?
+  cancelledAt     DateTime?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  createdBy       User             @relation("MeetingCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  invitees        MeetingInvitee[]
+
+  @@index([startsAt])
+  @@index([createdById])
+  @@map("meetings")
+}
+
+model MeetingInvitee {
+  id        String  @id @default(cuid())
+  meetingId String
+  userId    String
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  user      User    @relation("MeetingInvitees", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, userId])
+  @@index([userId])
+  @@map("meeting_invitees")
+}
+
 model MentorNote {
   id          String   @id @default(cuid())
   mentorId    String   @unique

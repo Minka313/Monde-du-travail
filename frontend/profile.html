@@ -136,6 +136,15 @@
                         <a href="salon.html" class="btn btn-primary btn-sm">Ouvrir le salon &rarr;</a>
                     </div>
 
+                    <!-- Réunions en visio : réservées aux adhérents invités -->
+                    <div class="profile-box profile-bureau-box" id="profileMeetingsBox" hidden>
+                        <h2><span>📹</span> Réunions en visio</h2>
+                        <p style="color: var(--color-gray-600); font-size: 0.95rem; margin: 0 0 1rem;">
+                            Réunions du bureau, des mentors ou de tous les adhérents : retrouve celles où tu es invité(e) et rejoins la salle en un clic.
+                        </p>
+                        <a href="reunions.html" class="btn btn-primary btn-sm">Voir mes réunions &rarr;</a>
+                    </div>
+
                     <!-- Compte visiteur : rejoindre le club -->
                     <div class="profile-box profile-join-box" id="profileJoinBox" hidden>
                         <h2><span>🤝</span> Rejoindre le club</h2>
@@ -646,7 +655,7 @@
         .join(' ');
     }
 
-    if (!isVisitor) document.getElementById('profileSalonBox').hidden = false;
+    if (!isVisitor) { document.getElementById('profileSalonBox').hidden = false; document.getElementById('profileMeetingsBox').hidden = false; }
 
     if ((user.adminRoles || []).includes('MENTOR_EXPERT')) {
       document.getElementById('profileMentorBox').hidden = false;

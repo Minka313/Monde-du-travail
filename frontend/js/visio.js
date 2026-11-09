@@ -14,9 +14,16 @@
 
   const params = new URLSearchParams(window.location.search);
   const seanceId = params.get('seance') || '';
-  const formationId = seanceId || params.get('formation') || params.get('id') || '';
+  const reunionId = params.get('reunion') || '';
+  const formationId = reunionId || seanceId || params.get('formation') || params.get('id') || '';
   // Points d'entrée de l'API selon le type de salle
-  const API = seanceId
+  const API = reunionId
+    ? {
+      session: () => window.Api.request(`/meetings/${encodeURIComponent(reunionId)}/visio`),
+      join: () => `/meetings/${encodeURIComponent(reunionId)}/visio/join`,
+      host: (action) => window.Api.request(`/meetings/${encodeURIComponent(reunionId)}/visio/${action}`, { method: 'POST' }),
+    }
+    : seanceId
     ? {
       session: () => window.Api.request(`/mentoring/sessions/${encodeURIComponent(seanceId)}/visio`),
       join: () => `/mentoring/sessions/${encodeURIComponent(seanceId)}/visio/join`,
@@ -43,8 +50,8 @@
     setupNotes();
     setupEcoToggle();
     if (!formationId) return renderError('Aucune formation indiquée dans le lien.');
-    if (seanceId && !(window.Api && window.Api.getToken && window.Api.getToken())) {
-      return renderError('Connecte-toi pour rejoindre ta séance de mentorat.');
+    if ((seanceId || reunionId) && !(window.Api && window.Api.getToken && window.Api.getToken())) {
+      return renderError(reunionId ? 'Connecte-toi pour rejoindre la réunion.' : 'Connecte-toi pour rejoindre ta séance de mentorat.');
     }
     await load();
   });
@@ -57,10 +64,11 @@
     try {
       session = (await API.session()).data;
     } catch (error) {
-      renderError(error.status === 404 ? (seanceId ? 'Cette séance est introuvable.' : 'Cette formation est introuvable. Vérifie le lien reçu.') : (error.message || 'Salle indisponible pour le moment.'));
+      renderError(error.status === 404 ? (reunionId ? 'Cette réunion est introuvable, ou tu n\'y es pas invité(e).' : seanceId ? 'Cette séance est introuvable.' : 'Cette formation est introuvable. Vérifie le lien reçu.') : (error.message || 'Salle indisponible pour le moment.'));
       return;
     }
     renderSidebar(session);
+    if (session.cancelled) { renderError('Cette réunion a été annulée par son organisateur.'); return; }
     if (session.visioStatus === 'LIVE') renderLive();
     else renderClosed();
     // Tant que la salle est fermée, on vérifie régulièrement si l'animateur l'a ouverte
@@ -112,7 +120,7 @@
         <div class="lobby-icon">⚠️</div>
         <h2>Salle indisponible</h2>
         <p>${esc(message)}</p>
-        <a class="lobby-btn lobby-btn-ghost" href="formations.html">Voir les formations</a>
+        <a class="lobby-btn lobby-btn-ghost" href="${reunionId ? 'reunions.html' : 'formations.html'}">${reunionId ? 'Mes réunions' : 'Voir les formations'}</a>
       </div>`;
   }
 
