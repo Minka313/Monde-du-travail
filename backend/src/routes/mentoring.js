@@ -146,6 +146,8 @@ router.get('/context', C.getContext);
 
 router.get('/mentors', C.listMentors);
 router.get('/mentors/pending', C.listPendingMentors);
+router.get('/mentors/:id/file', C.getMentorFile);
+router.put('/mentors/:id/note', validate(z.object({ body: z.object({ content: z.string().max(5000).nullable().optional() }).strict() })), C.saveMentorNote);
 router.post('/mentors/pending/:id/activate', C.activatePendingMentor);
 router.get('/members', C.searchMembers);
 router.post('/mentorships', validate(schemas.mentorship), C.createMentorship);

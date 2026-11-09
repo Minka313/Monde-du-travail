@@ -313,6 +313,96 @@ class MentoringService {
     });
   }
 
+  /**
+   * Fiche complète d'un mentor, réservée à la Présidence : identité et candidature, profil, activité (binômes, séances,
+   * avis, formations, comptes rendus) et notes privées.
+   */
+  static async getMentorFile(user, mentorId) {
+    requirePresident(user);
+    if (!(await mentorUserIds()).includes(mentorId)) throw new NotFoundError('Mentor introuvable');
+    const [mentor, application, mentorships, trainings, reports, note, roleRow] = await Promise.all([
+      prisma.user.findUnique({ where: { id: mentorId }, select: { ...USER_SUMMARY, createdAt: true, lastLoginAt: true, mentorProfile: true } }),
+      prisma.mentorApplication.findFirst({
+        where: { userId: mentorId, status: 'ACCEPTED' },
+        orderBy: { handledAt: 'desc' },
+        include: { handledBy: { select: { firstName: true, lastName: true } }, invitation: { select: { createdAt: true } } },
+      }),
+      prisma.mentorship.findMany({
+        where: { mentorId },
+        orderBy: { startDate: 'desc' },
+        include: {
+          sessions: { select: { id: true, scheduledAt: true, status: true, menteeRating: true, menteeComment: true, feedbackAt: true }, orderBy: { scheduledAt: 'desc' } },
+          concerns: { select: { status: true } },
+        },
+      }),
+      prisma.formationTrainer.findMany({ where: { userId: mentorId }, include: { formation: { select: { id: true, title: true, startDate: true, status: true } } } }),
+      prisma.mentorReport.findMany({ where: { authorId: mentorId }, orderBy: { updatedAt: 'desc' }, take: 8, select: { id: true, title: true, kind: true, status: true, submittedAt: true, updatedAt: true } }),
+      prisma.mentorNote.findUnique({ where: { mentorId } }),
+      prisma.userAdminRole.findFirst({ where: { userId: mentorId, role: { name: MENTOR_ROLE }, status: 'APPROVED' }, select: { reviewedAt: true, assignedAt: true } }),
+    ]);
+    if (!mentor) throw new NotFoundError('Mentor introuvable');
+
+    const sessions = mentorships.flatMap((m) => m.sessions);
+    const rated = sessions.filter((s) => s.menteeRating);
+    const now = new Date();
+    const reportCounts = await prisma.mentorReport.groupBy({ by: ['status'], where: { authorId: mentorId }, _count: true });
+    const countOf = (status) => reportCounts.find((r) => r.status === status)?._count || 0;
+
+    return {
+      id: mentor.id,
+      fullName: fullName(mentor),
+      email: mentor.email,
+      avatarUrl: mentor.avatarUrl,
+      accountCreatedAt: mentor.createdAt,
+      lastLoginAt: mentor.lastLoginAt,
+      mentorSince: roleRow?.reviewedAt || roleRow?.assignedAt || null,
+      profile: mentorProfileDto(mentor.mentorProfile),
+      application: application ? {
+        phone: application.phone, profession: application.profession, organization: application.organization, domains: application.domains,
+        experience: application.experience, motivation: application.motivation, availability: application.availability, linkedinUrl: application.linkedinUrl,
+        receivedAt: application.createdAt, acceptedAt: application.handledAt, acceptedBy: fullName(application.handledBy), invited: Boolean(application.invitationId),
+      } : null,
+      stats: {
+        activePairs: mentorships.filter((m) => m.status === 'ACTIVE').length,
+        totalPairs: mentorships.length,
+        sessionsDone: sessions.filter((s) => s.status === 'DONE').length,
+        sessionsPlanned: sessions.filter((s) => s.status === 'PLANNED' && s.scheduledAt >= now).length,
+        averageRating: rated.length ? Math.round((rated.reduce((n, s) => n + s.menteeRating, 0) / rated.length) * 10) / 10 : null,
+        ratingsCount: rated.length,
+        formations: trainings.length,
+        reportsSubmitted: countOf('SUBMITTED'), reportsValidated: countOf('VALIDATED'), reportsToFix: countOf('NEEDS_CHANGES'),
+        openConcerns: mentorships.reduce((n, m) => n + m.concerns.filter((c) => c.status === 'OPEN').length, 0),
+      },
+      mentorships: mentorships.map((m) => {
+        const done = m.sessions.filter((s) => s.status === 'DONE');
+        return {
+          id: m.id, menteeName: m.menteeName, status: m.status, startDate: m.startDate, endDate: m.endDate, goals: m.goals,
+          sessionsDone: done.length, lastSessionAt: done[0]?.scheduledAt || null,
+        };
+      }),
+      recentComments: rated.filter((s) => s.menteeComment).slice(0, 5).map((s) => ({ rating: s.menteeRating, comment: s.menteeComment, at: s.feedbackAt || s.scheduledAt })),
+      formations: trainings.map((t) => ({ id: t.formation.id, title: t.formation.title, startDate: t.formation.startDate, status: t.formation.status })),
+      reports: reports.map((r) => ({ id: r.id, title: r.title, kind: r.kind, status: r.status, at: r.submittedAt || r.updatedAt })),
+      note: note ? { content: note.content, updatedAt: note.updatedAt } : null,
+    };
+  }
+
+  static async saveMentorNote(user, mentorId, content, meta = {}) {
+    requirePresident(user);
+    if (!(await mentorUserIds()).includes(mentorId)) throw new NotFoundError('Mentor introuvable');
+    const text = String(content || '').trim();
+    if (text.length > 5000) throw new BadRequestError('Note trop longue (5000 caractères maximum)');
+    if (!text) {
+      await prisma.mentorNote.deleteMany({ where: { mentorId } });
+      return { note: null };
+    }
+    const saved = await prisma.mentorNote.upsert({
+      where: { mentorId }, update: { content: text, updatedById: user.id }, create: { mentorId, content: text, updatedById: user.id },
+    });
+    await AuditService.log({ userId: user.id, action: 'mentoring.note', module: 'mentoring', resource: 'MentorNote', resourceId: mentorId, ...meta });
+    return { note: { content: saved.content, updatedAt: saved.updatedAt } };
+  }
+
   static async searchMembers(user, q) {
     requirePresident(user);
     const query = String(q || '').trim();

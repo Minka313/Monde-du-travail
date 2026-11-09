@@ -194,6 +194,7 @@
               ${m.profile?.domains ? `<p class="ms-meta">Domaines : ${esc(m.profile.domains)}</p>` : '<p class="ms-meta"><em>Profil de mentor à compléter</em></p>'}
               <div class="ms-stats"><span><strong>${m.mentorshipsCount}</strong> binôme(s)</span><span><strong>${m.formationsCount}</strong> formation(s)</span><span><strong>${m.reportsCount}</strong> compte(s) rendu(s)</span></div>
               <div class="ms-actions">
+                <button type="button" class="ms-btn ms-btn-primary" data-act="mentor-file" data-id="${esc(m.id)}">📁 Fiche</button>
                 <button type="button" class="ms-btn ms-btn-ghost" data-act="pair-new" data-mentor="${esc(m.id)}">+ Confier un mentoré</button>
                 <button type="button" class="ms-btn ms-btn-ghost" data-act="open-thread" data-thread="${esc(m.id)}">💬 Écrire</button>
               </div>
@@ -470,6 +471,72 @@
         area.remove();
         return ok;
       }
+    }
+
+    // ===== Fiche d'un mentor (Présidence) =====
+
+    const REPORT_STATUS = { DRAFT: 'Brouillon', SUBMITTED: 'À examiner', NEEDS_CHANGES: 'À corriger', VALIDATED: 'Validé' };
+
+    async function openMentorFile(id) {
+      let f;
+      try { f = (await api(`/mentors/${encodeURIComponent(id)}/file`)).data; } catch (error) { toast(error.message || 'Fiche indisponible', 'error'); return; }
+      const a = f.application || {};
+      const p = f.profile || {};
+      const parcours = p.experience || a.experience;
+      const motivation = a.motivation;
+      const contact = [
+        `✉️ <a href="mailto:${esc(f.email)}">${esc(f.email)}</a>`,
+        a.phone && `📞 ${esc(a.phone)}`,
+        p.city && `📍 ${esc(p.city)}`,
+        p.languages && `🗣️ ${esc(p.languages)}`,
+        (p.linkedinUrl || a.linkedinUrl) && `<a href="${esc(p.linkedinUrl || a.linkedinUrl)}" target="_blank" rel="noopener noreferrer">Profil en ligne ↗</a>`,
+      ].filter(Boolean).join(' · ');
+      const st = f.stats;
+      const nf = (v) => (v === null || v === undefined ? '—' : String(v).replace('.', ','));
+      const overlay = modal(`
+        <div class="ms-file">
+          <div class="ms-card-head"><span class="ms-avatar">${esc((f.fullName || '?')[0])}</span><div><strong style="font-size:1.2rem;">${esc(f.fullName)}</strong><span>${esc(p.headline || a.profession || '')}${(p.organization || a.organization) ? ` · ${esc(p.organization || a.organization)}` : ''}</span></div></div>
+          <p class="ms-meta">${contact}</p>
+          <p class="ms-meta">${f.mentorSince ? `Mentor depuis le ${esc(frDate(f.mentorSince))}` : ''}${f.lastLoginAt ? ` · dernière connexion le ${esc(frDate(f.lastLoginAt))}` : ' · ne s\'est pas encore connecté'}${a.invited ? ' · ✉️ invité par la Présidence' : ''}</p>
+
+          <h4 class="ms-file-h">🧭 Son parcours</h4>
+          ${parcours ? `<p class="ms-file-text">${esc(parcours)}</p>` : '<p class="ms-hint">Parcours non renseigné : il peut le compléter dans « Mon profil ».</p>'}
+          ${(p.domains || a.domains) ? `<p class="ms-meta"><strong>Domaines :</strong> ${esc(p.domains || a.domains)}</p>` : ''}
+          ${a.availability ? `<p class="ms-meta"><strong>Disponibilités :</strong> ${esc(a.availability)}</p>` : ''}
+          ${p.bio ? `<h4 class="ms-file-h">🪪 Sa présentation aux mentorés</h4><p class="ms-file-text">${esc(p.bio)}</p>` : ''}
+
+          <h4 class="ms-file-h">💬 Le message de sa candidature</h4>
+          ${motivation ? `<blockquote class="ms-file-quote">${esc(motivation)}</blockquote><p class="ms-hint">Écrit le ${esc(frDate(a.receivedAt))}${a.acceptedAt ? ` · accepté le ${esc(frDate(a.acceptedAt))}${a.acceptedBy ? ` par ${esc(a.acceptedBy)}` : ''}` : ''}</p>` : '<p class="ms-hint">Pas de candidature enregistrée : ce mentor a été nommé directement depuis l\'administration.</p>'}
+
+          <h4 class="ms-file-h">📊 Son activité</h4>
+          <div class="ms-kpis">
+            <div class="ms-kpi"><span>Binômes actifs</span><strong>${st.activePairs}</strong><small>${st.totalPairs} au total</small></div>
+            <div class="ms-kpi"><span>Séances faites</span><strong>${st.sessionsDone}</strong><small>${st.sessionsPlanned} prévue(s)</small></div>
+            <div class="ms-kpi"><span>Avis des mentorés</span><strong>${st.averageRating ? `${nf(st.averageRating)}/5` : '—'}</strong><small>${st.ratingsCount} avis</small></div>
+            <div class="ms-kpi"><span>Formations animées</span><strong>${st.formations}</strong></div>
+            <div class="ms-kpi"><span>Comptes rendus</span><strong>${st.reportsValidated}</strong><small>validés${st.reportsSubmitted ? ` · ${st.reportsSubmitted} à examiner` : ''}${st.reportsToFix ? ` · ${st.reportsToFix} à corriger` : ''}</small></div>
+            <div class="ms-kpi ${st.openConcerns ? 'ms-kpi-warn' : ''}"><span>Signalements ouverts</span><strong>${st.openConcerns}</strong></div>
+          </div>
+          ${f.mentorships.length ? `<h4 class="ms-file-h">🤝 Ses binômes</h4><ul class="ms-sessions">${f.mentorships.map((m) => `<li><span><strong>${esc(m.menteeName)}</strong> · ${esc(m.status === 'ACTIVE' ? 'actif' : m.status === 'PAUSED' ? 'en pause' : 'terminé')} depuis le ${esc(frDate(m.startDate))}<br><em>${m.sessionsDone} séance(s)${m.lastSessionAt ? ` · dernière le ${esc(frDate(m.lastSessionAt))}` : ''}${m.goals ? ` · ${esc(m.goals.slice(0, 110))}` : ''}</em></span></li>`).join('')}</ul>` : ''}
+          ${f.recentComments.length ? `<h4 class="ms-file-h">⭐ Derniers avis</h4><ul class="ms-sessions">${f.recentComments.map((c) => `<li><span><strong>${esc(c.rating)}/5</strong> · ${esc(frDate(c.at))}<br><em>« ${esc(c.comment)} »</em></span></li>`).join('')}</ul>` : ''}
+          ${f.formations.length ? `<h4 class="ms-file-h">🎓 Formations animées</h4><ul class="ms-sessions">${f.formations.map((x) => `<li><span><strong>${esc(x.title)}</strong>${x.startDate ? ` · ${esc(frDate(x.startDate))}` : ''}</span></li>`).join('')}</ul>` : ''}
+          ${f.reports.length ? `<h4 class="ms-file-h">📝 Derniers comptes rendus</h4><ul class="ms-sessions">${f.reports.map((r) => `<li><span><strong>${esc(r.title)}</strong> · ${esc(REPORT_STATUS[r.status] || r.status)} · ${esc(frDate(r.at))}</span></li>`).join('')}</ul>` : ''}
+
+          <h4 class="ms-file-h">🔒 Notes privées de la Présidence</h4>
+          <p class="ms-hint">Visibles uniquement par la Présidence, jamais par le mentor.</p>
+          <textarea class="ms-file-note" rows="4" maxlength="5000" placeholder="Forces, points d'attention, idées de missions…">${esc(f.note?.content || '')}</textarea>
+          <div class="ms-actions"><button type="button" class="ms-btn ms-btn-primary" data-file-save>Enregistrer la note</button><button type="button" class="ms-btn ms-btn-ghost" data-file-write>💬 Lui écrire</button><button type="button" class="ms-btn ms-btn-ghost" data-file-print>🖨️ Imprimer la fiche</button></div>
+        </div>`, { wide: true, label: `Fiche de ${f.fullName}` });
+      overlay.querySelector('[data-file-save]').addEventListener('click', async (e) => {
+        const res = await run(e.currentTarget, () => api(`/mentors/${encodeURIComponent(id)}/note`, json('PUT', { content: overlay.querySelector('.ms-file-note').value })), 'Note enregistrée');
+        if (res) f.note = res.data.note;
+      });
+      overlay.querySelector('[data-file-print]').addEventListener('click', () => {
+        document.body.classList.add('ms-printing-file');
+        window.addEventListener('afterprint', () => document.body.classList.remove('ms-printing-file'), { once: true });
+        window.print();
+      });
+      overlay.querySelector('[data-file-write]').addEventListener('click', () => { closeModal(); state.threadUserId = f.id; go('messages'); });
     }
 
     // ===== Candidatures « Devenir mentor » (Présidence) =====
@@ -965,6 +1032,7 @@
           if (await run(btn, () => api(`/sessions/${id}`, json('PUT', { status: cancel ? 'CANCELLED' : 'DONE' })), cancel ? 'Séance annulée' : 'Séance marquée comme faite')) refresh();
         }
       }
+      if (act === 'mentor-file') openMentorFile(id);
       if (act === 'pending-activate' && window.confirm('Créer le compte de cette personne et ouvrir son Espace mentor ? Elle recevra un e-mail pour choisir son mot de passe.')) {
         const res = await run(btn, () => api(`/mentors/pending/${id}/activate`, json('POST')));
         if (res) { toast(res.data?.accountCreated ? 'Compte créé : un e-mail lui est envoyé pour choisir son mot de passe' : 'Espace mentor ouvert'); refresh(); }

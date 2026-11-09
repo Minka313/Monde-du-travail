@@ -139,3 +139,16 @@
 .ms-check { display: flex !important; flex-direction: row !important; align-items: center; gap: 0.5rem; font-weight: 500 !important; }
 .ms-check input { width: auto !important; }
 a.ms-btn { text-decoration: none; display: inline-flex; align-items: center; }
+
+/* Fiche mentor */
+.ms-file { display: grid; gap: 0.55rem; }
+.ms-file-h { margin: 1.1rem 0 0.2rem; font-size: 1rem; color: var(--ms-navy); border-bottom: 1px solid var(--ms-border); padding-bottom: 0.25rem; }
+.ms-file-text { margin: 0; white-space: pre-line; line-height: 1.6; overflow-wrap: anywhere; }
+.ms-file-quote { margin: 0; padding: 0.7rem 1rem; border-left: 4px solid var(--ms-gold); border-radius: 0 10px 10px 0; background: var(--ms-soft); white-space: pre-line; line-height: 1.6; overflow-wrap: anywhere; }
+.ms-file-note { width: 100%; box-sizing: border-box; padding: 0.7rem 0.85rem; border: 1px solid var(--ms-border); border-radius: 12px; background: var(--ms-soft); color: var(--ms-text); font: inherit; resize: vertical; }
+@media print {
+  body.ms-printing-file > *:not(#msModal) { display: none !important; }
+  body.ms-printing-file #msModal { position: static; background: none; padding: 0; display: block; }
+  body.ms-printing-file .ms-modal { box-shadow: none; max-height: none; width: 100%; overflow: visible; }
+  body.ms-printing-file .ms-close, body.ms-printing-file .ms-actions, body.ms-printing-file .ms-file-note { display: none !important; }
+}

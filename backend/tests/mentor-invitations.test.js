@@ -11,7 +11,7 @@ describe('Invitations de mentors', () => {
   const tokens = {};
   const as = (who) => ({ Authorization: `Bearer ${tokens[who]}` });
   const form = (extra = {}) => ({
-    fullName: 'Mamadou Professionnel', email: INVITEE, phone: '+221770000000', profession: 'Ingénieur agronome',
+    fullName: 'Mamadou Professionnel', email: INVITEE, phone: '+221770000000', profession: 'Ingénieur agronome', experience: 'Dix ans dans l\'agro-industrie.',
     domains: 'Agriculture, entrepreneuriat', motivation: 'Je souhaite transmettre mon expérience du terrain aux jeunes du club.',
     consent: true, ...extra,
   });
@@ -76,6 +76,11 @@ describe('Invitations de mentors', () => {
     const roles = await prisma.userAdminRole.findMany({ where: { userId: account.id, status: 'APPROVED', isActive: true }, include: { role: true } });
     expect(roles.map((r) => r.role.name)).toContain('MENTOR_EXPERT');
     expect((await request(app).get('/api/mentoring/mentors').set(as('pres'))).body.data.map((m) => m.email)).toContain(INVITEE);
+    // Sa fiche est disponible aussitôt : le parcours et le message de candidature sont repris de ce qu'il a saisi
+    const file = (await request(app).get(`/api/mentoring/mentors/${account.id}/file`).set(as('pres'))).body.data;
+    expect(file.fullName).toBe('Mamadou Professionnel');
+    expect(file.application).toMatchObject({ motivation: expect.stringContaining('transmettre mon expérience'), invited: true, phone: '+221770000000' });
+    expect(file.profile).toMatchObject({ headline: 'Ingénieur agronome', domains: 'Agriculture, entrepreneuriat' });
     expect(applications.find((a) => a.email === INVITEE)).toMatchObject({ invited: true, status: 'ACCEPTED', profession: 'Ingénieur agronome' });
     const alert = await prisma.notification.findFirst({ where: { user: { email: EMAILS[0] }, title: { contains: 'rejoint les mentors' } } });
     expect(alert).toBeTruthy();

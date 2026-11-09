@@ -582,6 +582,7 @@ model User {
   chatMessages           ChatMessage[]
   chatReads              ChatRead[]
   chatMemberships        ChatMember[]
+  mentorNote             MentorNote?             @relation("MentorNoteSubject")
   reportRequestsMade     PositionReportRequest[] @relation("ReportRequestAuthor")
   mentorInvitations      MentorInvitation[]      @relation("MentorInvitationCreator")
   topics                 Topic[]
@@ -821,6 +822,19 @@ model MentorRequest {
 }
 
 // Profil du mentor, présenté à ses mentorés et à la Présidence (jamais ses coordonnées)
+// Notes privées de la Présidence sur un mentor (jamais visibles du mentor)
+model MentorNote {
+  id          String   @id @default(cuid())
+  mentorId    String   @unique
+  content     String
+  updatedById String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  mentor      User     @relation("MentorNoteSubject", fields: [mentorId], references: [id], onDelete: Cascade)
+
+  @@map("mentor_notes")
+}
+
 model MentorProfile {
   id           String   @id @default(cuid())
   userId       String   @unique
