@@ -312,6 +312,16 @@
       } catch (_) { /* invité */ }
     });
     // Après la candidature : création de compte en une minute (e-mail déjà connu) pour que l'Espace mentor s'ouvre à l'acceptation
+    // Professionnel invité : accepté d'office, son compte est créé par le club (rien à faire de son côté, sauf choisir un mot de passe)
+    function showAccepted(data) {
+      const box = document.getElementById('mentorAccount');
+      if (!box) return;
+      box.innerHTML = data.accountCreated
+        ? '<h3>✅ Bienvenue parmi les mentors !</h3><p>Nous avons créé ton compte avec l\'adresse que tu viens d\'indiquer et ouvert ton <strong>Espace mentor</strong>. Un e-mail vient de t\'être envoyé : clique sur « Choisir mon mot de passe » et c\'est terminé (pense à regarder tes courriers indésirables).</p>'
+        : '<h3>✅ Bienvenue parmi les mentors !</h3><p>Ton Espace mentor est ouvert avec ton compte existant : <a href="login.html">connecte-toi</a>, puis ouvre « Mon espace ».</p>';
+      box.hidden = false;
+    }
+
     function offerAccount(applied, accepted) {
       const box = document.getElementById('mentorAccount');
       if (!box || (window.Api.getToken && window.Api.getToken())) return;
@@ -371,7 +381,7 @@
         status.textContent = (res && res.message) || 'Merci ! Ta candidature est transmise.';
         form.querySelectorAll('input, textarea, button').forEach((el) => { el.disabled = true; });
         try { window.AnalyticsTracker?.track?.('mentor_application', 'mentoring', 'application', {}); } catch (_) { /* suivi facultatif */ }
-        offerAccount(body, Boolean(res && res.data && res.data.accepted));
+        if (res && res.data && res.data.accepted) showAccepted(res.data); else offerAccount(body, false);
       } catch (error) {
         status.classList.add('is-error');
         status.textContent = error.message || 'Envoi impossible pour le moment.';

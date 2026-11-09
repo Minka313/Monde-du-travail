@@ -55,7 +55,9 @@ router.post('/', applyLimiter, optionalAuth, validate(schema), async (req, res, 
     res.status(result.alreadyPending ? 200 : 201).json({
       success: true,
       message: result.accepted
-        ? 'Merci et bienvenue parmi les mentors du club ! Ta candidature est acceptée : la Présidence en est prévenue et tu reçois un e-mail de confirmation.'
+        ? (result.accountCreated
+          ? 'Merci et bienvenue parmi les mentors du club ! Ta candidature est acceptée et ton compte est créé : un e-mail t\'est envoyé pour choisir ton mot de passe.'
+          : 'Merci et bienvenue parmi les mentors du club ! Ta candidature est acceptée : la Présidence en est prévenue et tu reçois un e-mail de confirmation.')
         : result.alreadyPending
           ? 'Ta candidature est déjà en cours d\'examen : la Présidence te répondra par e-mail.'
           : 'Merci ! Ta candidature est transmise à la Présidence du club, qui te répondra par e-mail.',

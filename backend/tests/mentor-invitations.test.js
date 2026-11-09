@@ -15,6 +15,9 @@ describe('Invitations de mentors', () => {
     domains: 'Agriculture, entrepreneuriat', motivation: 'Je souhaite transmettre mon expérience du terrain aux jeunes du club.',
     consent: true, ...extra,
   });
+  // Chaque candidature part d'une adresse différente : la limite de 5 envois par heure et par adresse ne gêne pas les tests
+  let ipCounter = 0;
+  const apply = (body) => request(app).post('/api/mentor-applications').set('X-Forwarded-For', `10.0.0.${++ipCounter}`).send(body);
   const tokenOf = (link) => new URL(link).searchParams.get('invitation');
 
   beforeAll(async () => {
@@ -28,6 +31,7 @@ describe('Invitations de mentors', () => {
 
   afterAll(async () => {
     await prisma.mentorApplication.deleteMany({ where: { email: INVITEE } });
+    await cleanupTestUsers([INVITEE]);
     await prisma.mentorInvitation.deleteMany({ where: { createdBy: { email: { in: EMAILS } } } });
     await cleanupTestUsers(EMAILS);
     await prisma.$disconnect();
@@ -61,24 +65,28 @@ describe('Invitations de mentors', () => {
   it('enregistre la candidature du professionnel invité, une seule fois, et prévient la Présidence', async () => {
     const created = (await request(app).post('/api/mentoring/invitations').set(as('pres')).send({ inviteeName: 'Mamadou', inviteeEmail: INVITEE })).body.data;
     const token = tokenOf(created.link);
-    const sent = await request(app).post('/api/mentor-applications').send(form({ invitation: token }));
+    const sent = await apply(form({ invitation: token }));
     expect(sent.status).toBe(201);
     const applications = (await request(app).get('/api/mentoring/applications').set(as('pres'))).body.data;
     // Invité : accepté d'office, sans attendre la décision de la Présidence
-    expect(sent.body.data).toMatchObject({ status: 'ACCEPTED', accepted: true, hasAccount: false });
+    expect(sent.body.data).toMatchObject({ status: 'ACCEPTED', accepted: true, hasAccount: true, accountCreated: true });
+    // Le compte est créé tout de suite, avec le rôle mentor : plus rien à faire de séparé
+    const account = await prisma.user.findUnique({ where: { email: INVITEE } });
+    expect(account).toMatchObject({ role: 'MEMBER', isActive: true, isVerified: true, firstName: 'Mamadou', lastName: 'Professionnel' });
+    const roles = await prisma.userAdminRole.findMany({ where: { userId: account.id, status: 'APPROVED', isActive: true }, include: { role: true } });
+    expect(roles.map((r) => r.role.name)).toContain('MENTOR_EXPERT');
+    expect((await request(app).get('/api/mentoring/mentors').set(as('pres'))).body.data.map((m) => m.email)).toContain(INVITEE);
     expect(applications.find((a) => a.email === INVITEE)).toMatchObject({ invited: true, status: 'ACCEPTED', profession: 'Ingénieur agronome' });
     const alert = await prisma.notification.findFirst({ where: { user: { email: EMAILS[0] }, title: { contains: 'rejoint les mentors' } } });
     expect(alert).toBeTruthy();
-    expect(alert.message).toContain('créer son compte');
-    // Sans compte : il est signalé à la Présidence comme mentor accepté en attente de compte
-    const pendingMentors = (await request(app).get('/api/mentoring/mentors/pending').set(as('pres'))).body.data;
-    expect(pendingMentors.find((m) => m.email === INVITEE)).toMatchObject({ accountState: 'NONE', invited: true });
+    expect(alert.message).toContain('compte a été créé');
+    expect((await request(app).get('/api/mentoring/mentors/pending').set(as('pres'))).body.data.map((m) => m.email)).not.toContain(INVITEE);
     expect((await request(app).get('/api/mentoring/mentors/pending').set(as('membre'))).status).toBe(403);
     const list = (await request(app).get('/api/mentoring/invitations').set(as('pres'))).body.data;
     expect(list.find((i) => i.id === created.id).status).toBe('USED');
     // Le lien ne sert qu'une fois
     expect((await request(app).get(`/api/mentor-applications/invitation/${token}`)).status).toBe(400);
-    expect((await request(app).post('/api/mentor-applications').send(form({ invitation: token, email: 'autre@inv.test.com' }))).status).toBe(400);
+    expect((await apply(form({ invitation: token, email: 'autre@inv.test.com' }))).status).toBe(400);
     expect((await request(app).post('/api/mentoring/invitations/' + created.id + '/resend').set(as('pres'))).status).toBe(400);
   });
 
@@ -86,7 +94,7 @@ describe('Invitations de mentors', () => {
     const pro = await createTestUser({ email: 'compte.pro@inv.test.com', firstName: 'Compte', lastName: 'Pro' });
     try {
       const created = (await request(app).post('/api/mentoring/invitations').set(as('pres')).send({ inviteeEmail: pro.email })).body.data;
-      const sent = await request(app).post('/api/mentor-applications').send(form({ invitation: tokenOf(created.link), email: pro.email, fullName: 'Compte Pro' }));
+      const sent = await apply(form({ invitation: tokenOf(created.link), email: pro.email, fullName: 'Compte Pro' }));
       expect(sent.body.data).toMatchObject({ accepted: true, hasAccount: true });
       const mentors = (await request(app).get('/api/mentoring/mentors').set(as('pres'))).body.data;
       expect(mentors.map((m) => m.email)).toContain(pro.email);
@@ -103,7 +111,7 @@ describe('Invitations de mentors', () => {
     expect((await request(app).delete(`/api/mentoring/invitations/${created.id}`).set(as('membre'))).status).toBe(403);
     expect((await request(app).delete(`/api/mentoring/invitations/${created.id}`).set(as('pres'))).status).toBe(200);
     expect((await request(app).get(`/api/mentor-applications/invitation/${tokenOf(created.link)}`)).status).toBe(404);
-    expect((await request(app).post('/api/mentor-applications').send(form({ invitation: tokenOf(created.link), email: 'x@inv.test.com' }))).status).toBe(404);
+    expect((await apply(form({ invitation: tokenOf(created.link), email: 'x@inv.test.com' }))).status).toBe(404);
   });
 
   it('refuse une invitation expirée', async () => {
@@ -114,9 +122,31 @@ describe('Invitations de mentors', () => {
     expect(list.find((i) => i.id === created.id).status).toBe('EXPIRED');
   });
 
+  it('crée aussi le compte quand la Présidence accepte une candidature spontanée, et le mot de passe se choisit par lien', async () => {
+    const mail = 'spontane.pro@inv.test.com';
+    await cleanupTestUsers([mail]);
+    await apply(form({ email: mail, fullName: 'Awa Spontanée' })).expect(201);
+    const app1 = (await request(app).get('/api/mentoring/applications').set(as('pres'))).body.data.find((a) => a.email === mail);
+    expect(app1.status).toBe('PENDING');
+    expect(await prisma.user.findUnique({ where: { email: mail } })).toBeNull();
+    const done = await request(app).post(`/api/mentoring/applications/${app1.id}/decision`).set(as('pres')).send({ decision: 'ACCEPTED' });
+    expect(done.status).toBe(200);
+    expect(done.body.data.accountCreated).toBe(true);
+    const created = await prisma.user.findUnique({ where: { email: mail } });
+    expect(created).toMatchObject({ isActive: true, isVerified: true });
+    // Le lien reçu par e-mail permet de choisir son mot de passe puis de se connecter
+    const url = require('../src/services/authService').passwordSetupUrl(created);
+    const token = new URL(url).searchParams.get('token');
+    expect((await request(app).post('/api/auth/reset-password').send({ token, newPassword: 'MotDePasse123' })).status).toBe(200);
+    expect((await request(app).post('/api/auth/login').send({ email: mail, password: 'MotDePasse123' })).status).toBe(200);
+    await prisma.mentorApplication.deleteMany({ where: { email: mail } });
+    await cleanupTestUsers([mail]);
+  });
+
   it('garde la candidature ouverte à tous sans invitation', async () => {
     await prisma.mentorApplication.deleteMany({ where: { email: INVITEE } });
-    const res = await request(app).post('/api/mentor-applications').send(form());
+    await cleanupTestUsers([INVITEE]);
+    const res = await apply(form());
     expect(res.status).toBe(201);
     const apps = (await request(app).get('/api/mentoring/applications').set(as('pres'))).body.data;
     expect(apps.find((a) => a.email === INVITEE).invited).toBe(false);

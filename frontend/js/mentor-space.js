@@ -976,9 +976,10 @@
       if (act === 'invitation-revoke' && window.confirm('Retirer cette invitation ? Le lien ne fonctionnera plus.')) {
         if (await run(btn, () => api(`/invitations/${id}`, { method: 'DELETE' }), 'Invitation retirée')) refresh();
       }
-      if (act === 'application-accept' && window.confirm('Accepter cette personne comme mentor du club ? Elle recevra son accès à l\'Espace mentor.')) {
+      if (act === 'application-accept' && window.confirm('Accepter cette personne comme mentor du club ? Son compte est créé automatiquement si elle n\'en a pas, et elle reçoit un e-mail pour choisir son mot de passe et ouvrir son Espace mentor.')) {
         const response = window.prompt('Un mot de bienvenue (facultatif) :', '') ?? '';
-        if (await run(btn, () => api(`/applications/${id}/decision`, json('POST', { decision: 'ACCEPTED', response: response.trim() || null })), 'Candidature acceptée')) refresh();
+        const res = await run(btn, () => api(`/applications/${id}/decision`, json('POST', { decision: 'ACCEPTED', response: response.trim() || null })));
+        if (res) { toast(res.data?.accountCreated ? 'Mentor accepté : son compte est créé, il reçoit un e-mail pour choisir son mot de passe' : 'Candidature acceptée : son Espace mentor est ouvert'); refresh(); }
       }
       if (act === 'application-decline') {
         const response = window.prompt('Ta réponse au candidat (elle lui sera envoyée par e-mail) :');

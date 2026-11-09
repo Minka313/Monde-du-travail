@@ -5,6 +5,7 @@ const EmailService = require('./emailService');
 const AuditService = require('./auditService');
 const logger = require('../utils/logger');
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 
 // Candidatures « Devenir mentor » : déposées depuis le site (avec ou sans compte),
 // examinées par la Présidence. Acceptée : le rôle MENTOR_EXPERT est attribué au compte qui porte
@@ -93,7 +94,7 @@ class MentorApplicationService {
       await prisma.mentorInvitation.update({ where: { id: invitation.id }, data: { usedAt: new Date() } });
       // Invité par la Présidence : accepté d'office, la Présidence en est avertie
       const result = await MentorApplicationService.acceptInvited(application, invitation);
-      return { status: 'ACCEPTED', alreadyPending: false, accepted: true, hasAccount: result.hasAccount };
+      return { status: 'ACCEPTED', alreadyPending: false, accepted: true, hasAccount: result.hasAccount, accountCreated: result.accountCreated };
     }
 
     const presidents = await prisma.user.findMany({ where: { role: 'ULTRA_ADMIN', isActive: true }, select: { id: true } });
@@ -108,19 +109,49 @@ class MentorApplicationService {
     return { status: 'PENDING', alreadyPending: false };
   }
 
-  /** Compte actif qui porte l'adresse e-mail de la candidature (ou celui déjà lié) */
-  static async accountFor(application) {
-    return application.userId
-      ? prisma.user.findUnique({ where: { id: application.userId }, select: { id: true } })
-      : prisma.user.findFirst({ where: { email: { equals: application.email, mode: 'insensitive' }, isActive: true }, select: { id: true } });
+  /**
+   * Compte du mentor accepté : celui qui porte l'adresse e-mail de la candidature ; s'il n'existe pas, il est créé
+   * tout de suite (adhérent, adresse considérée confirmée) et la personne choisit son mot de passe via un lien envoyé
+   * par e-mail. L'acceptation et la création du compte ne sont donc plus deux étapes séparées.
+   * Un compte désactivé par la Présidence n'est jamais réactivé.
+   */
+  static async ensureAccount(application) {
+    const linked = application.userId
+      ? await prisma.user.findUnique({ where: { id: application.userId }, select: { id: true, isActive: true, isVerified: true, role: true } })
+      : null;
+    const existing = linked || await prisma.user.findFirst({
+      where: { email: { equals: application.email, mode: 'insensitive' } },
+      select: { id: true, isActive: true, isVerified: true, role: true },
+    });
+    if (existing) {
+      // Compte gratuit créé par la personne mais jamais confirmé : l'acceptation le rend utilisable
+      if (!existing.isActive && !existing.isVerified && existing.role === 'VISITOR') {
+        await prisma.user.update({ where: { id: existing.id }, data: { isActive: true, isVerified: true } });
+        return { id: existing.id, created: false };
+      }
+      return existing.isActive ? { id: existing.id, created: false } : null;
+    }
+    const parts = application.fullName.trim().split(/\s+/);
+    const firstName = parts[0].length >= 2 ? parts[0] : `${parts[0]}.`;
+    const lastName = parts.slice(1).join(' ') || firstName;
+    const user = await prisma.user.create({
+      data: {
+        email: application.email,
+        // Mot de passe aléatoire jamais communiqué : la personne en choisit un avec le lien reçu par e-mail
+        password: await bcrypt.hash(crypto.randomBytes(32).toString('hex'), 12),
+        firstName, lastName, role: 'MEMBER', isActive: true, isVerified: true,
+      },
+      select: { id: true, email: true, password: true },
+    });
+    return { id: user.id, created: true, setupUrl: require('./authService').passwordSetupUrl(user) };
   }
 
   /**
-   * Accepte d'office la réponse d'un professionnel invité : rôle mentor tout de suite s'il a un compte, sinon à la
-   * création de son compte avec cette adresse. La Présidence est prévenue (cloche + alerte), le professionnel par e-mail.
+   * Accepte d'office la réponse d'un professionnel invité (rôle mentor, compte créé si besoin). La Présidence est
+   * prévenue (cloche + alerte), le professionnel par e-mail.
    */
   static async acceptInvited(application, invitation) {
-    const account = await MentorApplicationService.accountFor(application);
+    const account = await MentorApplicationService.ensureAccount(application);
     if (account) {
       await grantMentorRole(account.id, invitation.createdById);
       await seedProfile(account.id, application);
@@ -134,18 +165,21 @@ class MentorApplicationService {
       },
     });
     const presidents = await prisma.user.findMany({ where: { role: 'ULTRA_ADMIN', isActive: true }, select: { id: true } });
+    const detail = !account ? ' Son compte n\'a pas pu être ouvert (compte désactivé) : voir « Mentors ».'
+      : account.created ? ' Son compte a été créé et son Espace mentor ouvert : il reçoit un e-mail pour choisir son mot de passe.'
+        : ' Son Espace mentor est ouvert.';
     await Promise.allSettled(presidents.map((p) => NotificationService.createNotification({
       userId: p.id,
       type: 'SYSTEM',
       title: `🌟 ${application.fullName} rejoint les mentors`,
-      message: `${application.fullName} (${application.profession}) a répondu à ton invitation et est accepté d'office.${account ? ' Son Espace mentor est ouvert.' : ' Il doit créer son compte avec cette adresse pour ouvrir son Espace mentor.'}`.slice(0, 250),
+      message: `${application.fullName} (${application.profession}) a répondu à ton invitation et est accepté d'office.${detail}`.slice(0, 250),
       url: '/mentor.html?tab=overview',
       dedupeKey: `MENTOR_INVITED_ACCEPTED:${application.id}:${p.id}`,
     })));
     await EmailService.notifyMentorApplicationDecision({
-      to: application.email, fullName: application.fullName, accepted: true, response: null, hasAccount: Boolean(account),
+      to: application.email, fullName: application.fullName, accepted: true, response: null, hasAccount: Boolean(account), setupUrl: account?.setupUrl || null,
     }).catch((err) => logger.warn('E-mail d\'acceptation non envoyé', { error: err.message }));
-    if (account) {
+    if (account && !account.created) {
       await NotificationService.createNotification({
         userId: account.id, type: 'SYSTEM', title: '🌟 Bienvenue parmi les mentors',
         message: 'Tu es accepté comme mentor : ton Espace mentor est ouvert.', url: '/mentor.html',
@@ -153,9 +187,9 @@ class MentorApplicationService {
     }
     await AuditService.log({
       userId: invitation.createdById, action: 'mentoring.application.accept_invited', module: 'mentoring',
-      resource: 'MentorApplication', resourceId: application.id, metadata: { email: application.email, roleGranted: Boolean(account) },
+      resource: 'MentorApplication', resourceId: application.id, metadata: { email: application.email, roleGranted: Boolean(account), accountCreated: Boolean(account?.created) },
     }).catch(() => {});
-    return { hasAccount: Boolean(account) };
+    return { hasAccount: Boolean(account), accountCreated: Boolean(account?.created) };
   }
 
   // ===== Invitations : la Présidence envoie un lien personnel à un professionnel =====
@@ -280,7 +314,7 @@ class MentorApplicationService {
 
     let account = null;
     if (decision === 'ACCEPTED') {
-      account = await MentorApplicationService.accountFor(application);
+      account = await MentorApplicationService.ensureAccount(application);
       if (account) {
         await grantMentorRole(account.id, user.id);
         await seedProfile(account.id, application);
@@ -299,15 +333,15 @@ class MentorApplicationService {
       resource: 'MentorApplication', resourceId: id, metadata: { email: application.email, roleGranted: Boolean(account) }, ...meta,
     });
     await EmailService.notifyMentorApplicationDecision({
-      to: application.email, fullName: application.fullName, accepted: decision === 'ACCEPTED', response: note, hasAccount: Boolean(account),
+      to: application.email, fullName: application.fullName, accepted: decision === 'ACCEPTED', response: note, hasAccount: Boolean(account), setupUrl: account?.setupUrl || null,
     }).catch((err) => logger.warn('E-mail de décision de candidature non envoyé', { error: err.message }));
-    if (account) {
+    if (account && !account.created) {
       await NotificationService.createNotification({
         userId: account.id, type: 'SYSTEM', title: '🌟 Bienvenue parmi les mentors',
         message: 'Ta candidature est acceptée : ton Espace mentor est ouvert.', url: '/mentor.html',
       }).catch(() => {});
     }
-    return dto(updated);
+    return { ...dto(updated), accountCreated: Boolean(account?.created) };
   }
 
   // Candidature acceptée avant la création du compte : rôle attribué à la première connexion

@@ -693,7 +693,7 @@ class EmailService {
     return this.sendMail({ to, subject: 'Invitation à devenir mentor du club Le Monde du Travail', html });
   }
 
-  static async notifyMentorApplicationDecision({ to, fullName, accepted, response, hasAccount }) {
+  static async notifyMentorApplicationDecision({ to, fullName, accepted, response, hasAccount, setupUrl = null }) {
     const esc = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const base = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
     const html = this.opportunityMail({
@@ -701,12 +701,14 @@ class EmailService {
       heading: accepted ? `Bienvenue parmi les mentors, ${esc(fullName)} ! 🌟` : `Merci pour ta candidature, ${esc(fullName)}`,
       body: accepted
         ? `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0 0 10px;">La Présidence du club a accepté ta candidature de mentor.${response ? ` ${esc(response)}` : ''}</p>
-          <p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0;">${hasAccount
+          <p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0;">${setupUrl
+            ? 'Nous avons créé ton compte avec <strong>cette adresse e-mail</strong> et ouvert ton Espace mentor. Il ne te reste qu\'à choisir ton mot de passe (lien valable 7 jours), puis à ouvrir « Mon espace » › « Ouvrir mon espace mentor ».'
+            : hasAccount
             ? 'Ton Espace mentor est déjà ouvert : connecte-toi et ouvre « Mon espace », puis « Ouvrir mon espace mentor ».'
             : 'Crée ton compte sur le site avec <strong>cette adresse e-mail</strong> : ton Espace mentor s\'ouvrira automatiquement à ta première connexion.'}</p>`
         : `<p style="color:#475569;font-size:0.95rem;line-height:1.6;margin:0;">${esc(response || 'Nous ne pouvons pas donner suite pour le moment.')}</p>`,
-      ctaLabel: accepted ? (hasAccount ? 'Me connecter' : 'Créer mon compte') : 'Découvrir le club',
-      ctaUrl: accepted ? `${base}/login${hasAccount ? '' : '#register'}` : `${base}/about`,
+      ctaLabel: accepted ? (setupUrl ? 'Choisir mon mot de passe' : hasAccount ? 'Me connecter' : 'Créer mon compte') : 'Découvrir le club',
+      ctaUrl: accepted ? (setupUrl || `${base}/login${hasAccount ? '' : '#register'}`) : `${base}/about`,
       footer: 'Le Monde du Travail · WOW — « Demain se prépare aujourd’hui »',
     });
     return this.sendMail({ to, subject: accepted ? 'Ta candidature de mentor est acceptée' : 'Ta candidature de mentor', html });

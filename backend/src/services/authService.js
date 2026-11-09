@@ -464,6 +464,17 @@ class AuthService {
   }
 
   // 1. Demande de réinitialisation de mot de passe (Forgot Password)
+  /**
+   * Lien « choisir mon mot de passe » d'un compte créé pour la personne (mentor accepté). Même mécanisme que la
+   * réinitialisation, mais valable 7 jours ; il devient inutilisable dès que le mot de passe a été choisi.
+   */
+  static passwordSetupUrl(user, expiresIn = '7d') {
+    const secret = (process.env.JWT_SECRET || 'jwt_secret_dev') + user.password;
+    const token = jwt.sign({ id: user.id, email: user.email, scope: 'password_reset' }, secret, { expiresIn });
+    const base = (process.env.FRONTEND_URL || 'https://lemondedutravail.org').replace(/\/$/, '');
+    return `${base}/frontend/reset-password.html?token=${encodeURIComponent(token)}`;
+  }
+
   static async requestPasswordReset(email, ipAddress, userAgent) {
     if (!email) {
       throw new BadRequestError('Adresse email requise');
