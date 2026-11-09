@@ -168,7 +168,9 @@ class OpportunityController {
       const forumDigest = await require('../services/forumService').sendWeeklyDigest();
       // Et rappels des séances de mentorat du lendemain
       const mentoring = await require('../services/mentoringService').sendSessionReminders();
-      res.json({ success: true, data: { sessions, alerts, forumDigest, mentoring } });
+      // Rappels des réunions en visio (la veille, puis peu avant)
+      const meetings = await require('../services/meetingService').sendReminders();
+      res.json({ success: true, data: { sessions, alerts, forumDigest, mentoring, meetings } });
     } catch (error) {
       next(error);
     }

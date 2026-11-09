@@ -69,6 +69,7 @@
           <div class="rn-actions">
             ${active ? `<a class="btn btn-primary btn-sm" href="visio.html?reunion=${esc(m.id)}">${live ? '📹 Rejoindre la réunion' : (m.isHost ? '▶️ Ouvrir la salle' : '🕒 Salle d\'attente')}</a>` : ''}
             ${active ? `<button type="button" class="rn-link" data-act="copy" data-id="${esc(m.id)}">🔗 Copier le lien</button>` : ''}
+            ${m.isHost && active ? `<button type="button" class="rn-link" data-act="remind" data-id="${esc(m.id)}" title="Envoie une notification de rappel à tous les invités">🔔 Envoyer un rappel</button>` : ''}
             ${m.isHost && active ? `<button type="button" class="rn-link" data-act="edit" data-id="${esc(m.id)}">✏️ Modifier</button><button type="button" class="rn-link rn-danger" data-act="cancel" data-id="${esc(m.id)}">Annuler</button>` : ''}
           </div>
         </div>
@@ -94,6 +95,9 @@
       if (action === 'copy') {
         const link = `${window.location.origin}/visio.html?reunion=${id}`;
         try { await navigator.clipboard.writeText(link); toast('Lien copié (réservé aux invités, connexion demandée)'); } catch (_) { window.prompt('Copie ce lien :', link); }
+      }
+      if (action === 'remind' && window.confirm(`Envoyer un rappel de « ${m.title} » à tous les invités ?`)) {
+        try { const res = await api(`/${encodeURIComponent(id)}/remind`, json('POST')); toast(`Rappel envoyé à ${res.data.notified} personne${res.data.notified > 1 ? 's' : ''}`); await refresh(); } catch (error) { toast(error.message, 'error'); }
       }
       if (action === 'edit') openForm(m);
       if (action === 'cancel' && window.confirm(`Annuler « ${m.title} » ? Les invités sont prévenus.`)) {
@@ -127,13 +131,13 @@
           </div>
           <label>Ordre du jour <small>(facultatif)</small><textarea name="description" rows="3" maxlength="1500" placeholder="Sujets à aborder, documents à lire…">${esc(existing?.description || '')}</textarea></label>
           <fieldset class="rn-aud"><legend>Qui invites-tu ?</legend>
-            ${Object.entries(AUDIENCE).map(([k, l]) => `<label class="rn-check"><input type="checkbox" name="aud" value="${k}" ${existing?.audiences.includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}
-            <p class="rn-hint">Et/ou des personnes précises :</p>
+            ${Object.entries(AUDIENCE).filter(([k]) => state.ctx.audiencesAllowed.includes(k)).map(([k, l]) => `<label class="rn-check"><input type="checkbox" name="aud" value="${k}" ${existing?.audiences.includes(k) ? 'checked' : ''}> ${esc(l)}</label>`).join('')}
+            <p class="rn-hint">${state.ctx.audiencesAllowed.length < 3 ? 'En tant que mentor, tu invites les mentors et des personnes de ton entourage (tes mentorés, les autres mentors, le bureau).' : 'Et/ou des personnes précises :'}</p>
             <input type="search" class="rn-search" placeholder="Rechercher un adhérent…" aria-label="Rechercher un adhérent">
             <div class="rn-pick-count"></div>
             <div class="rn-pick-list"></div>
           </fieldset>
-          <p class="rn-hint">Les invités reçoivent une notification, et une autre quand tu ouvres la salle. Seules les personnes invitées peuvent entrer.</p>
+          <p class="rn-hint">Les invités sont prévenus à la création, rappelés automatiquement la veille et peu avant, puis prévenus quand tu ouvres la salle. Tu peux aussi envoyer un rappel à la main. Seules les personnes invitées peuvent entrer.</p>
           <div class="rn-modal-actions"><button type="button" class="btn btn-outline" data-close>Annuler</button><button type="submit" class="btn btn-primary">${existing ? 'Enregistrer' : 'Planifier et prévenir'}</button></div>
         </form>`);
       const list = el.querySelector('.rn-pick-list');

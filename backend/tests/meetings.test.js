@@ -38,14 +38,38 @@ describe('Réunions en visio', () => {
 
   let bureauMeeting; let mentorsMeeting;
 
-  it('réserve la planification à la Présidence et aux titulaires du bureau', async () => {
+  it('réserve la planification à la Présidence, au bureau et aux mentors', async () => {
     const body = { title: `${TAG} Réunion`, startsAt: inOneHour(), audiences: ['BUREAU'] };
     expect((await api('post', '/', 'membre', body)).status).toBe(403);
+    // Un mentor ne convoque pas le bureau
     expect((await api('post', '/', 'mentor', body)).status).toBe(403);
     expect((await api('post', '/', 'visiteur', body)).status).toBe(403);
     expect((await request(app).post('/api/meetings').send(body)).status).toBe(401);
     expect((await api('get', '/context', 'bureau')).body.data.canOrganize).toBe(true);
     expect((await api('get', '/context', 'membre')).body.data.canOrganize).toBe(false);
+    expect((await api('get', '/context', 'mentor')).body.data).toMatchObject({ canOrganize: true, audiencesAllowed: ['MENTORS'] });
+    expect((await api('get', '/context', 'bureau')).body.data.audiencesAllowed).toEqual(['BUREAU', 'MENTORS', 'MEMBERS']);
+  });
+
+  it('permet à un mentor de planifier avec les mentors et son entourage seulement', async () => {
+    const ship = await prisma.mentorship.create({ data: { mentorId: users.mentor.id, menteeId: users.choisi.id, menteeName: 'Ibou Choisi' } });
+    try {
+      // Il ne voit que ses mentorés, les autres mentors et le bureau
+      const names = (await api('get', '/people', 'mentor')).body.data.map((p) => p.id);
+      expect(names).toContain(users.choisi.id);
+      expect(names).toContain(users.bureau.id);
+      expect(names).not.toContain(users.membre.id);
+      const res = await api('post', '/', 'mentor', { title: `${TAG} Séance collective`, startsAt: inOneHour(), audiences: ['MENTORS'], inviteeIds: [users.choisi.id, users.membre.id] });
+      expect(res.status).toBe(201);
+      // Le membre hors de son entourage est ignoré
+      const mine = (await api('get', '/', 'mentor')).body.data.find((m) => m.id === res.body.data.id);
+      expect(mine.invitees.map((i) => i.id)).toEqual([users.choisi.id]);
+      expect(mine.isHost).toBe(true);
+      expect((await api('get', '/', 'membre')).body.data.map((m) => m.id)).not.toContain(res.body.data.id);
+      expect((await api('post', '/', 'mentor', { title: `${TAG} Tous`, startsAt: inOneHour(), audiences: ['MEMBERS'] })).status).toBe(403);
+    } finally {
+      await prisma.mentorship.delete({ where: { id: ship.id } });
+    }
   });
 
   it('exige un titre, une date valide et au moins un invité', async () => {
@@ -115,6 +139,39 @@ describe('Réunions en visio', () => {
     const list = (await api('get', '/', 'mentor')).body.data;
     expect(list.find((m) => m.id === mentorsMeeting.id)).toMatchObject({ cancelled: true, status: 'CANCELLED' });
     expect((await api('post', `/${mentorsMeeting.id}/visio/start`, 'bureau')).status).toBe(400);
+  });
+
+  it('envoie un rappel à la main (une fois toutes les 10 minutes) et seulement par l\'organisateur', async () => {
+    const m = (await api('post', '/', 'pres', { title: `${TAG} Rappel manuel`, startsAt: inOneHour(), audiences: ['MEMBERS'] })).body.data;
+    expect((await api('post', `/${m.id}/remind`, 'membre')).status).toBe(403);
+    const ok = await api('post', `/${m.id}/remind`, 'pres');
+    expect(ok.status).toBe(200);
+    expect(ok.body.data.notified).toBeGreaterThanOrEqual(1);
+    expect(await alerts('membre', 'Rappel : ')).toHaveLength(1);
+    expect((await api('post', `/${m.id}/remind`, 'pres')).status).toBe(400);
+  });
+
+  it('envoie les rappels automatiques : la veille, puis peu avant, une seule fois chacun', async () => {
+    const MeetingService = require('../src/services/meetingService');
+    await prisma.notification.deleteMany({ where: { userId: users.membre.id } });
+    const tomorrow = (await api('post', '/', 'pres', { title: `${TAG} Demain`, startsAt: new Date(Date.now() + 20 * 3600000).toISOString(), audiences: ['MEMBERS'] })).body.data;
+    const soon = (await api('post', '/', 'pres', { title: `${TAG} Bientôt`, startsAt: new Date(Date.now() + 40 * 60000).toISOString(), audiences: ['MEMBERS'] })).body.data;
+    const first = await MeetingService.sendReminders();
+    expect(first.day).toBeGreaterThanOrEqual(1);
+    expect(first.soon).toBeGreaterThanOrEqual(1);
+    expect(await alerts('membre', `Réunion demain : ${TAG} Demain`)).toHaveLength(1);
+    expect(await alerts('membre', `commence bientôt : ${TAG} Bientôt`)).toHaveLength(1);
+    // L'organisateur est prévenu aussi
+    expect(await alerts('pres', `Réunion demain : ${TAG} Demain`)).toHaveLength(1);
+    // Pas de doublon au passage suivant
+    await MeetingService.sendReminders();
+    expect(await alerts('membre', `Réunion demain : ${TAG} Demain`)).toHaveLength(1);
+    // Une réunion déplacée est de nouveau rappelée
+    await api('put', `/${tomorrow.id}`, 'pres', { startsAt: new Date(Date.now() + 22 * 3600000).toISOString() });
+    await MeetingService.sendReminders();
+    expect(await alerts('membre', `Réunion demain : ${TAG} Demain`)).toHaveLength(2);
+    // Une réunion annulée n'est pas rappelée
+    await api('delete', `/${soon.id}`, 'pres');
   });
 
   it('propose les adhérents aux organisateurs, jamais les visiteurs', async () => {

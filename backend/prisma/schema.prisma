@@ -827,21 +827,25 @@ model MentorRequest {
 // Notes privées de la Présidence sur un mentor (jamais visibles du mentor)
 // Réunion en visio du club (bureau, mentors, adhérents ou personnes choisies) : salle ouverte par l'organisateur
 model Meeting {
-  id              String           @id @default(cuid())
-  title           String
-  description     String?
-  startsAt        DateTime
-  durationMinutes Int              @default(60)
+  id                 String           @id @default(cuid())
+  title              String
+  description        String?
+  startsAt           DateTime
+  durationMinutes    Int              @default(60)
   // Groupes invités : BUREAU, MENTORS, MEMBERS (tous les adhérents)
-  audiences       String[]         @default([])
-  createdById     String
-  visioStatus     String           @default("CLOSED")
-  visioRoomId     String?
-  cancelledAt     DateTime?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  createdBy       User             @relation("MeetingCreator", fields: [createdById], references: [id], onDelete: Cascade)
-  invitees        MeetingInvitee[]
+  audiences          String[]         @default([])
+  createdById        String
+  visioStatus        String           @default("CLOSED")
+  visioRoomId        String?
+  cancelledAt        DateTime?
+  // Rappels automatiques (veille, puis peu avant) et dernier rappel envoyé à la main par l'organisateur
+  reminderDaySentAt  DateTime?
+  reminderSoonSentAt DateTime?
+  manualReminderAt   DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  createdBy          User             @relation("MeetingCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  invitees           MeetingInvitee[]
 
   @@index([startsAt])
   @@index([createdById])

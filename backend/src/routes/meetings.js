@@ -32,6 +32,7 @@ router.post('/', validate(z.object({ body })), wrap((req) => Meetings.create(req
 router.put('/:id', validate(z.object({ body: body.partial() })), wrap((req) => Meetings.update(req.user, req.params.id, req.body, meta(req))));
 router.delete('/:id', wrap((req) => Meetings.cancel(req.user, req.params.id, meta(req)), 200, 'Réunion annulée : les invités sont prévenus'));
 
+router.post('/:id/remind', wrap((req) => Meetings.remind(req.user, req.params.id, meta(req)), 200, 'Rappel envoyé aux invités'));
 router.get('/:id/visio', wrap((req) => Meetings.getVisio(req.user, req.params.id)));
 router.post('/:id/visio/start', wrap((req) => Meetings.setVisio(req.user, req.params.id, true)));
 router.post('/:id/visio/stop', wrap((req) => Meetings.setVisio(req.user, req.params.id, false)));

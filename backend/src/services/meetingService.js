@@ -39,9 +39,22 @@ function isInvited(user, meeting, profile) {
     || (meeting.audiences.includes('MEMBERS') && profile.isAdherent);
 }
 
-async function canOrganize(user) {
-  if (isPresident(user)) return true;
-  return (await prisma.clubAssignment.count({ where: { userId: user.id, isActive: true, memberRole: { not: 'EQUIPE' } } })) > 0;
+// Planifient : la Présidence, les titulaires de poste du bureau (tous les groupes) et les mentors (mentors et personnes de leur entourage)
+async function organizerLevel(user) {
+  if (isPresident(user)) return 'BUREAU';
+  if ((await prisma.clubAssignment.count({ where: { userId: user.id, isActive: true, memberRole: { not: 'EQUIPE' } } })) > 0) return 'BUREAU';
+  return (await profileOf(user)).isMentor ? 'MENTOR' : null;
+}
+const canOrganize = async (user) => Boolean(await organizerLevel(user));
+
+/** Personnes qu'un mentor (non membre du bureau) peut inviter : ses mentorés, les autres mentors, le bureau */
+async function mentorCircleIds(user) {
+  const [mentees, mentors, bureau] = await Promise.all([
+    prisma.mentorship.findMany({ where: { mentorId: user.id, menteeId: { not: null } }, select: { menteeId: true } }),
+    prisma.userAdminRole.findMany({ where: { isActive: true, status: 'APPROVED', role: { name: MENTOR_ROLE } }, select: { userId: true } }),
+    prisma.clubAssignment.findMany({ where: { isActive: true }, select: { userId: true } }),
+  ]);
+  return new Set([...mentees.map((m) => m.menteeId), ...mentors.map((m) => m.userId), ...bureau.map((b) => b.userId)]);
 }
 
 const INCLUDE = {
@@ -133,7 +146,11 @@ async function validInvitees(userIds) {
 class MeetingService {
   static async context(user) {
     const profile = await profileOf(user);
-    return { canOrganize: await canOrganize(user), ...profile, jaas: JaasService.isConfigured() };
+    const level = await organizerLevel(user);
+    return {
+      canOrganize: Boolean(level), ...profile, jaas: JaasService.isConfigured(),
+      audiencesAllowed: level === 'BUREAU' ? AUDIENCES : level === 'MENTOR' ? ['MENTORS'] : [],
+    };
   }
 
   /** Réunions à venir et récentes qui concernent la personne */
@@ -152,9 +169,15 @@ class MeetingService {
   }
 
   static async create(user, data, meta = {}) {
-    if (!(await canOrganize(user))) throw new ForbiddenError('Seuls la Présidence et les titulaires de poste du bureau planifient une réunion');
+    const level = await organizerLevel(user);
+    if (!level) throw new ForbiddenError('Seuls la Présidence, le bureau et les mentors planifient une réunion');
     const base = clean(data);
-    const invitees = await validInvitees(data.inviteeIds);
+    if (level === 'MENTOR' && base.audiences.some((a) => a !== 'MENTORS')) throw new ForbiddenError('Un mentor invite les mentors ou des personnes de son entourage ; les réunions du bureau et de tous les adhérents sont planifiées par le bureau');
+    let invitees = await validInvitees(data.inviteeIds);
+    if (level === 'MENTOR') {
+      const circle = await mentorCircleIds(user);
+      invitees = invitees.filter((id) => circle.has(id));
+    }
     if (!base.audiences.length && !invitees.length) throw new BadRequestError('Choisis au moins un groupe ou une personne à inviter');
     const created = await prisma.meeting.create({
       data: { ...base, createdById: user.id, invitees: { create: invitees.filter((id) => id !== user.id).map((userId) => ({ userId })) } },
@@ -176,13 +199,18 @@ class MeetingService {
     if (!isHost) throw new ForbiddenError('Seul l\'organisateur modifie la réunion');
     if (meeting.cancelledAt) throw new BadRequestError('Cette réunion est annulée');
     const base = clean({ ...meeting, ...data, audiences: data.audiences ?? meeting.audiences });
-    const invitees = data.inviteeIds !== undefined ? await validInvitees(data.inviteeIds) : null;
+    const level = await organizerLevel(user);
+    if (level === 'MENTOR' && base.audiences.some((a) => a !== 'MENTORS')) throw new ForbiddenError('Un mentor invite les mentors ou des personnes de son entourage');
+    let invitees = data.inviteeIds !== undefined ? await validInvitees(data.inviteeIds) : null;
+    if (invitees && level === 'MENTOR') { const circle = await mentorCircleIds(user); invitees = invitees.filter((x) => circle.has(x)); }
     if (!base.audiences.length && !(invitees ?? meeting.invitees).length) throw new BadRequestError('Choisis au moins un groupe ou une personne à inviter');
     const moved = base.startsAt.getTime() !== meeting.startsAt.getTime();
     const updated = await prisma.meeting.update({
       where: { id },
       data: {
         ...base,
+        // Nouvelle date : les rappels automatiques repartent à zéro
+        ...(moved ? { reminderDaySentAt: null, reminderSoonSentAt: null } : {}),
         ...(invitees ? { invitees: { deleteMany: {}, create: invitees.filter((x) => x !== meeting.createdById).map((userId) => ({ userId })) } } : {}),
       },
       include: INCLUDE,
@@ -208,16 +236,62 @@ class MeetingService {
 
   /** Adhérents qu'on peut inviter (organisateurs) */
   static async people(user, { search } = {}) {
-    if (!(await canOrganize(user))) throw new ForbiddenError('Réservé aux organisateurs');
+    const level = await organizerLevel(user);
+    if (!level) throw new ForbiddenError('Réservé aux organisateurs');
     const term = String(search || '').trim();
+    const circle = level === 'MENTOR' ? [...(await mentorCircleIds(user))] : null;
     const rows = await prisma.user.findMany({
       where: {
-        ...ADHERENT_WHERE, id: { not: user.id },
+        ...ADHERENT_WHERE, id: circle ? { in: circle.filter((x) => x !== user.id) } : { not: user.id },
         ...(term ? { AND: [{ OR: [{ firstName: { contains: term, mode: 'insensitive' } }, { lastName: { contains: term, mode: 'insensitive' } }] }] } : {}),
       },
       select: { id: true, firstName: true, lastName: true }, orderBy: [{ firstName: 'asc' }, { lastName: 'asc' }], take: 300,
     });
     return rows.map((u) => ({ id: u.id, name: fullName(u) }));
+  }
+
+  // ===== Rappels =====
+
+  /** Rappel envoyé à la main par l'organisateur (pas plus d'un toutes les 10 minutes) */
+  static async remind(user, id, meta = {}) {
+    const { meeting, isHost } = await load(user, id);
+    if (!isHost) throw new ForbiddenError('Seul l\'organisateur envoie un rappel');
+    if (meeting.cancelledAt) throw new BadRequestError('Cette réunion est annulée');
+    if (meeting.startsAt.getTime() + meeting.durationMinutes * 60000 < Date.now()) throw new BadRequestError('Cette réunion est terminée');
+    if (meeting.manualReminderAt && Date.now() - meeting.manualReminderAt.getTime() < 10 * 60000) {
+      throw new BadRequestError('Un rappel vient d\'être envoyé : patiente quelques minutes avant d\'en envoyer un autre');
+    }
+    const recipients = await recipientsOf(meeting);
+    await prisma.meeting.update({ where: { id }, data: { manualReminderAt: new Date() } });
+    await notifyAll(recipients, {
+      title: `🔔 Rappel : ${meeting.title}`,
+      message: `${meeting.visioStatus === 'LIVE' ? 'La salle est ouverte. ' : ''}${when(meeting.startsAt)} · organisée par ${fullName(meeting.createdBy)}.`,
+      url: `/visio.html?reunion=${id}`,
+    });
+    await AuditService.log({ userId: user.id, action: 'meeting.remind', module: 'meetings', resource: 'Meeting', resourceId: id, metadata: { recipients: recipients.length }, ...meta });
+    return { notified: recipients.length };
+  }
+
+  /**
+   * Rappels automatiques, déclenchés par le passage horaire du site : la veille (entre 2 h et 26 h avant), puis peu avant
+   * (dans les 90 minutes). Un seul de chaque par réunion ; l'organisateur est prévenu aussi.
+   */
+  static async sendReminders(now = new Date()) {
+    const base = { cancelledAt: null };
+    const [day, soon] = await Promise.all([
+      prisma.meeting.findMany({ where: { ...base, reminderDaySentAt: null, startsAt: { gte: new Date(now.getTime() + 2 * 3600000), lte: new Date(now.getTime() + 26 * 3600000) } }, include: INCLUDE, take: 50 }),
+      prisma.meeting.findMany({ where: { ...base, reminderSoonSentAt: null, startsAt: { gte: now, lte: new Date(now.getTime() + 90 * 60000) } }, include: INCLUDE, take: 50 }),
+    ]);
+    const run = async (meetings, field, title) => {
+      for (const m of meetings) {
+        const recipients = [...new Set([...(await recipientsOf(m)), m.createdById])];
+        await prisma.meeting.update({ where: { id: m.id }, data: { [field]: new Date() } });
+        await notifyAll(recipients, { title: `${title} : ${m.title}`, message: `${when(m.startsAt)} · ${m.durationMinutes} min · organisée par ${fullName(m.createdBy)}.`, url: `/visio.html?reunion=${m.id}` });
+      }
+    };
+    await run(day, 'reminderDaySentAt', '⏰ Réunion demain');
+    await run(soon, 'reminderSoonSentAt', '⏰ La réunion commence bientôt');
+    return { day: day.length, soon: soon.length };
   }
 
   // ===== Salle de visio (même forme que les séances de mentorat : la page visio.html les traite pareil) =====
